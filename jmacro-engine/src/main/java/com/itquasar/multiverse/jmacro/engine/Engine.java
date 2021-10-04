@@ -1,49 +1,88 @@
 package com.itquasar.multiverse.jmacro.engine;
 
 import javax.script.*;
+import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Engine {
 
+    static ScriptEngineManager manager = new ScriptEngineManager();
+    static Map<String, ScriptEngineFactory> engines = new LinkedHashMap<>();
+
     public static void main(String[] args) throws Exception {
-        ScriptEngineManager manager = new ScriptEngineManager();
         manager.getEngineFactories().forEach(engine -> {
-            System.out.println(engine);
-            System.out.println("\tNAME:" + engine.getEngineName());
-            System.out.println("\tLANG:" + engine.getLanguageName() + " v" + engine.getLanguageVersion());
-            System.out.println("\tEXTS: " + engine.getExtensions());
-            System.out.println("\tALIAS: " + engine.getNames());
+            var info = """
+                %s
+                    Name: %s
+                    Language: %s v %s
+                    Extensions: %s
+                    Names: %s
+                    Mime-type: %s
+                """.formatted(
+                engine.getClass().getName(),
+                engine.getEngineName(),
+                engine.getLanguageName(), engine.getLanguageVersion(),
+                String.join(",", engine.getExtensions()),
+                String.join(",", engine.getNames()),
+                String.join(",", engine.getMimeTypes())
+            );
+            engine.getExtensions().forEach(ext -> engines.put(ext, engine));
+            System.out.println(info);
         });
 
-        System.out.println("====================");
-        ScriptEngine engine = manager.getEngineByName("ruby");
+        new Engine().execute("teste.py", null, """
+            \"""
+            START METADATA
+                author: Me Myself
+                description: Foo bar baz
+                infos:
+                  foo: 1
+                  bar: teste
+                  baz: true
+                name: NOME
+                version: 1.2.3
+            END METADATA
+            \"""
+            x = 5
+            y = 2
+            print(x * y)
+            print(__METADATA__)
+            """);
 
-        StringWriter strWrtr = new StringWriter();
+    }
 
-        engine.getContext().setWriter(strWrtr);
-        // set global variable
-        engine.getBindings(ScriptContext.GLOBAL_SCOPE).put("x", "hello");
+    private Metadata parseMetadata(String script) {
+        String metaRegex = "START METADATA(?<meta>.+)END METADATA";
+        Pattern pattern = Pattern.compile(metaRegex, Pattern.DOTALL);
+        Matcher matcher = pattern.matcher(script);
+        if (matcher.find()) {
+            String metadata = matcher.group("meta");
+            return Metadata.load(metadata);
+        }
+        return Metadata.EMPTY;
+    }
 
-        // evaluate JavaScript code that prints the variable (x = "hello")
-        //engine.eval("println(x)");
-        engine.eval("puts x");
+    public void execute(String filename, String location, String script) throws FileNotFoundException, ScriptException {
+        var extension = filename.substring(filename.lastIndexOf('.') + 1);
+        var engine = engines.get(extension).getScriptEngine();
 
-        // define a different script context
-        ScriptContext newContext = new SimpleScriptContext();
-        newContext.setWriter(strWrtr);
-        newContext.setBindings(engine.createBindings(), ScriptContext.ENGINE_SCOPE);
-        Bindings engineScope = newContext.getBindings(ScriptContext.ENGINE_SCOPE);
+        ScriptContext context = new SimpleScriptContext();
+        context.setWriter(new PrintWriter(System.out));
+        context.setBindings(engine.createBindings(), ScriptContext.ENGINE_SCOPE);
+        Bindings engineScope = context.getBindings(ScriptContext.ENGINE_SCOPE);
 
-        // set the variable to a different value in another scope
-        engineScope.put("x", "world");
+        var metadata = parseMetadata(script);
+        metadata.setFilename(filename);
+        metadata.setLocation(location);
+        metadata.setSource(script);
 
-        // evaluate the same code but in a different script context (x = "world")
-        //engine.eval("println(x)", newContext);
-        engine.eval("puts x", newContext);
+        engineScope.put("__METADATA__", metadata);
 
-        System.out.println("START OUTPUT");
-        System.out.println(strWrtr);
-        System.out.println("DONE!");
+        engine.eval(script, context);
     }
 }
+
