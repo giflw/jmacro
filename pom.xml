@@ -25,6 +25,8 @@
 
         <groovy.version>3.0.9</groovy.version>
         <gmavenplus.version>1.13.0</gmavenplus.version>
+
+        <spotbugs.version>4.4.1</spotbugs.version>
     </properties>
 
     <modules>
@@ -75,8 +77,141 @@
                         </execution>
                     </executions>
                 </plugin>
+
+                <!-- Optional plugins for using Spock -->
+                <!-- Only required if names of spec classes don't match default Surefire patterns (`*Test` etc.) -->
+                <plugin>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.0.0-M5</version>
+                    <configuration>
+                        <useModulePath>false</useModulePath>
+                        <!-- https://issues.apache.org/jira/browse/SUREFIRE-1809 -->
+                        <useFile>false</useFile>
+                        <includes>
+                            <include>**/*Test</include>
+                            <include>**/*Spec</include>
+                        </includes>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>com.github.spotbugs</groupId>
+                    <artifactId>spotbugs-maven-plugin</artifactId>
+                    <version>${spotbugs.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.github.spotbugs</groupId>
+                            <artifactId>spotbugs</artifactId>
+                            <version>${spotbugs.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-pmd-plugin</artifactId>
+                    <version>3.15.0</version>
+                </plugin>
+                <!-- <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>3.1.2</version>
+                    <configuration>
+                        <configLocation>checkstyle.xml</configLocation>
+                        <encoding>UTF-8</encoding>
+                        <consoleOutput>true</consoleOutput>
+                        <failsOnError>true</failsOnError>
+                        <linkXRef>false</linkXRef>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>validate</id>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin> -->
             </plugins>
         </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>enforce-versions</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>3.8.2</version>
+                                </requireMavenVersion>
+                                <requireJavaVersion>
+                                    <version>17</version>
+                                </requireJavaVersion>
+                                <!-- <requireOS><!- - Needed if using jrpm or jdeb - ->
+                                    <family>unix</family>
+                                </requireOS>-->
+                                <reactorModuleConvergence>
+                                    <message>The reactor is not valid</message>
+                                    <!-- <ignoreModuleDependencies>true</ignoreModuleDependencies>-->
+                                </reactorModuleConvergence>
+                                <requireNoRepositories>
+                                    <message>Best Practice is to never define repositories in pom.xml (use a repository manager instead)</message>
+                                </requireNoRepositories>
+                                <!--?:q<requireReleaseDeps>
+                                    <message>No Snapshots Allowed!</message>
+                                </requireReleaseDeps>-->
+                                <!--<requireReleaseVersion>
+                                    <message>No Snapshots Allowed!</message>
+                                </requireReleaseVersion>
+                                <requireSnapshotVersion>
+                                    <message>No Releases Allowed!</message>
+                                </requireSnapshotVersion>-->
+                                <dependencyConvergence>
+                                    <uniqueVersions>true</uniqueVersions>
+                                </dependencyConvergence>
+                                <requireUpperBoundDeps>
+                                    <uniqueVersions>true</uniqueVersions>
+                                </requireUpperBoundDeps>
+                                <banDuplicatePomDependencyVersions/>
+
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-toolchains-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <toolchains>
+                        <jdk>
+                            <version>17</version>
+                        </jdk>
+                    </toolchains>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>toolchain</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>3.0.0-M4</version>
+            </plugin>
+        </plugins>
     </build>
 
 </project>

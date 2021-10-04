@@ -4,6 +4,7 @@ import com.itquasar.multiverse.jmacro.core.Command;
 import com.itquasar.multiverse.jmacro.core.Context;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Echo extends Command {
@@ -22,8 +23,8 @@ public class Echo extends Command {
             return "null";
         }
         return Arrays.stream(args)
-                .filter(item -> item != null)
-                .map(item -> item.toString())
-                .collect(Collectors.joining());
+            .filter(Objects::nonNull)
+            .map(Object::toString)
+            .collect(Collectors.joining());
     }
 }

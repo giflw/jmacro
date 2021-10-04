@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<toolchains>
+    <!-- copy this file to ~/.m2/toolchain.xml and edit jdkHome tag -->
+    <!-- JDK toolchains -->
+    <toolchain>
+        <type>jdk</type>
+        <provides>
+            <version>17</version>
+            <!--<vendor>sun</vendor>-->
+        </provides>
+        <configuration>
+            <jdkHome>/path/to/jdk/17</jdkHome>
+        </configuration>
+    </toolchain>
+</toolchains>
