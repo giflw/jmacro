@@ -1,57 +1,36 @@
 package com.itquasar.multiverse.jmacro.engine
 
-import spock.lang.Shared
+import spock.lang.Specification
+import spock.lang.Stepwise
 
-class MetadataTest extends spock.lang.Specification {
+@Stepwise
+class MetadataTest extends Specification implements Constants {
 
-    @Shared
-    Metadata metadata
-
-    def "Parse Metadata"() {
+    def "Parse Metadata"(extension) {
         given:
-        def script = """
-            START METADATA
-                name: Metadata Test
-                description: Just a metadata test
-                author: I Myself
-                version: 0.1.2
-                infos:
-                  one: 1
-                  two: true
-                  three: tree
-            END METADATA
-            """;
+        def script = getClass()
+            .getResource("/scripts/hello-world/hello-world.${extension}")
+            .text
+        Metadata metadata = Metadata.parseMetadata(script)
 
-        when:
-        metadata = Metadata.parseMetadata(script)
-
-        then:
+        expect:
         metadata.name == 'Metadata Test'
         metadata.description == 'Just a metadata test'
         metadata.author == 'I Myself'
         metadata.version == '0.1.2'
         metadata.infos == [one: 1, two: true, three: 'tree']
-    }
-
-    def "Dump"() {
-        given:
-        def yaml = """
+        metadata.dump() == """
                 author: I Myself
                 description: Just a metadata test
-                filename: null
                 infos:
                   one: 1
                   two: true
                   three: tree
-                location: null
                 name: Metadata Test
-                source: null
                 version: 0.1.2""".stripIndent().trim() + "\n"
-        when:
-        def dumped = metadata.dump()
 
-        then:
-        dumped == yaml
+        where:
+        extension << EXTENSIONS
     }
 
 }

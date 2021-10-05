@@ -1,9 +1,15 @@
 package com.itquasar.multiverse.jmacro.engine;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.introspector.Property;
+import org.yaml.snakeyaml.nodes.NodeTuple;
+import org.yaml.snakeyaml.nodes.Tag;
+import org.yaml.snakeyaml.representer.Representer;
 
 import java.util.Collections;
 import java.util.Map;
@@ -12,6 +18,7 @@ import java.util.regex.Pattern;
 
 @Data
 @ToString(exclude = "source")
+@NoArgsConstructor
 public class Metadata {
 
     public static final Metadata EMPTY = new Metadata();
@@ -23,12 +30,40 @@ public class Metadata {
 
     private String filename;
     private String location;
+
     private String source;
+    private Object result;
 
     private Map<String, ?> infos;
 
+    private Metadata(String name, String version, String author, String description, Map<String, ?> infos) {
+        this.name = name;
+        this.version = version;
+        this.author = author;
+        this.description = description;
+        this.infos = infos;
+    }
+
+    private Metadata copy() {
+        return new Metadata(
+            this.name, this.version, this.author, this.description, this.infos
+        );
+    }
+
     public String dump() {
-        return new Yaml().dumpAsMap(this);
+        Representer representer = new Representer() {
+            @Override
+            protected NodeTuple representJavaBeanProperty(Object javaBean, Property property, Object propertyValue, Tag customTag) {
+                // if value of property is null, ignore it.
+                if (propertyValue == null) {
+                    return null;
+                }
+                else {
+                    return super.representJavaBeanProperty(javaBean, property, propertyValue, customTag);
+                }
+            }
+        };
+        return new Yaml(representer).dumpAsMap(this.copy());
     }
 
     public static Metadata parseMetadata(String script) {
@@ -109,4 +144,14 @@ public class Metadata {
             throw new FieldAlreadySetted("Field 'infos' already setted");
         }
     }
+
+    public void setResult(Object result) {
+        if (this.result == null) {
+            this.result = result;
+        } else {
+            throw new FieldAlreadySetted("Field 'result' already setted");
+        }
+    }
+
 }
+

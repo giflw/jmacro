@@ -3,22 +3,19 @@ package com.itquasar.multiverse.jmacro.engine;
 import lombok.extern.log4j.Log4j2;
 
 import javax.script.*;
-import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Log4j2
 public class Engine {
 
-    static ScriptEngineManager manager = new ScriptEngineManager();
-    static Map<String, ScriptEngineFactory> engines = new LinkedHashMap<>();
+    private ScriptEngineManager manager = new ScriptEngineManager();
+    private Map<String, ScriptEngineFactory> engines = new LinkedHashMap<>();
 
-    public static void main(String[] args) throws Exception {
+    public Engine() {
         manager.getEngineFactories().forEach(engine -> {
-            var info = """
+            var engineInfo = """
                 %s
                     Name: %s
                     Language: %s v %s
@@ -34,34 +31,16 @@ public class Engine {
                 String.join(",", engine.getMimeTypes())
             );
             engine.getExtensions().forEach(ext -> engines.put(ext, engine));
-            LOGGER.info(info);
+            LOGGER.debug(engineInfo);
         });
-        new Engine().execute("teste.py", null, """
-            \"""
-            START METADATA
-                author: Me Myself
-                description: Foo bar baz
-                infos:
-                  foo: 1
-                  bar: teste
-                  baz: true
-                name: NOME
-                version: 1.2.3
-            END METADATA
-            \"""
-            x = 5
-            y = 2
-            print(x * y)
-            print(__METADATA__)
-            """);
-
     }
 
 
-
-    public void execute(String filename, String location, String script) throws FileNotFoundException, ScriptException {
+    public Metadata execute(String filename, String location, String script) throws ScriptException {
         var extension = filename.substring(filename.lastIndexOf('.') + 1);
         var engine = engines.get(extension).getScriptEngine();
+
+        engine.setBindings(engine.createBindings(), ScriptContext.GLOBAL_SCOPE);
 
         ScriptContext context = new SimpleScriptContext();
         context.setWriter(new PrintWriter(System.out));
@@ -75,7 +54,8 @@ public class Engine {
 
         engineScope.put("__METADATA__", metadata);
 
-        engine.eval(script, context);
+        metadata.setResult(engine.eval(script, context));
+        return metadata;
     }
 }
 
