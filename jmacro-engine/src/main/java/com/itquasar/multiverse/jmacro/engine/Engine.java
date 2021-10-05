@@ -1,5 +1,7 @@
 package com.itquasar.multiverse.jmacro.engine;
 
+import lombok.extern.log4j.Log4j2;
+
 import javax.script.*;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -8,6 +10,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Log4j2
 public class Engine {
 
     static ScriptEngineManager manager = new ScriptEngineManager();
@@ -31,9 +34,8 @@ public class Engine {
                 String.join(",", engine.getMimeTypes())
             );
             engine.getExtensions().forEach(ext -> engines.put(ext, engine));
-            System.out.println(info);
+            LOGGER.info(info);
         });
-
         new Engine().execute("teste.py", null, """
             \"""
             START METADATA
@@ -55,16 +57,7 @@ public class Engine {
 
     }
 
-    private Metadata parseMetadata(String script) {
-        String metaRegex = "START METADATA(?<meta>.+)END METADATA";
-        Pattern pattern = Pattern.compile(metaRegex, Pattern.DOTALL);
-        Matcher matcher = pattern.matcher(script);
-        if (matcher.find()) {
-            String metadata = matcher.group("meta");
-            return Metadata.load(metadata);
-        }
-        return Metadata.EMPTY;
-    }
+
 
     public void execute(String filename, String location, String script) throws FileNotFoundException, ScriptException {
         var extension = filename.substring(filename.lastIndexOf('.') + 1);
@@ -75,7 +68,7 @@ public class Engine {
         context.setBindings(engine.createBindings(), ScriptContext.ENGINE_SCOPE);
         Bindings engineScope = context.getBindings(ScriptContext.ENGINE_SCOPE);
 
-        var metadata = parseMetadata(script);
+        var metadata = Metadata.parseMetadata(script);
         metadata.setFilename(filename);
         metadata.setLocation(location);
         metadata.setSource(script);

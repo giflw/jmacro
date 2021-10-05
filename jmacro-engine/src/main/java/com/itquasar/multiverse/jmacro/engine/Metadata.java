@@ -7,7 +7,8 @@ import org.yaml.snakeyaml.constructor.Constructor;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Data
 @ToString(exclude = "source")
@@ -28,6 +29,17 @@ public class Metadata {
 
     public String dump() {
         return new Yaml().dumpAsMap(this);
+    }
+
+    public static Metadata parseMetadata(String script) {
+        String metaRegex = "START METADATA([ \t]*[\r\n]+)(?<meta>.+)([\r\n]+)([ \t]*)END METADATA";
+        Pattern pattern = Pattern.compile(metaRegex, Pattern.DOTALL);
+        Matcher matcher = pattern.matcher(script);
+        if (matcher.find()) {
+            String metadata = matcher.group("meta").stripIndent();
+            return Metadata.load(metadata);
+        }
+        return Metadata.EMPTY;
     }
 
     public static Metadata load(String string) {
