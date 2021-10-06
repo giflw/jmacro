@@ -3,7 +3,6 @@ package com.itquasar.multiverse.jmacro.engine;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.introspector.Property;
@@ -57,8 +56,7 @@ public class Metadata {
                 // if value of property is null, ignore it.
                 if (propertyValue == null) {
                     return null;
-                }
-                else {
+                } else {
                     return super.representJavaBeanProperty(javaBean, property, propertyValue, customTag);
                 }
             }

@@ -12,5 +12,6 @@ END METADATA
 */
 
 var msg = "Hello world from KTS"
-println(msg)
+logger.info(msg)
+logger.info(__METADATA__)
 msg

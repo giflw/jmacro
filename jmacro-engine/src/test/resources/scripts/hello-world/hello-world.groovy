@@ -12,5 +12,6 @@ END METADATA
 */
 
 def msg = "Hello world from GROOVY"
-println(msg)
+logger.info(msg)
+logger.info(__METADATA__)
 msg

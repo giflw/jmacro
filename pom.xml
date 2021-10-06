@@ -19,6 +19,8 @@
         <maven.compiler.version>3.8.1</maven.compiler.version>
         <lombok.version>1.18.20</lombok.version>
 
+        <jvm.argLine>--add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED</jvm.argLine>
+
         <source.encoding>UTF-8</source.encoding>
         <project.build.sourceEncoding>${source.encoding}</project.build.sourceEncoding>
         <project.reporting.outputEncoding>${source.encoding}</project.reporting.outputEncoding>
@@ -91,6 +93,7 @@
                             <include>**/*Test</include>
                             <include>**/*Spec</include>
                         </includes>
+                        <argLine>${jvm.argLine}</argLine>
                     </configuration>
                 </plugin>
 

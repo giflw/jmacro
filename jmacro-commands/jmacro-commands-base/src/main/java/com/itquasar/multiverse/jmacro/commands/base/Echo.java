@@ -1,22 +1,21 @@
 package com.itquasar.multiverse.jmacro.commands.base;
 
-import com.itquasar.multiverse.jmacro.core.Command;
-import com.itquasar.multiverse.jmacro.core.Context;
-
+import javax.script.ScriptContext;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class Echo extends Command {
+public class Echo {
 
-    public Echo(Context context) {
-        super(context);
-    }
+    public Echo(ScriptContext context) {
 
-    @Override
-    public String getName() {
-        return "echo";
     }
+//
+//    @Override
+//    public String getName() {
+//        return "echo";
+//    }
+
 
     public String call(Object... args) {
         if (args == null) {

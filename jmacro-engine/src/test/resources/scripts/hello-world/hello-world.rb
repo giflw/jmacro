@@ -12,5 +12,6 @@ END METADATA
 =end
 
 $msg = "Hello world from RB"
-puts $msg
+logger.info $msg
+logger.info __METADATA__
 $msg

@@ -11,5 +11,6 @@ START METADATA
 END METADATA
 """
 msg = "Hello world from PY"
-print(msg)
+logger.info(msg)
+logger.info(__METADATA__)
 msg
