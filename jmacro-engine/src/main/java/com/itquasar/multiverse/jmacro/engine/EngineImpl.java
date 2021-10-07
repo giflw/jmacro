@@ -1,21 +1,24 @@
 package com.itquasar.multiverse.jmacro.engine;
 
 import com.itquasar.multiverse.jmacro.core.CommandProviderLoader;
+import com.itquasar.multiverse.jmacro.core.Engine;
+import com.itquasar.multiverse.jmacro.core.Metadata;
 import lombok.extern.log4j.Log4j2;
 
 import javax.script.*;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Log4j2
-public class Engine {
+public class EngineImpl implements Engine {
 
     private ScriptEngineManager manager = new ScriptEngineManager();
     private Map<String, ScriptEngineFactory> engines = new LinkedHashMap<>();
 
-    public Engine() {
+    public EngineImpl() {
         manager.getEngineFactories().forEach(engine -> {
             var engineInfo = """
                 %s
@@ -37,6 +40,11 @@ public class Engine {
         });
     }
 
+    public Map<String, ScriptEngineFactory> getEngines() {
+        return Collections.unmodifiableMap(this.engines);
+    }
+
+    @Override
     public Metadata execute(String filename, String location, String script) throws ScriptException {
         var extension = filename.substring(filename.lastIndexOf('.') + 1);
         var engine = engines.get(extension).getScriptEngine();

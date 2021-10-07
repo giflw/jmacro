@@ -5,12 +5,8 @@ module jmacro.engine {
 
     requires java.scripting;
     requires java.desktop;
-    requires java.management;
 
-    requires simplejmx;
-    requires org.yaml.snakeyaml;
     requires org.apache.logging.log4j;
-    requires org.checkerframework.checker.qual;
 
     exports com.itquasar.multiverse.jmacro.engine;
 }

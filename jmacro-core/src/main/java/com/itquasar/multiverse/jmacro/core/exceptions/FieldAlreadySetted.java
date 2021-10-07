@@ -1,4 +1,4 @@
-package com.itquasar.multiverse.jmacro.engine;
+package com.itquasar.multiverse.jmacro.core.exceptions;
 
 public class FieldAlreadySetted extends RuntimeException {
 

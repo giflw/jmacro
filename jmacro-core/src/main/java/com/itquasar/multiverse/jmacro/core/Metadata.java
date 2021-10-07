@@ -1,5 +1,6 @@
-package com.itquasar.multiverse.jmacro.engine;
+package com.itquasar.multiverse.jmacro.core;
 
+import com.itquasar.multiverse.jmacro.core.exceptions.FieldAlreadySetted;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;

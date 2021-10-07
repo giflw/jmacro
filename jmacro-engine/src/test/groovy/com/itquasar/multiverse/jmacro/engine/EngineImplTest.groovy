@@ -1,18 +1,18 @@
 package com.itquasar.multiverse.jmacro.engine
 
-
+import com.itquasar.multiverse.jmacro.core.Metadata
 import spock.lang.Specification
 import spock.lang.Stepwise
 
 @Stepwise
-class EngineTest extends Specification implements Constants {
+class EngineImplTest extends Specification implements Constants {
 
     def "Parse Metadata"(extension) {
         given:
         def script = getClass()
             .getResource("/scripts/hello-world/hello-world.${extension}")
             .text
-        Engine engine = new Engine()
+        EngineImpl engine = new EngineImpl()
         Metadata metadata = engine.execute("hello-world.${extension}", '/scripts/hello-world', script)
 
         expect:
