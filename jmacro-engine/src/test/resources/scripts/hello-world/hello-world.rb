@@ -14,4 +14,4 @@ END METADATA
 $msg = "Hello world from RB"
 logger.info $msg
 logger.info __METADATA__
-$msg
+__RESULT__.set $msg

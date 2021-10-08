@@ -1,7 +1,10 @@
 package com.itquasar.multiverse.jmacro.core;
 
+import com.itquasar.multiverse.jmacro.core.script.Script;
+import com.itquasar.multiverse.jmacro.core.script.ScriptResult;
+
 import javax.script.ScriptException;
 
 public interface Engine {
-    Metadata execute(String filename, String location, String script) throws ScriptException;
+    ScriptResult execute(Script script) throws ScriptException;
 }

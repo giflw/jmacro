@@ -11,4 +11,8 @@ module jmacro.core {
 
     exports com.itquasar.multiverse.jmacro.core;
     exports com.itquasar.multiverse.jmacro.core.exceptions;
+    exports com.itquasar.multiverse.jmacro.core.jmx;
+    exports com.itquasar.multiverse.jmacro.core.command;
+    exports com.itquasar.multiverse.jmacro.core.script;
+    exports com.itquasar.multiverse.jmacro.core.configuration;
 }

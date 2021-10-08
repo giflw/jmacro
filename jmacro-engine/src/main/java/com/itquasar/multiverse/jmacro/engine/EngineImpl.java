@@ -1,8 +1,11 @@
 package com.itquasar.multiverse.jmacro.engine;
 
-import com.itquasar.multiverse.jmacro.core.CommandProviderLoader;
 import com.itquasar.multiverse.jmacro.core.Engine;
-import com.itquasar.multiverse.jmacro.core.Metadata;
+import com.itquasar.multiverse.jmacro.core.SPILoader;
+import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
+import com.itquasar.multiverse.jmacro.core.script.Script;
+import com.itquasar.multiverse.jmacro.core.script.ScriptResult;
+import com.itquasar.multiverse.jmacro.core.script.ValueHolder;
 import lombok.extern.log4j.Log4j2;
 
 import javax.script.*;
@@ -45,8 +48,8 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public Metadata execute(String filename, String location, String script) throws ScriptException {
-        var extension = filename.substring(filename.lastIndexOf('.') + 1);
+    public ScriptResult execute(Script script) throws ScriptException {
+        var extension = script.filename().substring(script.filename().lastIndexOf('.') + 1);
         var engine = engines.get(extension).getScriptEngine();
 
         ScriptContext context = new SimpleScriptContext();
@@ -63,7 +66,7 @@ public class EngineImpl implements Engine {
         engine.setBindings(globalScope, ScriptContext.ENGINE_SCOPE);
 
         var commandTypes = new ArrayList<Class>();
-        var commandProviderLoader = new CommandProviderLoader();
+        var commandProviderLoader = new SPILoader<>(CommandProvider.class);
         var commandProviders = commandProviderLoader.load();
         while (commandProviders.hasNext()) {
             var commandProvider = commandProviders.next();
@@ -75,17 +78,14 @@ public class EngineImpl implements Engine {
             commandTypes.add(command.getClass());
         }
 
-        var metadata = Metadata.parseMetadata(script);
-        metadata.setFilename(filename);
-        metadata.setLocation(location);
-        metadata.setSource(script);
-        engineScope.put("__METADATA__", metadata);
+        engineScope.put("__SCRIPT__", script);
+        engineScope.put("__METADATA__", script.metadata());
+        var valueHolder = new ValueHolder.ObjectValueHolder();
+        engineScope.put("__RESULT__", valueHolder);
 
-        var scriptResult = engine.eval(script, context);
-        if (metadata.getResult() == null) {
-            metadata.setResult(scriptResult);
-        }
-        return metadata;
+        var evalResult = engine.eval(script.source(), context);
+
+        return new ScriptResult(script, valueHolder, evalResult);
     }
 }
 

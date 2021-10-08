@@ -14,4 +14,4 @@ END METADATA
 var msg = "Hello world from KTS"
 logger.info(msg)
 logger.info(__METADATA__)
-msg
+__RESULT__(msg as Object)

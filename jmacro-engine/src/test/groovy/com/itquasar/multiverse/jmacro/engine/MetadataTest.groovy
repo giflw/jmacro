@@ -1,6 +1,6 @@
 package com.itquasar.multiverse.jmacro.engine
 
-import com.itquasar.multiverse.jmacro.core.Metadata
+import com.itquasar.multiverse.jmacro.core.script.Metadata
 import spock.lang.Specification
 import spock.lang.Stepwise
 

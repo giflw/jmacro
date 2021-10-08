@@ -1,6 +1,8 @@
 package com.itquasar.multiverse.jmacro.engine
 
-import com.itquasar.multiverse.jmacro.core.Metadata
+import com.itquasar.multiverse.jmacro.core.script.Metadata
+import com.itquasar.multiverse.jmacro.core.script.Script
+import com.itquasar.multiverse.jmacro.core.script.ScriptResult
 import spock.lang.Specification
 import spock.lang.Stepwise
 
@@ -9,19 +11,20 @@ class EngineImplTest extends Specification implements Constants {
 
     def "Parse Metadata"(extension) {
         given:
-        def script = getClass()
+        def source = getClass()
             .getResource("/scripts/hello-world/hello-world.${extension}")
             .text
         EngineImpl engine = new EngineImpl()
-        Metadata metadata = engine.execute("hello-world.${extension}", '/scripts/hello-world', script)
+        ScriptResult scriptResult = engine.execute(
+            new Script(Metadata.parseMetadata(source), "hello-world.${extension}", '/scripts/hello-world', source)
+        )
+        Script script = scriptResult.script()
 
         expect:
-        metadata.filename == "hello-world.${extension}"
-        metadata.location == '/scripts/hello-world'
-        metadata.source == script
-        if (! extension in ['py', 'scala']) {
-            metadata.result == "Hello world from ${extension.toUpperCase()}"
-        }
+        script.filename() == "hello-world.${extension}"
+        script.location() == '/scripts/hello-world'
+        script.source() == source
+        scriptResult.result().get() == "Hello world from ${extension.toUpperCase()}"
 
         where:
         extension << EXTENSIONS

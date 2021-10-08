@@ -1,4 +1,4 @@
-package com.itquasar.multiverse.jmacro.core;
+package com.itquasar.multiverse.jmacro.core.script;
 
 import com.itquasar.multiverse.jmacro.core.exceptions.FieldAlreadySetted;
 import lombok.Data;
@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 @Data
 @ToString(exclude = "source")
 @NoArgsConstructor
+// this is used by Snake YAML
 public class Metadata {
 
     public static final Metadata EMPTY = new Metadata();
@@ -27,12 +28,6 @@ public class Metadata {
     private String version;
     private String author;
     private String description;
-
-    private String filename;
-    private String location;
-
-    private String source;
-    private Object result;
 
     private Map<String, ?> infos;
 
@@ -112,43 +107,12 @@ public class Metadata {
         }
     }
 
-    public void setFilename(String filename) {
-        if (this.filename == null) {
-            this.filename = filename;
-        } else {
-            throw new FieldAlreadySetted("Field 'filename' already setted");
-        }
-    }
-
-    public void setLocation(String location) {
-        if (this.location == null) {
-            this.location = location;
-        } else {
-            throw new FieldAlreadySetted("Field 'location' already setted");
-        }
-    }
-
-    public void setSource(String source) {
-        if (this.source == null) {
-            this.source = source;
-        } else {
-            throw new FieldAlreadySetted("Field 'source' already setted");
-        }
-    }
 
     public void setInfos(Map<String, ?> infos) {
         if (this.infos == null) {
             this.infos = Collections.unmodifiableMap(infos);
         } else {
             throw new FieldAlreadySetted("Field 'infos' already setted");
-        }
-    }
-
-    public void setResult(Object result) {
-        if (this.result == null) {
-            this.result = result;
-        } else {
-            throw new FieldAlreadySetted("Field 'result' already setted");
         }
     }
 

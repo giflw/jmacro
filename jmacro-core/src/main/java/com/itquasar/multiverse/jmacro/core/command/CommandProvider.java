@@ -1,4 +1,4 @@
-package com.itquasar.multiverse.jmacro.core;
+package com.itquasar.multiverse.jmacro.core.command;
 
 import javax.script.ScriptContext;
 
