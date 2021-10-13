@@ -4,6 +4,7 @@ import java.net.URI;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface ScriptRepository {
 
@@ -15,5 +16,15 @@ public interface ScriptRepository {
 
     List<Script> list(boolean reload);
 
-    Optional<Script> get(String location);
+    default Optional<Script> get(String uuidOrLocation) {
+        try {
+            return this.get(UUID.fromString(uuidOrLocation));
+        } catch (IllegalArgumentException ex) {
+            return this.get(URI.create(uuidOrLocation));
+        }
+    }
+
+    Optional<Script> get(UUID uuid);
+
+    Optional<Script> get(URI location);
 }

@@ -49,7 +49,7 @@ public class EngineImpl implements Engine {
 
     @Override
     public ScriptResult execute(Script script) throws ScriptException {
-        var extension = script.filename().substring(script.filename().lastIndexOf('.') + 1);
+        var extension = script.getFilename().substring(script.getFilename().lastIndexOf('.') + 1);
         var engine = engines.get(extension).getScriptEngine();
 
         ScriptContext context = new SimpleScriptContext();
@@ -79,11 +79,11 @@ public class EngineImpl implements Engine {
         }
 
         engineScope.put("__SCRIPT__", script);
-        engineScope.put("__METADATA__", script.metadata());
+        engineScope.put("__METADATA__", script.getMetadata());
         var valueHolder = new ValueHolder.ObjectValueHolder();
         engineScope.put("__RESULT__", valueHolder);
 
-        var evalResult = engine.eval(script.source(), context);
+        var evalResult = engine.eval(script.getSource(), context);
 
         return new ScriptResult(script, valueHolder, evalResult);
     }

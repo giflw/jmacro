@@ -1,6 +1,6 @@
 package com.itquasar.multiverse.jmacro.core.script;
 
-import lombok.Data;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,9 +12,9 @@ public abstract class ScriptRepositoryAbstract implements ScriptRepository {
 
     private final URI uri;
 
-    @Getter
-    @Setter
-    private List<Script> cache = new ArrayList();
+    @Getter(AccessLevel.PROTECTED)
+    @Setter(AccessLevel.PROTECTED)
+    private List<Script> cache = null;
 
     public ScriptRepositoryAbstract(URI uri) {
         this.uri = uri;

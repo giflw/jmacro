@@ -35,6 +35,12 @@
             <artifactId>jmacro-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.itquasar.multiverse.jmacro.commands</groupId>
+            <artifactId>jmacro-commands-base</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>

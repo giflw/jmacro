@@ -7,4 +7,5 @@ import javax.script.ScriptException;
 
 public interface Engine {
     ScriptResult execute(Script script) throws ScriptException;
+
 }

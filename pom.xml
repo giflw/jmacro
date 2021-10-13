@@ -17,18 +17,24 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.version>3.8.1</maven.compiler.version>
-        <lombok.version>1.18.20</lombok.version>
 
-        <jvm.argLine>--add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED</jvm.argLine>
+        <jvm.argLine>--add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED
+        </jvm.argLine>
 
         <source.encoding>UTF-8</source.encoding>
         <project.build.sourceEncoding>${source.encoding}</project.build.sourceEncoding>
         <project.reporting.outputEncoding>${source.encoding}</project.reporting.outputEncoding>
 
+        <lombok.version>1.18.20</lombok.version>
+        <checker.version>3.18.0</checker.version>
+
         <groovy.version>3.0.9</groovy.version>
         <gmavenplus.version>1.13.0</gmavenplus.version>
+
         <spock.version>2.0-groovy-3.0</spock.version>
         <spotbugs.version>4.4.1</spotbugs.version>
+
+        <javalin.version>4.0.0</javalin.version>
     </properties>
 
     <modules>
@@ -139,56 +145,56 @@
         </pluginManagement>
 
         <plugins>
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-enforcer-plugin</artifactId>-->
-<!--                <version>3.0.0</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>enforce-versions</id>-->
-<!--&lt;!&ndash;                        <goals>&ndash;&gt;-->
-<!--&lt;!&ndash;                            <goal>enforce</goal>&ndash;&gt;-->
-<!--&lt;!&ndash;                        </goals>&ndash;&gt;-->
-<!--                        <configuration>-->
-<!--                            <rules>-->
-<!--                                <requireMavenVersion>-->
-<!--                                    <version>3.8.2</version>-->
-<!--                                </requireMavenVersion>-->
-<!--                                <requireJavaVersion>-->
-<!--                                    <version>17</version>-->
-<!--                                </requireJavaVersion>-->
-<!--                                &lt;!&ndash; <requireOS><!- - Needed if using jrpm or jdeb - ->-->
-<!--                                    <family>unix</family>-->
-<!--                                </requireOS>&ndash;&gt;-->
-<!--                                <reactorModuleConvergence>-->
-<!--                                    <message>The reactor is not valid</message>-->
-<!--                                    &lt;!&ndash; <ignoreModuleDependencies>true</ignoreModuleDependencies>&ndash;&gt;-->
-<!--                                </reactorModuleConvergence>-->
-<!--                                <requireNoRepositories>-->
-<!--                                    <message>Best Practice is to never define repositories in pom.xml (use a repository manager instead)</message>-->
-<!--                                </requireNoRepositories>-->
-<!--                                &lt;!&ndash;?:q<requireReleaseDeps>-->
-<!--                                    <message>No Snapshots Allowed!</message>-->
-<!--                                </requireReleaseDeps>&ndash;&gt;-->
-<!--                                &lt;!&ndash;<requireReleaseVersion>-->
-<!--                                    <message>No Snapshots Allowed!</message>-->
-<!--                                </requireReleaseVersion>-->
-<!--                                <requireSnapshotVersion>-->
-<!--                                    <message>No Releases Allowed!</message>-->
-<!--                                </requireSnapshotVersion>&ndash;&gt;-->
-<!--                                <dependencyConvergence>-->
-<!--                                    <uniqueVersions>true</uniqueVersions>-->
-<!--                                </dependencyConvergence>-->
-<!--                                <requireUpperBoundDeps>-->
-<!--                                    <uniqueVersions>true</uniqueVersions>-->
-<!--                                </requireUpperBoundDeps>-->
-<!--                                <banDuplicatePomDependencyVersions/>-->
+            <!--            <plugin>-->
+            <!--                <groupId>org.apache.maven.plugins</groupId>-->
+            <!--                <artifactId>maven-enforcer-plugin</artifactId>-->
+            <!--                <version>3.0.0</version>-->
+            <!--                <executions>-->
+            <!--                    <execution>-->
+            <!--                        <id>enforce-versions</id>-->
+            <!--&lt;!&ndash;                        <goals>&ndash;&gt;-->
+            <!--&lt;!&ndash;                            <goal>enforce</goal>&ndash;&gt;-->
+            <!--&lt;!&ndash;                        </goals>&ndash;&gt;-->
+            <!--                        <configuration>-->
+            <!--                            <rules>-->
+            <!--                                <requireMavenVersion>-->
+            <!--                                    <version>3.8.2</version>-->
+            <!--                                </requireMavenVersion>-->
+            <!--                                <requireJavaVersion>-->
+            <!--                                    <version>17</version>-->
+            <!--                                </requireJavaVersion>-->
+            <!--                                &lt;!&ndash; <requireOS><!- - Needed if using jrpm or jdeb - ->-->
+            <!--                                    <family>unix</family>-->
+            <!--                                </requireOS>&ndash;&gt;-->
+            <!--                                <reactorModuleConvergence>-->
+            <!--                                    <message>The reactor is not valid</message>-->
+            <!--                                    &lt;!&ndash; <ignoreModuleDependencies>true</ignoreModuleDependencies>&ndash;&gt;-->
+            <!--                                </reactorModuleConvergence>-->
+            <!--                                <requireNoRepositories>-->
+            <!--                                    <message>Best Practice is to never define repositories in pom.xml (use a repository manager instead)</message>-->
+            <!--                                </requireNoRepositories>-->
+            <!--                                &lt;!&ndash;?:q<requireReleaseDeps>-->
+            <!--                                    <message>No Snapshots Allowed!</message>-->
+            <!--                                </requireReleaseDeps>&ndash;&gt;-->
+            <!--                                &lt;!&ndash;<requireReleaseVersion>-->
+            <!--                                    <message>No Snapshots Allowed!</message>-->
+            <!--                                </requireReleaseVersion>-->
+            <!--                                <requireSnapshotVersion>-->
+            <!--                                    <message>No Releases Allowed!</message>-->
+            <!--                                </requireSnapshotVersion>&ndash;&gt;-->
+            <!--                                <dependencyConvergence>-->
+            <!--                                    <uniqueVersions>true</uniqueVersions>-->
+            <!--                                </dependencyConvergence>-->
+            <!--                                <requireUpperBoundDeps>-->
+            <!--                                    <uniqueVersions>true</uniqueVersions>-->
+            <!--                                </requireUpperBoundDeps>-->
+            <!--                                <banDuplicatePomDependencyVersions/>-->
 
-<!--                            </rules>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
+            <!--                            </rules>-->
+            <!--                        </configuration>-->
+            <!--                    </execution>-->
+            <!--                </executions>-->
+            <!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-toolchains-plugin</artifactId>

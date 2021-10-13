@@ -1,10 +1,10 @@
-package com.itquasar.multiverse.jmacro.core.command;
+package com.itquasar.multiverse.jmacro.commands.base.providers;
 
+import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import lombok.extern.log4j.Log4j2;
 
 import javax.script.ScriptContext;
 
-// FIXME move to commands base
 @Log4j2
 public class LoggerCommandProvider implements CommandProvider {
 

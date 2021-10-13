@@ -5,6 +5,7 @@ import lombok.SneakyThrows;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public class GlobalScriptRepository extends ScriptRepositoryAbstract {
 
@@ -25,7 +26,17 @@ public class GlobalScriptRepository extends ScriptRepositoryAbstract {
     }
 
     @Override
-    public Optional<Script> get(String location) {
+    public Optional<Script> get(UUID uuid) {
+        var matches = this.repositories.stream()
+            .map(repository -> repository.get(uuid))
+            .peek(System.out::println)
+            .filter(Optional::isPresent)
+            .toList();
+        return matches.size() > 0 ? matches.get(0) : Optional.empty();
+    }
+
+    @Override
+    public Optional<Script> get(URI location) {
         return repositories.stream()
             .map(it -> it.get(location))
             .filter(Optional::isPresent)
