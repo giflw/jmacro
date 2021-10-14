@@ -3,14 +3,14 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+          name="viewport">
+    <meta content="ie=edge" http-equiv="X-UA-Compatible"/>
     <title>JMacro</title>
 
-    <link rel="stylesheet" href="/webjars/bulma/0.9.3/css/bulma.min.css" />
-    <link rel="stylesheet" href="/webjars/bulmaswatch/0.8.1/superhero/bulmaswatch.min.css" />
-    <link rel="stylesheet" href="/webjars/font-awesome/5.15.4/css/all.min.css" />
+    <link href="/webjars/bulma/0.9.3/css/bulma.min.css" rel="stylesheet"/>
+    <link href="/webjars/bulmaswatch/0.8.1/superhero/bulmaswatch.min.css" rel="stylesheet"/>
+    <link href="/webjars/font-awesome/5.15.4/css/all.min.css" rel="stylesheet"/>
 
     <style>
         [v-cloak]>* {
@@ -24,31 +24,32 @@
             height: 16px;
             background-image: url('data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==');
         }
+
     </style>
 </head>
 
 <body>
-    <section class="hero">
-        <div class="hero-body">
-            <h1 class="title has-text-centered">JMacro</h1>
-            <h2 class="subtitle has-text-centered">Switching from macros to Java Platform
-                <i class="far fa-smile-wink"></i>
-            </h2>
-        </div>
-    </section>
+<section class="hero">
+    <div class="hero-body">
+        <h1 class="title has-text-centered">JMacro</h1>
+        <h2 class="subtitle has-text-centered">Switching from macros to Java Platform
+            <i class="far fa-smile-wink"></i>
+        </h2>
+    </div>
+</section>
 
-    <section v-cloack>
-        <div id="app" class="container">
-            <div class="columns">
-                <div class="column">
-                    <jm-script v-for="script in scripts" :script="script" :key="script.location"></jm-script>
-                </div>
-                <div class="column">LOGS/IMPORTANT MESSAGES</div>
+<section v-cloack>
+    <div class="container" id="app">
+        <div class="columns">
+            <div class="column">
+                <jm-script :key="script.location" :script="script" v-for="script in scripts"></jm-script>
             </div>
+            <div class="column">LOGS/IMPORTANT MESSAGES</div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <script type="module">
+<script type="module">
         import * as Vue from "/webjars/vue/3.2.19/dist/vue.esm-browser.prod.js"
         import Script from "/app/script.js"
 
@@ -70,7 +71,8 @@
 
         const app = Vue.createApp(ROOT_COMPONENT)
         const vm = app.mount('#app')
-    </script>
+
+</script>
 </body>
 
 </html>

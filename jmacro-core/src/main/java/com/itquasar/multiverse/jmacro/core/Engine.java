@@ -6,6 +6,6 @@ import com.itquasar.multiverse.jmacro.core.script.ScriptResult;
 import javax.script.ScriptException;
 
 public interface Engine {
-    ScriptResult execute(Script script) throws ScriptException;
+    ScriptResult execute(Script script, JMacroCore jMacroCore) throws ScriptException;
 
 }

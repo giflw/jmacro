@@ -35,17 +35,17 @@
         <spotbugs.version>4.4.1</spotbugs.version>
 
         <javalin.version>4.0.0</javalin.version>
+        <httpclient5.version>5.1</httpclient5.version>
     </properties>
 
     <modules>
         <module>jmacro-bom</module>
         <module>jmacro-docs</module>
         <module>jmacro-core</module>
-        <module>jmacro-engine</module>
         <module>jmacro-rest</module>
         <module>jmacro-commands</module>
+        <module>jmacro-tests</module>
     </modules>
-
 
     <build>
         <pluginManagement>

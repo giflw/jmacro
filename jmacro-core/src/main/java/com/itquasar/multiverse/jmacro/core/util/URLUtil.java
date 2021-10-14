@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class URLUtil {
 
     @SneakyThrows
-    public URL create(String url){
+    public URL create(String url) {
         return new URL(url);
     }
 

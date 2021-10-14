@@ -9,10 +9,6 @@ import java.util.List;
 
 public interface ScriptRepositoryFactory {
 
-    String getName();
-
-    ScriptRepository create(URI uri);
-
     static List<ScriptRepository> create(List<String> uris) {
         return create(uris, null);
     }
@@ -22,16 +18,22 @@ public interface ScriptRepositoryFactory {
 
         var repoFactoryLoader = new SPILoader<>(ScriptRepositoryFactory.class);
         repoFactoryLoader.load().forEachRemaining(
-            (factory) -> repositoryFactoryMap.put(factory.getName(), factory)
+            (factory) -> repositoryFactoryMap.put(factory.getType(), factory)
         );
 
         return uris.stream()
             .map(uri -> configuration != null ? configuration.replaceVars(uri).replace("\\", "/") : uri)
             .map(URI::create)
             .map(uri -> {
-                    var factory = repositoryFactoryMap.get(uri.getScheme());
-                    return factory.create(uri);
+                    String id = uri.getScheme();
+                    URI suburi = URI.create(uri.getSchemeSpecificPart());
+                    var factory = repositoryFactoryMap.get(suburi.getScheme());
+                    return factory.create(id, suburi);
                 }
             ).toList();
     }
+
+    String getType();
+
+    ScriptRepository create(String id, URI uri);
 }

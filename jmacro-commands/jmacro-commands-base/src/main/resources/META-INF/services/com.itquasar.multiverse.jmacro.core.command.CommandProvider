@@ -1,3 +1,6 @@
 com.itquasar.multiverse.jmacro.commands.base.providers.ConfigurationCommandProvider
+com.itquasar.multiverse.jmacro.commands.base.providers.CredentialsCommandProvider
+com.itquasar.multiverse.jmacro.commands.base.providers.IncludeCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.LoggerCommandProvider
+com.itquasar.multiverse.jmacro.commands.base.providers.MomentCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.TimerCommandProvider

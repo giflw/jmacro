@@ -4,5 +4,4 @@ module jmacro.rest {
     requires javax.servlet.api;
 
     requires jmacro.core;
-    requires jmacro.engine;
 }

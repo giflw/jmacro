@@ -13,7 +13,7 @@ public class GlobalScriptRepository extends ScriptRepositoryAbstract {
 
     @SneakyThrows
     public GlobalScriptRepository(List<ScriptRepository> repositories) {
-        super(URI.create("memory://" + GlobalScriptRepository.class.getName().replace(".", "/")));
+        super("global", URI.create("memory://" + GlobalScriptRepository.class.getName().replace(".", "/")));
         this.repositories = repositories;
     }
 
@@ -43,6 +43,16 @@ public class GlobalScriptRepository extends ScriptRepositoryAbstract {
             .findFirst()
             .get();
     }
+
+    public Optional<Script> get(String repoId, String script) {
+        return repositories.stream()
+            .filter(it -> it.getId().equals(repoId))
+            .map(repo -> repo.get(script))
+            .filter(Optional::isPresent)
+            .findFirst()
+            .get();
+    }
+
 
     @Override
     public String toString() {

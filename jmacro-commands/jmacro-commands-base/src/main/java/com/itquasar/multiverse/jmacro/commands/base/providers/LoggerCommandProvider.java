@@ -1,11 +1,12 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
+import com.itquasar.multiverse.jmacro.core.JMacroCore;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
-import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.LogManager;
 
 import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
 
-@Log4j2
 public class LoggerCommandProvider implements CommandProvider {
 
     @Override
@@ -14,7 +15,7 @@ public class LoggerCommandProvider implements CommandProvider {
     }
 
     @Override
-    public Object getCommand(ScriptContext context) {
-        return LOGGER;
+    public Object getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine, ScriptContext context) {
+        return LogManager.getLogger("ScriptEngine#" + context.getAttribute("id"));
     }
 }

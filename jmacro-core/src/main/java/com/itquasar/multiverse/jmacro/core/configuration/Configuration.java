@@ -32,6 +32,11 @@ public class Configuration {
             .flatMap(factory -> factory.getExtensions().stream())
             .toList()
     );
+    private List<String> scriptRepositories;
+    private Map<String, String> options = new LinkedHashMap<>();
+    private ScriptRepository scriptRepository;
+    private Configuration() {
+    }
 
     public static Configuration load() {
         var paths = List.of(
@@ -53,14 +58,6 @@ public class Configuration {
         Configuration configuration = new Yaml(new Constructor(Configuration.class)).load(reader);
         configuration.init();
         return configuration;
-    }
-
-    private List<String> scriptRepositories;
-    private Map<String, String> options = new LinkedHashMap<>();
-
-    private ScriptRepository scriptRepository;
-
-    private Configuration() {
     }
 
     public void init() {

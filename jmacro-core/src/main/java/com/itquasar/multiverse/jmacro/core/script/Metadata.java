@@ -19,7 +19,6 @@ import java.util.regex.Pattern;
 @Data
 @ToString(exclude = "source")
 @NoArgsConstructor
-// this is used by Snake YAML
 public class Metadata {
 
     public static final Metadata EMPTY = new Metadata();
@@ -37,6 +36,21 @@ public class Metadata {
         this.author = author;
         this.description = description;
         this.infos = infos;
+    }
+
+    public static Metadata parseMetadata(String script) {
+        String metaRegex = "START METADATA([ \t]*[\r\n]+)(?<meta>.+)([\r\n]+)([ \t]*)END METADATA";
+        Pattern pattern = Pattern.compile(metaRegex, Pattern.DOTALL);
+        Matcher matcher = pattern.matcher(script);
+        if (matcher.find()) {
+            String metadata = matcher.group("meta").stripIndent();
+            return Metadata.load(metadata);
+        }
+        return Metadata.EMPTY;
+    }
+
+    public static Metadata load(String string) {
+        return new Yaml(new Constructor(Metadata.class)).load(string);
     }
 
     private Metadata copy() {
@@ -58,21 +72,6 @@ public class Metadata {
             }
         };
         return new Yaml(representer).dumpAsMap(this.copy());
-    }
-
-    public static Metadata parseMetadata(String script) {
-        String metaRegex = "START METADATA([ \t]*[\r\n]+)(?<meta>.+)([\r\n]+)([ \t]*)END METADATA";
-        Pattern pattern = Pattern.compile(metaRegex, Pattern.DOTALL);
-        Matcher matcher = pattern.matcher(script);
-        if (matcher.find()) {
-            String metadata = matcher.group("meta").stripIndent();
-            return Metadata.load(metadata);
-        }
-        return Metadata.EMPTY;
-    }
-
-    public static Metadata load(String string) {
-        return new Yaml(new Constructor(Metadata.class)).load(string);
     }
 
     public void setName(String name) {

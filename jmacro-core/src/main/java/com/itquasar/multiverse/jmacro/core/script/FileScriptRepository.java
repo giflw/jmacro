@@ -15,8 +15,8 @@ public class FileScriptRepository extends ScriptRepositoryAbstract {
 
     private final Path path;
 
-    public FileScriptRepository(URI uri) {
-        super(uri);
+    public FileScriptRepository(String id, URI uri) {
+        super(id, uri);
         this.path = new File(uri.getPath()).toPath();
     }
 
@@ -25,25 +25,25 @@ public class FileScriptRepository extends ScriptRepositoryAbstract {
         if (this.getCache() == null || reload) {
             this.setCache(
                 Arrays.stream(this.path.toFile().listFiles())
-                .filter(File::isFile)
-                .filter(File::canRead)
-                .filter(file -> Configuration.supportedExtensions.contains(
-                    file.getName().substring(file.getName().lastIndexOf(".") + 1)
-                )).map(file -> {
-                    try {
-                        var source = Files.readString(file.toPath());
-                        return new Script(
-                            Metadata.parseMetadata(source),
-                            file.getName(),
-                            file.getAbsolutePath(),
-                            source
-                        );
-                    } catch (IOException e) {
-                        LOGGER.error("Error reading file " + file, e);
-                        return null;
-                    }
-                }).filter(Objects::nonNull)
-                .toList()
+                    .filter(File::isFile)
+                    .filter(File::canRead)
+                    .filter(file -> Configuration.supportedExtensions.contains(
+                        file.getName().substring(file.getName().lastIndexOf(".") + 1)
+                    )).map(file -> {
+                        try {
+                            var source = Files.readString(file.toPath());
+                            return new Script(
+                                Metadata.parseMetadata(source),
+                                file.getName(),
+                                file.getAbsolutePath(),
+                                source
+                            );
+                        } catch (IOException e) {
+                            LOGGER.error("Error reading file " + file, e);
+                            return null;
+                        }
+                    }).filter(Objects::nonNull)
+                    .toList()
             );
         }
         return this.getCache();

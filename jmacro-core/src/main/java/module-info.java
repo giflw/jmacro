@@ -3,6 +3,7 @@ module jmacro.core {
 
     requires java.scripting;
     requires java.management;
+    requires java.desktop;
 
     requires simplejmx;
     requires org.yaml.snakeyaml;
@@ -15,4 +16,8 @@ module jmacro.core {
     exports com.itquasar.multiverse.jmacro.core.command;
     exports com.itquasar.multiverse.jmacro.core.script;
     exports com.itquasar.multiverse.jmacro.core.configuration;
+
+    uses com.itquasar.multiverse.jmacro.core.script.ScriptRepositoryFactory;
+    provides com.itquasar.multiverse.jmacro.core.script.ScriptRepositoryFactory with com.itquasar.multiverse.jmacro.core.script.FileScriptRepositoryFactory;
+    opens com.itquasar.multiverse.jmacro.core.configuration to org.yaml.snakeyaml;
 }

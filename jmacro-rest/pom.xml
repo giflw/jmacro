@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>jmacro</artifactId>
@@ -29,11 +29,6 @@
         <dependency>
             <groupId>com.itquasar.multiverse.jmacro</groupId>
             <artifactId>jmacro-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.itquasar.multiverse.jmacro</groupId>
-            <artifactId>jmacro-engine</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -83,7 +78,6 @@
                 <version>3.0.0</version>
                 <executions>
                     <execution>
-                        <phase>verify</phase>
                         <goals>
                             <goal>java</goal>
                         </goals>
@@ -93,15 +87,15 @@
                     <executable>maven</executable>
                     <mainClass>com.itquasar.multiverse.jmacro.rest.JMacroRestServer</mainClass>
                     <!-- optional -->
-<!--                    <workingDirectory>/tmp</workingDirectory>-->
-<!--                    <arguments>-->
-<!--                        <argument>-X</argument>-->
-<!--                        <argument>myproject:dist</argument>-->
-<!--                        ...-->
-<!--                    </arguments>-->
-<!--                    <environmentVariables>-->
-<!--                        <LANG>en_US</LANG>-->
-<!--                    </environmentVariables>-->
+                    <!--                    <workingDirectory>/tmp</workingDirectory>-->
+                    <!--                    <arguments>-->
+                    <!--                        <argument>-X</argument>-->
+                    <!--                        <argument>myproject:dist</argument>-->
+                    <!--                        ...-->
+                    <!--                    </arguments>-->
+                    <!--                    <environmentVariables>-->
+                    <!--                        <LANG>en_US</LANG>-->
+                    <!--                    </environmentVariables>-->
                 </configuration>
             </plugin>
         </plugins>

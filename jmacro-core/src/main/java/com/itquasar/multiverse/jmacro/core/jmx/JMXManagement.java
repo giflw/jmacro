@@ -1,8 +1,6 @@
 package com.itquasar.multiverse.jmacro.core.jmx;
 
-import com.itquasar.multiverse.jmacro.core.JMacroCore;
 import com.itquasar.multiverse.jmacro.core.SPILoader;
-import com.itquasar.multiverse.jmacro.core.jmx.JMXBeanIFace;
 import com.j256.simplejmx.client.JmxClient;
 import com.j256.simplejmx.server.JmxServer;
 import lombok.SneakyThrows;
@@ -11,24 +9,21 @@ import lombok.extern.log4j.Log4j2;
 import java.net.InetAddress;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.ServiceLoader;
 
 @Log4j2
 public class JMXManagement {
 
-    private final JMacroCore jMacroCore;
     private final InetAddress jmxAddress;
     private final int jmxPort;
     private JmxServer server;
     private Map<String, JmxClient> clients = new LinkedHashMap<>();
 
-    public JMXManagement(JMacroCore jMacroCore, int jmxPort) {
-        this(jMacroCore, null, jmxPort);
+    public JMXManagement(int jmxPort) {
+        this(null, jmxPort);
     }
 
     @SneakyThrows
-    public JMXManagement(JMacroCore jMacroCore, InetAddress jmxAddress, int jmxPort) {
-        this.jMacroCore = jMacroCore;
+    public JMXManagement(InetAddress jmxAddress, int jmxPort) {
         this.jmxAddress = jmxAddress != null ? jmxAddress : InetAddress.getLocalHost();
         this.jmxPort = jmxPort;
         this.server = this.initServer();
@@ -42,7 +37,7 @@ public class JMXManagement {
         while (iterator.hasNext()) {
             var jmxBean = iterator.next();
             LOGGER.info("Loaded JMX Bean: " + jmxBean.getClass().getName());
-            jmxBean.setJMacroCore(this.jMacroCore);
+            //jmxBean.setJMacroCore(this.jMacroCore);
             this.server.register(jmxBean);
         }
     }

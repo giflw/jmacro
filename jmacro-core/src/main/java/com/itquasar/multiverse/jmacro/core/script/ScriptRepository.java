@@ -1,12 +1,13 @@
 package com.itquasar.multiverse.jmacro.core.script;
 
 import java.net.URI;
-import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface ScriptRepository {
+
+    String getId();
 
     URI getUri();
 

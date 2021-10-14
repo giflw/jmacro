@@ -2,10 +2,6 @@ package com.itquasar.multiverse.jmacro.core.script;
 
 public class ValueHolder<T extends Object> {
 
-    public static class ObjectValueHolder extends ValueHolder<Object> {
-
-    }
-
     private T value;
 
     public boolean hasValue() {
@@ -43,5 +39,9 @@ public class ValueHolder<T extends Object> {
         return "ValueHolder{" +
             "value=" + value +
             '}';
+    }
+
+    public static class ObjectValueHolder extends ValueHolder<Object> {
+
     }
 }
