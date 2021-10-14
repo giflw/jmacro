@@ -1,6 +1,13 @@
+com.itquasar.multiverse.jmacro.commands.base.providers.AttemptCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.ConfigurationCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.CredentialsCommandProvider
+com.itquasar.multiverse.jmacro.commands.base.providers.DebuggerCommandProvider
+com.itquasar.multiverse.jmacro.commands.base.providers.ExitCommandProvider
+com.itquasar.multiverse.jmacro.commands.base.providers.FixmeCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.IncludeCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.LoggerCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.MomentCommandProvider
+com.itquasar.multiverse.jmacro.commands.base.providers.PauseCommandProvider
+com.itquasar.multiverse.jmacro.commands.base.providers.RaiseCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.TimerCommandProvider
+com.itquasar.multiverse.jmacro.commands.base.providers.TodoCommandProvider

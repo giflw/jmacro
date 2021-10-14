@@ -1,6 +1,6 @@
 package com.itquasar.multiverse.jmacro.commands.base
 
-import com.itquasar.multiverse.jmacro.commands.base.commands.Functions
+
 import groovy.transform.CompileDynamic
 import groovy.util.logging.Log4j2
 
@@ -8,7 +8,7 @@ import javax.script.ScriptContext
 
 @Log4j2
 @CompileDynamic
-trait Command implements Functions {
+trait Command {
 
     ScriptContext context
 
