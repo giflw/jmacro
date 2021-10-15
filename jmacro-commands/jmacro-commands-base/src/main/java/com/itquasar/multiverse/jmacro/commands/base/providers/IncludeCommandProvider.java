@@ -4,6 +4,7 @@ import com.itquasar.multiverse.jmacro.commands.base.commands.Include;
 import com.itquasar.multiverse.jmacro.core.JMacroCore;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.script.GlobalScriptRepository;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
@@ -16,12 +17,10 @@ public class IncludeCommandProvider implements CommandProvider<Include> {
     }
 
     @Override
-    // FIXME jmacrocore must be not null
-    public Include getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine, ScriptContext scriptContext) {
+    public Include getCommand(@NonNull JMacroCore jMacroCore, @NonNull ScriptEngine scriptEngine) {
         return new Include(
             jMacroCore == null ? null : (GlobalScriptRepository) jMacroCore.getConfiguration().getScriptRepository(),
-            scriptEngine,
-            scriptContext
+            scriptEngine
         );
     }
 }

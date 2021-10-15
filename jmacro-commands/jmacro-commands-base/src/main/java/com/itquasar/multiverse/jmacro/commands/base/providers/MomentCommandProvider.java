@@ -14,7 +14,7 @@ public class MomentCommandProvider implements CommandProvider<Moment> {
     }
 
     @Override
-    public Moment getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine, ScriptContext scriptContext) {
+    public Moment getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
         return new Moment();
     }
 }

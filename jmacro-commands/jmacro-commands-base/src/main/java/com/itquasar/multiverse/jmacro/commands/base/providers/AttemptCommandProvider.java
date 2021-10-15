@@ -21,16 +21,16 @@ public class AttemptCommandProvider implements CommandProvider<AttemptCommandPro
     }
 
     @Override
-    public Attempt getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine, ScriptContext scriptContext) {
-        return new Attempt(scriptContext);
+    public Attempt getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
+        return new Attempt(scriptEngine);
     }
 
     public static class Attempt extends LoggingCommand {
 
         private static final List<ConstantsCommandProvider.Constants> ALLOWED_VERBOSITIES = List.of(QUIET, VERBOSE);
 
-        public Attempt(ScriptContext scriptContext) {
-            super(scriptContext);
+        public Attempt(ScriptEngine scriptEngine) {
+            super(scriptEngine);
         }
 
         Result call(Callable callable) {

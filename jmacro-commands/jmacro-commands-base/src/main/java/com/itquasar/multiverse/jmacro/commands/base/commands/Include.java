@@ -17,14 +17,12 @@ public class Include extends LoggingCommand {
 
     private final GlobalScriptRepository repository;
     private final ScriptEngine scriptEngine;
-    private final ScriptContext scriptContext;
     private List<Script> included = new ArrayList<>();
 
-    public Include(GlobalScriptRepository repository, ScriptEngine scriptEngine, ScriptContext scriptContext) {
-        super(scriptContext);
+    public Include(GlobalScriptRepository repository, ScriptEngine scriptEngine) {
+        super(scriptEngine.getContext());
         this.repository = repository;
         this.scriptEngine = scriptEngine;
-        this.scriptContext = scriptContext;
     }
 
     @SneakyThrows
@@ -45,7 +43,7 @@ public class Include extends LoggingCommand {
     private void include(String locator, Optional<Script> script) {
         if (script.isPresent()) {
             this.getLogger().warn("Including " + locator);
-            this.scriptEngine.eval(script.get().getSource(), this.scriptContext);
+            this.scriptEngine.eval(script.get().getSource(), this.scriptEngine.getContext());
         } else {
             throw new JMacroException(this, "Could not find " + locator + " to include");
         }

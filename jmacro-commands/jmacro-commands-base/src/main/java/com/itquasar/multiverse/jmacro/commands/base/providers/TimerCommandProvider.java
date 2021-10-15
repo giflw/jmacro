@@ -15,8 +15,8 @@ public class TimerCommandProvider implements CommandProvider<Timer> {
     }
 
     @Override
-    public Timer getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine, ScriptContext scriptContext) {
-        return new Timer(scriptContext);
+    public Timer getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
+        return new Timer(scriptEngine);
     }
 }
 

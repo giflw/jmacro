@@ -16,14 +16,14 @@ public class PauseCommandProvider implements CommandProvider<PauseCommandProvide
     }
 
     @Override
-    public Pause getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine, ScriptContext scriptContext) {
-        return new Pause(scriptContext);
+    public Pause getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
+        return new Pause(scriptEngine);
     }
 
     public static class Pause extends LoggingCommand {
 
-        public Pause(ScriptContext scriptContext) {
-            super(scriptContext);
+        public Pause(ScriptEngine scriptEngine) {
+            super(scriptEngine);
         }
 
         void call(Number seconds) {

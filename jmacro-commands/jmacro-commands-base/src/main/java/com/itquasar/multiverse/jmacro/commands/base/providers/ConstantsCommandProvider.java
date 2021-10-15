@@ -19,8 +19,8 @@ public class ConstantsCommandProvider implements CommandProvider<Map<String, Con
 
     @Override
     @SneakyThrows
-    public Map<String, Constants> getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine, ScriptContext scriptContext) {
-        Bindings bindings = scriptContext.getBindings(ScriptContext.ENGINE_SCOPE);
+    public Map<String, Constants> getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
+        Bindings bindings = scriptEngine.getContext().getBindings(ScriptContext.ENGINE_SCOPE);
         // allow constants be acessed directly
         Arrays.stream(Constants.values()).forEach(
             constant -> bindings.put(constant.name(), constant)

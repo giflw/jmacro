@@ -4,10 +4,14 @@ module jmacro.commands.browser {
     requires org.apache.logging.log4j;
     requires org.checkerframework.checker.qual;
     requires org.apache.groovy;
+    requires org.seleniumhq.selenium.support;
+    requires org.apache.commons.io;
 
     requires java.desktop;
     requires java.scripting;
 
     requires jmacro.core;
+    requires jmacro.commands.base;
+
     exports com.itquasar.multiverse.jmacro.commands.browser;
 }

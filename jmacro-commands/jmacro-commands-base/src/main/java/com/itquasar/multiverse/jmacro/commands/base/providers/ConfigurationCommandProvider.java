@@ -18,7 +18,7 @@ public class ConfigurationCommandProvider implements CommandProvider<Configurati
 
     @Override
     @SneakyThrows
-    public Configuration getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine, ScriptContext scriptContext) {
+    public Configuration getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
         return new Configuration();
     }
 }

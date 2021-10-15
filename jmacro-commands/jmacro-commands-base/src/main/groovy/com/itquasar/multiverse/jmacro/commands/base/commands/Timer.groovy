@@ -7,6 +7,7 @@ import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 
 import javax.script.ScriptContext
+import javax.script.ScriptEngine
 import java.util.concurrent.atomic.AtomicBoolean
 
 @CompileStatic
@@ -15,8 +16,8 @@ class Timer extends LoggingCommand implements GroovyCommand, AutoCloseable {
     private AtomicBoolean running = new AtomicBoolean(false)
     private Map<String, BigDecimal> partials = new LinkedHashMap()
 
-    Timer(ScriptContext scriptContext) {
-        super(scriptContext)
+    Timer(ScriptEngine scriptEngine) {
+        super(scriptEngine)
     }
 
     Timer start() {

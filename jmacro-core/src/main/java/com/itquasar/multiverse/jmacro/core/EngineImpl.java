@@ -80,7 +80,7 @@ public class EngineImpl implements Engine {
         var commandProviders = commandProviderLoader.load();
         while (commandProviders.hasNext()) {
             var commandProvider = commandProviders.next();
-            Object command = commandProvider.getCommand(jMacroCore, engine, context);
+            Object command = commandProvider.getCommand(jMacroCore, engine);
             engineScope.put(
                 commandProvider.getName(),
                 command

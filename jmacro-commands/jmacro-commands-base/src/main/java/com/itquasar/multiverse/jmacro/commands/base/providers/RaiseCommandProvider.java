@@ -15,7 +15,7 @@ public class RaiseCommandProvider implements CommandProvider<RaiseCommandProvide
     }
 
     @Override
-    public Raise getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine, ScriptContext scriptContext) {
+    public Raise getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
         return new Raise();
     }
 

@@ -14,7 +14,7 @@ public class ExitCommandProvider implements CommandProvider<ExitCommandProvider.
     }
 
     @Override
-    public Exit getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine, ScriptContext scriptContext) {
+    public Exit getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
         return new Exit();
     }
 

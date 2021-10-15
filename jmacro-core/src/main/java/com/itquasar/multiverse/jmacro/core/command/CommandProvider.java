@@ -9,5 +9,5 @@ public interface CommandProvider<C> {
 
     String getName();
 
-    C getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine, ScriptContext context);
+    C getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine);
 }
