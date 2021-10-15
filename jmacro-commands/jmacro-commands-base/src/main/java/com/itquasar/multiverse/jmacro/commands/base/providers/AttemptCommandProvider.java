@@ -3,13 +3,16 @@ package com.itquasar.multiverse.jmacro.commands.base.providers;
 import com.itquasar.multiverse.jmacro.commands.base.Result;
 import com.itquasar.multiverse.jmacro.core.JMacroCore;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
-import lombok.extern.log4j.Log4j2;
+import com.itquasar.multiverse.jmacro.core.command.LoggingCommand;
 
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
+import java.util.List;
 import java.util.concurrent.Callable;
 
-@Log4j2
+import static com.itquasar.multiverse.jmacro.commands.base.providers.ConstantsCommandProvider.Constants.QUIET;
+import static com.itquasar.multiverse.jmacro.commands.base.providers.ConstantsCommandProvider.Constants.VERBOSE;
+
 public class AttemptCommandProvider implements CommandProvider<AttemptCommandProvider.Attempt> {
 
     @Override
@@ -18,16 +21,35 @@ public class AttemptCommandProvider implements CommandProvider<AttemptCommandPro
     }
 
     @Override
-    public Attempt getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine, ScriptContext context) {
-        return new Attempt();
+    public Attempt getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine, ScriptContext scriptContext) {
+        return new Attempt(scriptContext);
     }
 
-    public static class Attempt {
+    public static class Attempt extends LoggingCommand {
+
+        private static final List<ConstantsCommandProvider.Constants> ALLOWED_VERBOSITIES = List.of(QUIET, VERBOSE);
+
+        public Attempt(ScriptContext scriptContext) {
+            super(scriptContext);
+        }
+
         Result call(Callable callable) {
+            return call(VERBOSE, callable);
+        }
+
+        Result call(ConstantsCommandProvider.Constants verbosity, Callable callable) {
+            if (!ALLOWED_VERBOSITIES.contains(verbosity)) {
+                throw new IllegalArgumentException("Verbosity must be in " + ALLOWED_VERBOSITIES);
+            }
             try {
                 return Result.ok(callable.call());
             } catch (Throwable ex) {
-                LOGGER.error("Attempt failed: " + ex.getMessage(), ex);
+                if (verbosity == QUIET) {
+                    this.getLogger().error("Attempt failed: " + ex.getMessage());
+                } else {
+                    this.getLogger().error("Attempt failed: " + ex.getMessage(), ex);
+                }
+
                 return Result.error(ex);
             }
         }

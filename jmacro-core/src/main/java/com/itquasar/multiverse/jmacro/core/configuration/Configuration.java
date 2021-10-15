@@ -35,6 +35,7 @@ public class Configuration {
     private List<String> scriptRepositories;
     private Map<String, String> options = new LinkedHashMap<>();
     private ScriptRepository scriptRepository;
+
     private Configuration() {
     }
 

@@ -59,4 +59,4 @@ logger.info "=" * 80
 __RESULT__ "RESULT"
 
 timer.partial "stop"
-logger.info timer
+timer.log()

@@ -8,7 +8,6 @@ import com.itquasar.multiverse.jmacro.core.script.GlobalScriptRepository;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 
-// FIXME transform in dsl function
 public class IncludeCommandProvider implements CommandProvider<Include> {
 
     @Override
@@ -18,11 +17,11 @@ public class IncludeCommandProvider implements CommandProvider<Include> {
 
     @Override
     // FIXME jmacrocore must be not null
-    public Include getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine, ScriptContext context) {
+    public Include getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine, ScriptContext scriptContext) {
         return new Include(
             jMacroCore == null ? null : (GlobalScriptRepository) jMacroCore.getConfiguration().getScriptRepository(),
             scriptEngine,
-            context
+            scriptContext
         );
     }
 }

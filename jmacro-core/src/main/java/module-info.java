@@ -6,6 +6,7 @@ module jmacro.core {
     requires java.desktop;
 
     requires simplejmx;
+    requires org.apache.groovy;
     requires org.yaml.snakeyaml;
     requires org.checkerframework.checker.qual;
     requires org.apache.logging.log4j;

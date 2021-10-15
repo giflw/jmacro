@@ -15,7 +15,7 @@ public class LoggerCommandProvider implements CommandProvider {
     }
 
     @Override
-    public Object getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine, ScriptContext context) {
-        return LogManager.getLogger("ScriptEngine#" + context.getAttribute("id"));
+    public Object getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine, ScriptContext scriptContext) {
+        return scriptContext.getAttribute("logger");
     }
 }

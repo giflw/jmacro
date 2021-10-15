@@ -1,16 +1,14 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands
 
-import com.itquasar.multiverse.jmacro.commands.base.Command
 import com.itquasar.multiverse.jmacro.commands.base.commands.moment.LocalDateTimeWrapper
+import com.itquasar.multiverse.jmacro.core.GroovyCommand
 import groovy.transform.CompileStatic
-import groovy.util.logging.Log4j2
 
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 @CompileStatic
-@Log4j2
-class Moment implements Command {
+class Moment implements GroovyCommand {
 
     LocalDateTimeWrapper today() {
         return LocalDateTimeWrapper.of(LocalDate.now().atStartOfDay())

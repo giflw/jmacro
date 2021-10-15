@@ -1,4 +1,4 @@
-package com.itquasar.multiverse.jmacro.commands.base
+package com.itquasar.multiverse.jmacro.core
 
 
 import groovy.transform.CompileDynamic
@@ -8,7 +8,7 @@ import javax.script.ScriptContext
 
 @Log4j2
 @CompileDynamic
-trait Command {
+trait GroovyCommand {
 
     ScriptContext context
 

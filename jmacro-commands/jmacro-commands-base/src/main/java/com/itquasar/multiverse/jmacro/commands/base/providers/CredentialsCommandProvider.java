@@ -15,7 +15,7 @@ public class CredentialsCommandProvider implements CommandProvider<Credentials> 
     }
 
     @Override
-    public Credentials getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine, ScriptContext context) {
+    public Credentials getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine, ScriptContext scriptContext) {
         return new Credentials();
     }
 }

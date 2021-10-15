@@ -1,9 +1,9 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands
 
-import com.itquasar.multiverse.jmacro.commands.base.Command
 import com.itquasar.multiverse.jmacro.core.Env
+import com.itquasar.multiverse.jmacro.core.GroovyCommand
 
-class Configuration implements Command {
+class Configuration implements GroovyCommand {
 
     ConfigObject configs = new ConfigObject()
     private excludeKeys = Credentials.declaredFields.collect { it.name }

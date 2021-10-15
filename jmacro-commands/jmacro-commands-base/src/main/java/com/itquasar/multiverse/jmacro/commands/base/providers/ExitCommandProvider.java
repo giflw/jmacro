@@ -2,12 +2,10 @@ package com.itquasar.multiverse.jmacro.commands.base.providers;
 
 import com.itquasar.multiverse.jmacro.core.JMacroCore;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
-import lombok.extern.log4j.Log4j2;
 
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 
-@Log4j2
 public class ExitCommandProvider implements CommandProvider<ExitCommandProvider.Exit> {
 
     @Override
@@ -16,7 +14,7 @@ public class ExitCommandProvider implements CommandProvider<ExitCommandProvider.
     }
 
     @Override
-    public Exit getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine, ScriptContext context) {
+    public Exit getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine, ScriptContext scriptContext) {
         return new Exit();
     }
 

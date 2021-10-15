@@ -34,12 +34,10 @@
         <dependency>
             <groupId>com.itquasar.multiverse.jmacro</groupId>
             <artifactId>jmacro-core</artifactId>
-            <version>${project.version}</version>
         </dependency>
-
         <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-jsr223</artifactId>
+            <groupId>org.apache.groovy</groupId>
+            <artifactId>groovy</artifactId>
         </dependency>
 
         <dependency>

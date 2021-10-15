@@ -1,5 +1,5 @@
 def foo() {
-    attempt {
+    attempt(QUIET) {
         todo("Just testing...")
     }
     pause 1, "Just chill =P"

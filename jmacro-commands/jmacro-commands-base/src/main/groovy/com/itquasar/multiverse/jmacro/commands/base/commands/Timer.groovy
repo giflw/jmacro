@@ -1,19 +1,23 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands
 
-import com.itquasar.multiverse.jmacro.commands.base.Command
+import com.itquasar.multiverse.jmacro.core.GroovyCommand
+import com.itquasar.multiverse.jmacro.core.command.LoggingCommand
 import com.itquasar.multiverse.jmacro.core.exceptions.JMacroException
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-import groovy.util.logging.Log4j2
 
+import javax.script.ScriptContext
 import java.util.concurrent.atomic.AtomicBoolean
 
 @CompileStatic
-@Log4j2
-class Timer implements Command, AutoCloseable {
+class Timer extends LoggingCommand implements GroovyCommand, AutoCloseable {
 
     private AtomicBoolean running = new AtomicBoolean(false)
     private Map<String, BigDecimal> partials = new LinkedHashMap()
+
+    Timer(ScriptContext scriptContext) {
+        super(scriptContext)
+    }
 
     Timer start() {
         if (!this.running.compareAndSet(false, true)) {
@@ -65,16 +69,18 @@ class Timer implements Command, AutoCloseable {
         return this.partials
     }
 
-    void print() {
-        println(this.toString())
+    void log() {
+        this.toString().split("\n").each {
+            this.getLogger().warn(it)
+        }
     }
 
     @Override
     void close() throws Exception {
         if (this.running.get()) {
-            log.debug('Closing timer...')
+            this.getLogger().debug('Closing timer...')
             this.stop()
-            log.debug('...timer closed!')
+            this.getLogger().debug('...timer closed!')
         }
     }
 

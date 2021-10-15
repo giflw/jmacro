@@ -1,0 +1,13 @@
+module jmacro.commands.browser {
+    requires static lombok;
+
+    requires org.apache.logging.log4j;
+    requires org.checkerframework.checker.qual;
+    requires org.apache.groovy;
+
+    requires java.desktop;
+    requires java.scripting;
+
+    requires jmacro.core;
+    exports com.itquasar.multiverse.jmacro.commands.browser;
+}

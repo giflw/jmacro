@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Data
 @ToString(exclude = "source")
@@ -115,5 +116,25 @@ public class Metadata {
         }
     }
 
+    public String getBanner() {
+        String infoString = this.infos.entrySet().stream()
+            .map(entry -> "\n        " + entry.getKey() + ":\n            " + entry.getValue())
+            .collect(Collectors.joining());
+        return """
+            Metadata:
+                Name        = %s
+                Version     = %s
+                Author      = %s
+                Description = %s
+                Infos: %s
+            """
+            .formatted(
+                this.name,
+                this.version,
+                this.author,
+                this.description,
+                infoString
+            );
+    }
 }
 
