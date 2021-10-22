@@ -12,7 +12,31 @@ class BaseExampleScriptSpec extends Specification implements Constants {
     def "Run Base Example script"() {
         when:
         def configuration = Configuration.load();
-        configuration.setScriptRepository(new GlobalScriptRepository([new ScriptRepository() {
+        configuration.setScriptRepository(new BaseExampleRepository())
+        def jMacroCore = new JMacroCore(configuration)
+        def source = getClass()
+            .getResource("/scripts/example/base-example.groovy")
+            .text
+
+        def metadata = Metadata.parseMetadata(source)
+
+        def scriptOrig = new Script(metadata, "base-example.groovy", '/scripts/example/base-example.groovy', source)
+        ScriptResult scriptResult = jMacroCore.engine.execute(scriptOrig)
+        Script script = scriptResult.script
+
+        then:
+        script.metadata.name == "Base Example"
+        script.filename == "base-example.groovy"
+        script.location == '/scripts/example/base-example.groovy'
+        script.source == source
+        scriptResult.result.get() == "RESULT"
+    }
+
+}
+
+class BaseExampleRepository extends  GlobalScriptRepository {
+    public BaseExampleRepository() {
+        super([new ScriptRepository() {
 
             @Override
             String getId() {
@@ -47,24 +71,6 @@ class BaseExampleScriptSpec extends Specification implements Constants {
                     )
                 )
             }
-        }]))
-        def jMacroCore = new JMacroCore(configuration)
-        def source = getClass()
-            .getResource("/scripts/example/base-example.groovy")
-            .text
-
-        def metadata = Metadata.parseMetadata(source)
-
-        def scriptOrig = new Script(metadata, "base-example.groovy", '/scripts/example/base-example.groovy', source)
-        ScriptResult scriptResult = jMacroCore.engine.execute(scriptOrig, jMacroCore)
-        Script script = scriptResult.script
-
-        then:
-        script.metadata.name == "Base Example"
-        script.filename == "base-example.groovy"
-        script.location == '/scripts/example/base-example.groovy'
-        script.source == source
-        scriptResult.result.get() == "RESULT"
+        }])
     }
-
 }

@@ -1,6 +1,7 @@
 package com.itquasar.multiverse.jmacro.engine
 
 import com.itquasar.multiverse.jmacro.core.EngineImpl
+import com.itquasar.multiverse.jmacro.core.JMacroCore
 import com.itquasar.multiverse.jmacro.core.script.Metadata
 import com.itquasar.multiverse.jmacro.core.script.Script
 import com.itquasar.multiverse.jmacro.core.script.ScriptResult
@@ -15,11 +16,11 @@ class EngineImplSpec extends Specification implements Constants {
         def source = getClass()
             .getResource("/scripts/hello-world/hello-world.${extension}")
             .text
-        EngineImpl engine = new EngineImpl()
+        EngineImpl engine = new EngineImpl(new JMacroCore())
 
         def metadata = Metadata.parseMetadata(source)
         def scriptOrig = new Script(metadata, "hello-world.${extension}", '/scripts/hello-world', source)
-        ScriptResult scriptResult = engine.execute(scriptOrig, null)
+        ScriptResult scriptResult = engine.execute(scriptOrig)
         Script script = scriptResult.script
 
         expect:

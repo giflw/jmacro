@@ -1,6 +1,7 @@
 package com.itquasar.multiverse.jmacro.core;
 
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
+import com.itquasar.multiverse.jmacro.core.exceptions.JMacroException;
 import com.itquasar.multiverse.jmacro.core.script.Script;
 import com.itquasar.multiverse.jmacro.core.script.ScriptResult;
 import com.itquasar.multiverse.jmacro.core.script.ValueHolder;
@@ -22,10 +23,12 @@ public class EngineImpl implements Engine {
     private static final ScriptEngineManager ENGINE_MANAGER = new ScriptEngineManager();
     private static final SPILoader<LanguageAdaptor> LANGUAGE_ADAPTOR_LOADER = new SPILoader<>(LanguageAdaptor.class);
 
+    private final JMacroCore jMacroCore;
     private final Map<String, ScriptEngineFactory> engines = new LinkedHashMap<>();
     private final Map<String, LanguageAdaptor> languageAdaptors = new LinkedHashMap<>();
 
-    public EngineImpl() {
+    public EngineImpl(JMacroCore jMacroCore) {
+        this.jMacroCore = jMacroCore;
         ENGINE_MANAGER.getEngineFactories().forEach(engine -> {
             var engineInfo = """
                 %s
@@ -56,11 +59,13 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public ScriptResult execute(Script script, JMacroCore jMacroCore) {
+    public ScriptResult execute(Script script) {
         var extension = script.getFilename().substring(script.getFilename().lastIndexOf('.') + 1);
         var engine = engines.get(extension).getScriptEngine();
 
         ScriptContext context = new SimpleScriptContext();
+        engine.setContext(context);
+
         context.setWriter(new PrintWriter(System.out));
         context.setBindings(engine.createBindings(), ScriptContext.GLOBAL_SCOPE);
         context.setBindings(engine.createBindings(), ENGINE_SCOPE);
@@ -80,7 +85,10 @@ public class EngineImpl implements Engine {
         var commandProviders = commandProviderLoader.load();
         while (commandProviders.hasNext()) {
             var commandProvider = commandProviders.next();
-            Object command = commandProvider.getCommand(jMacroCore, engine);
+            Object command = commandProvider.getCommand(this.jMacroCore, engine);
+            if (command == null) {
+                throw  new JMacroException(this, "Command provider " + commandProvider.getName() + " returned null command");
+            }
             engineScope.put(
                 commandProvider.getName(),
                 command
@@ -107,7 +115,7 @@ public class EngineImpl implements Engine {
             scriptLogger.warn("--------------------------------------------------------------------------------");
             scriptLogger.warn("--------------------------------------------------------------------------------");
             final CompiledScript compiled = ((Compilable) engine).compile(script.getSource());
-            Object evalReturn = compiled.eval(context);
+            Object evalReturn = compiled.eval();
             scriptLogger.warn("--------------------------------------------------------------------------------");
             scriptLogger.warn("--------------------------------------------------------------------------------");
             scriptLogger.warn("Result for script " + script.getFilename());
