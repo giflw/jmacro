@@ -13,6 +13,7 @@
     <description>JMacro parent pom</description>
 
     <properties>
+        <os.family>unknown</os.family>
         <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
@@ -125,16 +126,87 @@
                     <artifactId>maven-pmd-plugin</artifactId>
                     <version>3.15.0</version>
                 </plugin>
-                <!-- <plugin>
+                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
                     <version>3.1.2</version>
                     <configuration>
-                        <configLocation>checkstyle.xml</configLocation>
                         <encoding>UTF-8</encoding>
                         <consoleOutput>true</consoleOutput>
                         <failsOnError>true</failsOnError>
-                        <linkXRef>false</linkXRef>
+                        <linkXRef>true</linkXRef>
+                        <logViolationsToConsole>true</logViolationsToConsole>
+                        <checkstyleRules>
+                            <module name="Checker">
+                                <!-- Checks for Size Violations.                    -->
+                                <!-- See http://checkstyle.sf.net/config_sizes.html -->
+                                <module name="AnonInnerLength"/>
+                                <module name="ExecutableStatementCount"/>
+                                <module name="FileLength">
+                                    <property name="max" value="300"/>
+                                    <property name="fileExtensions" value="java, groovy"/>
+                                </module>
+                                <module name="LambdaBodyLength"/>
+                                <module name="LineLength">
+                                    <property name="max" value="120"/>
+                                    <property name="fileExtensions" value="java, groovy"/>
+                                </module>
+                                <module name="MethodCount">
+                                    <property name="maxPublic" value="10"/>
+                                    <property name="maxTotal" value="40"/>
+                                </module>
+                                <module name="MethodLength">
+                                    <property name="max" value="10"/>
+                                    <property name="countEmpty" value="false"/>
+                                </module>
+                                <module name="OuterTypeNumber"/>
+                                <module name="ParameterNumber">
+                                    <property name="max" value="5"/>
+                                    <property name="ignoreOverriddenMethods" value="true"/>
+                                </module>
+                                <module name="RecordComponentNumber"/>
+
+                                <!-- Checks for whitespace                               -->
+                                <!-- See http://checkstyle.sf.net/config_whitespace.html -->
+                                <module name="EmptyForInitializerPad">
+                                    <property name="option" value="space"/>
+                                </module>
+                                <module name="EmptyForIteratorPad"/>
+                                <module name="EmptyLineSeparator">
+                                    <property name="allowMultipleEmptyLines" value="false"/>
+                                </module>
+                                <module name="FileTabCharacter">
+                                    <property name="eachLine" value="true"/>
+                                    <!--<property name="fileExtensions" value="java, groovy, xml"/>-->
+                                </module>
+                                <module name="GenericWhitespace"/>
+                                <module name="MethodParamPad"/>
+                                <module name="NoLineWrap">
+                                    <property name="tokens" value="IMPORT, STATIC_IMPORT, PACKAGE_DEF, CLASS_DEF, METHOD_DEF, CTOR_DEF, ENUM_DEF, INTERFACE_DEF, RECORD_DEF, COMPACT_CTOR_DEF" />
+                                </module>
+                                <module name="NoWhitespaceAfter"/>
+                                <module name="NoWhitespaceBefore"/>
+                                <module name="NoWhitespaceBeforeCaseDefaultColon"/>
+                                <module name="OperatorWrap"/>
+                                <module name="ParenPad"/>
+                                <module name="SeparatorWrap">
+                                    <property name="option" value="nl"/>
+                                </module>
+                                <module name="SingleSpaceSeparator">
+                                    <property name="validateComments" value="true"/>
+                                </module>
+                                <module name="TypecastParenPad"/>
+                                <module name="WhitespaceAfter"/>
+                                <module name="WhitespaceAround"/>
+
+                                <module name="TreeWalker">
+                                    <module name="StaticVariableName"/>
+                                    <module name="TypeName">
+                                        <property name="format" value="^_?[A-Z][A-Z0-9]*$"/>
+                                    </module>
+                                </module>
+                            </module>
+                        </checkstyleRules>
                     </configuration>
                     <executions>
                         <execution>
@@ -145,7 +217,7 @@
                             </goals>
                         </execution>
                     </executions>
-                </plugin> -->
+                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -208,6 +280,7 @@
                     <toolchains>
                         <jdk>
                             <version>17</version>
+                            <os>${os.family}</os>
                         </jdk>
                     </toolchains>
                 </configuration>
@@ -227,5 +300,30 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>windows</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <properties>
+                <os.family>windows</os.family>
+            </properties>
+        </profile>
+        <profile>
+            <id>linux</id>
+            <activation>
+                <os>
+                    <family>linux</family>
+                </os>
+            </activation>
+            <properties>
+                <os.family>linux</os.family>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>
