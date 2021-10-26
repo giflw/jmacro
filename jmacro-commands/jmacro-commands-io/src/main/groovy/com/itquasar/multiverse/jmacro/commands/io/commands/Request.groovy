@@ -68,7 +68,6 @@ class Request implements GroovyCommand {
      */
     def call(Closure closure) {
         Request request = new Request()
-        request.context = this.context
         closure = closure.rehydrate(request, request, request)
         closure()
         if (!request.executed) {

@@ -17,6 +17,7 @@
         <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
         <maven.compiler.version>3.8.1</maven.compiler.version>
 
         <jvm.argLine>
@@ -51,6 +52,14 @@
         <module>jmacro-tests</module>
     </modules>
 
+    <distributionManagement>
+        <site>
+            <id>localhost</id>
+            <name>localhost</name>
+            <url>file:///tmp/jmacro-site</url>
+        </site>
+    </distributionManagement>
+
     <build>
         <pluginManagement>
             <plugins>
@@ -60,6 +69,10 @@
                     <version>${maven.compiler.version}</version>
                     <inherited>true</inherited>
                     <configuration>
+                        <useIncrementalCompilation>true</useIncrementalCompilation>
+                        <showDeprecation>true</showDeprecation>
+                        <showWarnings>true</showWarnings>
+                        <skipMultiThreadWarning>true</skipMultiThreadWarning>
                         <annotationProcessorPaths>
                             <path>
                                 <groupId>org.projectlombok</groupId>
@@ -130,93 +143,30 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
                     <version>3.1.2</version>
-                    <configuration>
-                        <encoding>UTF-8</encoding>
-                        <consoleOutput>true</consoleOutput>
-                        <failsOnError>true</failsOnError>
-                        <linkXRef>true</linkXRef>
-                        <logViolationsToConsole>true</logViolationsToConsole>
-                        <checkstyleRules>
-                            <module name="Checker">
-                                <!-- Checks for Size Violations.                    -->
-                                <!-- See http://checkstyle.sf.net/config_sizes.html -->
-                                <module name="AnonInnerLength"/>
-                                <module name="ExecutableStatementCount"/>
-                                <module name="FileLength">
-                                    <property name="max" value="300"/>
-                                    <property name="fileExtensions" value="java, groovy"/>
-                                </module>
-                                <module name="LambdaBodyLength"/>
-                                <module name="LineLength">
-                                    <property name="max" value="120"/>
-                                    <property name="fileExtensions" value="java, groovy"/>
-                                </module>
-                                <module name="MethodCount">
-                                    <property name="maxPublic" value="10"/>
-                                    <property name="maxTotal" value="40"/>
-                                </module>
-                                <module name="MethodLength">
-                                    <property name="max" value="10"/>
-                                    <property name="countEmpty" value="false"/>
-                                </module>
-                                <module name="OuterTypeNumber"/>
-                                <module name="ParameterNumber">
-                                    <property name="max" value="5"/>
-                                    <property name="ignoreOverriddenMethods" value="true"/>
-                                </module>
-                                <module name="RecordComponentNumber"/>
-
-                                <!-- Checks for whitespace                               -->
-                                <!-- See http://checkstyle.sf.net/config_whitespace.html -->
-                                <module name="EmptyForInitializerPad">
-                                    <property name="option" value="space"/>
-                                </module>
-                                <module name="EmptyForIteratorPad"/>
-                                <module name="EmptyLineSeparator">
-                                    <property name="allowMultipleEmptyLines" value="false"/>
-                                </module>
-                                <module name="FileTabCharacter">
-                                    <property name="eachLine" value="true"/>
-                                    <!--<property name="fileExtensions" value="java, groovy, xml"/>-->
-                                </module>
-                                <module name="GenericWhitespace"/>
-                                <module name="MethodParamPad"/>
-                                <module name="NoLineWrap">
-                                    <property name="tokens" value="IMPORT, STATIC_IMPORT, PACKAGE_DEF, CLASS_DEF, METHOD_DEF, CTOR_DEF, ENUM_DEF, INTERFACE_DEF, RECORD_DEF, COMPACT_CTOR_DEF" />
-                                </module>
-                                <module name="NoWhitespaceAfter"/>
-                                <module name="NoWhitespaceBefore"/>
-                                <module name="NoWhitespaceBeforeCaseDefaultColon"/>
-                                <module name="OperatorWrap"/>
-                                <module name="ParenPad"/>
-                                <module name="SeparatorWrap">
-                                    <property name="option" value="nl"/>
-                                </module>
-                                <module name="SingleSpaceSeparator">
-                                    <property name="validateComments" value="true"/>
-                                </module>
-                                <module name="TypecastParenPad"/>
-                                <module name="WhitespaceAfter"/>
-                                <module name="WhitespaceAround"/>
-
-                                <module name="TreeWalker">
-                                    <module name="StaticVariableName"/>
-                                    <module name="TypeName">
-                                        <property name="format" value="^_?[A-Z][A-Z0-9]*$"/>
-                                    </module>
-                                </module>
-                            </module>
-                        </checkstyleRules>
-                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.puppycrawl.tools</groupId>
+                            <artifactId>checkstyle</artifactId>
+                            <version>9.0.1</version>
+                        </dependency>
+                    </dependencies>
                     <executions>
                         <execution>
-                            <id>validate</id>
+                            <id>checkstyle-validate</id>
                             <phase>validate</phase>
                             <goals>
                                 <goal>check</goal>
                             </goals>
                         </execution>
                     </executions>
+                    <configuration>
+                        <excludes>**/module-info.java</excludes>
+                        <encoding>UTF-8</encoding>
+                        <consoleOutput>true</consoleOutput>
+                        <failsOnError>false</failsOnError>
+                        <linkXRef>true</linkXRef>
+                        <logViolationsToConsole>true</logViolationsToConsole>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -272,6 +222,11 @@
             <!--                    </execution>-->
             <!--                </executions>-->
             <!--            </plugin>-->
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-checkstyle-plugin</artifactId>-->
+<!--                <version>3.1.2</version>-->
+<!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-toolchains-plugin</artifactId>
@@ -298,8 +253,40 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <version>3.0.0-M4</version>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.9.1</version>
+                <configuration>
+                    <locales>en</locales>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>site</id>
+                        <phase>site</phase>
+                        <goals>
+                            <goal>stage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>3.1.2</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.1.2</version>
+            </plugin>
+        </plugins>
+    </reporting>
 
     <profiles>
         <profile>

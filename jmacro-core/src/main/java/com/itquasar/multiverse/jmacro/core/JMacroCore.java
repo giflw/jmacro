@@ -3,20 +3,22 @@ package com.itquasar.multiverse.jmacro.core;
 import com.itquasar.multiverse.jmacro.core.configuration.Configuration;
 import com.itquasar.multiverse.jmacro.core.jmx.JMXBeanIFace;
 import com.itquasar.multiverse.jmacro.core.jmx.JMXManagement;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.SneakyThrows;
 
 import java.net.InetAddress;
 import java.util.Random;
 
-@Builder
-@AllArgsConstructor
 public class JMacroCore {
 
     @Getter
     private Configuration configuration;
+
+    @Getter
+    private String serverAddress;
+
+    @Getter
+    private int jmxPort;
 
     @Getter
     private JMXManagement jmxManagement;
@@ -28,18 +30,32 @@ public class JMacroCore {
     private Engine engine;
 
     public JMacroCore() {
-        this(Configuration.load(), null, new Random().nextInt(9000, 10000));
+        this(Configuration.load());
     }
 
     public JMacroCore(Configuration configuration) {
-        this(configuration, null, new Random().nextInt(9000, 10000));
+        this(configuration, "localhost", new Random().nextInt(9000, 10000));
+    }
+
+    public JMacroCore(Configuration configuration, String serverAddress, int jmxPort) {
+        this.serverAddress = serverAddress;
+        this.jmxPort = jmxPort;
+        this.configuration = configuration != null ? configuration : Configuration.load();
+        this.SPILoader = new SPILoader(JMXBeanIFace.class);
     }
 
     @SneakyThrows
-    public JMacroCore(Configuration configuration, String serverAddress, int jmxPort) {
+    public void start() {
         this.engine = new EngineImpl(this);
-        this.configuration = configuration;
-        this.SPILoader = new SPILoader(JMXBeanIFace.class);
-        this.jmxManagement = new JMXManagement(InetAddress.getByName(serverAddress), jmxPort);
+        if (this.serverAddress != null && this.jmxPort > 0) {
+            this.jmxManagement = new JMXManagement(InetAddress.getByName(this.serverAddress), this.jmxPort);
+        }
+    }
+
+    @SneakyThrows
+    public void stop() {
+        if (this.jmxManagement != null) {
+            this.jmxManagement.getServer().close();
+        }
     }
 }

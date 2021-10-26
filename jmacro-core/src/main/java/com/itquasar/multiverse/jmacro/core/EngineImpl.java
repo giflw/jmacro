@@ -15,6 +15,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static javax.script.ScriptContext.ENGINE_SCOPE;
+import static javax.script.ScriptContext.GLOBAL_SCOPE;
 
 @Log4j2
 public class EngineImpl implements Engine {
@@ -63,13 +64,25 @@ public class EngineImpl implements Engine {
         var extension = script.getFilename().substring(script.getFilename().lastIndexOf('.') + 1);
         var engine = engines.get(extension).getScriptEngine();
 
-        ScriptContext context = new SimpleScriptContext();
-        engine.setContext(context);
+        ScriptContext context = engine.getContext();
+        if (context == null) {
+            context = new SimpleScriptContext();
+            engine.setContext(context);
+        }
 
         context.setWriter(new PrintWriter(System.out));
-        context.setBindings(engine.createBindings(), ScriptContext.GLOBAL_SCOPE);
-        context.setBindings(engine.createBindings(), ENGINE_SCOPE);
+
+        Bindings globalScope = context.getBindings(GLOBAL_SCOPE);
+        if (globalScope == null) {
+            context.setBindings(engine.createBindings(), ScriptContext.GLOBAL_SCOPE);
+            globalScope = context.getBindings(GLOBAL_SCOPE);
+        }
+
         Bindings engineScope = context.getBindings(ENGINE_SCOPE);
+        if (engineScope == null) {
+            context.setBindings(engine.createBindings(), ENGINE_SCOPE);
+            engineScope = context.getBindings(ENGINE_SCOPE);
+        }
 
         int id = ID_GENERATOR.addAndGet(1);
         Logger scriptLogger = LogManager.getLogger("ScriptEngine#" + id);
@@ -87,7 +100,7 @@ public class EngineImpl implements Engine {
             var commandProvider = commandProviders.next();
             Object command = commandProvider.getCommand(this.jMacroCore, engine);
             if (command == null) {
-                throw  new JMacroException(this, "Command provider " + commandProvider.getName() + " returned null command");
+                throw new JMacroException(this, "Command provider " + commandProvider.getName() + " returned null command");
             }
             engineScope.put(
                 commandProvider.getName(),
@@ -104,7 +117,8 @@ public class EngineImpl implements Engine {
         engineScope.put("__RESULT__", valueHolder);
 
         if (this.languageAdaptors.containsKey(extension)) {
-            this.languageAdaptors.get(extension).adapt(context);
+            LOGGER.warn("Running adaptor for " + extension);
+            this.languageAdaptors.get(extension).adapt(engine);
         }
 
         var evalResult = script.run(() -> {
@@ -114,8 +128,7 @@ public class EngineImpl implements Engine {
             Arrays.stream(script.getMetadata().getBanner().split("\n")).forEach(scriptLogger::warn);
             scriptLogger.warn("--------------------------------------------------------------------------------");
             scriptLogger.warn("--------------------------------------------------------------------------------");
-            final CompiledScript compiled = ((Compilable) engine).compile(script.getSource());
-            Object evalReturn = compiled.eval();
+            Object evalReturn = engine.eval(script.getSource());
             scriptLogger.warn("--------------------------------------------------------------------------------");
             scriptLogger.warn("--------------------------------------------------------------------------------");
             scriptLogger.warn("Result for script " + script.getFilename());

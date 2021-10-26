@@ -1,10 +1,11 @@
 package com.itquasar.multiverse.jmacro.core;
 
-import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
 
 public interface LanguageAdaptor {
 
     String forExtension();
 
-    void adapt(ScriptContext scriptContext);
+    void adapt(ScriptEngine scriptEngine);
+
 }

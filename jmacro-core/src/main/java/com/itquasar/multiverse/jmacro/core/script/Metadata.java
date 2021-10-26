@@ -116,8 +116,12 @@ public class Metadata {
         }
     }
 
+    public Map<String, ?> getInfos() {
+        return this.infos != null ? this.infos : Collections.EMPTY_MAP;
+    }
+
     public String getBanner() {
-        String infoString = this.infos.entrySet().stream()
+        String infoString = this.getInfos().entrySet().stream()
             .map(entry -> "\n        " + entry.getKey() + ":\n            " + entry.getValue())
             .collect(Collectors.joining());
         return """

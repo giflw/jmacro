@@ -26,7 +26,6 @@ class File implements GroovyCommand, InputParsers, OutputSerializers {
 
     def call(Closure closure) {
         File newInstance = new File()
-        newInstance.context = this.context
         closure.delegate = newInstance
         closure.resolveStrategy = Closure.DELEGATE_FIRST
         closure()

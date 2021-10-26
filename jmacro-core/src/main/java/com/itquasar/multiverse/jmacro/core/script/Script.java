@@ -30,7 +30,7 @@ public class Script {
         this.location = location;
         this.source = source;
 
-        byte[] nameSpaceBytes = this.location.getBytes(StandardCharsets.UTF_8);
+        byte[] nameSpaceBytes = (this.location != null? this.location: "memory://").getBytes(StandardCharsets.UTF_8);
         byte[] nameBytes = (this.metadata.getName() + this.metadata.getVersion()).getBytes(StandardCharsets.UTF_8);
         byte[] result = new byte[nameSpaceBytes.length + nameBytes.length];
         System.arraycopy(nameSpaceBytes, 0, result, 0, nameSpaceBytes.length);

@@ -1,17 +1,17 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
 import com.itquasar.multiverse.jmacro.commands.base.Result;
+import com.itquasar.multiverse.jmacro.commands.base.commands.ConstantsCommand;
 import com.itquasar.multiverse.jmacro.core.JMacroCore;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.command.LoggingCommand;
 
-import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import static com.itquasar.multiverse.jmacro.commands.base.providers.ConstantsCommandProvider.Constants.QUIET;
-import static com.itquasar.multiverse.jmacro.commands.base.providers.ConstantsCommandProvider.Constants.VERBOSE;
+import static com.itquasar.multiverse.jmacro.commands.base.commands.ConstantsCommand.QUIET;
+import static com.itquasar.multiverse.jmacro.commands.base.commands.ConstantsCommand.VERBOSE;
 
 public class AttemptCommandProvider implements CommandProvider<AttemptCommandProvider.Attempt> {
 
@@ -27,7 +27,7 @@ public class AttemptCommandProvider implements CommandProvider<AttemptCommandPro
 
     public static class Attempt extends LoggingCommand {
 
-        private static final List<ConstantsCommandProvider.Constants> ALLOWED_VERBOSITIES = List.of(QUIET, VERBOSE);
+        private static final List<ConstantsCommand> ALLOWED_VERBOSITIES = List.of(QUIET, VERBOSE);
 
         public Attempt(ScriptEngine scriptEngine) {
             super(scriptEngine);
@@ -37,7 +37,7 @@ public class AttemptCommandProvider implements CommandProvider<AttemptCommandPro
             return call(VERBOSE, callable);
         }
 
-        Result call(ConstantsCommandProvider.Constants verbosity, Callable callable) {
+        Result call(ConstantsCommand verbosity, Callable callable) {
             if (!ALLOWED_VERBOSITIES.contains(verbosity)) {
                 throw new IllegalArgumentException("Verbosity must be in " + ALLOWED_VERBOSITIES);
             }
