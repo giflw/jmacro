@@ -27,10 +27,10 @@
         <!--            <![CDATA[<script src="http://www.google-analytics.com/urchin.js" type="text/javascript" />]]>-->
         <!--        </head>-->
 
-<!--        <breadcrumbs>-->
-<!--            <item name="Doxia" href="https://maven.apache.org/doxia/index.html"/>-->
-<!--            <item name="Trunk" href="https://maven.apache.org/doxia/doxia/index.html"/>-->
-<!--        </breadcrumbs>-->
+        <!--        <breadcrumbs>-->
+        <!--            <item name="Doxia" href="https://maven.apache.org/doxia/index.html"/>-->
+        <!--            <item name="Trunk" href="https://maven.apache.org/doxia/doxia/index.html"/>-->
+        <!--        </breadcrumbs>-->
 
         <menu ref="parent" inherit="top"/>
         <menu name="Overview" inherit="top">

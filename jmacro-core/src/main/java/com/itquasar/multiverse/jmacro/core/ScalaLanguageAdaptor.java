@@ -1,6 +1,5 @@
 package com.itquasar.multiverse.jmacro.core;
 
-import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 
 import javax.script.ScriptEngine;
@@ -36,7 +35,7 @@ public class ScalaLanguageAdaptor extends AbstractLanguageAdaptor {
         implicitConversions.add("implicit def obj2queue(x: Object) = x.asInstanceOf[java.util.Queue[_]]");
         implicitConversions.add("implicit def obj2map(x: Object) = x.asInstanceOf[java.util.Map[_,_]]");
 
-        for(String implicitConversion: implicitConversions) {
+        for (String implicitConversion : implicitConversions) {
             try {
                 LOGGER.warn("Registering implicit conversion: " + implicitConversion);
                 scriptEngine.eval(implicitConversion);

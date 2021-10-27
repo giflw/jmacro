@@ -172,61 +172,62 @@
         </pluginManagement>
 
         <plugins>
-            <!--            <plugin>-->
-            <!--                <groupId>org.apache.maven.plugins</groupId>-->
-            <!--                <artifactId>maven-enforcer-plugin</artifactId>-->
-            <!--                <version>3.0.0</version>-->
-            <!--                <executions>-->
-            <!--                    <execution>-->
-            <!--                        <id>enforce-versions</id>-->
-            <!--&lt;!&ndash;                        <goals>&ndash;&gt;-->
-            <!--&lt;!&ndash;                            <goal>enforce</goal>&ndash;&gt;-->
-            <!--&lt;!&ndash;                        </goals>&ndash;&gt;-->
-            <!--                        <configuration>-->
-            <!--                            <rules>-->
-            <!--                                <requireMavenVersion>-->
-            <!--                                    <version>3.8.2</version>-->
-            <!--                                </requireMavenVersion>-->
-            <!--                                <requireJavaVersion>-->
-            <!--                                    <version>17</version>-->
-            <!--                                </requireJavaVersion>-->
-            <!--                                &lt;!&ndash; <requireOS><!- - Needed if using jrpm or jdeb - ->-->
-            <!--                                    <family>unix</family>-->
-            <!--                                </requireOS>&ndash;&gt;-->
-            <!--                                <reactorModuleConvergence>-->
-            <!--                                    <message>The reactor is not valid</message>-->
-            <!--                                    &lt;!&ndash; <ignoreModuleDependencies>true</ignoreModuleDependencies>&ndash;&gt;-->
-            <!--                                </reactorModuleConvergence>-->
-            <!--                                <requireNoRepositories>-->
-            <!--                                    <message>Best Practice is to never define repositories in pom.xml (use a repository manager instead)</message>-->
-            <!--                                </requireNoRepositories>-->
-            <!--                                &lt;!&ndash;?:q<requireReleaseDeps>-->
-            <!--                                    <message>No Snapshots Allowed!</message>-->
-            <!--                                </requireReleaseDeps>&ndash;&gt;-->
-            <!--                                &lt;!&ndash;<requireReleaseVersion>-->
-            <!--                                    <message>No Snapshots Allowed!</message>-->
-            <!--                                </requireReleaseVersion>-->
-            <!--                                <requireSnapshotVersion>-->
-            <!--                                    <message>No Releases Allowed!</message>-->
-            <!--                                </requireSnapshotVersion>&ndash;&gt;-->
-            <!--                                <dependencyConvergence>-->
-            <!--                                    <uniqueVersions>true</uniqueVersions>-->
-            <!--                                </dependencyConvergence>-->
-            <!--                                <requireUpperBoundDeps>-->
-            <!--                                    <uniqueVersions>true</uniqueVersions>-->
-            <!--                                </requireUpperBoundDeps>-->
-            <!--                                <banDuplicatePomDependencyVersions/>-->
-
-            <!--                            </rules>-->
-            <!--                        </configuration>-->
-            <!--                    </execution>-->
-            <!--                </executions>-->
-            <!--            </plugin>-->
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-checkstyle-plugin</artifactId>-->
-<!--                <version>3.1.2</version>-->
-<!--            </plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>enforce-versions</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>3.8.2</version>
+                                </requireMavenVersion>
+                                <requireJavaVersion>
+                                    <version>17</version>
+                                </requireJavaVersion>
+                                <!-- <requireOS><!- - Needed if using jrpm or jdeb - ->
+                                    <family>unix</family>
+                                </requireOS>-->
+                                <reactorModuleConvergence>
+                                    <message>The reactor is not valid</message>
+                                    <!-- <ignoreModuleDependencies>true</ignoreModuleDependencies>-->
+                                </reactorModuleConvergence>
+                                <requireNoRepositories>
+                                    <message>Best Practice is to never define repositories in pom.xml (use a repository
+                                        manager instead)
+                                    </message>
+                                </requireNoRepositories>
+                                <!--                                <requireReleaseDeps>-->
+                                <!--                                    <message>No Snapshots Allowed! (requireReleaseDeps)</message>-->
+                                <!--                                </requireReleaseDeps>-->
+                                <!--                                <requireReleaseVersion>-->
+                                <!--                                    <message>No Snapshots Allowed! (requireReleaseVersion)</message>-->
+                                <!--                                </requireReleaseVersion>-->
+                                <!--                                <requireSnapshotVersion>-->
+                                <!--                                    <message>No Releases Allowed! (requireSnapshotVersion)</message>-->
+                                <!--                                </requireSnapshotVersion>-->
+                                <dependencyConvergence>
+                                    <uniqueVersions>true</uniqueVersions>
+                                </dependencyConvergence>
+                                <requireUpperBoundDeps>
+                                    <uniqueVersions>true</uniqueVersions>
+                                </requireUpperBoundDeps>
+                                <banDuplicatePomDependencyVersions/>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.1.2</version>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-toolchains-plugin</artifactId>

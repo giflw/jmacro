@@ -6,7 +6,6 @@ import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.script.GlobalScriptRepository;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 
 public class IncludeCommandProvider implements CommandProvider<Include> {

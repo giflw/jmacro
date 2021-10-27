@@ -34,7 +34,7 @@ class BaseExampleScriptSpec extends Specification implements Constants {
 
 }
 
-class BaseExampleRepository extends  GlobalScriptRepository {
+class BaseExampleRepository extends GlobalScriptRepository {
     public BaseExampleRepository() {
         super([new ScriptRepository() {
 

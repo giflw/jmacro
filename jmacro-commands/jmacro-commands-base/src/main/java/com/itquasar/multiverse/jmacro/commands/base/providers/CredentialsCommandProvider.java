@@ -4,7 +4,6 @@ import com.itquasar.multiverse.jmacro.commands.base.commands.Credentials;
 import com.itquasar.multiverse.jmacro.core.JMacroCore;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 
-import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 
 public class CredentialsCommandProvider implements CommandProvider<Credentials> {

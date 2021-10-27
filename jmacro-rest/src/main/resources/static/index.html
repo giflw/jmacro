@@ -13,7 +13,7 @@
     <link href="/webjars/font-awesome/5.15.4/css/all.min.css" rel="stylesheet"/>
 
     <style>
-        [v-cloak]>* {
+        [v-cloak] > * {
             display: none
         }
 
@@ -51,27 +51,27 @@
 </section>
 
 <script type="module">
-        import * as Vue from "/webjars/vue/3.2.19/dist/vue.esm-browser.prod.js"
-        import Script from "/app/script.js"
+    import * as Vue from "/webjars/vue/3.2.19/dist/vue.esm-browser.prod.js"
+    import Script from "/app/script.js"
 
-        const ROOT_COMPONENT = {
-            components: {
-                'jm-script': Script,
-            },
-            data() {
-                return {
-                    scripts: []
-                }
-            },
-            mounted() {
-                fetch("/scripts")
-                    .then(response => response.json())
-                    .then(json => this.scripts = json)
+    const ROOT_COMPONENT = {
+        components: {
+            'jm-script': Script,
+        },
+        data() {
+            return {
+                scripts: []
             }
+        },
+        mounted() {
+            fetch("/scripts")
+                .then(response => response.json())
+                .then(json => this.scripts = json)
         }
+    }
 
-        const app = Vue.createApp(ROOT_COMPONENT)
-        const vm = app.mount('#app')
+    const app = Vue.createApp(ROOT_COMPONENT)
+    const vm = app.mount('#app')
 
 
 </script>

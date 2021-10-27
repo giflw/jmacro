@@ -6,7 +6,6 @@ import com.itquasar.multiverse.jmacro.core.script.GlobalScriptRepository;
 import com.itquasar.multiverse.jmacro.core.script.Script;
 import lombok.SneakyThrows;
 
-import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import java.util.ArrayList;
 import java.util.List;

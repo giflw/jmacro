@@ -12,7 +12,6 @@ import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
 import org.apache.commons.io.FileUtils
-import org.apache.logging.log4j.Level
 import org.openqa.selenium.By
 import org.openqa.selenium.Keys
 import org.openqa.selenium.OutputType

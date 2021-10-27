@@ -1,6 +1,6 @@
 export default {
-    name: 'JMScript',
-    template: `
+  name: 'JMScript',
+  template: `
         <div class="card">
             <div class="card-header">
                 <p class="card-header-title"
@@ -36,32 +36,33 @@ export default {
             <pre v-if="viewSource" class="content">{{ script.source }}</pre>
         </div>
     `,
-    props: {
-        script: {
-            type: Object,
-            default: () => {}
-        }
-    },
-    data() {
-        return {
-            viewSource: false
-        }
-    },
-    methods: {
-        showSource() {
-            this.viewSource = !this.viewSource
-        },
-        runOnce() {
-            console.log("RUN ONCE", this.script.location)
-        },
-        runLoop() {
-            console.log("RUN LOOP", this.script.location)
-        },
-        stop() {
-            console.log("STOP", this.script.location)
-        },
-        showLog() {
-            console.log("SHOW LOG", this.script.location)
-        },
+  props: {
+    script: {
+      type: Object,
+      default: () => {
+      }
     }
+  },
+  data() {
+    return {
+      viewSource: false
+    }
+  },
+  methods: {
+    showSource() {
+      this.viewSource = !this.viewSource
+    },
+    runOnce() {
+      console.log("RUN ONCE", this.script.location)
+    },
+    runLoop() {
+      console.log("RUN LOOP", this.script.location)
+    },
+    stop() {
+      console.log("STOP", this.script.location)
+    },
+    showLog() {
+      console.log("SHOW LOG", this.script.location)
+    },
+  }
 }

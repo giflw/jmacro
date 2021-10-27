@@ -5,7 +5,6 @@ import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.command.LoggingCommand;
 import lombok.SneakyThrows;
 
-import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 
 public class PauseCommandProvider implements CommandProvider<PauseCommandProvider.Pause> {

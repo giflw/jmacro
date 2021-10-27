@@ -107,6 +107,9 @@ public class Metadata {
         }
     }
 
+    public Map<String, ?> getInfos() {
+        return this.infos != null ? this.infos : Collections.EMPTY_MAP;
+    }
 
     public void setInfos(Map<String, ?> infos) {
         if (this.infos == null) {
@@ -114,10 +117,6 @@ public class Metadata {
         } else {
             throw new FieldAlreadySetted("Field 'infos' already setted");
         }
-    }
-
-    public Map<String, ?> getInfos() {
-        return this.infos != null ? this.infos : Collections.EMPTY_MAP;
     }
 
     public String getBanner() {

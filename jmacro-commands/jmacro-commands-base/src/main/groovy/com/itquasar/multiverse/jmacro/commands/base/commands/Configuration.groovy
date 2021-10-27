@@ -3,8 +3,6 @@ package com.itquasar.multiverse.jmacro.commands.base.commands
 import com.itquasar.multiverse.jmacro.core.Env
 import com.itquasar.multiverse.jmacro.core.GroovyCommand
 
-import javax.script.ScriptContext
-
 class Configuration implements GroovyCommand {
 
     ConfigObject configs = new ConfigObject()

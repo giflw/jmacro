@@ -6,7 +6,6 @@ import com.itquasar.multiverse.jmacro.core.exceptions.JMacroException
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 
-import javax.script.ScriptContext
 import javax.script.ScriptEngine
 import java.util.concurrent.atomic.AtomicBoolean
 
