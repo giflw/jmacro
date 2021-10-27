@@ -33,7 +33,7 @@ public class FileScriptRepository extends ScriptRepositoryAbstract {
                         try {
                             var source = Files.readString(file.toPath());
                             return new Script(
-                                Metadata.parseMetadata(source),
+                                Metadata.extractMetadata(source),
                                 file.getName(),
                                 file.getAbsolutePath(),
                                 source

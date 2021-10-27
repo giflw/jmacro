@@ -39,7 +39,7 @@ public class Metadata {
         this.infos = infos;
     }
 
-    public static Metadata parseMetadata(String script) {
+    public static Metadata extractMetadata(String script) {
         String metaRegex = "START METADATA([ \t]*[\r\n]+)(?<meta>.+)([\r\n]+)([ \t]*)END METADATA";
         Pattern pattern = Pattern.compile(metaRegex, Pattern.DOTALL);
         Matcher matcher = pattern.matcher(script);

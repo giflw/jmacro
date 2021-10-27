@@ -13,6 +13,7 @@ import java.util.concurrent.Callable;
 import static com.itquasar.multiverse.jmacro.commands.base.commands.ConstantsCommand.QUIET;
 import static com.itquasar.multiverse.jmacro.commands.base.commands.ConstantsCommand.VERBOSE;
 
+// FIXME shouldnt have a "catch" block ???
 public class AttemptCommandProvider implements CommandProvider<AttemptCommandProvider.Attempt> {
 
     @Override

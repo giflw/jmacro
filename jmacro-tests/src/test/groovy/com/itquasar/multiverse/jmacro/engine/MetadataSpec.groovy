@@ -12,7 +12,7 @@ class MetadataSpec extends Specification implements Constants {
         def script = getClass()
             .getResource("/scripts/hello-world/hello-world.${extension}")
             .text
-        Metadata metadata = Metadata.parseMetadata(script)
+        Metadata metadata = Metadata.extractMetadata(script)
 
         expect:
         metadata.name == 'Metadata Test'

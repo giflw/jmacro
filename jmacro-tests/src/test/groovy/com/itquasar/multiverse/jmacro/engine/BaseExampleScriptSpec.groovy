@@ -18,7 +18,7 @@ class BaseExampleScriptSpec extends Specification implements Constants {
             .getResource("/scripts/example/base-example.groovy")
             .text
 
-        def metadata = Metadata.parseMetadata(source)
+        def metadata = Metadata.extractMetadata(source)
 
         def scriptOrig = new Script(metadata, "base-example.groovy", '/scripts/example/base-example.groovy', source)
         ScriptResult scriptResult = jMacroCore.engine.execute(scriptOrig)

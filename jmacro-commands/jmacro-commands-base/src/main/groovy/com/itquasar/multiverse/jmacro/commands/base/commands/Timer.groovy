@@ -24,7 +24,7 @@ class Timer extends LoggingCommand implements GroovyCommand, AutoCloseable {
             throw new JMacroException(this, 'Timer already started!')
         }
         this.partials = new LinkedHashMap()
-        this.partials.put('start', System.currentTimeMillis() / 1000)
+        this.partials.put('Start', System.currentTimeMillis() / 1000)
         return this
     }
 
@@ -32,21 +32,21 @@ class Timer extends LoggingCommand implements GroovyCommand, AutoCloseable {
         if (!running.compareAndSet(true, false)) {
             throw new JMacroException(this, 'Timer not started!')
         }
-        this.partials.put('stop', (System.currentTimeMillis() / 1000) - this.partials['start'])
+        this.partials.put('Stop', (System.currentTimeMillis() / 1000) - this.partials['Start'])
         return this
     }
 
     Timer partial(String label = null) {
-        partials.put(label ?: 'Partial ' + (partials.size() + 1), (System.currentTimeMillis() / 1000) - this.partials['start'])
+        partials.put(label ?: 'Partial ' + (partials.size() + 1), (System.currentTimeMillis() / 1000) - this.partials['Start'])
         return this
     }
 
     BigDecimal getStart() {
-        return this.partials['start']
+        return this.partials['Start']
     }
 
     BigDecimal getStop() {
-        return this.partials['stop']
+        return this.partials['Stop']
     }
 
     @CompileDynamic
@@ -57,9 +57,9 @@ class Timer extends LoggingCommand implements GroovyCommand, AutoCloseable {
     }
 
     BigDecimal get(String label) {
-        if (label == 'start') {
+        if (label == 'Start') {
             return this.start
-        } else if (label == 'stop') {
+        } else if (label == 'Stop') {
             return this.stop
         }
         return this.partials[label]
@@ -87,7 +87,7 @@ class Timer extends LoggingCommand implements GroovyCommand, AutoCloseable {
     @Override
     String toString() {
         return "Timer\n" + this.partials.collect {
-            def value = it.key == 'start' ? 0 : it.value
+            def value = it.key == 'Start' ? 0 : it.value
             "${it.key}: ${value} (${value + this.start})"
         }.join("\n")
     }

@@ -11,14 +11,14 @@ START METADATA
 END METADATA
 */
 
-timer.start()
+com.itquasar.multiverse.jmacro.commands.base.commands.timer.start()
 
 logger.info "=" * 80
 
 logger.info "NOW: ${moment.now()}"
 logger.info "TODAY : ${moment.today()}"
 
-timer.partial "moment"
+com.itquasar.multiverse.jmacro.commands.base.commands.timer.partial "moment"
 
 logger.info "=" * 80
 
@@ -32,7 +32,7 @@ assert configuration.count == 10
 
 logger.info "Configuration: ${configuration}"
 
-timer.partial "configuration"
+com.itquasar.multiverse.jmacro.commands.base.commands.timer.partial "configuration"
 
 logger.info "=" * 80
 
@@ -52,11 +52,11 @@ assert credentials.domain == "example.com"
 
 logger.info "Credentials: ${credentials}"
 
-timer.partial "credentials"
+com.itquasar.multiverse.jmacro.commands.base.commands.timer.partial "credentials"
 
 logger.info "=" * 80
 
 __RESULT__ "RESULT"
 
-timer.partial "stop"
-timer.log()
+com.itquasar.multiverse.jmacro.commands.base.commands.timer.partial "stop"
+com.itquasar.multiverse.jmacro.commands.base.commands.timer.log()

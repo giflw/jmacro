@@ -9,9 +9,18 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.script.*;
+import javax.script.Bindings;
+import javax.script.ScriptContext;
+import javax.script.ScriptEngineFactory;
+import javax.script.ScriptEngineManager;
+import javax.script.SimpleScriptContext;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static javax.script.ScriptContext.ENGINE_SCOPE;
@@ -22,7 +31,8 @@ public class EngineImpl implements Engine {
 
     private static final AtomicInteger ID_GENERATOR = new AtomicInteger(0);
     private static final ScriptEngineManager ENGINE_MANAGER = new ScriptEngineManager();
-    private static final SPILoader<LanguageAdaptor> LANGUAGE_ADAPTOR_LOADER = new SPILoader<>(LanguageAdaptor.class);
+    private static final SPILoader<LanguageAdaptor> LANGUAGE_ADAPTOR_LOADER =
+        new SPILoader<>(LanguageAdaptor.class);
 
     private final JMacroCore jMacroCore;
     private final Map<String, ScriptEngineFactory> engines = new LinkedHashMap<>();
@@ -100,7 +110,8 @@ public class EngineImpl implements Engine {
             var commandProvider = commandProviders.next();
             Object command = commandProvider.getCommand(this.jMacroCore, engine);
             if (command == null) {
-                throw new JMacroException(this, "Command provider " + commandProvider.getName() + " returned null command");
+                throw new JMacroException(this,
+                    "Command provider " + commandProvider.getName() + " returned null command");
             }
             engineScope.put(
                 commandProvider.getName(),
@@ -122,22 +133,28 @@ public class EngineImpl implements Engine {
         }
 
         var evalResult = script.run(() -> {
-            scriptLogger.warn("================================================================================");
-            scriptLogger.warn("================================================================================");
+            String doubleSeparator =
+                "================================================================================";
+            String singleSeparator =
+                "--------------------------------------------------------------------------------";
+
+            scriptLogger.warn(doubleSeparator);
+            scriptLogger.warn(doubleSeparator);
             scriptLogger.warn("Script " + script.getFilename() + " started!");
             Arrays.stream(script.getMetadata().getBanner().split("\n")).forEach(scriptLogger::warn);
-            scriptLogger.warn("--------------------------------------------------------------------------------");
-            scriptLogger.warn("--------------------------------------------------------------------------------");
+
+            scriptLogger.warn(singleSeparator);
+            scriptLogger.warn(singleSeparator);
             Object evalReturn = engine.eval(script.getSource());
-            scriptLogger.warn("--------------------------------------------------------------------------------");
-            scriptLogger.warn("--------------------------------------------------------------------------------");
+            scriptLogger.warn(singleSeparator);
+            scriptLogger.warn(singleSeparator);
             scriptLogger.warn("Result for script " + script.getFilename());
             scriptLogger.warn("__RESULT__:");
             scriptLogger.warn(valueHolder.get());
             scriptLogger.warn("Evaluation return:");
             scriptLogger.warn(evalReturn);
-            scriptLogger.warn("================================================================================");
-            scriptLogger.warn("================================================================================");
+            scriptLogger.warn(doubleSeparator);
+            scriptLogger.warn(doubleSeparator);
             return evalReturn;
         });
 

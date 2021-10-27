@@ -48,6 +48,12 @@
             <scope>provided</scope>
         </dependency>
 
+<!--        <dependency>-->
+<!--            &lt;!&ndash; enforce convergence &ndash;&gt;-->
+<!--            <groupId>org.webjars.npm</groupId>-->
+<!--            <artifactId>babel__parser</artifactId>-->
+<!--            <version>7.15.8</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.webjars.npm</groupId>
             <artifactId>vue</artifactId>
