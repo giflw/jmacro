@@ -7,20 +7,36 @@ import javax.script.ScriptEngine;
 
 public abstract class LoggingCommand {
 
+    /**
+     * Logger instance to use. This is got from script engine context attribute, or explicitly given.
+     */
     private final Logger logger;
 
-    public LoggingCommand(ScriptEngine scriptEngine) {
+    /**
+     * @param scriptEngine Script engine instance to get context, from which we get logger attribute.
+     */
+    public LoggingCommand(final ScriptEngine scriptEngine) {
         this(scriptEngine.getContext());
     }
 
-    public LoggingCommand(ScriptContext scriptContext) {
+    /**
+     * @param scriptContext Script context from where to get attribute "logger".
+     */
+    public LoggingCommand(final ScriptContext scriptContext) {
         this((Logger) scriptContext.getAttribute("logger"));
     }
 
-    public LoggingCommand(Logger logger) {
+    /**
+     * @param logger Logger instance to use as logger backend.
+     */
+    public LoggingCommand(final Logger logger) {
         this.logger = logger;
     }
 
+    /**
+     *
+     * @return Logger instance.
+     */
     public Logger getLogger() {
         return logger;
     }

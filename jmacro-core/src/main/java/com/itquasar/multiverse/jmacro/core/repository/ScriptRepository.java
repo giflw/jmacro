@@ -1,4 +1,6 @@
-package com.itquasar.multiverse.jmacro.core.script;
+package com.itquasar.multiverse.jmacro.core.repository;
+
+import com.itquasar.multiverse.jmacro.core.script.Script;
 
 import java.net.URI;
 import java.util.List;

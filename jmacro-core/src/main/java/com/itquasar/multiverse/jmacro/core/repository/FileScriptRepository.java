@@ -1,6 +1,8 @@
-package com.itquasar.multiverse.jmacro.core.script;
+package com.itquasar.multiverse.jmacro.core.repository;
 
 import com.itquasar.multiverse.jmacro.core.configuration.Configuration;
+import com.itquasar.multiverse.jmacro.core.script.Metadata;
+import com.itquasar.multiverse.jmacro.core.script.Script;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.File;
@@ -10,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
+// FIXME change to FileSystem repository, add Artifact super type for Script
 @Log4j2
 public class FileScriptRepository extends ScriptRepositoryAbstract {
 
@@ -27,7 +30,7 @@ public class FileScriptRepository extends ScriptRepositoryAbstract {
                 Arrays.stream(this.path.toFile().listFiles())
                     .filter(File::isFile)
                     .filter(File::canRead)
-                    .filter(file -> Configuration.supportedExtensions.contains(
+                    .filter(file -> Configuration.SUPPORTED_EXTENSIONS.contains(
                         file.getName().substring(file.getName().lastIndexOf(".") + 1)
                     )).map(file -> {
                         try {

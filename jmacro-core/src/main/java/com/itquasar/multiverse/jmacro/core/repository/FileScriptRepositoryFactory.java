@@ -1,4 +1,4 @@
-package com.itquasar.multiverse.jmacro.core.script;
+package com.itquasar.multiverse.jmacro.core.repository;
 
 import java.net.URI;
 

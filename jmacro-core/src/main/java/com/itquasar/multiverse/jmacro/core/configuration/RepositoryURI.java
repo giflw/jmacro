@@ -5,15 +5,24 @@ import lombok.Data;
 import java.net.URI;
 
 @Data
-public class RepositoryURI {
+public final class RepositoryURI {
 
+    /**
+     * {@link URI} repository definition.
+     */
     private URI uri;
 
-    public RepositoryURI(String uri) {
+    /**
+     * @param uri {@link String} representing repository {@link URI}.
+     */
+    public RepositoryURI(final String uri) {
         this.uri = URI.create(uri);
     }
 
-    public RepositoryURI(URI uri) {
+    /**
+     * @param uri {@link URI} defining this repository.
+     */
+    public RepositoryURI(final URI uri) {
         this.uri = uri;
     }
 }

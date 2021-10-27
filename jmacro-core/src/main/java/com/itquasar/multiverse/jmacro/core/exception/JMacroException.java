@@ -1,6 +1,6 @@
-package com.itquasar.multiverse.jmacro.core.exceptions;
+package com.itquasar.multiverse.jmacro.core.exception;
 
-public class JMacroException extends RuntimeException {
+public final class JMacroException extends RuntimeException {
 
     public JMacroException(String message) {
         super(message);

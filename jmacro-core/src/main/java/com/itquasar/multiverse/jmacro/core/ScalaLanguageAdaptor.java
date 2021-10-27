@@ -7,10 +7,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Log4j2
-public class ScalaLanguageAdaptor extends AbstractLanguageAdaptor {
+public final class ScalaLanguageAdaptor extends AbstractLanguageAdaptor {
 
     @Override
-    public void _adapt(ScriptEngine scriptEngine) {
+    public void _adapt(final ScriptEngine scriptEngine) {
         Set<String> implicitConversions = getBindings().values().stream()
             .map(Object::getClass)
             .filter(it -> !it.isArray() && !it.isPrimitive())

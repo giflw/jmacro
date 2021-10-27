@@ -1,4 +1,4 @@
-package com.itquasar.multiverse.jmacro.core.exceptions;
+package com.itquasar.multiverse.jmacro.core.exception;
 
 import java.text.MessageFormat;
 

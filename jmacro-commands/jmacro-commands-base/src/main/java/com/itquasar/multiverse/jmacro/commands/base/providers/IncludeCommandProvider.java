@@ -3,7 +3,7 @@ package com.itquasar.multiverse.jmacro.commands.base.providers;
 import com.itquasar.multiverse.jmacro.commands.base.commands.Include;
 import com.itquasar.multiverse.jmacro.core.JMacroCore;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
-import com.itquasar.multiverse.jmacro.core.script.GlobalScriptRepository;
+import com.itquasar.multiverse.jmacro.core.repository.GlobalScriptRepository;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import javax.script.ScriptEngine;

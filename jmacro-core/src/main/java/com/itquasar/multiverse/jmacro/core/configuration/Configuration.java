@@ -1,8 +1,8 @@
 package com.itquasar.multiverse.jmacro.core.configuration;
 
-import com.itquasar.multiverse.jmacro.core.script.GlobalScriptRepository;
-import com.itquasar.multiverse.jmacro.core.script.ScriptRepository;
-import com.itquasar.multiverse.jmacro.core.script.ScriptRepositoryFactory;
+import com.itquasar.multiverse.jmacro.core.repository.GlobalScriptRepository;
+import com.itquasar.multiverse.jmacro.core.repository.ScriptRepository;
+import com.itquasar.multiverse.jmacro.core.repository.ScriptRepositoryFactory;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 import org.yaml.snakeyaml.Yaml;
@@ -22,29 +22,50 @@ import java.util.regex.Pattern;
 
 @Data
 @Log4j2
-public class Configuration {
+public final class Configuration {
 
-    // FIXME dont use static
-    public static final List<String> supportedExtensions = Collections.unmodifiableList(
+    /**
+     * Defines where to search (in classpath) configuration files. Search is made ordered.
+     */
+    public static final List<String> CONFIGURATION_PATHS = List.of(
+        "/jmacro-test.yaml",
+        "/jmacro.yaml"
+    );
+
+    /**
+     * List found extensions supported by script engines found by {@link ScriptEngineManager}.
+     */
+    public static final List<String> SUPPORTED_EXTENSIONS = Collections.unmodifiableList(
         new ScriptEngineManager()
             .getEngineFactories()
             .stream()
             .flatMap(factory -> factory.getExtensions().stream())
             .toList()
     );
-    private List<String> scriptRepositories;
+    /**
+     * URI for repositories.
+     */
+    private List<String> repositories;
+    /**
+     * Custom options mapping from configuration file.
+     */
     private Map<String, String> options = new LinkedHashMap<>();
+
+    /**
+     * Global repository proxy for all registered repositories.
+     */
     private ScriptRepository scriptRepository;
 
     private Configuration() {
     }
 
+    /**
+     * Loads configuration from predefined paths.
+     *
+     * @return Found configuration.
+     */
     public static Configuration load() {
-        var paths = List.of(
-            "/jmacro-test.yaml",
-            "/jmacro.yaml"
-        );
-        for (String path : paths) {
+        for (String path : CONFIGURATION_PATHS) {
             InputStream inputStream = Configuration.class.getResourceAsStream(path);
             if (inputStream != null) {
                 Reader reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -55,19 +76,37 @@ public class Configuration {
         return new Configuration();
     }
 
-    public static Configuration load(Reader reader) {
+    /**
+     * Load configuration from given {@link Reader}.
+     *
+     * @param reader {@link Reader} to load configuration from.
+     * @return Parsed configuration.
+     */
+    public static Configuration load(final Reader reader) {
         Configuration configuration = new Yaml(new Constructor(Configuration.class)).load(reader);
         configuration.init();
         return configuration;
     }
 
-    public void init() {
+    /**
+     * Initializes intances objects from loaded configuration.
+     */
+    private void init() {
         this.scriptRepository = new GlobalScriptRepository(
-            ScriptRepositoryFactory.create(this.scriptRepositories, this)
+            ScriptRepositoryFactory.create(this.repositories, this)
         );
     }
 
-    public String getValue(String key) {
+    /**
+     * Get configuration value. Load from thoses sources, in order:
+     * - environment variables
+     * - configuration file options (loaded in this instance)
+     * - system property
+     *
+     * @param key Key to search.
+     * @return Found value.
+     */
+    public String getValue(final String key) {
         String value = System.getenv(key);
         if (value == null) {
             value = this.options.get(key);
@@ -78,16 +117,24 @@ public class Configuration {
         return value;
     }
 
-    public String replaceVars(String string) {
+    /**
+     * Replace values in string, interpolating {@code ${key}} found in given {@link String}
+     * and replacing by value found using {@link #getValue(String)}.
+     *
+     * @param interpolatedString String to make interpolation replacements.
+     * @return Interpolated string with keys replaced by values.
+     */
+    public String replaceVars(final String interpolatedString) {
         String regex = "(?<var>\\$(?<key>[\\w\\d.]+)\\$)";
         final Pattern pattern = Pattern.compile(regex);
-        final Matcher matcher = pattern.matcher(string);
+        final Matcher matcher = pattern.matcher(interpolatedString);
+        String interpolation = interpolatedString;
         while (matcher.find()) {
             String value = getValue(matcher.group("key"));
             if (value != null) {
-                string = string.replace(matcher.group("var"), value);
+                interpolation = interpolation.replace(matcher.group("var"), value);
             }
         }
-        return string;
+        return interpolation;
     }
 }

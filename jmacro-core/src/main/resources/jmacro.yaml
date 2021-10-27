@@ -1,7 +1,7 @@
-scriptRepositories:
-    - "m2:file:///$user.home$/.m2"
-    - "service:file:///C:/Users/glutz/Workspace/jmacro/jmacro-core/src/main/resources/META-INF/services"
-    - "hello-world:file:///C:/Users/glutz/Workspace/jmacro/jmacro-engine/src/test/resources/scripts/hello-world"
+repositories:
+    - "m2:script:file:///$user.home$/.m2"
+    - "service:script:file:///C:/Users/glutz/Workspace/jmacro/jmacro-core/src/main/resources/META-INF/services"
+    - "hello-world:script:file:///C:/Users/glutz/Workspace/jmacro/jmacro-engine/src/test/resources/scripts/hello-world"
 options:
     foo: bar
     john: doe

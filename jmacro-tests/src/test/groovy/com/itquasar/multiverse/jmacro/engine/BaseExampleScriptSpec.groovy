@@ -2,6 +2,8 @@ package com.itquasar.multiverse.jmacro.engine
 
 import com.itquasar.multiverse.jmacro.core.JMacroCore
 import com.itquasar.multiverse.jmacro.core.configuration.Configuration
+import com.itquasar.multiverse.jmacro.core.repository.GlobalScriptRepository
+import com.itquasar.multiverse.jmacro.core.repository.ScriptRepository
 import com.itquasar.multiverse.jmacro.core.script.*
 import spock.lang.Specification
 import spock.lang.Stepwise

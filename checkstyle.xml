@@ -72,7 +72,7 @@
     <!-- See https://checkstyle.org/config_sizes.html -->
     <module name="FileLength"/>
     <module name="LineLength">
-        <property name="fileExtensions" value="java,groovy"/>
+        <property name="fileExtensions" value="java, groovy"/>
         <property name="max" value="130"/>
     </module>
 
@@ -113,7 +113,13 @@
         <module name="LocalFinalVariableName"/>
         <module name="LocalVariableName"/>
         <module name="MemberName"/>
-        <module name="MethodName"/>
+        <module name="MethodName">
+            <property name="applyToProtected" value="false" />
+        </module>
+        <module name="MethodName">
+            <property name="format" value="^[_a-z][a-zA-Z0-9]*$"/>
+            <property name="applyToProtected" value="true" />
+        </module>
         <module name="PackageName"/>
         <module name="ParameterName"/>
         <module name="StaticVariableName"/>
@@ -163,7 +169,12 @@
         <!-- See https://checkstyle.org/config_coding.html -->
         <module name="EmptyStatement"/>
         <module name="EqualsHashCode"/>
-        <module name="HiddenField"/>
+        <module name="HiddenField">
+            <property name="ignoreConstructorParameter" value="true"/>
+            <property name="ignoreSetter" value="true"/>
+            <property name="setterCanReturnItsClass" value="true"/>
+            <property name="ignoreAbstractMethods" value="true"/>
+        </module>
         <module name="IllegalInstantiation"/>
         <module name="InnerAssignment"/>
         <module name="MagicNumber"/>

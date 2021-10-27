@@ -1,6 +1,6 @@
 package com.itquasar.multiverse.jmacro.core.script;
 
-import com.itquasar.multiverse.jmacro.core.exceptions.FieldAlreadySetted;
+import com.itquasar.multiverse.jmacro.core.exception.FieldAlreadySet;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -79,7 +79,7 @@ public class Metadata {
         if (this.name == null) {
             this.name = name;
         } else {
-            throw new FieldAlreadySetted("Field 'name' already setted");
+            throw new FieldAlreadySet("Field 'name' already setted");
         }
     }
 
@@ -87,7 +87,7 @@ public class Metadata {
         if (this.version == null) {
             this.version = version;
         } else {
-            throw new FieldAlreadySetted("Field 'version' already setted");
+            throw new FieldAlreadySet("Field 'version' already setted");
         }
     }
 
@@ -95,7 +95,7 @@ public class Metadata {
         if (this.author == null) {
             this.author = author;
         } else {
-            throw new FieldAlreadySetted("Field 'author' already setted");
+            throw new FieldAlreadySet("Field 'author' already setted");
         }
     }
 
@@ -103,7 +103,7 @@ public class Metadata {
         if (this.description == null) {
             this.description = description;
         } else {
-            throw new FieldAlreadySetted("Field 'description' already setted");
+            throw new FieldAlreadySet("Field 'description' already setted");
         }
     }
 
@@ -115,7 +115,7 @@ public class Metadata {
         if (this.infos == null) {
             this.infos = Collections.unmodifiableMap(infos);
         } else {
-            throw new FieldAlreadySetted("Field 'infos' already setted");
+            throw new FieldAlreadySet("Field 'infos' already setted");
         }
     }
 

@@ -1,3 +1,6 @@
+import com.itquasar.multiverse.jmacro.core.repository.FileScriptRepositoryFactory;
+import com.itquasar.multiverse.jmacro.core.repository.ScriptRepositoryFactory;
+
 module jmacro.core {
     requires static lombok;
 
@@ -13,19 +16,20 @@ module jmacro.core {
     requires org.apache.logging.log4j.core;
 
     exports com.itquasar.multiverse.jmacro.core;
-    exports com.itquasar.multiverse.jmacro.core.exceptions;
+    exports com.itquasar.multiverse.jmacro.core.exception;
     exports com.itquasar.multiverse.jmacro.core.jmx;
     exports com.itquasar.multiverse.jmacro.core.command;
     exports com.itquasar.multiverse.jmacro.core.script;
     exports com.itquasar.multiverse.jmacro.core.configuration;
 
-    uses com.itquasar.multiverse.jmacro.core.script.ScriptRepositoryFactory;
+    uses ScriptRepositoryFactory;
     uses com.itquasar.multiverse.jmacro.core.LanguageAdaptor;
     uses com.itquasar.multiverse.jmacro.core.command.CommandProvider;
     uses com.itquasar.multiverse.jmacro.core.jmx.JMXBeanIFace;
 
-    provides com.itquasar.multiverse.jmacro.core.script.ScriptRepositoryFactory with com.itquasar.multiverse.jmacro.core.script.FileScriptRepositoryFactory;
+    provides ScriptRepositoryFactory with FileScriptRepositoryFactory;
     provides com.itquasar.multiverse.jmacro.core.LanguageAdaptor with com.itquasar.multiverse.jmacro.core.ScalaLanguageAdaptor;
 
     opens com.itquasar.multiverse.jmacro.core.configuration to org.yaml.snakeyaml;
+    exports com.itquasar.multiverse.jmacro.core.repository;
 }

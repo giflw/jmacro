@@ -1,7 +1,7 @@
 package com.itquasar.multiverse.jmacro.core;
 
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
-import com.itquasar.multiverse.jmacro.core.exceptions.JMacroException;
+import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.itquasar.multiverse.jmacro.core.script.Script;
 import com.itquasar.multiverse.jmacro.core.script.ScriptResult;
 import com.itquasar.multiverse.jmacro.core.script.ValueHolder;
@@ -27,18 +27,47 @@ import static javax.script.ScriptContext.ENGINE_SCOPE;
 import static javax.script.ScriptContext.GLOBAL_SCOPE;
 
 @Log4j2
-public class EngineImpl implements Engine {
+public final class EngineImpl implements Engine {
 
+    /**
+     * Script engine id generator to unique identify each {@link javax.script.ScriptEngine} instance.
+     */
     private static final AtomicInteger ID_GENERATOR = new AtomicInteger(0);
+
+    /**
+     * JSR 223 {@link ScriptEngineManager}.
+     *
+     * @see <a href="https://www.jcp.org/en/jsr/detail?id=223">JSR 223: Scripting for the JavaTM Platform</a>
+     */
     private static final ScriptEngineManager ENGINE_MANAGER = new ScriptEngineManager();
+
+    /**
+     * Java SPI loader for {@link LanguageAdaptor}s.
+     */
     private static final SPILoader<LanguageAdaptor> LANGUAGE_ADAPTOR_LOADER =
         new SPILoader<>(LanguageAdaptor.class);
 
+    /**
+     * Core instance used by this engine.
+     */
     private final JMacroCore jMacroCore;
+
+    /**
+     * {@link ScriptEngineFactory} instances available on runtime.
+     */
     private final Map<String, ScriptEngineFactory> engines = new LinkedHashMap<>();
+
+    /**
+     * {@link LanguageAdaptor}s found in runtime using SPI.
+     */
     private final Map<String, LanguageAdaptor> languageAdaptors = new LinkedHashMap<>();
 
-    public EngineImpl(JMacroCore jMacroCore) {
+    /**
+     * Create engine instance with given core.
+     *
+     * @param jMacroCore Core to use with this engine.
+     */
+    public EngineImpl(final JMacroCore jMacroCore) {
         this.jMacroCore = jMacroCore;
         ENGINE_MANAGER.getEngineFactories().forEach(engine -> {
             var engineInfo = """
@@ -65,12 +94,15 @@ public class EngineImpl implements Engine {
         );
     }
 
+    /**
+     * @return Found {@link ScriptEngineFactory} intances on runtime.
+     */
     public Map<String, ScriptEngineFactory> getEngines() {
         return Collections.unmodifiableMap(this.engines);
     }
 
     @Override
-    public ScriptResult execute(Script script) {
+    public ScriptResult execute(final Script script) {
         var extension = script.getFilename().substring(script.getFilename().lastIndexOf('.') + 1);
         var engine = engines.get(extension).getScriptEngine();
 

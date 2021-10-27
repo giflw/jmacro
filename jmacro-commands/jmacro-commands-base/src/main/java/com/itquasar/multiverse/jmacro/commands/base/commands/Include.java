@@ -1,8 +1,8 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands;
 
 import com.itquasar.multiverse.jmacro.core.command.LoggingCommand;
-import com.itquasar.multiverse.jmacro.core.exceptions.JMacroException;
-import com.itquasar.multiverse.jmacro.core.script.GlobalScriptRepository;
+import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
+import com.itquasar.multiverse.jmacro.core.repository.GlobalScriptRepository;
 import com.itquasar.multiverse.jmacro.core.script.Script;
 import lombok.SneakyThrows;
 

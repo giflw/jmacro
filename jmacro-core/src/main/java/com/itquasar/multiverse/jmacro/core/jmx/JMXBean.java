@@ -1,7 +1,7 @@
 package com.itquasar.multiverse.jmacro.core.jmx;
 
 import com.itquasar.multiverse.jmacro.core.JMacroCore;
-import com.itquasar.multiverse.jmacro.core.exceptions.FieldAlreadySetted;
+import com.itquasar.multiverse.jmacro.core.exception.FieldAlreadySet;
 
 public abstract class JMXBean implements JMXBeanIFace {
 
@@ -15,7 +15,7 @@ public abstract class JMXBean implements JMXBeanIFace {
         if (this.jMacroCore == null) {
             this.jMacroCore = jMacroCore;
         } else {
-            throw new FieldAlreadySetted("jMacroCore");
+            throw new FieldAlreadySet("jMacroCore");
         }
     }
 
