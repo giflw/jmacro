@@ -1,7 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.browser.command.browser
 
 
-import com.itquasar.multiverse.jmacro.core.exceptions.JMacroException
+import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.openqa.selenium.By

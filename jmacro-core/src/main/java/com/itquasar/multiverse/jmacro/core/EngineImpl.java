@@ -1,6 +1,7 @@
 package com.itquasar.multiverse.jmacro.core;
 
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
+import com.itquasar.multiverse.jmacro.core.exception.ExitException;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.itquasar.multiverse.jmacro.core.script.Script;
 import com.itquasar.multiverse.jmacro.core.script.ScriptResult;
@@ -103,7 +104,7 @@ public final class EngineImpl implements Engine {
 
     @Override
     public ScriptResult execute(final Script script) {
-        var extension = script.getFilename().substring(script.getFilename().lastIndexOf('.') + 1);
+        var extension = script.getPath().substring(script.getPath().lastIndexOf('.') + 1);
         var engine = engines.get(extension).getScriptEngine();
 
         ScriptContext context = engine.getContext();
@@ -164,6 +165,7 @@ public final class EngineImpl implements Engine {
             this.languageAdaptors.get(extension).adapt(engine);
         }
 
+        var exitCode = new ValueHolder<>(0);
         var evalResult = script.run(() -> {
             String doubleSeparator =
                 "================================================================================";
@@ -172,15 +174,35 @@ public final class EngineImpl implements Engine {
 
             scriptLogger.warn(doubleSeparator);
             scriptLogger.warn(doubleSeparator);
-            scriptLogger.warn("Script " + script.getFilename() + " started!");
+            scriptLogger.warn("Script " + script.getPath() + " started!");
             Arrays.stream(script.getMetadata().getBanner().split("\n")).forEach(scriptLogger::warn);
 
             scriptLogger.warn(singleSeparator);
             scriptLogger.warn(singleSeparator);
-            Object evalReturn = engine.eval(script.getSource());
+            Object evalReturn = null;
+            try {
+                evalReturn = engine.eval(script.getSource());
+            } catch (Throwable exception) {
+                exitCode.set(ExitException.SCRIPT_ENGINE_ERROR);
+                Throwable cause = exception;
+                while ((cause = cause.getCause()) != null) {
+                    if (ExitException.class.isInstance(cause)) {
+                        exitCode.set(((ExitException) cause).getExitCode());
+                        break;
+                    }
+                }
+                if (exitCode.get() == ExitException.SCRIPT_ENGINE_ERROR) {
+                    LOGGER.error("Error during script execution", exception);
+                }
+            }
             scriptLogger.warn(singleSeparator);
             scriptLogger.warn(singleSeparator);
-            scriptLogger.warn("Result for script " + script.getFilename());
+            var scriptExitCodeDescription = (exitCode.get() == ExitException.SCRIPT_ENGINE_ERROR)
+                ? " (Script engine error)"
+                : " (Script exit code)";
+            scriptLogger.warn("Script exited with code " + exitCode.get() + scriptExitCodeDescription);
+            scriptLogger.warn(singleSeparator);
+            scriptLogger.warn("Result for script " + script.getPath());
             scriptLogger.warn("__RESULT__:");
             scriptLogger.warn(valueHolder.get());
             scriptLogger.warn("Evaluation return:");
@@ -190,7 +212,7 @@ public final class EngineImpl implements Engine {
             return evalReturn;
         });
 
-        return new ScriptResult(script, valueHolder, evalResult);
+        return new ScriptResult(script, exitCode.get(), valueHolder, evalResult);
     }
 }
 

@@ -1,7 +1,8 @@
 package com.itquasar.multiverse.jmacro.commands.base
 
-import com.itquasar.multiverse.jmacro.core.exceptions.JMacroException
+import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 
+// FIXME add something similar to catch/finally
 class Result {
 
     private def value

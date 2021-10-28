@@ -14,7 +14,7 @@ class BaseExampleScriptSpec extends Specification implements Constants {
     def "Run Base Example script"() {
         when:
         def configuration = Configuration.load();
-        configuration.setScriptRepository(new BaseExampleRepository())
+        configuration.setGlobalScriptRepository(new BaseExampleRepository())
         def jMacroCore = new JMacroCore(configuration)
         def source = getClass()
             .getResource("/scripts/example/base-example.groovy")
@@ -28,7 +28,7 @@ class BaseExampleScriptSpec extends Specification implements Constants {
 
         then:
         script.metadata.name == "Base Example"
-        script.filename == "base-example.groovy"
+        script.path == "base-example.groovy"
         script.location == '/scripts/example/base-example.groovy'
         script.source == source
         scriptResult.result.get() == "RESULT"

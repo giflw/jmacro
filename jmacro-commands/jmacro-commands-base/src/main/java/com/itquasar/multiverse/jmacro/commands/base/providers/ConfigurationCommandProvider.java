@@ -16,6 +16,11 @@ public class ConfigurationCommandProvider implements CommandProvider<Configurati
     }
 
     @Override
+    public Class<Configuration> getCommandType() {
+        return Configuration.class;
+    }
+
+    @Override
     @SneakyThrows
     public Configuration getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
         return new Configuration();

@@ -15,6 +15,11 @@ public class PauseCommandProvider implements CommandProvider<PauseCommandProvide
     }
 
     @Override
+    public Class<Pause> getCommandType() {
+        return Pause.class;
+    }
+
+    @Override
     public Pause getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
         return new Pause(scriptEngine);
     }

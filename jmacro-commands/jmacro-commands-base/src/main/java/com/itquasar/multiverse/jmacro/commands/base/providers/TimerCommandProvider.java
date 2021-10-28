@@ -14,6 +14,11 @@ public class TimerCommandProvider implements CommandProvider<Timer> {
     }
 
     @Override
+    public Class<Timer> getCommandType() {
+        return Timer.class;
+    }
+
+    @Override
     public Timer getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
         return new Timer(scriptEngine);
     }

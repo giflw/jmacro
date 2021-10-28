@@ -1,15 +1,13 @@
 package com.itquasar.multiverse.jmacro.core;
 
 import com.itquasar.multiverse.jmacro.core.configuration.Configuration;
-import com.itquasar.multiverse.jmacro.core.jmx.JMXBeanIFace;
 import com.itquasar.multiverse.jmacro.core.jmx.JMXManagement;
 import lombok.Getter;
 import lombok.SneakyThrows;
 
 import java.net.InetAddress;
-import java.util.Random;
 
-public class JMacroCore {
+public final class JMacroCore {
 
     @Getter
     private Configuration configuration;
@@ -24,9 +22,6 @@ public class JMacroCore {
     private JMXManagement jmxManagement;
 
     @Getter
-    private SPILoader SPILoader;
-
-    @Getter
     private Engine engine;
 
     public JMacroCore() {
@@ -34,14 +29,13 @@ public class JMacroCore {
     }
 
     public JMacroCore(Configuration configuration) {
-        this(configuration, "localhost", new Random().nextInt(9000, 10000));
+        this(configuration, null, 0);
     }
 
-    public JMacroCore(Configuration configuration, String serverAddress, int jmxPort) {
+    public JMacroCore(final Configuration configuration, final String serverAddress, final int jmxPort) {
         this.serverAddress = serverAddress;
         this.jmxPort = jmxPort;
         this.configuration = configuration != null ? configuration : Configuration.load();
-        this.SPILoader = new SPILoader(JMXBeanIFace.class);
     }
 
     @SneakyThrows
@@ -49,6 +43,8 @@ public class JMacroCore {
         this.engine = new EngineImpl(this);
         if (this.serverAddress != null && this.jmxPort > 0) {
             this.jmxManagement = new JMXManagement(InetAddress.getByName(this.serverAddress), this.jmxPort);
+            // FIXME
+            // var SPILoader = new SPILoader(JMXBeanIFace.class);
         }
     }
 

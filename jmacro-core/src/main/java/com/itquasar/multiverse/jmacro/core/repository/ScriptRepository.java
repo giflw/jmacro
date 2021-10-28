@@ -19,15 +19,22 @@ public interface ScriptRepository {
 
     List<Script> list(boolean reload);
 
+    default URI pathToLocation(String path) {
+        URI uri = URI.create(path);
+        return uri.getScheme() != null ? uri : getUri().resolve(path);
+    }
+
     default Optional<Script> get(String uuidOrLocation) {
         try {
             return this.get(UUID.fromString(uuidOrLocation));
         } catch (IllegalArgumentException ex) {
-            return this.get(URI.create(uuidOrLocation));
+            return this.get(pathToLocation(uuidOrLocation));
         }
     }
+
 
     Optional<Script> get(UUID uuid);
 
     Optional<Script> get(URI location);
+
 }

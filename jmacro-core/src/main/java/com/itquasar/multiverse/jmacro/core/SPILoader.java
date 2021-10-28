@@ -17,6 +17,10 @@ public final class SPILoader<S> {
     private final Class<S> type;
     private final ServiceLoader<S> loader;
 
+    public static <S> Iterator<S> load(Class<S> type) {
+        return new SPILoader<S>(type).load();
+    }
+
     public SPILoader(Class<S> type) {
         this.type = type;
         this.loader = ServiceLoader.load(type);

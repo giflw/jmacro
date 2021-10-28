@@ -14,6 +14,11 @@ public class RaiseCommandProvider implements CommandProvider<RaiseCommandProvide
     }
 
     @Override
+    public Class<Raise> getCommandType() {
+        return Raise.class;
+    }
+
+    @Override
     public Raise getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
         return new Raise();
     }
@@ -21,7 +26,7 @@ public class RaiseCommandProvider implements CommandProvider<RaiseCommandProvide
     public static class Raise {
 
         void call(String message) {
-            throw new JMacroException(this, message);
+            throw new JMacroException(message);
         }
 
     }

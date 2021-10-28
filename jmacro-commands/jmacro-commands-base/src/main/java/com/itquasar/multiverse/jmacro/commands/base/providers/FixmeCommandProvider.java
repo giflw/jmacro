@@ -14,6 +14,11 @@ public class FixmeCommandProvider implements CommandProvider<FixmeCommandProvide
     }
 
     @Override
+    public Class<Fixme> getCommandType() {
+        return Fixme.class;
+    }
+
+    @Override
     public Fixme getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
         return new Fixme();
     }

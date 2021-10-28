@@ -1,7 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands
 
 import com.itquasar.multiverse.jmacro.core.GroovyCommand
-import com.itquasar.multiverse.jmacro.core.exceptions.JMacroException
+import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import com.kstruct.gethostname4j.Hostname
 import groovy.transform.ToString
 import org.apache.hc.client5.http.auth.AuthScope
@@ -11,10 +11,10 @@ import org.apache.hc.client5.http.auth.NTCredentials
 import org.apache.hc.client5.http.auth.UsernamePasswordCredentials
 import org.apache.hc.core5.http.protocol.HttpContext
 
-@ToString(includePackage = false, includeFields = true, includeNames = true, includes = ['user', 'impersonate', 'hostname', 'domain', 'token', 'apiKey'])
+@ToString(includePackage = false, includeFields = true, includeNames = true, includes = ['login', 'impersonate', 'hostname', 'domain'])
 class Credentials implements GroovyCommand, CredentialsProvider {
 
-    String user
+    String login
     String password
     String hostname = Hostname.getHostname()
     String domain
@@ -32,11 +32,11 @@ class Credentials implements GroovyCommand, CredentialsProvider {
     }
 
     boolean exists() {
-        return (user && password) || token || (user && apiKey)
+        return (login && password) || token || (login && apiKey)
     }
 
     void fill(Map<String, ?> values) {
-        user = values.user
+        login = values.user
         password = values.password
         domain = values.domain
         impersonate = values.impersonate
@@ -49,11 +49,11 @@ class Credentials implements GroovyCommand, CredentialsProvider {
     }
 
     String getFullUser() {
-        return "$domain\\$user"
+        return "$domain\\$login"
     }
 
     String getImpersonate() {
-        return impersonate ?: user
+        return impersonate ?: login
     }
 
     String getFullImpersonate() {
@@ -65,9 +65,9 @@ class Credentials implements GroovyCommand, CredentialsProvider {
         log.debug("Auth scope: $authScope")
         switch (authScope.schemeName) {
             case 'NTLM':
-                return new NTCredentials(user, password.toCharArray(), hostname, domain)
+                return new NTCredentials(login, password.toCharArray(), hostname, domain)
         }
-        return new UsernamePasswordCredentials(user, password.toCharArray())
+        return new UsernamePasswordCredentials(login, password.toCharArray())
     }
 
 }

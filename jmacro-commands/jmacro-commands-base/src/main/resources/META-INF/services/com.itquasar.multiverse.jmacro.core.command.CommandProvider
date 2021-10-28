@@ -2,7 +2,6 @@ com.itquasar.multiverse.jmacro.commands.base.providers.AttemptCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.ConfigurationCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.ConstantsCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.CredentialsCommandProvider
-com.itquasar.multiverse.jmacro.commands.base.providers.DebuggerCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.ExitCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.FixmeCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.IncludeCommandProvider

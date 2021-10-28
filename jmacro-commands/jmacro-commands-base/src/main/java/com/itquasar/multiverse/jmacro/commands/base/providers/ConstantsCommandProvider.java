@@ -20,6 +20,11 @@ public class ConstantsCommandProvider implements CommandProvider<Map<String, Con
     }
 
     @Override
+    public Class<Map<String, ConstantsCommand>> getCommandType() {
+        return (Class<Map<String, ConstantsCommand>>) (Class<?>) Map.class;
+    }
+
+    @Override
     @SneakyThrows
     public Map<String, ConstantsCommand> getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
         Bindings bindings = scriptEngine.getContext().getBindings(ScriptContext.ENGINE_SCOPE);

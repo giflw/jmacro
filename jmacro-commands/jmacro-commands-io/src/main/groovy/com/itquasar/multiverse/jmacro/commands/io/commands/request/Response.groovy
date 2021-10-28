@@ -2,7 +2,7 @@ package com.itquasar.multiverse.jmacro.commands.io.commands.request
 
 
 import com.itquasar.multiverse.jmacro.commands.io.InputParsers
-import com.itquasar.multiverse.jmacro.core.exceptions.JMacroException
+import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
 import groovy.util.logging.Log4j2

@@ -4,7 +4,7 @@ package com.itquasar.multiverse.jmacro.commands.io.commands
 import com.itquasar.multiverse.jmacro.commands.io.InputParsers
 import com.itquasar.multiverse.jmacro.commands.io.OutputSerializers
 import com.itquasar.multiverse.jmacro.core.GroovyCommand
-import com.itquasar.multiverse.jmacro.core.exceptions.JMacroException
+import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.ToString

@@ -14,6 +14,11 @@ public class BrowserCommandProvider implements CommandProvider<Browser> {
     }
 
     @Override
+    public Class<Browser> getCommandType() {
+        return Browser.class;
+    }
+
+    @Override
     public Browser getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
         return new Browser(scriptEngine.getContext());
     }

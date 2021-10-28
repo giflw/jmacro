@@ -1,6 +1,8 @@
 /*
 START METADATA
 name: TIMER
+infos:
+    expectedResult: true
 END METADATA
  */
 

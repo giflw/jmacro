@@ -72,6 +72,9 @@ class LocalDateTimeWrapper {
         if (this.localDateTime.hasProperty(name)) {
             return this.localDateTime."$name"
         }
+        if (this.respondsTo(name, null)) {
+            return this."$name"()
+        }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(name)
         return formatter.format(localDateTime)
     }

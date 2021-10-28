@@ -10,6 +10,11 @@ import spock.lang.Specification
 
 class EngineImplSpec extends Specification implements Constants {
 
+    def setupSpec() {
+        // FIXME better report header or remove
+        reportHeader "<h2>Using default engine</h2>"
+    }
+
     def "parse metadata"(extension) {
         given:
         def source = getClass()
@@ -23,7 +28,7 @@ class EngineImplSpec extends Specification implements Constants {
         Script script = scriptResult.script
 
         expect:
-        script.filename == "hello-world.${extension}"
+        script.path == "hello-world.${extension}"
         script.location == '/scripts/hello-world'
         script.source == source
         scriptResult.result.get() == "Hello world from ${extension.toUpperCase()}"

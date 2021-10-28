@@ -12,6 +12,12 @@ public interface CommandProvider<C> {
     String getName();
 
     /**
+     *
+     * @return Command type.
+     */
+    Class<C> getCommandType();
+
+    /**
      * Create command new instance when called.
      *
      * @param jMacroCore   Core to use in this command.

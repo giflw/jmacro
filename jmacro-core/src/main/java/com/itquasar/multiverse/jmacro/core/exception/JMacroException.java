@@ -2,23 +2,39 @@ package com.itquasar.multiverse.jmacro.core.exception;
 
 public final class JMacroException extends RuntimeException {
 
-    public JMacroException(String message) {
+    /**
+     * @param message Exception message.
+     */
+    public JMacroException(final String message) {
         super(message);
     }
 
-    public JMacroException(String message, Throwable throwable) {
+    /**
+     * @param message   Exception message
+     * @param throwable Related {@link Throwable}.
+     */
+    public JMacroException(final String message, final Throwable throwable) {
         super(message, throwable);
     }
 
-    public JMacroException(Object script, String message) {
-        super(message(script.getClass(), message));
+    /**
+     * @param context Exception context object (any object related to exception).
+     * @param message Exception message.
+     */
+    public JMacroException(final Object context, final String message) {
+        super(message(context.getClass(), message));
     }
 
-    public JMacroException(Object command, String message, Throwable cause) {
-        super(message(command.getClass(), message), cause);
+    /**
+     * @param context Exception context object (any object related to exception).
+     * @param message Exception message.
+     * @param throwable Related {@link Throwable}.
+     */
+    public JMacroException(final Object context, final String message, final Throwable throwable) {
+        super(message(context.getClass(), message), throwable);
     }
 
-    static String message(Class clazz, String message) {
+    private static String message(final Class clazz, final String message) {
         return clazz.getSimpleName() + ": " + message;
     }
 

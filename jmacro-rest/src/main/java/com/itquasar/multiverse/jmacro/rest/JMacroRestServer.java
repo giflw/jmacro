@@ -28,12 +28,12 @@ public class JMacroRestServer {
         app.get("/management", (ctx) -> ctx.result(jmacro.getJmxManagement().getClient().getBeanNames().toString()));
 
         app.get("/scripts", (ctx) -> ctx.json(
-            configuration.getScriptRepository().list())
+            configuration.getGlobalScriptRepository().list())
         );
 
         app.get("/scripts/{search}", (ctx) -> {
             var search = ctx.pathParam("search");
-            var script = configuration.getScriptRepository().get(search);
+            var script = configuration.getGlobalScriptRepository().get(search);
             if (script.isPresent()) {
                 ctx.json(script.get());
             } else {

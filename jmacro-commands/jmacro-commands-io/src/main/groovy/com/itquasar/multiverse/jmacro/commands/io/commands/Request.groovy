@@ -5,7 +5,7 @@ import com.itquasar.multiverse.jmacro.commands.io.commands.request.Headers
 import com.itquasar.multiverse.jmacro.commands.io.commands.request.Response
 import com.itquasar.multiverse.jmacro.commands.io.commands.request.ResponseAndContentHttpresponseHandler
 import com.itquasar.multiverse.jmacro.core.GroovyCommand
-import com.itquasar.multiverse.jmacro.core.exceptions.JMacroException
+import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.ToString

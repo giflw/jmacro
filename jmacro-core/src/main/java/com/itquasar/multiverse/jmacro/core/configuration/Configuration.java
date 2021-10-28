@@ -1,7 +1,6 @@
 package com.itquasar.multiverse.jmacro.core.configuration;
 
 import com.itquasar.multiverse.jmacro.core.repository.GlobalScriptRepository;
-import com.itquasar.multiverse.jmacro.core.repository.ScriptRepository;
 import com.itquasar.multiverse.jmacro.core.repository.ScriptRepositoryFactory;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
@@ -54,7 +53,7 @@ public final class Configuration {
     /**
      * Global repository proxy for all registered repositories.
      */
-    private ScriptRepository scriptRepository;
+    private GlobalScriptRepository globalScriptRepository;
 
     private Configuration() {
     }
@@ -92,7 +91,7 @@ public final class Configuration {
      * Initializes intances objects from loaded configuration.
      */
     private void init() {
-        this.scriptRepository = new GlobalScriptRepository(
+        this.globalScriptRepository = new GlobalScriptRepository(
             ScriptRepositoryFactory.create(this.repositories, this)
         );
     }

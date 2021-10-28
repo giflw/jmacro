@@ -14,6 +14,11 @@ public class TodoCommandProvider implements CommandProvider<TodoCommandProvider.
     }
 
     @Override
+    public Class<Todo> getCommandType() {
+        return Todo.class;
+    }
+
+    @Override
     public Todo getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
         return new Todo();
     }

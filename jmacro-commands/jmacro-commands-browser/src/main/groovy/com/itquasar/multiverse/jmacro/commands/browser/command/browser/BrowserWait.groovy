@@ -2,7 +2,7 @@ package com.itquasar.multiverse.jmacro.commands.browser.command.browser
 
 
 import com.itquasar.multiverse.jmacro.commands.browser.command.Browser
-import com.itquasar.multiverse.jmacro.core.exceptions.JMacroException
+import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileStatic
 import org.openqa.selenium.By
 import org.openqa.selenium.support.ui.ExpectedCondition

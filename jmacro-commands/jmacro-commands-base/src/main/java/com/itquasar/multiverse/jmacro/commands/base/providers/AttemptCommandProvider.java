@@ -5,6 +5,7 @@ import com.itquasar.multiverse.jmacro.commands.base.commands.ConstantsCommand;
 import com.itquasar.multiverse.jmacro.core.JMacroCore;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.command.LoggingCommand;
+import com.itquasar.multiverse.jmacro.core.exception.ExitException;
 
 import javax.script.ScriptEngine;
 import java.util.List;
@@ -19,6 +20,11 @@ public class AttemptCommandProvider implements CommandProvider<AttemptCommandPro
     @Override
     public String getName() {
         return "attempt";
+    }
+
+    @Override
+    public Class<Attempt> getCommandType() {
+        return Attempt.class;
     }
 
     @Override
@@ -44,13 +50,14 @@ public class AttemptCommandProvider implements CommandProvider<AttemptCommandPro
             }
             try {
                 return Result.ok(callable.call());
+            } catch (ExitException exitException) {
+                throw exitException;
             } catch (Throwable ex) {
                 if (verbosity == QUIET) {
                     this.getLogger().error("Attempt failed: " + ex.getMessage());
                 } else {
                     this.getLogger().error("Attempt failed: " + ex.getMessage(), ex);
                 }
-
                 return Result.error(ex);
             }
         }

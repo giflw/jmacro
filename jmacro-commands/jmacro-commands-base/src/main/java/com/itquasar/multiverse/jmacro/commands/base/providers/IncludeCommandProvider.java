@@ -16,9 +16,14 @@ public class IncludeCommandProvider implements CommandProvider<Include> {
     }
 
     @Override
+    public Class<Include> getCommandType() {
+        return Include.class;
+    }
+
+    @Override
     public Include getCommand(@NonNull JMacroCore jMacroCore, @NonNull ScriptEngine scriptEngine) {
         return new Include(
-            jMacroCore == null ? null : (GlobalScriptRepository) jMacroCore.getConfiguration().getScriptRepository(),
+            jMacroCore == null ? null : (GlobalScriptRepository) jMacroCore.getConfiguration().getGlobalScriptRepository(),
             scriptEngine
         );
     }
