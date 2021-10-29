@@ -4,7 +4,9 @@ import com.itquasar.multiverse.jmacro.core.JMacroCore
 import com.itquasar.multiverse.jmacro.core.configuration.Configuration
 import com.itquasar.multiverse.jmacro.core.repository.GlobalScriptRepository
 import com.itquasar.multiverse.jmacro.core.repository.ScriptRepository
-import com.itquasar.multiverse.jmacro.core.script.*
+import com.itquasar.multiverse.jmacro.core.script.Metadata
+import com.itquasar.multiverse.jmacro.core.script.Script
+import com.itquasar.multiverse.jmacro.core.script.ScriptResult
 import spock.lang.Specification
 import spock.lang.Stepwise
 
@@ -29,7 +31,7 @@ class BaseExampleScriptSpec extends Specification implements Constants {
         then:
         script.metadata.name == "Base Example"
         script.path == "base-example.groovy"
-        script.location == '/scripts/example/base-example.groovy'
+        script.location == URI.create('/scripts/example/base-example.groovy')
         script.source == source
         scriptResult.result.get() == "RESULT"
     }
@@ -47,7 +49,7 @@ class BaseExampleRepository extends GlobalScriptRepository {
 
             @Override
             URI getUri() {
-                return BaseExampleScriptSpec.class.name
+                return URI.create("memory:/" + BaseExampleScriptSpec.class.name)
             }
 
             @Override

@@ -29,7 +29,7 @@ class EngineImplSpec extends Specification implements Constants {
 
         expect:
         script.path == "hello-world.${extension}"
-        script.location == '/scripts/hello-world'
+        script.location == URI.create('/scripts/hello-world')
         script.source == source
         scriptResult.result.get() == "Hello world from ${extension.toUpperCase()}"
 

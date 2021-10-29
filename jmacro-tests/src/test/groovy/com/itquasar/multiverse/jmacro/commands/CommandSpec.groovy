@@ -23,7 +23,7 @@ class CommandSpec extends Specification {
         configuration.repository = new GlobalScriptRepository(
             new CommandTestRepository(
                 CommandSpec.class.getResource(
-                    "/" + CommandSpec.class.packageName.replace(".", "/") + "/"
+                    "/" + CommandSpec.class.packageName.replace(".", "/") + "/scripts/"
                 ).toURI()
             )
         )
@@ -41,7 +41,7 @@ class CommandSpec extends Specification {
         Script script = loadScript(provider.name)
         ScriptResult result = core.engine.execute(script)
 
-        then: "Not exception thrown"
+        then: "No exception thrown"
         noExceptionThrown()
 
         and: "Script object is populated"

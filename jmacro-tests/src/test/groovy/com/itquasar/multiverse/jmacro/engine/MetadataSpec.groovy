@@ -2,9 +2,7 @@ package com.itquasar.multiverse.jmacro.engine
 
 import com.itquasar.multiverse.jmacro.core.script.Metadata
 import spock.lang.Specification
-import spock.lang.Stepwise
 
-@Stepwise
 class MetadataSpec extends Specification implements Constants {
 
     def "Parse Metadata"(extension) {
