@@ -53,7 +53,7 @@ export default {
       this.viewSource = !this.viewSource
     },
     runOnce() {
-      console.log("RUN ONCE", this.script.location)
+      fetch(`/scripts/${this.script.uuid}/execute/once`)
     },
     runLoop() {
       console.log("RUN LOOP", this.script.location)

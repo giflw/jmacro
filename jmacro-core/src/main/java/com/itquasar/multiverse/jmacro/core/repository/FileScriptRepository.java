@@ -10,7 +10,12 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 
 // FIXME change to FileSystem repository, add Artifact super type for Script
 @Log4j2
@@ -25,6 +30,11 @@ public class FileScriptRepository extends ScriptRepositoryAbstract {
 
     @Override
     public List<Script> list(boolean reload) {
+        System.out.println("========================");
+        System.out.println("========================");
+        System.out.println(path);
+        System.out.println("========================");
+        System.out.println("========================");
         if (this.getCache() == null || reload) {
             this.setCache(
                 Arrays.stream(this.path.toFile().listFiles())
@@ -38,7 +48,7 @@ public class FileScriptRepository extends ScriptRepositoryAbstract {
                             return new Script(
                                 Metadata.extractMetadata(source),
                                 file.getName(),
-                                file.getAbsolutePath(),
+                                "file:///" + file.getAbsolutePath().replace("\\", "/"),
                                 source
                             );
                         } catch (IOException e) {
@@ -49,7 +59,7 @@ public class FileScriptRepository extends ScriptRepositoryAbstract {
                     .toList()
             );
         }
-        return this.getCache();
+        return this.getCache() != null ? this.getCache() : Collections.EMPTY_LIST;
     }
 
     @Override

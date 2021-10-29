@@ -9,10 +9,11 @@ public interface CommandProvider<C> {
     /**
      * @return Command name to be used to invoke in script.
      */
-    String getName();
+    default String getName() {
+        return this.getClass().getSimpleName().replace(CommandProvider.class.getSimpleName(), "").toLowerCase();
+    }
 
     /**
-     *
      * @return Command type.
      */
     Class<C> getCommandType();

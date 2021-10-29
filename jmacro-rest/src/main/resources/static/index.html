@@ -40,15 +40,58 @@
 </section>
 
 <section v-cloack>
-    <div class="container" id="app">
+    <div class="container">
         <div class="columns">
-            <div class="column">
-                <jm-script :key="script.location" :script="script" v-for="script in scripts"></jm-script>
+            <div class="column" id="app">
+                <p v-if="scripts.length === 0">No scripts found</p>
+                <template v-else>
+                    <jm-script :key="script.location" :script="script" v-for="script in scripts"></jm-script>
+                </template>
             </div>
-            <div class="column">LOGS/IMPORTANT MESSAGES</div>
+            <div class="column">LOGS/IMPORTANT MESSAGES
+
+                <div id="chatControls">
+                    <input id="message" placeholder="Type your message">
+                    <button id="send">Send</button>
+                </div>
+                <ul id="userlist"> <!-- Built by JS --> </ul>
+                <div id="chat">    <!-- Built by JS --> </div>
+                <script>
+                    // small helper function for selecting element by id
+                    let id = id => document.getElementById(id);
+
+                    //Establish the WebSocket connection and set up event handlers
+                    let ws = new WebSocket("ws://" + location.hostname + ":" + location.port + "/chat");
+                    ws.onmessage = msg => updateChat(msg);
+                    ws.onclose = () => alert("WebSocket connection closed");
+
+                    // Add event listeners to button and input field
+                    id("send").addEventListener("click", () => sendAndClear(id("message").value));
+                    id("message").addEventListener("keypress", function (e) {
+                        if (e.keyCode === 13) { // Send message if enter is pressed in input field
+                            sendAndClear(e.target.value);
+                        }
+                    });
+
+                    function sendAndClear(message) {
+                        if (message !== "") {
+                            ws.send(message);
+                            id("message").value = "";
+                        }
+                    }
+
+                    function updateChat(msg) { // Update chat-panel and list of connected users
+                        let data = JSON.parse(msg.data);
+                        id("chat").insertAdjacentHTML("afterbegin", data.userMessage);
+                        id("userlist").innerHTML = data.userlist.map(user => "<li>" + user + "</li>").join("");
+                    }
+                </script>
+
+            </div>
         </div>
     </div>
 </section>
+
 
 <script type="module">
     import * as Vue from "/webjars/vue/3.2.19/dist/vue.esm-browser.prod.js"
