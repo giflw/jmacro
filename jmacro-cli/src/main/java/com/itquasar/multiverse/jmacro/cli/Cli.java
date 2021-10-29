@@ -1,8 +1,12 @@
 package com.itquasar.multiverse.jmacro.cli;
 
+import com.itquasar.multiverse.jmacro.commands.base.commands.Credentials;
 import com.itquasar.multiverse.jmacro.core.JMacroCore;
+import com.itquasar.multiverse.jmacro.core.script.ScriptResult;
 import lombok.ToString;
 
+import javax.script.Bindings;
+import javax.script.ScriptContext;
 import java.util.concurrent.Callable;
 
 import static picocli.CommandLine.Command;
@@ -13,8 +17,8 @@ import static picocli.CommandLine.Parameters;
 @Command(name = "jmacro-cli", showAtFileInUsageHelp = true, mixinStandardHelpOptions = true, version = "1.0")
 public class Cli implements Callable<CliResult> {
 
-    @Option(names = {"-u", "--user"}, description = "User name")
-    private String user = System.getProperty("user.name");
+    @Option(names = {"-l", "--login"}, description = "Login")
+    private String login;
 
     @Option(names = {"-p", "--password"}, description = "Password", interactive = true, arity = "0..1", prompt = "Password:")
     private char[] password;
@@ -40,6 +44,15 @@ public class Cli implements Callable<CliResult> {
         }
 
         var script = core.getConfiguration().getRepository().get(this.path);
-        return new CliResult(core.getEngine().execute(script.get()));
+        ScriptResult scriptResult = core.getEngine().execute(
+            script.get(),
+            scriptEngine -> {
+                Bindings bindings = scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
+                Credentials credentials = (Credentials) bindings.get("credentials");
+                credentials.setLogin(login);
+                credentials.setPassword(password);
+            }
+        );
+        return new CliResult(scriptResult);
     }
 }

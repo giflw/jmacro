@@ -45,7 +45,11 @@ class Credentials implements GroovyCommand, CredentialsProvider {
     }
 
     String getPassword() {
-        return password.toString().trim()
+        return password
+    }
+
+    void setPassword(char[] password) {
+        this.password = String.valueOf(password)
     }
 
     String getFullUser() {

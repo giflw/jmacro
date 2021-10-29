@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.script.Bindings;
 import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import javax.script.SimpleScriptContext;
@@ -23,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 import static javax.script.ScriptContext.ENGINE_SCOPE;
 import static javax.script.ScriptContext.GLOBAL_SCOPE;
@@ -103,7 +105,7 @@ public final class EngineImpl implements Engine {
     }
 
     @Override
-    public ScriptResult execute(final Script script) {
+    public ScriptResult execute(final Script script, final Consumer<ScriptEngine> preExecHook) {
         var extension = script.getPath().substring(script.getPath().lastIndexOf('.') + 1);
         var engine = engines.get(extension).getScriptEngine();
 
@@ -181,6 +183,7 @@ public final class EngineImpl implements Engine {
             scriptLogger.warn(singleSeparator);
             Object evalReturn = null;
             try {
+                preExecHook.accept(engine);
                 evalReturn = engine.eval(script.getSource());
             } catch (Throwable exception) {
                 exitCode.set(ExitException.SCRIPT_ENGINE_ERROR);
