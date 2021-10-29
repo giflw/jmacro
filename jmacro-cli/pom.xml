@@ -70,6 +70,12 @@
                 </executions>
                 <configuration>
                     <mainClass>com.itquasar.multiverse.jmacro.cli.Launcher</mainClass>
+                    <systemProperties>
+                        <systemProperty>
+                            <key>basedir</key>
+                            <value>${project.basedir}/../jmacro-tests/src/test/resources/com/itquasar/multiverse/jmacro/commands</value>
+                        </systemProperty>
+                    </systemProperties>
                 </configuration>
             </plugin>
         </plugins>

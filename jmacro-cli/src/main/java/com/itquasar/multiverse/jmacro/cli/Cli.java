@@ -30,7 +30,7 @@ public class Cli implements Callable<CliResult> {
         var core = new JMacroCore();
         core.start();
         if (debug) {
-            System.out.println(core.getConfiguration());
+            System.out.println(core.getConfiguration().serialize());
             core.getConfiguration().getRepository().getRepositories().forEach((repo) -> {
                 System.out.println(repo.getId() + ":" + repo.getUri());
                 repo.list().forEach(script -> {

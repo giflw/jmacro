@@ -52,7 +52,6 @@ public class GlobalScriptRepository extends ScriptRepositoryAbstract {
     public Optional<Script> get(UUID uuid) {
         var matches = this.repositories.stream()
             .map(repository -> repository.get(uuid))
-            .peek(System.out::println)
             .filter(Optional::isPresent)
             .toList();
         return matches.size() > 0 ? matches.get(0) : Optional.empty();

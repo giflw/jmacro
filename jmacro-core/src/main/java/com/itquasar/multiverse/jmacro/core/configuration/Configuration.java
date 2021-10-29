@@ -2,6 +2,7 @@ package com.itquasar.multiverse.jmacro.core.configuration;
 
 import com.itquasar.multiverse.jmacro.core.repository.GlobalScriptRepository;
 import com.itquasar.multiverse.jmacro.core.repository.ScriptRepositoryFactory;
+import com.itquasar.multiverse.jmacro.core.util.RepresenterNonNull;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 import org.yaml.snakeyaml.Yaml;
@@ -58,6 +59,11 @@ public final class Configuration {
     private Configuration() {
     }
 
+    private Configuration(List<String> repositories, Map<String, String> options) {
+        this.repositories = repositories;
+        this.options = options;
+    }
+
     /**
      * Loads configuration from predefined paths.
      *
@@ -94,6 +100,14 @@ public final class Configuration {
         this.repository = new GlobalScriptRepository(
             ScriptRepositoryFactory.create(this.repositories, this)
         );
+    }
+
+    public String serialize() {
+        return new Yaml(new RepresenterNonNull()).dumpAsMap(this.copy());
+    }
+
+    private Configuration copy() {
+        return new Configuration(repositories, options);
     }
 
     /**

@@ -1,15 +1,12 @@
 package com.itquasar.multiverse.jmacro.core.script;
 
 import com.itquasar.multiverse.jmacro.core.exception.FieldAlreadySet;
+import com.itquasar.multiverse.jmacro.core.util.RepresenterNonNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
-import org.yaml.snakeyaml.introspector.Property;
-import org.yaml.snakeyaml.nodes.NodeTuple;
-import org.yaml.snakeyaml.nodes.Tag;
-import org.yaml.snakeyaml.representer.Representer;
 
 import java.util.Collections;
 import java.util.Map;
@@ -61,18 +58,7 @@ public class Metadata {
     }
 
     public String dump() {
-        Representer representer = new Representer() {
-            @Override
-            protected NodeTuple representJavaBeanProperty(Object javaBean, Property property, Object propertyValue, Tag customTag) {
-                // if value of property is null, ignore it.
-                if (propertyValue == null) {
-                    return null;
-                } else {
-                    return super.representJavaBeanProperty(javaBean, property, propertyValue, customTag);
-                }
-            }
-        };
-        return new Yaml(representer).dumpAsMap(this.copy());
+        return new Yaml(new RepresenterNonNull()).dumpAsMap(this.copy());
     }
 
     public void setName(String name) {
@@ -139,5 +125,6 @@ public class Metadata {
                 infoString
             );
     }
+
 }
 

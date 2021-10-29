@@ -23,16 +23,15 @@ public interface ScriptRepositoryFactory {
 
         return uris.stream()
             .map(uri -> configuration != null ? configuration.replaceVars(uri).replace("\\", "/") : uri)
-            .peek(System.out::println)
             .map(URI::create)
+            .map(URI::normalize)
             .map(uri -> {
                     String id = uri.getScheme();
                     URI suburi = URI.create(uri.getSchemeSpecificPart());
                     var factory = repositoryFactoryMap.get(suburi.getScheme());
-                    return factory.create(id, suburi);
+                    return factory.create(id, suburi.normalize());
                 }
             )
-            .peek(System.out::println)
             .toList();
     }
 

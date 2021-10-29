@@ -24,7 +24,7 @@ public final class SPILoader<S> {
     public SPILoader(Class<S> type) {
         this.type = type;
         this.loader = ServiceLoader.load(type);
-        this.loader.stream().map(this::logMessage).forEach(LOGGER::info);
+        this.loader.stream().map(this::logMessage).forEach(LOGGER::debug);
     }
 
     private String logMessage(ServiceLoader.Provider<S> provider) {

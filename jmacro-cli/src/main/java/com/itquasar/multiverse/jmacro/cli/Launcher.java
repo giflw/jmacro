@@ -8,9 +8,7 @@ public class Launcher {
         CommandLine commandLine = new CommandLine(new Cli());
         int exitCode = commandLine.execute("-p", "foo", "include.groovy", "-d");
         CliResult cliResult = commandLine.getExecutionResult();
-        if (cliResult != null) {
-            System.out.println(cliResult);
-        }
+        exitCode = exitCode > 0 ? exitCode : cliResult.scriptResult().getExitCode();
         System.exit(exitCode);
     }
 }

@@ -61,7 +61,7 @@ class CommandSpec extends Specification {
 
     static Script loadScript(String basename) {
         String filename = basename + ".groovy"
-        URL location = CommandSpec.class.getResource("/" + CommandSpec.class.packageName.replace(".", "/") + "/" + filename)
+        URL location = CommandSpec.class.getResource("/" + CommandSpec.class.packageName.replace(".", "/") + "/scripts/" + filename)
         if (location == null) {
             throw new IllegalArgumentException("Could not find $filename")
         }
