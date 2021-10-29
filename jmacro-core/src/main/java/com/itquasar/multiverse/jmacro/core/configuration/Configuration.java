@@ -53,7 +53,7 @@ public final class Configuration {
     /**
      * Global repository proxy for all registered repositories.
      */
-    private GlobalScriptRepository globalScriptRepository;
+    private GlobalScriptRepository repository;
 
     private Configuration() {
     }
@@ -91,7 +91,7 @@ public final class Configuration {
      * Initializes intances objects from loaded configuration.
      */
     private void init() {
-        this.globalScriptRepository = new GlobalScriptRepository(
+        this.repository = new GlobalScriptRepository(
             ScriptRepositoryFactory.create(this.repositories, this)
         );
     }

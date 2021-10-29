@@ -1,16 +1,19 @@
 package com.itquasar.multiverse.jmacro.core.repository;
 
 import com.itquasar.multiverse.jmacro.core.script.Script;
+import lombok.Getter;
 import lombok.SneakyThrows;
 
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public class GlobalScriptRepository extends ScriptRepositoryAbstract {
 
+    @Getter
     private final List<ScriptRepository> repositories;
 
     public GlobalScriptRepository(ScriptRepository... repositories) {
@@ -25,7 +28,7 @@ public class GlobalScriptRepository extends ScriptRepositoryAbstract {
     @SneakyThrows
     public GlobalScriptRepository(String id, URI uri, List<ScriptRepository> repositories) {
         super(id, uri);
-        this.repositories = repositories;
+        this.repositories = Collections.unmodifiableList(repositories);
     }
 
     @Override
@@ -39,7 +42,7 @@ public class GlobalScriptRepository extends ScriptRepositoryAbstract {
     @Override
     public Optional<Script> get(String uuidOrLocation) {
         return repositories.stream()
-            .map(it -> it.get(uuidOrLocation))
+            .map(it -> it.get(it.pathToLocation(uuidOrLocation)))
             .filter(Optional::isPresent)
             .findFirst()
             .get();

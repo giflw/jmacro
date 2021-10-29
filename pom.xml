@@ -51,8 +51,9 @@
         <module>jmacro-bom</module>
         <module>jmacro-docs</module>
         <module>jmacro-core</module>
-        <module>jmacro-rest</module>
         <module>jmacro-commands</module>
+        <module>jmacro-cli</module>
+        <module>jmacro-rest</module>
         <module>jmacro-tests</module>
     </modules>
 
@@ -83,7 +84,15 @@
                                 <artifactId>lombok</artifactId>
                                 <version>${lombok.version}</version>
                             </path>
+                            <path>
+                                <groupId>info.picocli</groupId>
+                                <artifactId>picocli-codegen</artifactId>
+                                <version>4.6.1</version>
+                            </path>
                         </annotationProcessorPaths>
+                        <compilerArgs>
+                            <arg>-Aproject=${project.groupId}/${project.artifactId}</arg>
+                        </compilerArgs>
                     </configuration>
                 </plugin>
 
@@ -230,11 +239,11 @@
                 </executions>
             </plugin>
             <!-- FIXME create profile -->
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-checkstyle-plugin</artifactId>-->
-<!--                <version>3.1.2</version>-->
-<!--            </plugin>-->
+            <!--            <plugin>-->
+            <!--                <groupId>org.apache.maven.plugins</groupId>-->
+            <!--                <artifactId>maven-checkstyle-plugin</artifactId>-->
+            <!--                <version>3.1.2</version>-->
+            <!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-toolchains-plugin</artifactId>

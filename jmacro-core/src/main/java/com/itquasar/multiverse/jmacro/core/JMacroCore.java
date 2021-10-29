@@ -21,7 +21,6 @@ public final class JMacroCore {
     @Getter
     private JMXManagement jmxManagement;
 
-    @Getter
     private Engine engine;
 
     public JMacroCore() {
@@ -36,6 +35,14 @@ public final class JMacroCore {
         this.serverAddress = serverAddress;
         this.jmxPort = jmxPort;
         this.configuration = configuration != null ? configuration : Configuration.load();
+    }
+
+    // FIXME is this really a good option (auto start core)???
+    public Engine getEngine() {
+        if (engine == null) {
+            this.start();
+        }
+        return engine;
     }
 
     @SneakyThrows

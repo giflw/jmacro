@@ -23,6 +23,7 @@ public interface ScriptRepositoryFactory {
 
         return uris.stream()
             .map(uri -> configuration != null ? configuration.replaceVars(uri).replace("\\", "/") : uri)
+            .peek(System.out::println)
             .map(URI::create)
             .map(uri -> {
                     String id = uri.getScheme();
@@ -30,7 +31,9 @@ public interface ScriptRepositoryFactory {
                     var factory = repositoryFactoryMap.get(suburi.getScheme());
                     return factory.create(id, suburi);
                 }
-            ).toList();
+            )
+            .peek(System.out::println)
+            .toList();
     }
 
     String getType();

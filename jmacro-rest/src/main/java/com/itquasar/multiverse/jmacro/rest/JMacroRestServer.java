@@ -49,11 +49,11 @@ public class JMacroRestServer {
 
         app.get("/management", (ctx) -> ctx.result(jmacro.getJmxManagement().getClient().getBeanNames().toString()));
 
-        app.get("/scripts", (ctx) -> ctx.json(configuration.getGlobalScriptRepository().list()));
+        app.get("/scripts", (ctx) -> ctx.json(configuration.getRepository().list()));
 
         app.get("/scripts/{uuid}/execute", (ctx) -> {
             String uuid = ctx.pathParam("uuid");
-            Optional<Script> script = configuration.getGlobalScriptRepository().get(UUID.fromString(uuid));
+            Optional<Script> script = configuration.getRepository().get(UUID.fromString(uuid));
             script.ifPresentOrElse(
                 (value) -> {
                     try {
@@ -69,7 +69,7 @@ public class JMacroRestServer {
 
         app.get("/scripts/{search}", (ctx) -> {
             var search = ctx.pathParam("search");
-            var script = configuration.getGlobalScriptRepository().get(search);
+            var script = configuration.getRepository().get(search);
             if (script.isPresent()) {
                 ctx.json(script.get());
             } else {

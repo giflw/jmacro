@@ -2,7 +2,8 @@ repositories:
     #- "m2:file:///$user.home$/.m2"
     #- "service:file:///C:/Users/glutz/Workspace/jmacro/jmacro-core/src/main/resources/META-INF/services"
     #- "hello-world:file:///C:/Users/glutz/Workspace/jmacro/jmacro-engine/src/test/resources/scripts/hello-world"
-    - "jmacro-tests:file:///C/Users/glutz/Workspace/jmacro/jmacro-tests/src/test/resources/com/itquasar/multiverse/jmacro/commands/"
+    #- "jmacro-tests:file:///C:/Users/glutz/Workspace/jmacro/jmacro-tests/src/test/resources/com/itquasar/multiverse/jmacro/commands/"
+    - "jmacro-tests:file:/$user.home$/Workspace/jmacro/jmacro-tests/src/test/resources/com/itquasar/multiverse/jmacro/commands/"
 options:
     foo: bar
     john: doe

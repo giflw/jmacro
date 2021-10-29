@@ -20,7 +20,7 @@ class CommandSpec extends Specification {
 
     void setup() {
         def configuration = new Configuration()
-        configuration.globalScriptRepository = new GlobalScriptRepository(
+        configuration.repository = new GlobalScriptRepository(
             new CommandTestRepository(
                 CommandSpec.class.getResource(
                     "/" + CommandSpec.class.packageName.replace(".", "/") + "/"
