@@ -7,18 +7,22 @@ import lombok.Setter;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class ScriptRepositoryAbstract implements ScriptRepository {
 
+    @NonNull
     private final URI uri;
 
     @Getter
+    @NonNull
     private final String id;
 
     @Getter(AccessLevel.PROTECTED)
     @Setter(AccessLevel.PROTECTED)
-    private List<Script> cache = null;
+    @NonNull
+    private List<Script> cache = Collections.EMPTY_LIST;
 
     public ScriptRepositoryAbstract(@NonNull String id, @NonNull URI uri) {
         this.id = id;

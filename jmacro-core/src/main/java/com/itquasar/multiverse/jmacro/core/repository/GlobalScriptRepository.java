@@ -45,16 +45,16 @@ public class GlobalScriptRepository extends ScriptRepositoryAbstract {
             .map(it -> it.get(it.pathToLocation(uuidOrLocation)))
             .filter(Optional::isPresent)
             .findFirst()
-            .get();
+            .orElseGet(Optional::empty);
     }
 
     @Override
     public Optional<Script> get(UUID uuid) {
-        var matches = this.repositories.stream()
+        return this.repositories.stream()
             .map(repository -> repository.get(uuid))
             .filter(Optional::isPresent)
-            .toList();
-        return matches.size() > 0 ? matches.get(0) : Optional.empty();
+            .findFirst()
+            .orElseGet(Optional::empty);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class GlobalScriptRepository extends ScriptRepositoryAbstract {
             .map(it -> it.get(location))
             .filter(Optional::isPresent)
             .findFirst()
-            .get();
+            .orElseGet(Optional::empty);
     }
 
     public Optional<Script> get(String repoId, String script) {
@@ -72,7 +72,7 @@ public class GlobalScriptRepository extends ScriptRepositoryAbstract {
             .map(repo -> repo.get(script))
             .filter(Optional::isPresent)
             .findFirst()
-            .get();
+            .orElseGet(Optional::empty);
     }
 
 

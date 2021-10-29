@@ -70,6 +70,10 @@
                 </executions>
                 <configuration>
                     <mainClass>com.itquasar.multiverse.jmacro.cli.Launcher</mainClass>
+                    <arguments>
+                        <argument>run</argument>
+                        <argument>example.groovy</argument>
+                    </arguments>
                     <systemProperties>
                         <systemProperty>
                             <key>basedir</key>

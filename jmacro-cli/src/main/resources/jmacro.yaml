@@ -1,2 +1,3 @@
 repositories:
     - "embedded:file:/$basedir$/scripts/"
+    - "home:file:/$user.home$/scripts/"

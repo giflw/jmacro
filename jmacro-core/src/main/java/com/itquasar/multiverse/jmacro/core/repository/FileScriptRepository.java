@@ -26,30 +26,34 @@ public class FileScriptRepository extends ScriptRepositoryAbstract {
 
     @Override
     public List<Script> list(boolean reload) {
-        if (this.getCache() == null || reload) {
-            File[] array = new File(this.getUri().getPath()).listFiles();
-            this.setCache(
-                Arrays.stream(array)
-                    .filter(File::isFile)
-                    .filter(File::canRead)
-                    .filter(file -> Configuration.SUPPORTED_EXTENSIONS.contains(
-                        file.getName().substring(file.getName().lastIndexOf(".") + 1)
-                    )).map(file -> {
-                        try {
-                            var source = Files.readString(file.toPath());
-                            return new Script(
-                                Metadata.extractMetadata(source),
-                                file.getName(),
-                                "file:///" + file.getAbsolutePath().replace("\\", "/"),
-                                source
-                            );
-                        } catch (IOException e) {
-                            LOGGER.error("Error reading file " + file, e);
-                            return null;
-                        }
-                    }).filter(Objects::nonNull)
-                    .toList()
-            );
+        if (this.getCache().size() == 0 || reload) {
+            File repoPath = new File(this.getUri().getPath());
+            if (repoPath.exists()) {
+                this.setCache(
+                    Arrays.stream(repoPath.listFiles())
+                        .filter(File::isFile)
+                        .filter(File::canRead)
+                        .filter(file -> Configuration.SUPPORTED_EXTENSIONS.contains(
+                            file.getName().substring(file.getName().lastIndexOf(".") + 1)
+                        )).map(file -> {
+                            try {
+                                var source = Files.readString(file.toPath());
+                                return new Script(
+                                    Metadata.extractMetadata(source),
+                                    file.getName(),
+                                    "file:///" + file.getAbsolutePath().replace("\\", "/"),
+                                    source
+                                );
+                            } catch (IOException e) {
+                                LOGGER.error("Error reading file " + file, e);
+                                return null;
+                            }
+                        }).filter(Objects::nonNull)
+                        .toList()
+                );
+            } else {
+                LOGGER.error("Repository " + repoPath + "does not exists.");
+            }
         }
         return this.getCache() != null ? this.getCache() : Collections.EMPTY_LIST;
     }
@@ -63,9 +67,6 @@ public class FileScriptRepository extends ScriptRepositoryAbstract {
 
     @Override
     public Optional<Script> get(URI location) {
-        System.out.println(">>>>> " + location);
-        System.out.println(">>>>> " + getUri());
-        System.out.println(">>>>> " + getUri().relativize(location));
         // when relativizes and is the same base uri as the repository, only relative path is kept on uri
         if (!this.getUri().relativize(location).equals(location)) {
             return this.getCache().stream().filter(it -> it.getLocation().equals(location)).findFirst();
