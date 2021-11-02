@@ -10,11 +10,6 @@ import spock.lang.Specification
 
 class EngineImplSpec extends Specification implements Constants {
 
-    def setupSpec() {
-        // FIXME better report header or remove
-        reportHeader "<h2>Using default engine</h2>"
-    }
-
     def "parse metadata"(extension) {
         given:
         def source = getClass()
