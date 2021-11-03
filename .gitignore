@@ -1,5 +1,5 @@
 tools/
-
+*.exe
 .jython_cache
 
 # Created by https://www.toptal.com/developers/gitignore/api/maven,intellij,java,linux,windows
