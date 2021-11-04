@@ -4,7 +4,7 @@ module jmacro.commands.terminal {
     requires org.apache.logging.log4j;
     requires org.checkerframework.checker.qual;
     requires org.apache.groovy;
-    requires j3270;
+    requires tn3270j;
 
     requires java.desktop;
     requires java.scripting;

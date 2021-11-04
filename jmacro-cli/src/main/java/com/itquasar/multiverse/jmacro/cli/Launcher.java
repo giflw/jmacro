@@ -11,9 +11,10 @@ public class Launcher {
         core.start();
 
         CommandLine commandLine = null;
-        int exitCode = 0;
+        // FIXME default value != 0
+        int exitCode = 2;
         try {
-            commandLine = new CommandLine(new Cli(new JMacroCore()));
+            commandLine = new CommandLine(new Cli(core));
 
             exitCode = commandLine.execute(args);
 

@@ -36,7 +36,7 @@ class CommandSpec extends Specification {
 //        if (SystemUtils.IS_OS_WINDOWS) {
 //            command = "hercules/windows/${arch}/hercules.exe"
 //        }
-
+//
 //        new Thread({
 //            Path mainframeDir = toolsDir.resolve("hercules-mvs-3.8-turnkey-4-system-tk4-update-8/mainframe")
 //            var processBuilder = new ProcessBuilder()
@@ -57,13 +57,13 @@ class CommandSpec extends Specification {
 //                }
 //            }
 //        }).start()
-
-
+//
+//
 //        while (!mainframeReady) {
 //            println "Waiting mainframe be ready"
 //            Thread.sleep(1000)
 //        }
-
+//
 //        println('Hercules mainframe started!')
     }
 

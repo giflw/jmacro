@@ -52,7 +52,7 @@ public class FileScriptRepository extends ScriptRepositoryAbstract {
                         .toList()
                 );
             } else {
-                LOGGER.error("Repository " + repoPath + "does not exists.");
+                LOGGER.error("Repository " + repoPath + " does not exists.");
             }
         }
         return this.getCache() != null ? this.getCache() : Collections.EMPTY_LIST;

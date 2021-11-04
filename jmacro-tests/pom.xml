@@ -56,6 +56,10 @@
             <groupId>com.itquasar.multiverse.jmacro.commands</groupId>
             <artifactId>jmacro-commands-base</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.itquasar.multiverse.jmacro.commands</groupId>
+            <artifactId>jmacro-commands-terminal</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -133,6 +137,13 @@
                         <groupId>com.googlecode.maven-download-plugin</groupId>
                         <artifactId>download-maven-plugin</artifactId>
                         <version>1.6.7</version>
+                        <configuration>
+                            <unpack>true</unpack>
+                            <outputDirectory>${project.parent.basedir}/tools/</outputDirectory>
+                            <alwaysVerifyChecksum>true</alwaysVerifyChecksum>
+                            <failOnError>true</failOnError>
+                            <cacheDirectory>${project.parent.basedir}/tools/</cacheDirectory>
+                        </configuration>
                         <executions>
                             <execution>
                                 <id>mainframe-get</id>
@@ -140,18 +151,34 @@
                                 <goals>
                                     <goal>wget</goal>
                                 </goals>
+                                <configuration>
+                                    <url>https://github.com/giflw/hercules-mvs-3.8-turnkey-4-system/archive/refs/tags/tk4-update-8.tar.gz</url>
+                                    <outputFileName>hercules-mvs-3.8-turnkey-4-system.tar.gz</outputFileName>
+                                    <md5>f60f505ca8372c76f78adfd8cc7ca7f8</md5>
+                                </configuration>
                             </execution>
                         </executions>
-                        <configuration>
-                            <url>https://github.com/giflw/hercules-mvs-3.8-turnkey-4-system/archive/refs/tags/tk4-update-8.tar.gz</url>
-                            <unpack>true</unpack>
-                            <outputDirectory>${project.parent.basedir}/tools/</outputDirectory>
-                            <outputFileName>hercules-mvs-3.8-turnkey-4-system.tar.gz</outputFileName>
-                            <md5>f60f505ca8372c76f78adfd8cc7ca7f8</md5>
-                            <alwaysVerifyChecksum>true</alwaysVerifyChecksum>
-                            <failOnError>true</failOnError>
-                            <cacheDirectory>${project.parent.basedir}/tools/</cacheDirectory>
-                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>3.0.0</version>
+                        <executions>
+                            <execution>
+                                <id>x3270-unpack</id>
+                                <phase>generate-test-resources</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <echo message="Unzipping wc3270 x32" />
+                                        <unzip src="../tools/hercules-mvs-3.8-turnkey-4-system-tk4-update-8/resources/wc3270-4.1ga10-noinstall-32.zip" dest="../tools/x3270/windows/32/" />
+                                        <echo message="Unzipping wc3270 x64" />
+                                        <unzip src="../tools/hercules-mvs-3.8-turnkey-4-system-tk4-update-8/resources/wc3270-4.1ga10-noinstall-64.zip" dest="../tools/x3270/windows/64/" />
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
                     </plugin>
                     <plugin>
                         <artifactId>maven-clean-plugin</artifactId>
@@ -167,7 +194,9 @@
                                         <fileset>
                                             <directory>${project.parent.basedir}/tools/</directory>
                                             <includes>
-                                                <include>*.zip</include>
+                                                <include>**/*.zip</include>
+                                                <include>**/*.tar.gz</include>
+                                                <include>**/*.tgz</include>
                                             </includes>
                                             <followSymlinks>false</followSymlinks>
                                         </fileset>
