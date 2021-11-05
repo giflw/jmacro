@@ -1,10 +1,8 @@
 package com.itquasar.multiverse.jmacro.commands.io.commands.request
 
-
 import com.itquasar.multiverse.jmacro.commands.io.InputParsers
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileStatic
-import groovy.transform.ToString
 import groovy.util.logging.Log4j2
 import org.apache.hc.client5.http.fluent.Content
 import org.apache.hc.core5.http.ContentType
@@ -16,7 +14,6 @@ import static org.apache.hc.core5.http.ContentType.*
 
 @Log4j2
 @CompileStatic
-@ToString(includePackage = false, includeNames = true, includeFields = true, includes = ['name', 'type'])
 class Response implements InputParsers {
 
     static final Map<Integer, String> HTTP_STATUS = Collections.unmodifiableMap([
@@ -116,13 +113,16 @@ class Response implements InputParsers {
 
     int statusCode = -1
     ContentType contentType
-    private String raw
     InputStream inputStream
 
+    @Override
+    String getText() {
+        return new String(this.inputStream.readAllBytes(), charset)
+    }
+
+    // do not read in advance, let parse be called by script
     Response(String name, HttpResponse httpResponse, Content content) {
-        this.raw = raw
         this.name = name
-        this.data = null
         this.statusCode = httpResponse.code
         this.contentType = content.type
         this.type = content.type?.mimeType
@@ -130,9 +130,6 @@ class Response implements InputParsers {
         this.inputStream = content.asStream()
 
         switch (this.type) {
-            case APPLICATION_OCTET_STREAM.mimeType:
-                this.data = this.inputStream
-                break
             case APPLICATION_XML.mimeType:
                 this.data = this.getXml()
                 break
@@ -146,19 +143,13 @@ class Response implements InputParsers {
                 this.data = this.getHtml()
                 break
             case TEXT_PLAIN.mimeType:
-                this.data = raw
+                this.data = text
                 break
+            case APPLICATION_OCTET_STREAM.mimeType:
             default:
-                this.data = raw
+                this.data = this.inputStream
                 log.warn("Content-Type $type unknow!")
         }
-    }
-
-    String getRaw() {
-        if (this.raw == null) {
-            this.raw = inputStream?.getText(charset)
-        }
-        return this.raw
     }
 
     boolean isSuccess() {
@@ -169,8 +160,8 @@ class Response implements InputParsers {
         throw new JMacroException("Server response returned $statusCode: ${HTTP_STATUS[statusCode]}")
     }
 
-    def dataOrRaise() {
-        return success ? data : raise()
+    def getData() {
+        return success ? InputParsers.super.data : raise()
     }
 
 }

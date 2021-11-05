@@ -27,6 +27,11 @@
             </dependency>
             <dependency>
                 <groupId>com.itquasar.multiverse.jmacro.commands</groupId>
+                <artifactId>jmacro-commands-io</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.itquasar.multiverse.jmacro.commands</groupId>
                 <artifactId>jmacro-commands-terminal</artifactId>
                 <version>${project.version}</version>
             </dependency>

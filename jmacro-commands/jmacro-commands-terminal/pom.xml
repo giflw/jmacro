@@ -50,9 +50,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.filipesimoes</groupId>
-            <artifactId>j3270</artifactId>
-            <version>1.0.2</version>
+            <groupId>com.itquasar.multiverse.tn3270j</groupId>
+            <artifactId>tn3270j</artifactId>
+            <version>0.2.0</version>
         </dependency>
     </dependencies>
 

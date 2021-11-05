@@ -10,15 +10,22 @@ import com.itquasar.multiverse.jmacro.core.script.Metadata
 import com.itquasar.multiverse.jmacro.core.script.Script
 import com.itquasar.multiverse.jmacro.core.script.ScriptResult
 import groovy.util.logging.Log4j2
+import org.junit.Assume
 import spock.lang.Specification
 import spock.lang.Unroll
 
 @Log4j2
 class CommandSpec extends Specification {
 
-    static Process mainframe;
+    /**
+     * name of the command to run only one test.
+     * Should be null on repository
+     */
+    static String singleCommandTest = null
 
-    static boolean mainframeReady=  false
+    static Process mainframe
+
+    static boolean mainframeReady = false
 
     JMacroCore core
 
@@ -90,13 +97,7 @@ class CommandSpec extends Specification {
 
     void setup() {
         def configuration = new Configuration()
-        configuration.repository = new GlobalScriptRepository(
-            new CommandTestRepository(
-                CommandSpec.class.getResource(
-                    "/" + CommandSpec.class.packageName.replace(".", "/") + "/scripts/"
-                ).toURI()
-            )
-        )
+        configuration.repository = new GlobalScriptRepository(new CommandTestRepository(CommandSpec.class.getResource("/" + CommandSpec.class.packageName.replace(".", "/") + "/scripts/").toURI()))
         core = new JMacroCore(configuration)
         core.start()
     }
@@ -108,6 +109,9 @@ class CommandSpec extends Specification {
     @Unroll
     void "Command [#provider.name] of type [#provider.commandType.simpleName]"(CommandProvider provider) {
         when: "Script found"
+        if (provider.name.equals("tn3270")) {
+            Assume.assumeNotNull(System.getProperty("tn3270j.url"))
+        }
         Script script = loadScript(provider.name)
         ScriptResult result = core.engine.execute(script)
 
@@ -126,7 +130,9 @@ class CommandSpec extends Specification {
         script.metadata.infos['expectedResult'] == result.result.get()
 
         where: "Command providers loaded throw Java SPI"
-        provider << SPILoader.load(CommandProvider.class).toList()
+        provider << SPILoader.load(CommandProvider.class).toList().findAll {
+            singleCommandTest ? it.name == singleCommandTest : true
+        }
     }
 
     static Script loadScript(String basename) {
@@ -142,7 +148,7 @@ class CommandSpec extends Specification {
 
     static class CommandTestRepository implements ScriptRepository {
 
-        private final URI uri;
+        private final URI uri
 
         CommandTestRepository(URI uri) {
             this.uri = uri
@@ -155,15 +161,13 @@ class CommandSpec extends Specification {
 
         @Override
         URI getUri() {
-            return this.uri;
+            return this.uri
         }
 
         @Override
         List<Script> list(boolean reload) {
-            return List.of(
-                loadScript("include"),
-                loadScript("include-aux")
-            )
+            return List.of(loadScript("include"),
+                loadScript("include-aux"))
         }
 
         @Override

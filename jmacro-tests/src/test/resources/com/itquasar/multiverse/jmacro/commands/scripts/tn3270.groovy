@@ -1,4 +1,5 @@
 import com.itquasar.multiverse.tn3270j.WaitMode
+import org.junit.AssumptionViolatedException
 
 /*
 START METADATA
@@ -9,8 +10,10 @@ END METADATA
  */
 
 
+def url = System.getProperty("tn3270j.url")
+
 tn3270 {
-    open '127.0.0.1:3270'
+    open url
     logger.warn screenshot()
     attempt(QUIET) {
         wait 30, WaitMode.InputField

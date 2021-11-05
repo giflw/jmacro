@@ -22,6 +22,6 @@ class ResponseAndContentHttpresponseHandler implements HttpClientResponseHandler
     }
 
     Content handleEntity(HttpEntity entity) throws IOException {
-        return entity != null && entity.contentType != null ? new Content(EntityUtils.toByteArray(entity), ContentType.parse(entity.getContentType())) : Content.NO_CONTENT;
+        return entity != null && entity.contentType != null ? new Content(EntityUtils.toByteArray(entity), ContentType.parse(entity.getContentType())) : Content.NO_CONTENT
     }
 }

@@ -25,6 +25,7 @@ public class FileScriptRepository extends ScriptRepositoryAbstract {
     }
 
     @Override
+    // FIXME list recursive!!!!
     public List<Script> list(boolean reload) {
         if (this.getCache().size() == 0 || reload) {
             File repoPath = new File(this.getUri().getPath());
@@ -74,4 +75,3 @@ public class FileScriptRepository extends ScriptRepositoryAbstract {
         return Optional.empty();
     }
 }
-
