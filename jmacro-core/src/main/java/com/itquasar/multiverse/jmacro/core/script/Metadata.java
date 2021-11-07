@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Data
-@ToString(exclude = "source")
+@ToString()
 @NoArgsConstructor
 public class Metadata {
 

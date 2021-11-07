@@ -105,7 +105,7 @@ public final class EngineImpl implements Engine {
     }
 
     @Override
-    public ScriptResult execute(final Script script, final Consumer<ScriptEngine> preExecHook) {
+    public ScriptResult execute(final Script script, final Consumer<ScriptEngine> preExecHook, final Consumer<ScriptEngine> postExecHook) {
         var extension = script.getPath().substring(script.getPath().lastIndexOf('.') + 1);
         var engine = engines.get(extension).getScriptEngine();
 
@@ -159,7 +159,7 @@ public final class EngineImpl implements Engine {
 
         engineScope.put("__SCRIPT__", script);
         engineScope.put("__METADATA__", script.getMetadata());
-        engineScope.put("__CONTEXT__", script.getMetadata());
+        engineScope.put("__CONTEXT__", engineScope);
         engineScope.put("__RESULT__", valueHolder);
 
         if (this.languageAdaptors.containsKey(extension)) {

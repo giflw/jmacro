@@ -21,7 +21,7 @@ class CommandSpec extends Specification {
      * name of the command to run only one test.
      * Should be null on repository
      */
-    static String singleCommandTest = null
+    static String singleCommandTest = System.getProperty('commandSpec.command')
 
     static Process mainframe
 
@@ -167,7 +167,7 @@ class CommandSpec extends Specification {
         @Override
         List<Script> list(boolean reload) {
             return List.of(loadScript("include"),
-                loadScript("include-aux"))
+                loadScript("library"))
         }
 
         @Override

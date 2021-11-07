@@ -6,13 +6,30 @@ infos:
 END METADATA
  */
 
-echo "Before include-aux"
+echo "Before library"
 
-include "include-aux"
+include "IncludeAux1", "IncludeAux2" from "library"
 
-echo "After include-aux"
+echo "After library"
 
-__RESULT__(included_func(INCLUDED_PROP))
+// FIXME throw exception if succeds
+attempt (QUIET) {
+    println "Trying SCRIPT_CONTEXT"
+    println SCRIPT_CONTEXT
+}
+
+// FIXME throw exception if succeds
+attempt (QUIET) {
+    println "Trying included_func(INCLUDED_PROP)"
+    included_func(INCLUDED_PROP)
+}
+
+IncludeAux2.with {
+    included_func(INCLUDED_PROP)
+}
+
+
+__RESULT__(IncludeAux1.included_func(IncludeAux1.INCLUDED_PROP))
 
 
 

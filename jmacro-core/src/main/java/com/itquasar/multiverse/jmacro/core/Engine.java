@@ -12,12 +12,25 @@ public interface Engine {
     /**
      * Execute given {@link Script} and return its execution result wrapped on {@link ScriptResult}.
      *
-     * @param script   {@link Script} to execute.
+     * @param script       {@link Script} to execute.
+     * @param preExecHook  {@link Consumer} allowing access to {@link ScriptEngine} before script execution.
+     * @param postExecHook {@link Consumer} allowing access to {@link ScriptEngine} after script execution.
+     * @return {@link ScriptResult} wrapped result.
+     * @throws ScriptException if some error occurs.
+     */
+    ScriptResult execute(Script script, Consumer<ScriptEngine> preExecHook, Consumer<ScriptEngine> postExecHook) throws ScriptException;
+
+    /**
+     * Execute given {@link Script} and return its execution result wrapped on {@link ScriptResult}.
+     *
+     * @param script      {@link Script} to execute.
      * @param preExecHook {@link Consumer} allowing access to {@link ScriptEngine}.
      * @return {@link ScriptResult} wrapped result.
      * @throws ScriptException if some error occurs.
      */
-    ScriptResult execute(Script script, Consumer<ScriptEngine> preExecHook) throws ScriptException;
+    default ScriptResult execute(Script script, Consumer<ScriptEngine> preExecHook) throws ScriptException {
+        return this.execute(script, preExecHook, (scriptEngine) -> { /* NO-OP */ });
+    }
 
     /**
      * Execute script with no operation preExecHook.
