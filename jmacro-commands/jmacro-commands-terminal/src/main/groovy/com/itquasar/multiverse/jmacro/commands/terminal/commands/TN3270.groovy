@@ -2,7 +2,7 @@ package com.itquasar.multiverse.jmacro.commands.terminal.commands
 
 import com.itquasar.multiverse.jmacro.commands.terminal.commands.tn3270.Reader
 import com.itquasar.multiverse.jmacro.commands.terminal.commands.tn3270.Writer
-import com.itquasar.multiverse.jmacro.core.GroovyCommand
+import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import com.itquasar.multiverse.tn3270j.TN3270j
 import com.itquasar.multiverse.tn3270j.TN3270jFactory
 import com.itquasar.multiverse.tn3270j.WaitMode
@@ -11,25 +11,44 @@ import groovy.util.logging.Log4j2
 import java.nio.file.Path
 
 @Log4j2
-class TN3270 implements GroovyCommand, AutoCloseable {
+class TN3270 implements AutoCloseable {
 
-    private final TN3270j tn3270j
     private boolean opened = false
+    private TN3270j tn3270j = null
 
-    TN3270() {
-        // FIXME
-        Path toolsDir = Path.of(System.getProperty('basedir')).resolve('../tools')
-        boolean isWindows = System.getProperty('os.name').startsWith("Windows")
-        String arch = System.getProperty("os.arch").contains("64") ? "64" : "32"
-        this.tn3270j = TN3270jFactory.create(
-            "3270/j3270",
-            new ProcessBuilder(
-                toolsDir.resolve(
-                    "x3270/" + (isWindows ? 'windows' : 'linux') + "/$arch/" + (isWindows ? 'ws3270.exe' : 's3270')
-                ).toString()
-            ),
-            WaitMode.Seconds
-        )
+    // FIXME refactor to wrapper class to allow multiple tn3270 sessions in same script
+    private def start(WaitMode waitMode) {
+        if (this.tn3270j == null) {
+            // FIXME
+            Path toolsDir = Path.of(System.getProperty('basedir')).resolve('../tools')
+            boolean isWindows = System.getProperty('os.name').startsWith("Windows")
+            String arch = System.getProperty("os.arch").contains("64") ? "64" : "32"
+            this.tn3270j = TN3270jFactory.create(
+                "3270/j3270",
+                new ProcessBuilder(
+                    toolsDir.resolve(
+                        "x3270/" + (isWindows ? 'windows' : 'linux') + "/$arch/" + (isWindows ? 'ws3270.exe' : 's3270')
+                    ).toString()
+                ),
+                waitMode
+            )
+        }
+    }
+
+    def call(Closure closure) {
+        return call(WaitMode.Seconds, closure)
+    }
+
+    def call(WaitMode waitMode, Closure closure) {
+        if(this.tn3270j != null) {
+            throw new JMacroException("tn3270j already started. Cannot change default wait mode.")
+        }
+
+        start(waitMode)
+        closure.delegate = this
+        closure.resolveStrategy = Closure.DELEGATE_FIRST
+        closure()
+        this
     }
 
     def open(String... hostnames) {
