@@ -66,7 +66,7 @@ class Request {
      * @return HTTP header value
      */
     def propertyMissing(String name) {
-        return this.headers[name]
+        return this.headers[name.replace('_', '-')]
     }
 
     /**
@@ -76,7 +76,7 @@ class Request {
      * @return HTTP header value
      */
     def propertyMissing(String name, def arg) {
-        this.headers[name] = args
+        this.headers[name.replace('_', '-')] = args
     }
 
     /**
@@ -93,9 +93,9 @@ class Request {
             this.httpRequest = HTTPFluentRequest.create(method, url)
             return this
         } else {
-            body.invokeMethod(name, args)
+            return body.invokeMethod(name, args)
         }
-        throw new JMacroException(this, "HTTP Methods should be uppercase: GET, POST, etc")
+        throw new JMacroException(this, "HTTP Methods should be uppercase: GET, POST, etc. $name given.")
     }
 
     /**

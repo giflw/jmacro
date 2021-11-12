@@ -2,22 +2,32 @@ package com.itquasar.multiverse.jmacro.commands.terminal.commands
 
 import com.itquasar.multiverse.jmacro.commands.terminal.commands.tn3270.Reader
 import com.itquasar.multiverse.jmacro.commands.terminal.commands.tn3270.Writer
+import com.itquasar.multiverse.jmacro.core.command.LoggingCommand
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import com.itquasar.multiverse.tn3270j.TN3270j
 import com.itquasar.multiverse.tn3270j.TN3270jFactory
 import com.itquasar.multiverse.tn3270j.WaitMode
 import groovy.util.logging.Log4j2
+import org.apache.logging.log4j.Logger
 
+import javax.script.Bindings
+import javax.script.ScriptEngine
 import java.nio.file.Path
 
 @Log4j2
-class TN3270 implements AutoCloseable {
+class TN3270 extends LoggingCommand implements AutoCloseable {
 
-    private boolean opened = false
+    private final Bindings bindings
+
     private TN3270j tn3270j = null
 
+    TN3270(ScriptEngine scriptEngine, Bindings bindings) {
+        super(scriptEngine)
+        this.bindings = bindings
+    }
+
     // FIXME refactor to wrapper class to allow multiple tn3270 sessions in same script
-    private def start(WaitMode waitMode) {
+    def _init(WaitMode waitMode = WaitMode.Seconds) {
         if (this.tn3270j == null) {
             // FIXME
             Path toolsDir = Path.of(System.getProperty('basedir')).resolve('../tools')
@@ -40,43 +50,46 @@ class TN3270 implements AutoCloseable {
     }
 
     def call(WaitMode waitMode, Closure closure) {
-        if(this.tn3270j != null) {
-            throw new JMacroException("tn3270j already started. Cannot change default wait mode.")
-        }
-
-        start(waitMode)
+        this._init(waitMode)
         closure.delegate = this
         closure.resolveStrategy = Closure.DELEGATE_FIRST
         closure()
         this
     }
 
-    def open(String... hostnames) {
-        return open(Arrays.asList(hostnames))
-    }
-
-    def open(List<String> hostnames) {
-        this.opened = true
-        for (String hostname : hostnames) {
+    def methodMissing(String name, def args) {
+        try {
+            if (args) {
+                return tn3270j."$name"(*args)
+            }
+            return tn3270j."$name"()
+        } catch (Throwable ex) {
             try {
-                log.warn("Trying to connect to $hostname.")
-                tn3270j.open(hostname)
-//                if (tn3270j.isConnected()) {
-//                    log.warn("Connected to $hostname!")
-//                    break
-//                }
-            } catch (IllegalArgumentException exception) {
-                log.error("Error connecting to $hostname", exception)
+                if (args) {
+                    return this.bindings."$name"(*args)
+                }
+                return this.bindings."$name"()
+            } catch (Throwable throwable) {
+                throw new JMacroException("methodMissing redirection error: $name ($args)", throwable)
             }
         }
     }
 
-    def methodMissing(String name, def args) {
-        return tn3270j."$name"(*args)
-    }
-
+    // FIXME this is hell
     def propertyMissing(String name) {
-        return tn3270j."$name"
+        try {
+            return WaitMode.valueOf(name)
+        } catch (IllegalArgumentException ex) {
+            try {
+                return Reader.Mode.valueOf(name)
+            } catch (IllegalArgumentException ex2) {
+                try {
+                    return bindings."$name"
+                } catch (Exception ex3){
+                    return tn3270j.send(name)
+                }
+            }
+        }
     }
 
     def propertyMissing(String name, def arg) {
@@ -84,29 +97,34 @@ class TN3270 implements AutoCloseable {
     }
 
     def write(Closure closure) {
-        closure.delegate = new Writer(this.tn3270j)
+        def writer = new Writer(this)
+        closure.delegate = writer
         closure.resolveStrategy = Closure.DELEGATE_FIRST
         closure()
+        return writer
     }
 
-    def read(Closure closure) {
-        closure.delegate = new Reader(this.tn3270j)
+//    def read(Closure closure) {
+//        read(Reader.Mode.FINAL_POSITION, closure)
+//    }
+
+    def read(Reader.Mode mode, Closure closure) {
+        def reader = new Reader(this, mode)
+        closure.delegate = reader
         closure.resolveStrategy = Closure.DELEGATE_FIRST
         closure()
+        return reader
     }
 
     @Override
-    // FIXME
-    void close() throws Exception {
-//        if (this.opened && tn3270j.isConnected()) {
-        try {
-            // FIXME implements is connected or is opened
-            tn3270j.close()
-        } catch(Throwable ex) {
-            // FIXME
-            println ex.getMessage()
+    void close() {
+        if (tn3270j != null) {
+            try {
+                tn3270j.close()
+            } catch (Throwable ex) {
+                log.error("Error closing tn3270 command", ex)
+            }
         }
-//        }
     }
 }
 
