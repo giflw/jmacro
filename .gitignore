@@ -1,4 +1,5 @@
 tools/
+.tools-cache/
 *.exe
 .jython_cache
 

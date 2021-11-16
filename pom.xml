@@ -48,6 +48,7 @@
     </properties>
 
     <modules>
+        <module>jmacro-tools</module>
         <module>jmacro-bom</module>
         <module>jmacro-docs</module>
         <module>jmacro-core</module>
