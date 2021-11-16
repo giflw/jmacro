@@ -156,12 +156,8 @@ class Response implements InputParsers {
         return this.statusCode >= 200 && this.statusCode < 400
     }
 
-    void raise() {
-        throw new JMacroException("Server response returned $statusCode: ${HTTP_STATUS[statusCode]}")
-    }
-
     def getData() {
-        return success ? InputParsers.super.data : raise()
+        return InputParsers.super.data
     }
 
 }

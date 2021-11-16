@@ -7,10 +7,12 @@ import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
 import groovy.util.logging.Log4j2
 import org.apache.hc.client5.http.HttpResponseException
+import org.apache.hc.client5.http.auth.AuthScope
 import org.apache.hc.client5.http.auth.CredentialsProvider
 import org.apache.hc.client5.http.fluent.Content
 import org.apache.hc.client5.http.fluent.Request as HTTPFluentRequest
 import org.apache.hc.client5.http.fluent.Response as HTTPFluentResponse
+import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient
 import org.apache.hc.client5.http.impl.classic.HttpClients
 import org.apache.hc.core5.http.HttpEntity
@@ -18,6 +20,7 @@ import org.apache.hc.core5.http.HttpResponse
 import org.apache.hc.core5.http.NoHttpResponseException
 
 import javax.script.ScriptContext
+import java.nio.charset.StandardCharsets
 
 /**
  * Request is used to make HTTP requests.
@@ -76,7 +79,7 @@ class Request {
      * @return HTTP header value
      */
     def propertyMissing(String name, def arg) {
-        this.headers[name.replace('_', '-')] = args
+        this.headers[name.replace('_', '-')] = arg
     }
 
     /**
@@ -154,10 +157,11 @@ class Request {
         }
 
         log.debug('Creating new response object')
+
+        def credentials = this.context.getBindings(ScriptContext.ENGINE_SCOPE).get('credentials') as CredentialsProvider
+        log.warn("HTTP Credentials: $credentials")
         CloseableHttpClient client = HttpClients.custom()
-            .setDefaultCredentialsProvider(
-                this.context.getBindings(ScriptContext.ENGINE_SCOPE).get('credentials') as CredentialsProvider
-            )
+            .setDefaultCredentialsProvider(credentials)
             .build()
         HTTPFluentResponse fluentResponse = httpRequest.execute(client)
         (httpResponse, content) = fluentResponse.handleResponse(new ResponseAndContentHttpresponseHandler()) as Tuple

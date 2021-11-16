@@ -20,11 +20,31 @@ class Writer {
             }
             return tn3270j."$name"()
         }
-
-        int row = args[0]
-        int col = args[1]
-        this.logger.info("Writing '$name' at $row x $col")
-        this.tn3270j.write(row, col, name)
+        // FIXME is there a easy way to make this log in dynamic calls?
+        if (args.length == 2) {
+            String content = name
+            int row = args[0]
+            int col = args[1]
+            this.logger.info("Writing '$content' at $row x $col")
+            return this.tn3270j.write(row, col, content)
+        }
+        if (args.length == 3) {
+            String content = name
+            int row = args[0]
+            int col = args[1]
+            int length = args[2]
+            this.logger.info("Writing '$content' at $row x $col with length $length")
+            return this.tn3270j.write(row, col, length, content)
+        }
+        if (args.length == 4) {
+            String fieldName = name
+            int row = args[0]
+            int col = args[1]
+            int length = args[2]
+            String content = args[3]
+            this.logger.info("Writing $fieldName with '$content' at $row x $col with length $length")
+            this.tn3270j.write(row, col, length, content, fieldName)
+        }
     }
 
     def propertyMissing(String name) {

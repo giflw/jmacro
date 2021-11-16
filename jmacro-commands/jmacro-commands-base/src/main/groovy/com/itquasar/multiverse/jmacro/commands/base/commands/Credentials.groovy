@@ -4,6 +4,7 @@ import com.itquasar.multiverse.jmacro.core.GroovyCommand
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import com.kstruct.gethostname4j.Hostname
 import groovy.transform.ToString
+import groovy.util.logging.Log4j2
 import org.apache.hc.client5.http.auth.AuthScope
 import org.apache.hc.client5.http.auth.Credentials as HttpCredentials
 import org.apache.hc.client5.http.auth.CredentialsProvider
@@ -12,6 +13,7 @@ import org.apache.hc.client5.http.auth.UsernamePasswordCredentials
 import org.apache.hc.core5.http.protocol.HttpContext
 
 @ToString(includePackage = false, includeFields = true, includeNames = true, includes = ['login', 'impersonate', 'hostname', 'domain'])
+@Log4j2
 class Credentials implements GroovyCommand, CredentialsProvider {
 
     String login
@@ -35,9 +37,20 @@ class Credentials implements GroovyCommand, CredentialsProvider {
         return (login && password) || token || (login && apiKey)
     }
 
+    void fill(Credentials credentials) {
+        login = credentials.login
+        password = credentials.password
+        hostname = credentials.hostname ?: this.hostname
+        domain = credentials.domain
+        impersonate = credentials.impersonate
+        token = credentials.token
+        apiKey = credentials.apiKey
+    }
+
     void fill(Map<String, ?> values) {
-        login = values.user
+        login = values.login
         password = values.password
+        hostname = values.hostname ?: this.hostname
         domain = values.domain
         impersonate = values.impersonate
         token = values.token

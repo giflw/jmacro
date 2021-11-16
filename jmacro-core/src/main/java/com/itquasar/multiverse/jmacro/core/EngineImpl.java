@@ -198,18 +198,19 @@ public final class EngineImpl implements Engine {
                     LOGGER.error("Error during script execution", exception);
                 }
             } finally {
-                for (int scope : new int[]{ENGINE_SCOPE, GLOBAL_SCOPE}) {
-                    engine.getBindings(scope).forEach((key, value) -> {
-                        if (AutoCloseable.class.isInstance(value)) {
-                            try {
-                                LOGGER.warn("Closing command " + key + " as it is AutoCloseable");
-                                ((AutoCloseable) value).close();
-                            } catch (Exception exception) {
-                                LOGGER.error("Error closing command " + key, exception);
-                            }
-                        }
-                    });
-                }
+                // FIXME only when not beeing included
+//                for (int scope : new int[]{ENGINE_SCOPE, GLOBAL_SCOPE}) {
+//                    engine.getBindings(scope).forEach((key, value) -> {
+//                        if (AutoCloseable.class.isInstance(value)) {
+//                            try {
+//                                LOGGER.warn("Closing command " + key + " as it is AutoCloseable");
+//                                ((AutoCloseable) value).close();
+//                            } catch (Exception exception) {
+//                                LOGGER.error("Error closing command " + key, exception);
+//                            }
+//                        }
+//                    });
+//                }
             }
             scriptLogger.warn(singleSeparator);
             scriptLogger.warn(singleSeparator);

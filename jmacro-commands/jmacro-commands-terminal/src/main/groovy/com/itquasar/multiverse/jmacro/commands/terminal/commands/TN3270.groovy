@@ -30,7 +30,7 @@ class TN3270 extends LoggingCommand implements AutoCloseable {
     def _init(WaitMode waitMode = WaitMode.Seconds) {
         if (this.tn3270j == null) {
             // FIXME
-            Path toolsDir = Path.of(System.getProperty('basedir')).resolve('../tools')
+            Path toolsDir = Path.of(System.getProperty('basedir')).resolve('tools')
             boolean isWindows = System.getProperty('os.name').startsWith("Windows")
             String arch = System.getProperty("os.arch").contains("64") ? "64" : "32"
             this.tn3270j = TN3270jFactory.create(
@@ -58,21 +58,19 @@ class TN3270 extends LoggingCommand implements AutoCloseable {
     }
 
     def methodMissing(String name, def args) {
-        try {
+        if (tn3270j.respondsTo(name)) {
             if (args) {
                 return tn3270j."$name"(*args)
             }
             return tn3270j."$name"()
-        } catch (Throwable ex) {
-            try {
-                if (args) {
-                    return this.bindings."$name"(*args)
-                }
-                return this.bindings."$name"()
-            } catch (Throwable throwable) {
-                throw new JMacroException("methodMissing redirection error: $name ($args)", throwable)
-            }
         }
+        if (this.bindings.respondsTo(name)) {
+            if (args) {
+                return this.bindings."$name"(*args)
+            }
+            return this.bindings."$name"()
+        }
+        throw new JMacroException("methodMissing redirection error: $name ($args)")
     }
 
     // FIXME this is hell
@@ -80,28 +78,34 @@ class TN3270 extends LoggingCommand implements AutoCloseable {
         try {
             return WaitMode.valueOf(name)
         } catch (IllegalArgumentException ex) {
-            try {
-                return Reader.Mode.valueOf(name)
-            } catch (IllegalArgumentException ex2) {
-                try {
-                    return bindings."$name"
-                } catch (Exception ex3){
-                    return tn3270j.send(name)
-                }
-            }
+            // no op
         }
+        try {
+            return Reader.Mode.valueOf(name)
+        } catch (IllegalArgumentException ex) {
+            // no op
+        }
+        if (this.bindings.hasProperty(name)) {
+            return this.bindings."$name"
+        }
+        return tn3270j.send(name)
     }
 
     def propertyMissing(String name, def arg) {
         tn3270j."$name" = arg
     }
 
+    def write(String... args) {
+        for (String arg : args) {
+            this.tn3270j.write(arg)
+        }
+    }
+
     def write(Closure closure) {
         def writer = new Writer(this)
         closure.delegate = writer
-        closure.resolveStrategy = Closure.DELEGATE_FIRST
+        closure.resolveStrategy = Closure.DELEGATE_ONLY
         closure()
-        return writer
     }
 
 //    def read(Closure closure) {

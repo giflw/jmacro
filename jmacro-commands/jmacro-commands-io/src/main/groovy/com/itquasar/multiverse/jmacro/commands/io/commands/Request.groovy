@@ -5,6 +5,7 @@ import com.itquasar.multiverse.jmacro.commands.io.commands.request.Response
 import groovy.transform.CompileDynamic
 import groovy.util.logging.Log4j2
 
+import javax.script.ScriptContext
 import javax.script.ScriptEngine
 
 /**
@@ -34,6 +35,10 @@ class Request {
 
     RequestAction call(Closure closure) {
         def action = new RequestAction(scriptEngine.getContext())
+        def requestConfig = scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE).get('configuration')?.request
+        if (requestConfig?.headers) {
+            action.headers.putAll(requestConfig.headers as Map<String, String>)
+        }
         action.call(closure)
         return action
     }

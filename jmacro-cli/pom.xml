@@ -38,6 +38,10 @@
             <groupId>com.itquasar.multiverse.jmacro.commands</groupId>
             <artifactId>jmacro-commands-io</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.itquasar.multiverse.jmacro.commands</groupId>
+            <artifactId>jmacro-commands-terminal</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -84,6 +88,35 @@
                             <value>${project.basedir}/../jmacro-tests/src/test/resources/com/itquasar/multiverse/jmacro/commands</value>
                         </systemProperty>
                     </systemProperties>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>appassembler-maven-plugin</artifactId>
+                <version>1.10</version>
+                <executions>
+                    <execution>
+                        <id>appassembler</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>assemble</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <programs>
+                        <program>
+                            <mainClass>com.itquasar.multiverse.jmacro.cli.Launcher</mainClass>
+                            <id>jmacro-cli</id>
+                        </program>
+                    </programs>
+                    <configurationDirectory>etc</configurationDirectory>
+                    <logsDirectory>logs</logsDirectory>
+                    <repositoryLayout>flat</repositoryLayout>
+                    <repositoryName>lib</repositoryName>
+                    <tempDirectory>tmp</tempDirectory>
+                    <showConsoleWindow>true</showConsoleWindow>
+                    <useWildcardClassPath>true</useWildcardClassPath>
                 </configuration>
             </plugin>
         </plugins>
