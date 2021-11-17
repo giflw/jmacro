@@ -70,7 +70,7 @@ public class FileScriptRepository extends ScriptRepositoryAbstract {
     public Optional<Script> get(URI location) {
         // when relativizes and is the same base uri as the repository, only relative path is kept on uri
         if (!this.getUri().relativize(location).equals(location)) {
-            return this.getCache().stream().filter(it -> it.getLocation().equals(location)).findFirst();
+            return this.list().stream().filter(it -> it.getLocation().equals(location)).findFirst();
         }
         return Optional.empty();
     }

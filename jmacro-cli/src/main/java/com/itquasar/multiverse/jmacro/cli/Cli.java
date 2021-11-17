@@ -24,7 +24,7 @@ import static picocli.CommandLine.ScopeType.INHERIT;
         Run.class
     }
 )
-public class Cli implements Callable<CliResult> {
+public class Cli {
 
     private final JMacroCore core;
 
@@ -35,18 +35,4 @@ public class Cli implements Callable<CliResult> {
     @Option(names = {"-d", "--debug"}, description = "Debug mode")
     private boolean debug;
 
-
-    @Override
-    public CliResult call() throws Exception {
-        if (isDebug()) {
-            System.out.println(getCore().getConfiguration().serialize());
-            getCore().getConfiguration().getRepository().getRepositories().forEach((repo) -> {
-                System.out.println(repo.getId() + ":" + repo.getUri());
-                repo.list().forEach(script -> {
-                    System.out.println(" - " + repo.pathToLocation(script.getPath()));
-                });
-            });
-        }
-        return new CliResult(null);
-    }
 }

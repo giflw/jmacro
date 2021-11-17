@@ -60,12 +60,20 @@ public class Run implements Callable<CliResult> {
         }
     }
 
-    @Parameters(arity = "0..1")
+    @Parameters(arity = "1")
     private String path;
 
     @Override
     public CliResult call() throws Exception {
-        cli.call();
+        if (cli.isDebug()) {
+            System.out.println(cli.getCore().getConfiguration().serialize());
+            cli.getCore().getConfiguration().getRepository().getRepositories().forEach((repo) -> {
+                System.out.println(repo.getId() + ":" + repo.getUri());
+                repo.list().forEach(script -> {
+                    System.out.println(" - " + repo.pathToLocation(script.getPath()));
+                });
+            });
+        }
 
         var script = cli.getCore().getConfiguration().getRepository().get(path);
 
