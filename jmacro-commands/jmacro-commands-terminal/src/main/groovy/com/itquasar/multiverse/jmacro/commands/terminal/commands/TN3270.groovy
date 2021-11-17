@@ -33,15 +33,19 @@ class TN3270 extends LoggingCommand implements AutoCloseable {
             Path toolsDir = Path.of(System.getProperty('basedir')).resolve('tools')
             boolean isWindows = System.getProperty('os.name').startsWith("Windows")
             String arch = System.getProperty("os.arch").contains("64") ? "64" : "32"
-            this.tn3270j = TN3270jFactory.create(
-                "3270/j3270",
-                new ProcessBuilder(
-                    toolsDir.resolve(
-                        "x3270/" + (isWindows ? 'windows' : 'linux') + "/$arch/" + (isWindows ? 'ws3270.exe' : 's3270')
-                    ).toString()
-                ),
-                waitMode
-            )
+            String path = 's3270'
+            if (isWindows) {
+                Path toolPath = toolsDir.resolve("x3270/windows/$arch/ws3270.exe")
+                if (toolPath.toFile().exists()) {
+                    path = toolPath.toString()
+                } else {
+                    toolPath = toolsDir.resolve("x3270/windows/32/ws3270.exe")
+                    if (toolPath.toFile().exists()) {
+                        path = toolPath.toString()
+                    }
+                }
+            }
+            this.tn3270j = TN3270jFactory.create("3270/j3270", new ProcessBuilder(path), waitMode)
         }
     }
 
