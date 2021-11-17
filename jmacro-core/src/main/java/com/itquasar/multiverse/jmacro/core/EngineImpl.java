@@ -106,6 +106,15 @@ public final class EngineImpl implements Engine {
 
     @Override
     public ScriptResult execute(final Script script, final Consumer<ScriptEngine> preExecHook, final Consumer<ScriptEngine> postExecHook) {
+        return this.executeInternal(script, preExecHook, postExecHook, true);
+    }
+
+    @Override
+    public ScriptResult executeInclusion(final Script script, final Consumer<ScriptEngine> preExecHook, final Consumer<ScriptEngine> postExecHook) {
+        return this.executeInternal(script, preExecHook, postExecHook, false);
+    }
+
+    private ScriptResult executeInternal(final Script script, final Consumer<ScriptEngine> preExecHook, final Consumer<ScriptEngine> postExecHook, boolean normalExecution) {
         var extension = script.getPath().substring(script.getPath().lastIndexOf('.') + 1);
         var engine = engines.get(extension).getScriptEngine();
 
@@ -120,7 +129,7 @@ public final class EngineImpl implements Engine {
         Bindings globalScope = context.getBindings(GLOBAL_SCOPE);
         if (globalScope == null) {
             context.setBindings(engine.createBindings(), ScriptContext.GLOBAL_SCOPE);
-            globalScope = context.getBindings(GLOBAL_SCOPE);
+//            globalScope = context.getBindings(GLOBAL_SCOPE);
         }
 
         Bindings engineScope = context.getBindings(ENGINE_SCOPE);
@@ -167,24 +176,27 @@ public final class EngineImpl implements Engine {
             this.languageAdaptors.get(extension).adapt(engine);
         }
 
+        String doubleSeparator =
+            "================================================================================";
+        String singleSeparator =
+            "--------------------------------------------------------------------------------";
+
         var exitCode = new ValueHolder<>(0);
         var evalResult = script.run(() -> {
-            String doubleSeparator =
-                "================================================================================";
-            String singleSeparator =
-                "--------------------------------------------------------------------------------";
-
-            scriptLogger.warn(doubleSeparator);
-            scriptLogger.warn(doubleSeparator);
-            scriptLogger.warn("Script " + script.getPath() + " started!");
-            Arrays.stream(script.getMetadata().getBanner().split("\n")).forEach(scriptLogger::warn);
-
-            scriptLogger.warn(singleSeparator);
-            scriptLogger.warn(singleSeparator);
+            if (normalExecution) {
+                scriptLogger.warn(doubleSeparator);
+                scriptLogger.warn(doubleSeparator);
+            }
+             if (normalExecution) {
+                Arrays.stream(script.getMetadata().getBanner().split("\n")).forEach(scriptLogger::warn);
+                scriptLogger.warn(singleSeparator);
+                scriptLogger.warn(singleSeparator);
+            }
             Object evalReturn = null;
             try {
                 preExecHook.accept(engine);
                 evalReturn = engine.eval(script.getSource());
+                postExecHook.accept(engine);
             } catch (Throwable exception) {
                 exitCode.set(ExitException.SCRIPT_ENGINE_ERROR);
                 Throwable cause = exception;
@@ -212,20 +224,24 @@ public final class EngineImpl implements Engine {
 //                    });
 //                }
             }
-            scriptLogger.warn(singleSeparator);
-            scriptLogger.warn(singleSeparator);
+
             var scriptExitCodeDescription = (exitCode.get() == ExitException.SCRIPT_ENGINE_ERROR)
                 ? " (Script engine error)"
                 : " (Script exit code)";
-            scriptLogger.warn("Script exited with code " + exitCode.get() + scriptExitCodeDescription);
-            scriptLogger.warn(singleSeparator);
-            scriptLogger.warn("Result for script " + script.getPath());
-            scriptLogger.warn("__RESULT__:");
-            scriptLogger.warn(valueHolder.get());
-            scriptLogger.warn("Evaluation return:");
-            scriptLogger.warn(evalReturn);
-            scriptLogger.warn(doubleSeparator);
-            scriptLogger.warn(doubleSeparator);
+
+            if (normalExecution) {
+                scriptLogger.warn(singleSeparator);
+                scriptLogger.warn(singleSeparator);
+                scriptLogger.warn("Script exited with code " + exitCode.get() + scriptExitCodeDescription);
+                scriptLogger.warn(singleSeparator);
+                scriptLogger.warn("Result for script " + script.getPath());
+                scriptLogger.warn("__RESULT__:");
+                scriptLogger.warn(valueHolder.get());
+                scriptLogger.warn("Evaluation return:");
+                scriptLogger.warn(evalReturn);
+                scriptLogger.warn(doubleSeparator);
+                scriptLogger.warn(doubleSeparator);
+            }
             return evalReturn;
         });
 

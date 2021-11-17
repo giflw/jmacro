@@ -57,12 +57,12 @@ public class Script {
     public <T> T run(Callable<T> callable) {
         if (this.running.compareAndSet(false, true)) {
             try {
-                LOGGER.warn("Starting script " + this.path);
+                LOGGER.warn("Starting " + this.path);
                 T call = callable.call();
                 return call;
             } finally {
                 this.running.set(false);
-                LOGGER.warn("Script " + this.path + " stopped");
+                LOGGER.warn(this.path + " finished");
             }
         } else {
             throw new IllegalStateException("Already running");

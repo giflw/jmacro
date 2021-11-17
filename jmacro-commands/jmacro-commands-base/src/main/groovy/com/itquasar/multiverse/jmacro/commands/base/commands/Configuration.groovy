@@ -19,9 +19,7 @@ class Configuration implements GroovyCommand {
             }
             this[key] = value
         }
-        println '-' * 80
         this['env'] = this['env'] ? Env.env(this['env']) : Env.env("DEV")
-        println '-' * 80
         return this
     }
 

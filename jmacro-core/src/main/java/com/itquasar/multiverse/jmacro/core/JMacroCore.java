@@ -1,6 +1,7 @@
 package com.itquasar.multiverse.jmacro.core;
 
 import com.itquasar.multiverse.jmacro.core.configuration.Configuration;
+import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.itquasar.multiverse.jmacro.core.jmx.JMXManagement;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -37,10 +38,9 @@ public final class JMacroCore {
         this.configuration = configuration != null ? configuration : Configuration.load();
     }
 
-    // FIXME is this really a good option (auto start core)???
     public Engine getEngine() {
         if (engine == null) {
-            this.start();
+            throw new JMacroException("Engine not started!");
         }
         return engine;
     }

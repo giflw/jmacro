@@ -22,11 +22,15 @@ class IncludeAux1 {
 
 class IncludeAux2 {
 
-    static def context
+    def context
 
-    static def INCLUDED_PROP = "foo2"
+    def INCLUDED_PROP = "foo2"
 
-    static def included_func(def arg) {
+    IncludeAux2(def context) {
+        this.context = context
+    }
+
+    def included_func(def arg) {
         context.echo IncludeAux1.class
         return "included2: " + arg
     }
@@ -36,9 +40,9 @@ class IncludeAux2 {
 def includeAux1 = new IncludeAux1()
 includeAux1.context = this
 
-IncludeAux2.context = this
+def includeAux2 = new IncludeAux2(this)
 
 library("IncludeAux1", includeAux1)
-library("IncludeAux2", IncludeAux2)
+library("IncludeAux2", includeAux2)
 
-__RESULT__(IncludeAux2.included_func(IncludeAux2.INCLUDED_PROP))
+__RESULT__(includeAux2.included_func(includeAux2.INCLUDED_PROP))

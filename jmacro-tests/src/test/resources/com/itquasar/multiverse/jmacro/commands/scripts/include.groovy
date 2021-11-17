@@ -24,6 +24,8 @@ attempt (QUIET) {
     included_func(INCLUDED_PROP)
 }
 
+IncludeAux2.included_func(IncludeAux2.INCLUDED_PROP)
+
 IncludeAux2.with {
     included_func(INCLUDED_PROP)
 }

@@ -43,9 +43,8 @@ public class Include extends LoggingCommand {
                 Script script = scriptOptional.get();
 
                 include.getLogger().warn("Including " + includeName);
-                String source = script.getSource();
 
-                core.getEngine().execute(
+                core.getEngine().executeInclusion(
                     script,
                     engine -> {
                         include.scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE).forEach(
@@ -55,17 +54,7 @@ public class Include extends LoggingCommand {
                                 }
                             });
                     },
-                    engine -> {
-                        for (String name : contextName) {
-                            if (name.startsWith("__")) {
-                                continue;
-                            }
-                            include.scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE).put(
-                                name,
-                                engine.getBindings(ScriptContext.ENGINE_SCOPE).get(name)
-                            );
-                        }
-                    });
+                    engine -> { });
             } else {
                 throw new JMacroException(this, "Could not find library " + includeName + " to include");
             }

@@ -19,11 +19,10 @@ class Library extends LoggingCommand {
     }
 
     void call(String name, Object library) {
+        getLogger().warn("Registering library object $name")
         this.scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE).put(
             name,
             library
         )
     }
-
-
 }
