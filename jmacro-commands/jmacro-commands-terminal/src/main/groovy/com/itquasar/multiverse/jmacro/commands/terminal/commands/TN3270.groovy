@@ -30,7 +30,7 @@ class TN3270 extends LoggingCommand implements AutoCloseable {
     def _init(WaitMode waitMode = WaitMode.Seconds) {
         if (this.tn3270j == null) {
             // FIXME
-            Path toolsDir = Path.of(System.getProperty('basedir')).resolve('tools')
+            Path toolsDir = Path.of(System.getProperty('app.home')).resolve('tools')
             boolean isWindows = System.getProperty('os.name').startsWith("Windows")
             String arch = System.getProperty("os.arch").contains("64") ? "64" : "32"
             String path = 's3270'

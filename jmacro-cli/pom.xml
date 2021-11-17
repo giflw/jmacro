@@ -110,6 +110,11 @@
                             <id>jmacro-cli</id>
                         </program>
                     </programs>
+                    <unixScriptTemplate>${basedir}/src/main/appassembler/unixBinTemplate.sh</unixScriptTemplate>
+                    <windowsScriptTemplate>${basedir}/src/main/appassembler/windowsBinTemplate.bat</windowsScriptTemplate>
+                    <environmentSetupFileName>setup-env</environmentSetupFileName>
+                    <configurationSourceDirectory>src/main/config</configurationSourceDirectory>
+                    <copyConfigurationDirectory>true</copyConfigurationDirectory>
                     <configurationDirectory>etc</configurationDirectory>
                     <logsDirectory>logs</logsDirectory>
                     <repositoryLayout>flat</repositoryLayout>
@@ -124,6 +129,21 @@
                 <version>3.2.0</version>
                 <executions>
                     <execution>
+                        <id>copy-scripts-bin</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/appassembler/bin</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/src/main/scripts/bin</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>copy-tools</id>
                         <phase>package</phase>
                         <goals>
@@ -133,9 +153,40 @@
                             <outputDirectory>${basedir}/target/appassembler/tools</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>${basedir}/../tools/</directory>
+                                    <directory>${basedir}/../tools</directory>
                                 </resource>
                             </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.igormaznitsa</groupId>
+                <artifactId>mvn-jlink-wrapper</artifactId>
+                <version>1.1.0</version>
+                <executions>
+                    <execution>
+                        <id>jlink-full</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>jlink</goal>
+                        </goals>
+                        <configuration>
+                            <provider>LOCAL</provider>
+                            <output>${project.build.directory}/appassembler/java</output>
+                            <modulePaths>
+                                <path>${java.home}${file.separator}jmods</path>
+                            </modulePaths>
+                            <options>
+                                <option>--add-modules</option>
+                                <option>
+                                    java.base,java.base,java.compiler,java.datatransfer,java.desktop,java.instrument,java.logging,java.management,java.management.rmi,java.naming,java.net.http,java.prefs,java.rmi,java.scripting,java.security.jgss,java.sql,java.sql.rowset,java.transaction.xa,java.xml,java.xml.crypto,jdk.attach,jdk.charsets,jdk.javadoc,jdk.jdi,jdk.jsobject,jdk.localedata,jdk.naming.dns,jdk.net,jdk.sctp,jdk.unsupported,jdk.xml.dom,jdk.zipfs
+                                </option>
+                                <option>--compress=2</option>
+                                <option>--no-header-files</option>
+                                <option>--no-man-pages</option>
+                                <option>--strip-debug</option>
+                            </options>
                         </configuration>
                     </execution>
                 </executions>
