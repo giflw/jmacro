@@ -57,8 +57,7 @@ class TN3270 extends LoggingCommand implements AutoCloseable {
         this._init(waitMode)
         closure.delegate = this
         closure.resolveStrategy = Closure.DELEGATE_FIRST
-        closure()
-        this
+        return closure()
     }
 
     def methodMissing(String name, def args) {
@@ -92,6 +91,7 @@ class TN3270 extends LoggingCommand implements AutoCloseable {
         if (this.bindings.hasProperty(name)) {
             return this.bindings."$name"
         }
+        logger.info("Sending key $name")
         return tn3270j.send(name)
     }
 
@@ -109,12 +109,12 @@ class TN3270 extends LoggingCommand implements AutoCloseable {
         def writer = new Writer(this)
         closure.delegate = writer
         closure.resolveStrategy = Closure.DELEGATE_ONLY
-        closure()
+        return closure()
     }
 
-//    def read(Closure closure) {
-//        read(Reader.Mode.FINAL_POSITION, closure)
-//    }
+    def read(Closure closure) {
+        return read(Reader.Mode.FINAL_POSITION, closure)
+    }
 
     def read(Reader.Mode mode, Closure closure) {
         def reader = new Reader(this, mode)
