@@ -42,6 +42,10 @@
             <groupId>com.itquasar.multiverse.jmacro.commands</groupId>
             <artifactId>jmacro-commands-terminal</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.itquasar.multiverse.jmacro.commands</groupId>
+            <artifactId>jmacro-commands-datax</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -144,6 +148,7 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <!-- Copy tools dir with binaries -->
                         <id>copy-tools</id>
                         <phase>package</phase>
                         <goals>
@@ -154,6 +159,22 @@
                             <resources>
                                 <resource>
                                     <directory>${basedir}/../tools</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <!-- Copy data dir with data files for tools or commands -->
+                        <id>copy-data</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/appassembler/data</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/../data</directory>
                                 </resource>
                             </resources>
                         </configuration>
