@@ -6,7 +6,7 @@ import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 
 import javax.script.ScriptEngine;
 
-public class PDCCommandProvider implements CommandProvider<PDFCommand> {
+public class PDFCommandProvider implements CommandProvider<PDFCommand> {
 
     @Override
     public Class<PDFCommand> getCommandType() {

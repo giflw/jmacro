@@ -10,13 +10,9 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.script.Bindings;
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineFactory;
-import javax.script.ScriptEngineManager;
-import javax.script.SimpleScriptContext;
+import javax.script.*;
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -163,6 +159,15 @@ public final class EngineImpl implements Engine {
                 command
             );
             commandTypes.add(command.getClass());
+        }
+
+        var systemCommand = engineScope.get("system");
+        if (systemCommand != null) {
+            try {
+                systemCommand.getClass().getDeclaredMethod("lock").invoke(systemCommand);
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                scriptLogger.error("Error locking system command", e);
+            }
         }
 
         var valueHolder = new ValueHolder.ObjectValueHolder();

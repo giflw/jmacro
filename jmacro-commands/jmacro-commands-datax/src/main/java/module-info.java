@@ -16,4 +16,8 @@ module jmacro.commands.datax {
 
     uses com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 
+    exports com.itquasar.multiverse.jmacro.commands.datax.providers;
+    exports com.itquasar.multiverse.jmacro.commands.datax.commands;
+    exports com.itquasar.multiverse.jmacro.commands.datax.commands.pdf;
+
 }
