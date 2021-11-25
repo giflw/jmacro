@@ -7,7 +7,9 @@ import picocli.CommandLine;
 
 import javax.script.Bindings;
 import javax.script.ScriptContext;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
@@ -21,12 +23,16 @@ import static picocli.CommandLine.Spec;
 
 @Command(
     name = "run",
-    description = "Run given script"
+    description = "Run given script",
+    showEndOfOptionsDelimiterInUsageHelp = true
 )
 public class Run implements Callable<CliResult> {
 
     private final Map<String, String> configuration = new LinkedHashMap<>();
     private final Map<String, String> credentials = new LinkedHashMap<>();
+
+    @Parameters()
+    List<String> args;
 
     @Spec
     private CommandSpec spec; // injected by picocli
@@ -80,6 +86,7 @@ public class Run implements Callable<CliResult> {
         if (script.isPresent()) {
             ScriptResult scriptResult = cli.getCore().getEngine().execute(
                 script.get(),
+                this.args != null ? Collections.unmodifiableList(this.args) : Collections.emptyList(),
                 scriptEngine -> {
                     Bindings bindings = scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
                     Credentials bindedCredentials = (Credentials) bindings.get("credentials");
