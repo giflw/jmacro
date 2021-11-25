@@ -43,7 +43,7 @@ public final class Configuration {
     /**
      * URI for repositories.
      */
-    private List<String> repositories;
+    private List<String> repositories = new ArrayList<>();
     /**
      * Custom options mapping from configuration file.
      */
@@ -145,6 +145,9 @@ public final class Configuration {
      * @return Interpolated string with keys replaced by values.
      */
     public String replaceVars(final String interpolatedString) {
+        if (interpolatedString == null || interpolatedString.isEmpty()) {
+            return interpolatedString;
+        }
         String regex = "(?<var>\\$(?<key>[\\w\\d.]+)\\$)";
         final Pattern pattern = Pattern.compile(regex);
         final Matcher matcher = pattern.matcher(interpolatedString);

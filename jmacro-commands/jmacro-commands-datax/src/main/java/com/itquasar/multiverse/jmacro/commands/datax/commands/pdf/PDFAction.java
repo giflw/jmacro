@@ -11,6 +11,7 @@ import org.apache.pdfbox.pdmodel.graphics.form.PDFormXObject;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.text.PDFTextStripper;
 
+import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.util.ArrayList;
@@ -28,6 +29,31 @@ public class PDFAction {
     public PDFAction(File file) {
         this.file = file;
         this.load();
+    }
+
+    @SneakyThrows
+    private static List<BufferedImage> getImagesFromPDF(PDDocument document) {
+        List<BufferedImage> images = new ArrayList<>();
+        for (PDPage page : document.getPages()) {
+            images.addAll(getImagesFromResources(page.getResources()));
+        }
+        return images;
+    }
+
+    @SneakyThrows
+    private static List<BufferedImage> getImagesFromResources(PDResources resources) {
+        List<BufferedImage> images = new ArrayList<>();
+
+        for (COSName xObjectName : resources.getXObjectNames()) {
+            PDXObject xObject = resources.getXObject(xObjectName);
+            if (xObject instanceof PDFormXObject) {
+                images.addAll(getImagesFromResources(((PDFormXObject) xObject).getResources()));
+            } else if (xObject instanceof PDImageXObject) {
+                images.add(((PDImageXObject) xObject).getImage());
+            }
+        }
+
+        return images;
     }
 
     @SneakyThrows
@@ -50,33 +76,8 @@ public class PDFAction {
     }
 
     @SneakyThrows
-    public List<RenderedImage> getImages(File file) {
+    public List<BufferedImage> getImages() {
         return getImagesFromPDF(this.document);
-    }
-
-    @SneakyThrows
-    private static List<RenderedImage> getImagesFromPDF(PDDocument document) {
-        List<RenderedImage> images = new ArrayList<>();
-        for (PDPage page : document.getPages()) {
-            images.addAll(getImagesFromResources(page.getResources()));
-        }
-        return images;
-    }
-
-    @SneakyThrows
-    private static List<RenderedImage> getImagesFromResources(PDResources resources) {
-        List<RenderedImage> images = new ArrayList<>();
-
-        for (COSName xObjectName : resources.getXObjectNames()) {
-            PDXObject xObject = resources.getXObject(xObjectName);
-            if (xObject instanceof PDFormXObject) {
-                images.addAll(getImagesFromResources(((PDFormXObject) xObject).getResources()));
-            } else if (xObject instanceof PDImageXObject) {
-                images.add(((PDImageXObject) xObject).getImage());
-            }
-        }
-
-        return images;
     }
 
 }

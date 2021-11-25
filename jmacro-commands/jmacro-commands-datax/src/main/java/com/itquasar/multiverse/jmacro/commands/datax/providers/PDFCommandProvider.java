@@ -15,6 +15,6 @@ public class PDFCommandProvider implements CommandProvider<PDFCommand> {
 
     @Override
     public PDFCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return null;
+        return new PDFCommand();
     }
 }

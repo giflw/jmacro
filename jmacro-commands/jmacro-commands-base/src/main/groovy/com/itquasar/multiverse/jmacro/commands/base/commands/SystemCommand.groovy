@@ -44,5 +44,9 @@ class SystemCommand {
         return System.getProperty(name)
     }
 
+    def getContext() {
+        return this.engine.getContext().getBindings(ScriptContext.ENGINE_SCOPE)
+    }
+
 
 }

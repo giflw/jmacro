@@ -22,7 +22,8 @@ public interface ScriptRepositoryFactory {
         );
 
         return uris.stream()
-            .map(uri -> configuration != null ? configuration.replaceVars(uri).replace("\\", "/") : uri)
+            .filter(uri -> uri != null)
+            .map(uri -> configuration != null && uri != null? configuration.replaceVars(uri).replace("\\", "/") : uri)
             .map(URI::create)
             .map(URI::normalize)
             .map(uri -> {

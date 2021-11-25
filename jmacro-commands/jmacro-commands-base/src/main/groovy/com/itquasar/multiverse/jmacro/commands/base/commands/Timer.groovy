@@ -86,9 +86,12 @@ class Timer extends LoggingCommand implements GroovyCommand, AutoCloseable {
 
     @Override
     String toString() {
+        def previous = 0
         return "Timer\n" + this.partials.collect {
             def value = it.key == 'Start' ? 0 : it.value
-            "${it.key}: ${value} (${value + this.start})"
+            def total = value - previous
+            previous = value
+            "${it.key}: ${value} [${total}] (${value + this.start})"
         }.join("\n")
     }
 }

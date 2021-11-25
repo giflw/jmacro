@@ -3,12 +3,14 @@ package com.itquasar.multiverse.jmacro.core.repository;
 import com.itquasar.multiverse.jmacro.core.configuration.Configuration;
 import com.itquasar.multiverse.jmacro.core.script.Metadata;
 import com.itquasar.multiverse.jmacro.core.script.Script;
+import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -25,15 +27,15 @@ public class FileScriptRepository extends ScriptRepositoryAbstract {
     }
 
     @Override
-    // FIXME list recursive!!!!
+    @SneakyThrows
     public List<Script> list(boolean reload) {
         if (this.getCache().size() == 0 || reload) {
             File repoPath = new File(this.getUri().getPath());
             if (repoPath.exists()) {
                 this.setCache(
-                    Arrays.stream(repoPath.listFiles())
-                        .filter(File::isFile)
-                        .filter(File::canRead)
+                    Files.walk(repoPath.toPath())
+                        .filter(Files::isRegularFile)
+                        .map(Path::toFile)
                         .filter(file -> Configuration.SUPPORTED_EXTENSIONS.contains(
                             file.getName().substring(file.getName().lastIndexOf(".") + 1)
                         )).map(file -> {
@@ -41,7 +43,7 @@ public class FileScriptRepository extends ScriptRepositoryAbstract {
                                 var source = Files.readString(file.toPath());
                                 return new Script(
                                     Metadata.extractMetadata(source),
-                                    file.getName(),
+                                    repoPath.toPath().relativize(file.toPath()).toString().replace("\\", "/"),
                                     "file:///" + file.getAbsolutePath().replace("\\", "/"),
                                     source
                                 );
