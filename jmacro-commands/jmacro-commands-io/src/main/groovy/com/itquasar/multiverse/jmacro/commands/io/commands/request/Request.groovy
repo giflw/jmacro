@@ -101,6 +101,14 @@ class Request {
         throw new JMacroException(this, "HTTP Methods should be uppercase: GET, POST, etc. $name given.")
     }
 
+    String urlEncode(String str) {
+        return URLEncoder.encode(str, StandardCharsets.UTF_8)
+    }
+
+    String urlDecode(String str) {
+        return URLDecoder.decode(str, StandardCharsets.UTF_8)
+    }
+
     /**
      * Prepare this request to be executed filling headers and body.
      * @return This request.
