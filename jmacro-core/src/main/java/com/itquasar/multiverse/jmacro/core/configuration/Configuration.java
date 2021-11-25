@@ -1,5 +1,6 @@
 package com.itquasar.multiverse.jmacro.core.configuration;
 
+import com.itquasar.multiverse.jmacro.core.Folders;
 import com.itquasar.multiverse.jmacro.core.repository.GlobalScriptRepository;
 import com.itquasar.multiverse.jmacro.core.repository.ScriptRepositoryFactory;
 import com.itquasar.multiverse.jmacro.core.util.RepresenterNonNull;
@@ -13,10 +14,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -56,12 +54,21 @@ public final class Configuration {
      */
     private GlobalScriptRepository repository;
 
+    private final Folders folders;
+
     private Configuration() {
+        this(null, null);
     }
 
     private Configuration(List<String> repositories, Map<String, String> options) {
-        this.repositories = repositories;
-        this.options = options;
+        this(repositories, options, Folders.fromSysProp());
+    }
+
+    private Configuration(List<String> repositories, Map<String, String> options, Folders folders) {
+        Objects.requireNonNull(folders, "Folders must be not null");
+        this.repositories = repositories != null ? repositories : this.repositories;
+        this.options = options != null ? options : this.options;
+        this.folders = folders;
     }
 
     /**

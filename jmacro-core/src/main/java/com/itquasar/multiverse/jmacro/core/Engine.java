@@ -5,6 +5,8 @@ import com.itquasar.multiverse.jmacro.core.script.ScriptResult;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Consumer;
 
 public interface Engine {
@@ -18,7 +20,7 @@ public interface Engine {
      * @return {@link ScriptResult} wrapped result.
      * @throws ScriptException if some error occurs.
      */
-    ScriptResult execute(Script script, Consumer<ScriptEngine> preExecHook, Consumer<ScriptEngine> postExecHook) throws ScriptException;
+    ScriptResult execute(Script script, List<String> args, Consumer<ScriptEngine> preExecHook, Consumer<ScriptEngine> postExecHook) throws ScriptException;
 
     /**
      * Execute given {@link Script} and return its execution result wrapped on {@link ScriptResult}.
@@ -30,7 +32,7 @@ public interface Engine {
      * @throws ScriptException if some error occurs.
      */
     default ScriptResult executeInclusion(Script script, Consumer<ScriptEngine> preExecHook, Consumer<ScriptEngine> postExecHook) throws ScriptException {
-        return this.execute(script, preExecHook, postExecHook);
+        return this.execute(script, Collections.emptyList(), preExecHook, postExecHook);
     }
 
 
@@ -42,8 +44,20 @@ public interface Engine {
      * @return {@link ScriptResult} wrapped result.
      * @throws ScriptException if some error occurs.
      */
-    default ScriptResult execute(Script script, Consumer<ScriptEngine> preExecHook) throws ScriptException {
-        return this.execute(script, preExecHook, (scriptEngine) -> { /* NO-OP */ });
+    default ScriptResult execute(Script script, List<String> args, Consumer<ScriptEngine> preExecHook) throws ScriptException {
+        return this.execute(script, args, preExecHook, (scriptEngine) -> { /* NO-OP */ });
+    }
+
+    /**
+     * Execute script with no operation preExecHook.
+     *
+     * @param script {@link Script} to execute.
+     * @param args Script arguments {@link List}.
+     * @return {@link ScriptResult} wrapped result.
+     * @throws ScriptException if some error occurs.
+     */
+    default ScriptResult execute(Script script, List<String> args) throws ScriptException {
+        return this.execute(script, Collections.emptyList(), (scriptEngine) -> { /* NO-OP */ });
     }
 
     /**
@@ -54,7 +68,7 @@ public interface Engine {
      * @throws ScriptException if some error occurs.
      */
     default ScriptResult execute(Script script) throws ScriptException {
-        return this.execute(script, (scriptEngine) -> { /* NO-OP */ });
+        return this.execute(script, Collections.emptyList());
     }
 
 }

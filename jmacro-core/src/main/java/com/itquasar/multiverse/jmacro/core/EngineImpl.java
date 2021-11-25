@@ -17,12 +17,7 @@ import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import javax.script.SimpleScriptContext;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -31,6 +26,12 @@ import static javax.script.ScriptContext.GLOBAL_SCOPE;
 
 @Log4j2
 public final class EngineImpl implements Engine {
+
+
+    private static final String DOUBLE_SEPARATOR =
+        "================================================================================";
+    private static final String SINGLE_SEPARATOR =
+        "--------------------------------------------------------------------------------";
 
     /**
      * Script engine id generator to unique identify each {@link javax.script.ScriptEngine} instance.
@@ -105,16 +106,16 @@ public final class EngineImpl implements Engine {
     }
 
     @Override
-    public ScriptResult execute(final Script script, final Consumer<ScriptEngine> preExecHook, final Consumer<ScriptEngine> postExecHook) {
-        return this.executeInternal(script, preExecHook, postExecHook, true);
+    public ScriptResult execute(final Script script, final List<String> args, final Consumer<ScriptEngine> preExecHook, final Consumer<ScriptEngine> postExecHook) {
+        return this.executeInternal(script, args, preExecHook, postExecHook, true);
     }
 
     @Override
     public ScriptResult executeInclusion(final Script script, final Consumer<ScriptEngine> preExecHook, final Consumer<ScriptEngine> postExecHook) {
-        return this.executeInternal(script, preExecHook, postExecHook, false);
+        return this.executeInternal(script, Collections.emptyList(), preExecHook, postExecHook, false);
     }
 
-    private ScriptResult executeInternal(final Script script, final Consumer<ScriptEngine> preExecHook, final Consumer<ScriptEngine> postExecHook, boolean normalExecution) {
+    private ScriptResult executeInternal(final Script script, final List<String> args, final Consumer<ScriptEngine> preExecHook, final Consumer<ScriptEngine> postExecHook, boolean normalExecution) {
         var extension = script.getPath().substring(script.getPath().lastIndexOf('.') + 1);
         var engine = engines.get(extension).getScriptEngine();
 
@@ -166,6 +167,8 @@ public final class EngineImpl implements Engine {
 
         var valueHolder = new ValueHolder.ObjectValueHolder();
 
+        engineScope.put("args", args);
+
         engineScope.put("__SCRIPT__", script);
         engineScope.put("__METADATA__", script.getMetadata());
         engineScope.put("__CONTEXT__", engineScope);
@@ -176,21 +179,16 @@ public final class EngineImpl implements Engine {
             this.languageAdaptors.get(extension).adapt(engine);
         }
 
-        String doubleSeparator =
-            "================================================================================";
-        String singleSeparator =
-            "--------------------------------------------------------------------------------";
-
         var exitCode = new ValueHolder<>(0);
         var evalResult = script.run(() -> {
             if (normalExecution) {
-                scriptLogger.warn(doubleSeparator);
-                scriptLogger.warn(doubleSeparator);
+                scriptLogger.warn(DOUBLE_SEPARATOR);
+                scriptLogger.warn(DOUBLE_SEPARATOR);
             }
-             if (normalExecution) {
+            if (normalExecution) {
                 Arrays.stream(script.getMetadata().getBanner().split("\n")).forEach(scriptLogger::warn);
-                scriptLogger.warn(singleSeparator);
-                scriptLogger.warn(singleSeparator);
+                scriptLogger.warn(SINGLE_SEPARATOR);
+                scriptLogger.warn(SINGLE_SEPARATOR);
             }
             Object evalReturn = null;
             try {
@@ -210,19 +208,9 @@ public final class EngineImpl implements Engine {
                     LOGGER.error("Error during script execution", exception);
                 }
             } finally {
-                // FIXME only when not beeing included
-//                for (int scope : new int[]{ENGINE_SCOPE, GLOBAL_SCOPE}) {
-//                    engine.getBindings(scope).forEach((key, value) -> {
-//                        if (AutoCloseable.class.isInstance(value)) {
-//                            try {
-//                                LOGGER.warn("Closing command " + key + " as it is AutoCloseable");
-//                                ((AutoCloseable) value).close();
-//                            } catch (Exception exception) {
-//                                LOGGER.error("Error closing command " + key, exception);
-//                            }
-//                        }
-//                    });
-//                }
+                if (normalExecution) {
+                    this.closeCommands(engine);
+                }
             }
 
             var scriptExitCodeDescription = (exitCode.get() == ExitException.SCRIPT_ENGINE_ERROR)
@@ -230,22 +218,37 @@ public final class EngineImpl implements Engine {
                 : " (Script exit code)";
 
             if (normalExecution) {
-                scriptLogger.warn(singleSeparator);
-                scriptLogger.warn(singleSeparator);
+                scriptLogger.warn(SINGLE_SEPARATOR);
+                scriptLogger.warn(SINGLE_SEPARATOR);
                 scriptLogger.warn("Script exited with code " + exitCode.get() + scriptExitCodeDescription);
-                scriptLogger.warn(singleSeparator);
+                scriptLogger.warn(SINGLE_SEPARATOR);
                 scriptLogger.warn("Result for script " + script.getPath());
                 scriptLogger.warn("__RESULT__:");
                 scriptLogger.warn(valueHolder.get());
                 scriptLogger.warn("Evaluation return:");
                 scriptLogger.warn(evalReturn);
-                scriptLogger.warn(doubleSeparator);
-                scriptLogger.warn(doubleSeparator);
+                scriptLogger.warn(DOUBLE_SEPARATOR);
+                scriptLogger.warn(DOUBLE_SEPARATOR);
             }
             return evalReturn;
         });
 
         return new ScriptResult(script, exitCode.get(), valueHolder, evalResult);
+    }
+
+    private void closeCommands(ScriptEngine engine) {
+        for (int scope : new int[]{ENGINE_SCOPE, GLOBAL_SCOPE}) {
+            engine.getBindings(scope).forEach((key, value) -> {
+                if (AutoCloseable.class.isInstance(value)) {
+                    try {
+                        LOGGER.warn("Closing command " + key + " as it is AutoCloseable");
+                        ((AutoCloseable) value).close();
+                    } catch (Exception exception) {
+                        LOGGER.error("Error closing command " + key, exception);
+                    }
+                }
+            });
+        }
     }
 }
 
