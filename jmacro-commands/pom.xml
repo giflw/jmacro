@@ -23,5 +23,6 @@
         <module>jmacro-commands-io</module>
         <module>jmacro-commands-browser</module>
         <module>jmacro-commands-terminal</module>
+        <module>jmacro-commands-datax</module>
     </modules>
 </project>
