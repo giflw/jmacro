@@ -21,7 +21,7 @@ public interface ScriptRepository {
 
     default URI pathToLocation(String path) {
         URI uri = URI.create(path);
-        return uri.getScheme() != null ? uri : getUri().resolve(path);
+        return uri.getScheme() != null ? uri : URI.create(getUri().toString() + path);
     }
 
     default Optional<Script> get(String uuidOrLocation) {

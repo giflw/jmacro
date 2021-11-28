@@ -11,12 +11,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 // FIXME change to FileSystem repository, add Artifact super type for Script
 @Log4j2
@@ -41,12 +36,10 @@ public class FileScriptRepository extends ScriptRepositoryAbstract {
                         )).map(file -> {
                             try {
                                 var source = Files.readString(file.toPath());
-                                return new Script(
-                                    Metadata.extractMetadata(source),
-                                    repoPath.toPath().relativize(file.toPath()).toString().replace("\\", "/"),
-                                    "file:///" + file.getAbsolutePath().replace("\\", "/"),
-                                    source
-                                );
+                                Metadata metadata = Metadata.extractMetadata(source);
+                                String path = repoPath.toPath().relativize(file.toPath()).toString().replace("\\", "/");
+                                String location = "file://" + file.getAbsolutePath().replace("\\", "/");
+                                return new Script(metadata, path, location, source);
                             } catch (IOException e) {
                                 LOGGER.error("Error reading file " + file, e);
                                 return null;
