@@ -2,11 +2,17 @@ package com.itquasar.multiverse.jmacro.commands.base.commands
 
 import com.itquasar.multiverse.jmacro.core.Env
 import com.itquasar.multiverse.jmacro.core.GroovyCommand
+import com.itquasar.multiverse.jmacro.core.Configuration as JMacroConfiguration
 
 class Configuration implements GroovyCommand {
 
+    JMacroConfiguration jMacroConfiguration
     ConfigObject configs = new ConfigObject()
     private excludeKeys = Credentials.declaredFields.collect { it.name }
+
+    Configuration (JMacroConfiguration jMacroConfiguration) {
+        this.jMacroConfiguration = jMacroConfiguration
+    }
 
     def fill(Configuration configuration) {
         fill(configuration.configs)
@@ -39,6 +45,9 @@ class Configuration implements GroovyCommand {
     def propertyMissing(String name) {
         if (this.configs.hasVariable(name)) {
             return this.configs.getVariable(name)
+        }
+        if (this.jMacroConfiguration.hasProperty(name)) {
+            return this.jMacroConfiguration."$name"
         }
         throw new MissingPropertyException("Property $name not found!")
     }
