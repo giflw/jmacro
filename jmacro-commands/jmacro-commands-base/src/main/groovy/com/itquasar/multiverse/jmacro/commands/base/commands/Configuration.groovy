@@ -46,6 +46,9 @@ class Configuration implements GroovyCommand {
         if (this.configs.hasVariable(name)) {
             return this.configs.getVariable(name)
         }
+        if (this.jMacroConfiguration.hasProperty(name)) {
+            return this.jMacroConfiguration."$name"
+        }
         throw new MissingPropertyException("Property $name not found!")
     }
 
