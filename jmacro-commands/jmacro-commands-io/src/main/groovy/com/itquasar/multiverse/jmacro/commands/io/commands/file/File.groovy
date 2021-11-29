@@ -12,7 +12,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
 
 import java.io.File as JFile
 import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
 import java.nio.file.Files
+import java.nio.file.CopyOption
+import java.nio.file.OpenOption
 
 @Log4j2
 @CompileStatic
@@ -60,6 +63,22 @@ class File implements GroovyCommand, InputParsers {
                 throw new Error("File type $type unknow!")
         }
         return this
+    }
+
+    Path write(String text, OpenOption... options) {
+        return write(text, StandardCharsets.UTF_8, options)
+    }
+
+    Path write(String text, String charset, OpenOption... options) {
+        return write(text, Charset.forName(charset), options)
+    }
+
+    Path write(String text, Charset charset, OpenOption... options) {
+        return Files.write(file.toPath(), text.getBytes(charset), options)
+    }
+
+    long write(InputStream input, CopyOption... options) {
+        return Files.copy(input, file.toPath(), options)
     }
 
     @Override
