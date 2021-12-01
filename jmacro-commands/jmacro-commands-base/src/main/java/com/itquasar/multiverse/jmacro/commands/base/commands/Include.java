@@ -54,7 +54,8 @@ public class Include extends LoggingCommand {
                                 }
                             });
                     },
-                    engine -> { });
+                    engine -> {
+                    });
             } else {
                 throw new JMacroException(this, "Could not find library " + includeName + " to include");
             }

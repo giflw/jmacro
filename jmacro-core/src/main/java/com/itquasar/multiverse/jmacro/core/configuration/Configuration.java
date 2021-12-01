@@ -40,6 +40,7 @@ public final class Configuration {
             .flatMap(factory -> factory.getExtensions().stream())
             .toList()
     );
+    private final Folders folders;
     /**
      * URI for repositories.
      */
@@ -48,13 +49,10 @@ public final class Configuration {
      * Custom options mapping from configuration file.
      */
     private Map<String, String> options = new LinkedHashMap<>();
-
     /**
      * Global repository proxy for all registered repositories.
      */
     private GlobalScriptRepository repository;
-
-    private final Folders folders;
 
     private Configuration() {
         this(null, null);

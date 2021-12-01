@@ -9,6 +9,11 @@ import javax.script.ScriptEngine;
 
 public class EchoCommandProvider implements CommandProvider<EchoCommandProvider.Echo> {
 
+    /**
+     * New log level between WARN and INFO.
+     */
+    public static final Level ECHO = Level.forName("ECHO", 350);
+
     @Override
     public Class<Echo> getCommandType() {
         return Echo.class;
@@ -18,11 +23,6 @@ public class EchoCommandProvider implements CommandProvider<EchoCommandProvider.
     public Echo getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
         return new Echo((Logger) scriptEngine.getContext().getAttribute("logger"));
     }
-
-    /**
-     * New log level between WARN and INFO.
-     */
-    public static final Level ECHO = Level.forName("ECHO", 350);
 
     public static class Echo {
 

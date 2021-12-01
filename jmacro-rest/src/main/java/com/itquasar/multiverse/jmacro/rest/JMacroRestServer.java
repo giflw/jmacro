@@ -16,13 +16,12 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static j2html.TagCreator.article;
-import static j2html.TagCreator.attrs;
-import static j2html.TagCreator.b;
-import static j2html.TagCreator.p;
-import static j2html.TagCreator.span;
+import static j2html.TagCreator.*;
 
 public class JMacroRestServer {
+
+    private static Map<WsContext, String> userUsernameMap = new ConcurrentHashMap<>();
+    private static int nextUserNumber = 1; // Assign to username for next connecting user
 
     public static void main(String[] args) {
         var serverAddress = "localhost";
@@ -107,9 +106,6 @@ public class JMacroRestServer {
             });
         });
     }
-
-    private static Map<WsContext, String> userUsernameMap = new ConcurrentHashMap<>();
-    private static int nextUserNumber = 1; // Assign to username for next connecting user
 
     // Sends a message from one user to all users, along with a list of current usernames
     private static void broadcastMessage(String sender, String message) {

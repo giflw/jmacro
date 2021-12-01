@@ -5,11 +5,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 
 import java.net.URI;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class GlobalScriptRepository extends ScriptRepositoryAbstract {
 

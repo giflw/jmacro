@@ -7,12 +7,10 @@ import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
 import groovy.util.logging.Log4j2
 import org.apache.hc.client5.http.HttpResponseException
-import org.apache.hc.client5.http.auth.AuthScope
 import org.apache.hc.client5.http.auth.CredentialsProvider
 import org.apache.hc.client5.http.fluent.Content
 import org.apache.hc.client5.http.fluent.Request as HTTPFluentRequest
 import org.apache.hc.client5.http.fluent.Response as HTTPFluentResponse
-import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient
 import org.apache.hc.client5.http.impl.classic.HttpClients
 import org.apache.hc.core5.http.HttpEntity

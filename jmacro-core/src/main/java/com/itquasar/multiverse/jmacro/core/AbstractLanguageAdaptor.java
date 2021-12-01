@@ -46,7 +46,7 @@ public abstract class AbstractLanguageAdaptor implements LanguageAdaptor {
      */
     public final Bindings getBindings() {
         Bindings allBindings = new SimpleBindings();
-        for (int scope : new int[] {ScriptContext.GLOBAL_SCOPE, ScriptContext.ENGINE_SCOPE}) {
+        for (int scope : new int[]{ScriptContext.GLOBAL_SCOPE, ScriptContext.ENGINE_SCOPE}) {
             Bindings bindings = this.getScriptContext().getBindings(scope);
             allBindings.putAll(bindings);
         }
@@ -71,7 +71,7 @@ public abstract class AbstractLanguageAdaptor implements LanguageAdaptor {
      * @return Binding value or default value if null.
      */
     public final <T> T getBinding(final String key, final T defaultValue) {
-        for (int scope : new int[] {ScriptContext.ENGINE_SCOPE, ScriptContext.GLOBAL_SCOPE}) {
+        for (int scope : new int[]{ScriptContext.ENGINE_SCOPE, ScriptContext.GLOBAL_SCOPE}) {
             Bindings bindings = this.getScriptContext().getBindings(scope);
             if (bindings.containsKey(key)) {
                 return (T) bindings.get(key);

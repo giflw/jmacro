@@ -1,5 +1,4 @@
 import com.itquasar.multiverse.tn3270j.WaitMode
-import org.junit.AssumptionViolatedException
 
 /*
 START METADATA

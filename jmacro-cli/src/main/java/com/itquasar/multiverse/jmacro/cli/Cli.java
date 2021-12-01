@@ -4,8 +4,6 @@ import com.itquasar.multiverse.jmacro.core.JMacroCore;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.util.concurrent.Callable;
-
 import static picocli.CommandLine.Command;
 import static picocli.CommandLine.Option;
 import static picocli.CommandLine.ScopeType.INHERIT;
@@ -27,12 +25,11 @@ import static picocli.CommandLine.ScopeType.INHERIT;
 public class Cli {
 
     private final JMacroCore core;
+    @Option(names = {"-d", "--debug"}, description = "Debug mode")
+    private boolean debug;
 
     public Cli(JMacroCore core) {
         this.core = core;
     }
-
-    @Option(names = {"-d", "--debug"}, description = "Debug mode")
-    private boolean debug;
 
 }

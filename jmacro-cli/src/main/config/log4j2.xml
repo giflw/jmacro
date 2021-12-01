@@ -4,24 +4,24 @@
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="[%-4level] - %msg%n"/>
         </Console>
-		<RollingFile
-			name="RollingFile"
-			fileName="${sys:app.home}/logs/jmacro.log"
-			filePattern="${sys:app.home}/logs/jmacro.%d{yyyy-MM-dd}.log.gz"
-			ignoreExceptions="false">
-			<PatternLayout>
-				<Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %m%n</Pattern>
-			</PatternLayout>
-			<Policies>
-				<TimeBasedTriggeringPolicy interval="1"/>
-			</Policies>
-			<DefaultRolloverStrategy max="5" />
-		</RollingFile>
+        <RollingFile
+            name="RollingFile"
+            fileName="${sys:app.home}/logs/jmacro.log"
+            filePattern="${sys:app.home}/logs/jmacro.%d{yyyy-MM-dd}.log.gz"
+            ignoreExceptions="false">
+            <PatternLayout>
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %m%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+            </Policies>
+            <DefaultRolloverStrategy max="5"/>
+        </RollingFile>
     </Appenders>
     <Loggers>
         <Root level="info">
             <AppenderRef ref="Console"/>
-			<AppenderRef ref="RollingFile"/>
+            <AppenderRef ref="RollingFile"/>
         </Root>
     </Loggers>
 </Configuration>

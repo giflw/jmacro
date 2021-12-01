@@ -59,7 +59,7 @@ class OCRCommand {
 
     def methodMissing(String name, def args) {
         this.init()
-        if(args) {
+        if (args) {
             return this.tesseract."$name"(args)
         }
         return this.tesseract."$name"()

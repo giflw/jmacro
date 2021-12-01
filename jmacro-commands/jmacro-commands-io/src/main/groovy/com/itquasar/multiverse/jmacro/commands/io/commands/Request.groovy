@@ -1,7 +1,6 @@
 package com.itquasar.multiverse.jmacro.commands.io.commands
 
 import com.itquasar.multiverse.jmacro.commands.io.commands.request.Request as RequestAction
-import com.itquasar.multiverse.jmacro.commands.io.commands.request.Response
 import groovy.transform.CompileDynamic
 import groovy.util.logging.Log4j2
 

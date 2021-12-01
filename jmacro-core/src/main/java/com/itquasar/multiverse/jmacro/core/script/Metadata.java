@@ -119,7 +119,7 @@ public class Metadata {
             """
             .formatted(
                 this.name != null ? this.name : "",
-                this.version != null ? this.version: "",
+                this.version != null ? this.version : "",
                 this.author != null ? this.author : "",
                 this.description != null ? this.description : "",
                 infoString

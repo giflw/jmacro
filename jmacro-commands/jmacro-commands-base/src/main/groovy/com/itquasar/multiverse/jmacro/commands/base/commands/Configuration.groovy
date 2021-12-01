@@ -10,7 +10,7 @@ class Configuration implements GroovyCommand {
     ConfigObject configs = new ConfigObject()
     private excludeKeys = Credentials.declaredFields.collect { it.name }
 
-    Configuration (JMacroConfiguration jMacroConfiguration) {
+    Configuration(JMacroConfiguration jMacroConfiguration) {
         this.jMacroConfiguration = jMacroConfiguration
     }
 

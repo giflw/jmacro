@@ -10,7 +10,6 @@ import com.itquasar.multiverse.jmacro.core.script.Metadata
 import com.itquasar.multiverse.jmacro.core.script.Script
 import com.itquasar.multiverse.jmacro.core.script.ScriptResult
 import groovy.util.logging.Log4j2
-import org.junit.Assume
 import spock.lang.Specification
 import spock.lang.Unroll
 

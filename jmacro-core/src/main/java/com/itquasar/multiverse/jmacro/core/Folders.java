@@ -44,7 +44,6 @@ public record Folders(Path appHome) {
     }
 
     public Path tools() {
-
         return appHome.resolve("tools");
     }
 }

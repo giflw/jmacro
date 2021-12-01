@@ -6,7 +6,7 @@ infos:
 END METADATA
  */
 def basedir = System.getProperty('basedir')
-def pom  = file(basedir + "/pom.xml")
+def pom = file(basedir + "/pom.xml")
 
 def project = pom.data
 

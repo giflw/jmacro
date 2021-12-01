@@ -1,11 +1,6 @@
 package com.itquasar.multiverse.jmacro.core.script;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.SneakyThrows;
+import lombok.*;
 import lombok.extern.log4j.Log4j2;
 
 import java.net.URI;

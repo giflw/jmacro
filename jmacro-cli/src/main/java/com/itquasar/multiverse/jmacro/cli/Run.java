@@ -13,12 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import static picocli.CommandLine.Command;
+import static picocli.CommandLine.*;
 import static picocli.CommandLine.Model.CommandSpec;
-import static picocli.CommandLine.Option;
-import static picocli.CommandLine.Parameters;
-import static picocli.CommandLine.ParentCommand;
-import static picocli.CommandLine.Spec;
 
 
 @Command(
@@ -39,6 +35,8 @@ public class Run implements Callable<CliResult> {
 
     @ParentCommand
     private Cli cli;
+    @Parameters(arity = "1")
+    private String path;
 
     @Option(names = {"--config", "--configuration"}, paramLabel = "KEY=VALUE")
     public void setConfiguration(Map<String, String> map) {
@@ -65,9 +63,6 @@ public class Run implements Callable<CliResult> {
                 String.format("Duplicate key '%s' for values '%s' and '%s'.", key, existing, newValue));
         }
     }
-
-    @Parameters(arity = "1")
-    private String path;
 
     @Override
     public CliResult call() throws Exception {

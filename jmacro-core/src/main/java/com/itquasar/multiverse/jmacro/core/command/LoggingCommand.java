@@ -34,7 +34,6 @@ public abstract class LoggingCommand {
     }
 
     /**
-     *
      * @return Logger instance.
      */
     public Logger getLogger() {

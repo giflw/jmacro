@@ -11,7 +11,6 @@ spockReports {
     set 'com.athaydes.spockframework.report.outputDir': 'target/site/spock-reports'
 
 
-
     // Name of the implementation class(es) of report creator(s) to enable (separate multiple entries with commas)
     // Currently supported classes are:
     //   1. com.athaydes.spockframework.report.internal.HtmlReportCreator

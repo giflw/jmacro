@@ -26,8 +26,8 @@ public final class JMacroException extends RuntimeException {
     }
 
     /**
-     * @param context Exception context object (any object related to exception).
-     * @param message Exception message.
+     * @param context   Exception context object (any object related to exception).
+     * @param message   Exception message.
      * @param throwable Related {@link Throwable}.
      */
     public JMacroException(final Object context, final String message, final Throwable throwable) {

@@ -5,7 +5,6 @@ import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 
 import javax.script.ScriptEngine;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 
 public class Base64CommandProvider implements CommandProvider<Base64CommandProvider.Base64> {
 

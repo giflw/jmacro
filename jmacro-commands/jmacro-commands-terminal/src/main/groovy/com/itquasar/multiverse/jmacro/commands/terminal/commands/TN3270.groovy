@@ -8,7 +8,6 @@ import com.itquasar.multiverse.tn3270j.TN3270j
 import com.itquasar.multiverse.tn3270j.TN3270jFactory
 import com.itquasar.multiverse.tn3270j.WaitMode
 import groovy.util.logging.Log4j2
-import org.apache.logging.log4j.Logger
 
 import javax.script.Bindings
 import javax.script.ScriptEngine

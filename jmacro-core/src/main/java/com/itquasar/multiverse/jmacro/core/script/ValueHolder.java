@@ -2,14 +2,14 @@ package com.itquasar.multiverse.jmacro.core.script;
 
 public class ValueHolder<T extends Object> {
 
+    private T value;
+
     public ValueHolder() {
     }
 
     public ValueHolder(T value) {
         this.value = value;
     }
-
-    private T value;
 
     public boolean hasValue() {
         return this.value != null;
