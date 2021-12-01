@@ -118,10 +118,10 @@ public class Metadata {
                 Infos: %s
             """
             .formatted(
-                this.name,
-                this.version,
-                this.author,
-                this.description,
+                this.name != null ? this.name : "",
+                this.version != null ? this.version: "",
+                this.author != null ? this.author : "",
+                this.description != null ? this.description : "",
                 infoString
             );
     }
