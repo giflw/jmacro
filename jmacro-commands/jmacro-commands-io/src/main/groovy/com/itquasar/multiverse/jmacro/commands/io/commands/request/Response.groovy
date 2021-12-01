@@ -115,6 +115,10 @@ class Response implements InputParsers {
     ContentType contentType
     InputStream inputStream
 
+    String getStatusMessage() {
+        return HTTP_STATUS[statusCode]
+    }
+
     @Override
     String getText() {
         return new String(this.inputStream.readAllBytes(), charset)

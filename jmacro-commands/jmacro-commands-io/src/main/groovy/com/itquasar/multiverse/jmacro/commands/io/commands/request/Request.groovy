@@ -96,17 +96,22 @@ class Request {
             this.httpRequest = HTTPFluentRequest.create(method, url)
             return this
         } else {
-            return body.invokeMethod(name, args)
+            body.invokeMethod(name, args)
+            return this
         }
         throw new JMacroException(this, "HTTP Methods should be uppercase: GET, POST, etc. $name given.")
     }
 
-    String urlEncode(String str) {
-        return URLEncoder.encode(str, StandardCharsets.UTF_8)
+    // FIXME need unit test
+    String urlEncode(String str, boolean percent20 = false) {
+        String encoded = URLEncoder.encode(str, StandardCharsets.UTF_8)
+        return percent20 ? encoded.replace('+', '%20') : encoded
     }
 
-    String urlDecode(String str) {
-        return URLDecoder.decode(str, StandardCharsets.UTF_8)
+    // FIXME need unit test
+    String urlDecode(String str, boolean percent20 = false) {
+        String decoded = percent20 ? str.replace('%20', '+') : str
+        return URLDecoder.decode(decoded, StandardCharsets.UTF_8)
     }
 
     /**
