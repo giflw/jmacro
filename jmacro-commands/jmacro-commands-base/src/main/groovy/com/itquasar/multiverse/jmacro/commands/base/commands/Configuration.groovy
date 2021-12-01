@@ -2,7 +2,7 @@ package com.itquasar.multiverse.jmacro.commands.base.commands
 
 import com.itquasar.multiverse.jmacro.core.Env
 import com.itquasar.multiverse.jmacro.core.GroovyCommand
-import com.itquasar.multiverse.jmacro.core.Configuration as JMacroConfiguration
+import com.itquasar.multiverse.jmacro.core.configuration.Configuration as JMacroConfiguration
 
 class Configuration implements GroovyCommand {
 
@@ -36,10 +36,12 @@ class Configuration implements GroovyCommand {
 
     def set(String name, value) {
         this.configs[name] = value
+        return this
     }
 
     def get(String name) {
-        this.configs[name] ? this.configs[name] : null
+        def value = this.configs[name] ? this.configs[name] : null
+        return value == null && this.jMacroConfiguration.hasProperty(name) ? this.jMacroConfiguration."$name" : value
     }
 
     def propertyMissing(String name) {
@@ -51,7 +53,6 @@ class Configuration implements GroovyCommand {
         }
         throw new MissingPropertyException("Property $name not found!")
     }
-
 
     @Override
     String toString() {
