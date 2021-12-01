@@ -14,6 +14,7 @@ import org.apache.pdfbox.text.PDFTextStripper;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +24,11 @@ public class PDFAction {
     private PDDocument document;
 
     public PDFAction() {
-        this(null);
+        this((File) null);
+    }
+
+    public PDFAction(Path path) {
+        this(path.toFile());
     }
 
     public PDFAction(File file) {

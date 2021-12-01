@@ -16,8 +16,8 @@ public class PDFCommand {
         return this.call(path.toFile(), closure);
     }
 
-    public Object call(File path, Closure closure) {
-        closure.setDelegate(new PDFAction(path));
+    public Object call(File file, Closure closure) {
+        closure.setDelegate(new PDFAction(file));
         return execute(closure);
     }
 

@@ -8,13 +8,22 @@ import groovy.util.logging.Log4j2
 import javax.swing.*
 import javax.swing.filechooser.FileFilter
 import java.io.File as JFile
+import java.nio.file.Path
 
 @Log4j2
 @CompileStatic
 class File {
 
-    FileAction call(String filename) {
-        return call(filename, Closure.IDENTITY)
+    FileAction call(String path) {
+        return call(path, Closure.IDENTITY)
+    }
+
+    FileAction call(JFile file) {
+        return call(file, Closure.IDENTITY)
+    }
+
+    FileAction call(Path path) {
+        return call(path, Closure.IDENTITY)
     }
 
     /**
@@ -23,8 +32,16 @@ class File {
      * @param closure
      * @return
      */
-    FileAction call(String filename, Closure closure) {
-        def fileAction = new FileAction(new JFile(filename))
+    FileAction call(String path, Closure closure) {
+        return call(Path.of(path), closure)
+    }
+
+    FileAction call(JFile file, Closure closure) {
+        return call(file.toPath(), closure)
+    }
+
+    FileAction call(Path path, Closure closure) {
+        def fileAction = new FileAction(path)
         fileAction.call(closure)
         fileAction
     }
