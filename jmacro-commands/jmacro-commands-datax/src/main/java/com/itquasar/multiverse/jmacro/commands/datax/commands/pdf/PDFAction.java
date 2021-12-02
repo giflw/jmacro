@@ -46,6 +46,9 @@ public class PDFAction {
 
     @SneakyThrows
     private static List<BufferedImage> getImagesFromResources(PDResources resources) {
+        if (resources == null) {
+            return List.of();
+        }
         List<BufferedImage> images = new ArrayList<>();
 
         for (COSName xObjectName : resources.getXObjectNames()) {
