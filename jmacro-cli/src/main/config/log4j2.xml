@@ -6,8 +6,8 @@
         </Console>
         <RollingFile
             name="RollingFile"
-            fileName="${sys:app.home}/logs/jmacro.log"
-            filePattern="${sys:app.home}/logs/jmacro.%d{yyyy-MM-dd}.log.gz"
+            fileName="${sys:app.home}/logs/jmacro-${sys:app.startime}-${sys:app.pid}.log"
+            filePattern="${sys:app.home}/logs/jmacro-${sys:app.startime}-${sys:app.pid}.%d{yyyy-MM-dd}.log.gz"
             ignoreExceptions="false">
             <PatternLayout>
                 <Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %m%n</Pattern>
