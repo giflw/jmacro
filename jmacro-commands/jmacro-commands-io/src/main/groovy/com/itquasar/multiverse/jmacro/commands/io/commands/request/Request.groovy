@@ -1,8 +1,6 @@
 package com.itquasar.multiverse.jmacro.commands.io.commands.request
 
-import com.itquasar.multiverse.jmacro.commands.io.commands.request.Body
-import com.itquasar.multiverse.jmacro.commands.io.commands.request.Response
-import com.itquasar.multiverse.jmacro.commands.io.commands.request.ResponseAndContentHttpresponseHandler
+import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
 import groovy.util.logging.Log4j2
@@ -17,9 +15,8 @@ import org.apache.hc.core5.http.HttpEntity
 import org.apache.hc.core5.http.HttpResponse
 import org.apache.hc.core5.http.NoHttpResponseException
 
-import javax.script.ScriptContext
+import javax.script.Bindings
 import java.nio.charset.StandardCharsets
-
 /**
  * Request is used to make HTTP requests.
  * Request block are executed automatically at the end of the block,
@@ -35,7 +32,7 @@ import java.nio.charset.StandardCharsets
 @Log4j2
 class Request {
 
-    private ScriptContext context
+    private Bindings bindings
 
     private String method
     private String url
@@ -47,8 +44,9 @@ class Request {
     private boolean prepared = false
     private boolean executed = false
 
-    Request(ScriptContext context) {
-        this.context = context
+    Request(Bindings bindings) {
+        Objects.requireNonNull(bindings, "Bindings must be not null")
+        this.bindings = bindings
     }
 
     Request call(Closure closure) {
@@ -67,7 +65,12 @@ class Request {
      * @return HTTP header value
      */
     def propertyMissing(String name) {
-        return this.headers[name.replace('_', '-')]
+        def header = name.replace('_', '-')
+        if (this.headers.containsKey(header)) {
+            def value = this.headers[header]
+            return value
+        }
+        return Command.propertyMissingOn(bindings, name)
     }
 
     /**
@@ -77,7 +80,8 @@ class Request {
      * @return HTTP header value
      */
     def propertyMissing(String name, def arg) {
-        this.headers[name.replace('_', '-')] = arg
+        String header = name.replace('_', '-')
+        this.headers[header] = arg
     }
 
     /**
@@ -94,8 +98,7 @@ class Request {
             this.httpRequest = HTTPFluentRequest.create(method, url)
             return this
         } else {
-            body.invokeMethod(name, args)
-            return this
+            return Command.methodMissingOnOrChainToContext(bindings, body, name, args)
         }
         throw new JMacroException(this, "HTTP Methods should be uppercase: GET, POST, etc. $name given.")
     }
@@ -169,7 +172,7 @@ class Request {
 
         log.debug('Creating new response object')
 
-        def credentials = this.context.getBindings(ScriptContext.ENGINE_SCOPE).get('credentials') as CredentialsProvider
+        def credentials = this.bindings.get('credentials') as CredentialsProvider
         log.warn("HTTP Credentials: $credentials")
         CloseableHttpClient client = HttpClients.custom()
             .setDefaultCredentialsProvider(credentials)

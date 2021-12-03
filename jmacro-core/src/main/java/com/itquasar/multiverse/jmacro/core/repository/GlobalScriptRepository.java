@@ -2,7 +2,6 @@ package com.itquasar.multiverse.jmacro.core.repository;
 
 import com.itquasar.multiverse.jmacro.core.script.Script;
 import lombok.Getter;
-import lombok.SneakyThrows;
 
 import java.net.URI;
 import java.util.*;
@@ -16,12 +15,10 @@ public class GlobalScriptRepository extends ScriptRepositoryAbstract {
         this(Arrays.asList(repositories));
     }
 
-    @SneakyThrows
     public GlobalScriptRepository(List<ScriptRepository> repositories) {
         this("global", URI.create("memory://" + GlobalScriptRepository.class.getName().replace(".", "/")), repositories);
     }
 
-    @SneakyThrows
     public GlobalScriptRepository(String id, URI uri, List<ScriptRepository> repositories) {
         super(id, uri);
         this.repositories = Collections.unmodifiableList(repositories);

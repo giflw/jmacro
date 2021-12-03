@@ -24,6 +24,7 @@ public interface ScriptRepositoryFactory {
         return uris.stream()
             .filter(uri -> uri != null)
             .map(uri -> configuration != null && uri != null ? configuration.replaceVars(uri) : uri)
+            .map(it -> it.replace("\\", "/"))
             .map(URI::create)
             .map(uri -> {
                     String id = uri.getScheme();

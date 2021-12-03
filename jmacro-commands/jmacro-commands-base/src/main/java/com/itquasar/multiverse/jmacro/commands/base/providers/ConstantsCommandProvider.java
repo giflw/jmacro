@@ -21,7 +21,7 @@ public class ConstantsCommandProvider implements CommandProvider<ConstantsComman
     }
 
     @Override
-    @SneakyThrows
+
     public ConstantsCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
         return new ConstantsCommand(jMacroCore, scriptEngine);
     }

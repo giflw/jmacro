@@ -4,7 +4,6 @@ import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.JMacroCore
 import lombok.Getter
 
-import javax.script.ScriptContext
 import javax.script.ScriptEngine
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -19,15 +18,16 @@ class SystemCommand extends Command {
         super(core, engine)
     }
 
-    void lock() {
+    @Override
+    void allCommandsRegistered() {
         if (this.locked.compareAndSet(false, true)) {
-            this.commands.putAll(this.engine.getContext().getBindings(ScriptContext.ENGINE_SCOPE));
+            this.commands.putAll(this.getBindings());
             this.commands = Collections.unmodifiableMap(this.commands);
         }
     }
 
     def methodMissing(String name, def args) {
-        return args ? this.commands."$name"(args) : this.commands."$name"()
+        return args ? this.commands."$name".call(*args) : this.commands."$name".call()
     }
 
     def propertyMissing(String name) {

@@ -16,7 +16,12 @@ import java.nio.charset.StandardCharsets
 @CompileDynamic
 class Body implements OutputSerializers {
 
+//    private ScriptContext context
     HttpEntity entity
+
+//    Body(ScriptContext bindings) {
+//        this.context = context
+//    }
 
     @Override
     String csv(Iterable<Map<String, ?>> raw, Object separator, Object enclosing) {
@@ -58,5 +63,16 @@ class Body implements OutputSerializers {
         }
         entity = new UrlEncodedFormEntity(urlParameters, StandardCharsets.UTF_8)
     }
-
+//
+//    def methodMissing(String name, def args) {
+//        Command.methodMissingOn(this.context, name, args)
+//    }
+//
+//    def propertyMissing(String name) {
+//        Command.propertyMissingOn(this.context, name)
+//    }
+//
+//    def propertyMissing(String name, def arg) {
+//        Command.propertyMissingOn(this.context, name, arg)
+//    }
 }

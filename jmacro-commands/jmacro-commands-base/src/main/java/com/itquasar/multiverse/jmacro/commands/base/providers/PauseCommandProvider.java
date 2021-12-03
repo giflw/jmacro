@@ -3,7 +3,7 @@ package com.itquasar.multiverse.jmacro.commands.base.providers;
 import com.itquasar.multiverse.jmacro.core.Command;
 import com.itquasar.multiverse.jmacro.core.JMacroCore;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
-import lombok.SneakyThrows;
+import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 
 import javax.script.ScriptEngine;
 
@@ -34,13 +34,17 @@ public class PauseCommandProvider implements CommandProvider<PauseCommandProvide
             this.call(seconds, null);
         }
 
-        @SneakyThrows
+
         void call(Number seconds, String message) {
             if (message != null) {
                 this.getLogger().warn(message);
             }
             Number milis = seconds.longValue() * 1000;
-            Thread.sleep(milis.longValue());
+            try {
+                Thread.sleep(milis.longValue());
+            } catch (InterruptedException e) {
+                throw new JMacroException("Error sleeping", e);
+            }
         }
 
     }

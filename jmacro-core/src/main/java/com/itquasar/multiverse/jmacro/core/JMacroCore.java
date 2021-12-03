@@ -4,9 +4,10 @@ import com.itquasar.multiverse.jmacro.core.configuration.Configuration;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.itquasar.multiverse.jmacro.core.jmx.JMXManagement;
 import lombok.Getter;
-import lombok.SneakyThrows;
 
+import java.io.IOException;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 public final class JMacroCore {
 
@@ -45,20 +46,28 @@ public final class JMacroCore {
         return engine;
     }
 
-    @SneakyThrows
+
     public void start() {
         this.engine = new EngineImpl(this);
         if (this.serverAddress != null && this.jmxPort > 0) {
-            this.jmxManagement = new JMXManagement(InetAddress.getByName(this.serverAddress), this.jmxPort);
+            try {
+                this.jmxManagement = new JMXManagement(InetAddress.getByName(this.serverAddress), this.jmxPort);
+            } catch (UnknownHostException e) {
+                throw new JMacroException("Error get INetAddress for [" + this.serverAddress + "]");
+            }
             // FIXME
             // var SPILoader = new SPILoader(JMXBeanIFace.class);
         }
     }
 
-    @SneakyThrows
+
     public void stop() {
         if (this.jmxManagement != null) {
-            this.jmxManagement.getServer().close();
+            try {
+                this.jmxManagement.getServer().close();
+            } catch (IOException e) {
+                throw new JMacroException("Error closing core", e);
+            }
         }
     }
 }

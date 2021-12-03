@@ -38,19 +38,19 @@ class OCRCommand extends Command {
         this.tesseract.setDatapath(path)
     }
 
-    @SneakyThrows
+
     String call(BufferedImage image) {
         this.init()
         return this.tesseract.doOCR(image)
     }
 
-    @SneakyThrows
+
     String call(Path path) {
         this.init()
         return this.tesseract.doOCR(path.toFile())
     }
 
-    @SneakyThrows
+
     String call(File file) {
         this.init()
         return this.tesseract.doOCR(file)

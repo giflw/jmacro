@@ -11,14 +11,14 @@ import javax.script.ScriptEngine
 
 class COMCommand extends Command implements AutoCloseable {
 
-    static {
-        System.setProperty("jacob.dll.path", LibraryLoader.getPreferredDLLName() + ".dll")
-    }
-
+    @Lazy
     static final Variant NO_PARAM = { new Variant().putNoParam() }()
 
     static enum Application {
-        EXCEL('Excel.Application');
+        EXCEL('Excel.Application'),
+        OUTLOOK('Outlook.Application'),
+        POWERPOINT('PowerPoint.Application'),
+        WORD('Word.Application');
 
         private final String activeXName
 
@@ -42,6 +42,11 @@ class COMCommand extends Command implements AutoCloseable {
 
     COMCommand(JMacroCore core, ScriptEngine scriptEngine) {
         super(core, scriptEngine)
+        if (!System.getProperty("jacob.dll.path")) {
+            def dllPath = core.configuration.folders.bin().resolve(LibraryLoader.getPreferredDLLName() + ".dll").toString()
+            System.setProperty("jacob.dll.path", dllPath);
+        }
+        getLogger().warn("JACOB dll: " + System.getProperty("jacob.dll.path"));
     }
 
     @Override

@@ -1,9 +1,9 @@
 package com.itquasar.multiverse.jmacro.core.repository;
 
 import com.itquasar.multiverse.jmacro.core.configuration.Configuration;
+import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.itquasar.multiverse.jmacro.core.script.Metadata;
 import com.itquasar.multiverse.jmacro.core.script.Script;
-import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.File;
@@ -22,31 +22,35 @@ public class FileScriptRepository extends ScriptRepositoryAbstract {
     }
 
     @Override
-    @SneakyThrows
+
     public List<Script> list(boolean reload) {
         if (this.getCache().size() == 0 || reload) {
             File repoPath = new File(this.getUri().getPath());
             if (repoPath.exists()) {
-                this.setCache(
-                    Files.walk(repoPath.toPath())
-                        .filter(Files::isRegularFile)
-                        .map(Path::toFile)
-                        .filter(file -> Configuration.SUPPORTED_EXTENSIONS.contains(
-                            file.getName().substring(file.getName().lastIndexOf(".") + 1)
-                        )).map(file -> {
-                            try {
-                                var source = Files.readString(file.toPath());
-                                Metadata metadata = Metadata.extractMetadata(source);
-                                String path = repoPath.toPath().relativize(file.toPath()).toString().replace("\\", "/");
-                                String location = "file://" + file.getAbsolutePath().replace("\\", "/");
-                                return new Script(metadata, path, location, source);
-                            } catch (IOException e) {
-                                LOGGER.error("Error reading file " + file, e);
-                                return null;
-                            }
-                        }).filter(Objects::nonNull)
-                        .toList()
-                );
+                try {
+                    this.setCache(
+                        Files.walk(repoPath.toPath())
+                            .filter(Files::isRegularFile)
+                            .map(Path::toFile)
+                            .filter(file -> Configuration.SUPPORTED_EXTENSIONS.contains(
+                                file.getName().substring(file.getName().lastIndexOf(".") + 1)
+                            )).map(file -> {
+                                try {
+                                    var source = Files.readString(file.toPath());
+                                    Metadata metadata = Metadata.extractMetadata(source);
+                                    String path = repoPath.toPath().relativize(file.toPath()).toString().replace("\\", "/");
+                                    String location = "file://" + file.getAbsolutePath().replace("\\", "/");
+                                    return new Script(metadata, path, location, source);
+                                } catch (IOException e) {
+                                    LOGGER.error("Error reading file " + file, e);
+                                    return null;
+                                }
+                            }).filter(Objects::nonNull)
+                            .toList()
+                    );
+                } catch (IOException e) {
+                    throw new JMacroException("Error waking repository " + this.getUri());
+                }
             } else {
                 LOGGER.error("Repository " + repoPath + " does not exists.");
             }

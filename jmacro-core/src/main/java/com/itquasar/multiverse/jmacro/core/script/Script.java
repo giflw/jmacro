@@ -10,6 +10,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Data
+@ToString(exclude = "source")
 @EqualsAndHashCode(exclude = "running")
 @Log4j2
 public class Script {
@@ -48,19 +49,20 @@ public class Script {
         return this.uuid;
     }
 
-    @SneakyThrows
+
     public <T> T run(Callable<T> callable) {
         if (this.running.compareAndSet(false, true)) {
             try {
                 LOGGER.warn("Starting " + this.path);
                 T call = callable.call();
                 return call;
+            } catch (Exception exception) {
+                LOGGER.error("Error while running script " + getLocation(), exception);
             } finally {
                 this.running.set(false);
                 LOGGER.warn(this.path + " finished");
             }
-        } else {
-            throw new IllegalStateException("Already running");
         }
+        throw new IllegalStateException("Already running");
     }
 }

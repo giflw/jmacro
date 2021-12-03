@@ -12,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 
 import javax.script.*;
 import java.io.PrintWriter;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -126,7 +125,7 @@ public final class EngineImpl implements Engine {
         Bindings globalScope = context.getBindings(GLOBAL_SCOPE);
         if (globalScope == null) {
             context.setBindings(engine.createBindings(), ScriptContext.GLOBAL_SCOPE);
-//            globalScope = context.getBindings(GLOBAL_SCOPE);
+            globalScope = context.getBindings(GLOBAL_SCOPE);
         }
 
         Bindings engineScope = context.getBindings(ENGINE_SCOPE);
@@ -138,32 +137,36 @@ public final class EngineImpl implements Engine {
         int id = ID_GENERATOR.addAndGet(1);
         Logger scriptLogger = LogManager.getLogger("ScriptEngine#" + id);
 
-        context.setAttribute("id", id, ENGINE_SCOPE);
-        context.setAttribute("uuid", UUID.randomUUID(), ENGINE_SCOPE);
-        context.setAttribute("logger", scriptLogger, ENGINE_SCOPE);
-
-        context.setAttribute("#jsr223.groovy.engine.keep.globals", "weak", ENGINE_SCOPE);
+        globalScope.put("id", id);
+        globalScope.put("uuid", UUID.randomUUID());
+        globalScope.put("logger", scriptLogger);
+        globalScope.put("#jsr223.groovy.engine.keep.globals", "weak");
 
         var commandTypes = new ArrayList<Class>();
         var commandProviderLoader = new SPILoader<>(CommandProvider.class);
         var commandProviders = commandProviderLoader.load();
+
+        var commands = new ArrayList<Command>();
+
         while (commandProviders.hasNext()) {
             var commandProvider = commandProviders.next();
-            Object command = commandProvider.getCommand(this.jMacroCore, engine);
+            scriptLogger.warn("Registering command [" + commandProvider.getName() + "] from " + commandProvider.getClass());
+            var command = commandProvider.getCommand(this.jMacroCore, engine);
             if (command == null) {
                 throw new JMacroException(this,
                     "Command provider " + commandProvider.getName() + " returned null command");
             }
             var name = commandProvider.getName();
             if (engineScope.containsKey(name)) {
-                throw new JMacroException("Command " + name + " already registered for " + engineScope.get(name).getClass() + ". Register attempt from " + commandProvider.getClass());
+                throw new JMacroException("Command [" + name + "] already registered for " + engineScope.get(name).getClass() + ". Register attempt from " + commandProvider.getClass());
             }
             engineScope.put(name, command);
+            commands.add(command);
 
             var scope = engineScope;
             commandProvider.getAliases().forEach(alias -> {
                 if (scope.containsKey(alias)) {
-                    scriptLogger.error("Alias " + alias + " for command " + name + " already registered for another command: " + scope.get(alias).getClass() + ". Register attempt from " + commandProvider.getClass());
+                    scriptLogger.error("Alias [" + alias + "] for command " + name + " already registered for another command: " + scope.get(alias).getClass() + ". Register attempt from " + commandProvider.getClass());
                 } else {
                     scope.put(name, command);
                 }
@@ -171,15 +174,7 @@ public final class EngineImpl implements Engine {
 
             commandTypes.add(command.getClass());
         }
-
-        var systemCommand = engineScope.get("system");
-        if (systemCommand != null) {
-            try {
-                systemCommand.getClass().getDeclaredMethod("lock").invoke(systemCommand);
-            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                scriptLogger.error("Error locking system command", e);
-            }
-        }
+        commands.forEach(command -> command.allCommandsRegistered());
 
         var valueHolder = new ValueHolder.ObjectValueHolder();
 

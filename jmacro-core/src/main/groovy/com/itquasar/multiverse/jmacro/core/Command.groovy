@@ -16,6 +16,7 @@ abstract class Command {
     private final JMacroCore core
     private final ScriptEngine scriptEngine
     private final ScriptContext context
+    private final Bindings bindings
 
     /**
      * Logger instance to use. This is got from script engine context attribute, or explicitly given.
@@ -27,10 +28,23 @@ abstract class Command {
      */
     @CompileStatic
     Command(final JMacroCore core, final ScriptEngine scriptEngine) {
+        Objects.requireNonNull(core, "Core must be not null")
+        Objects.requireNonNull(scriptEngine, "Script engine must be not null")
         this.core = core
         this.scriptEngine = scriptEngine
+
         this.context = scriptEngine.getContext()
-        this.logger = (Logger) this.context.getAttribute("logger")
+        Objects.requireNonNull(this.context, "Script context must be not null")
+
+        this.bindings = this.context.getBindings(ScriptContext.ENGINE_SCOPE)
+        Objects.requireNonNull(this.bindings, "Bindings must be not null")
+
+        this.logger = (Logger) this.context.getBindings(ScriptContext.GLOBAL_SCOPE).get("logger")
+        Objects.requireNonNull(this.logger, "Logger must be not null")
+    }
+
+    void allCommandsRegistered() {
+        // called after command is registered
     }
 
     def call(Closure closure) {
@@ -41,74 +55,98 @@ abstract class Command {
     }
 
     def methodMissing(String name, def args) {
-        return methodMissingOn(this.context, name, args)
+        return this.bindings."$name"(*args)
     }
 
     def propertyMissing(String name) {
-        return this.context."$name"
+        return this.bindings."$name"
     }
 
     def propertyMissing(String name, def arg) {
-        return this.context."$name" = arg
+        // no op
     }
 
-    static methodMissingOn(def target, def name, def args) {
-        if (target.respondsTo(name)) {
+    static methodMissingOn(def object, def name, def args) {
+        try {
             if (args) {
-                return target."$name"(*args)
+                return object."$name"(*args)
             }
-            return target."$name"()
+            return object."$name"()
+        } catch (Exception ex) {
+            throw new JMacroException("[$name] method missing on [${object}]", ex)
         }
     }
 
-    static methodMissingOnOrChainToContext(Command owner, def target, def name, def args) {
-        Try.of({ methodMissingOn(target, name, args) })
-            .onFailure(MissingMethodException.class, { methodMissingOn(owner.context, name, args) })
-            .getOrElseThrow({ new JMacroException("Method mising redirection error: $name ($args)") })
+    static methodMissingOnOrChainToContext(Command command, def target, def name, def args) {
+        return methodMissingOnOrChainToContext(command.bindings, target, name, args)
+    }
+
+    static methodMissingOnOrChainToContext(ScriptContext context, def target, def name, def args) {
+        return methodMissingOnOrChainToContext(context.getBindings(ScriptContext.ENGINE_SCOPE), target, name, args)
+    }
+
+    static methodMissingOnOrChainToContext(def context, def target, def name, def args) {
+        Try.of({ it -> methodMissingOn(target, name, args) })
+            .orElse(Try.of ({ methodMissingOn(context, name, args) }))
+            .getOrElseThrow({ it -> throw new JMacroException("Method mising redirection error: $name ($args)", it) })
+    }
+
+    static propertyMissingOn(Command command, def name) {
+        return propertyMissingOn(command.bindings, name)
+    }
+
+    static propertyMissingOn(ScriptContext context, def name) {
+        return propertyMissingOn(context.getBindings(ScriptContext.ENGINE_SCOPE), name)
     }
 
     static propertyMissingOn(def target, def name) {
-        return target."$name"
+        return Try.of({ target."$name" })
+            .getOrElseThrow({ it -> new JMacroException("Property missing (get) redirection error: $name", it) })
     }
 
-    static propertyMissingOnOrChainToContext(Command owner, def target, def name) {
-        Try.of({ propertyMissingOn(target, name) })
-            .onFailure(MissingPropertyException.class, { propertyMissingOn(owner.context, name) })
-            .getOrElseThrow({ new JMacroException("Property missing (get) redirection error: $name") })
+    static propertyMissingOnOrChainToContext(Command command, def target, def name) {
+        return Try.of({ propertyMissingOn(target, name) })
+            .orElse(Try.of({ propertyMissingOn(command.bindings, name) }))
+            .getOrElseThrow({ it -> new JMacroException("Property missing (get) redirection error: $name", it) })
     }
 
-    static propertyMissing(def target, String name, def arg) {
-        return target."$name" = arg
+    static propertyMissingOn(Command command, String name, def arg) {
+        return propertyMissingOn(command.bindings, name, arg)
     }
 
-    static propertyMissingOnOrChainToContext(Command owner, def target, def name, def args) {
-        Try.of({ propertyMissing(target, name, args) })
-            .onFailure(MissingPropertyException.class, { propertyMissing(owner.context, name, args) })
-            .getOrElseThrow({ new JMacroException("Property missing (set) redirection error: $name = $args") })
+    static propertyMissingOn(ScriptContext context, String name, def arg) {
+        return propertyMissingOn(context.getBindings(ScriptContext.ENGINE_SCOPE), name, arg)
     }
 
-    @CompileStatic
+    static propertyMissingOn(def target, String name, def arg) {
+        return Try.of({ target."$name" = arg })
+            .getOrElseThrow({ it -> new JMacroException("Property missing (set) redirection error: $name = $arg", it) })
+
+    }
+
+    static propertyMissingOnOrChainToContext(Command command, def target, def name, def arg) {
+        return Try.of({ propertyMissingOn(target, name, arg) })
+            .orElse(Try.of({ propertyMissingOn(command.context, name, arg) }))
+            .getOrElseThrow({ it -> new JMacroException("Property missing (set) redirection error: $name = $arg", it) })
+    }
+
     JMacroCore getCore() {
         return core
     }
 
-    @CompileStatic
     ScriptEngine getScriptEngine() {
         return scriptEngine
     }
 
-    @CompileStatic
     ScriptContext getContext() {
         return context
     }
 
-    @CompileStatic
-    Logger getLogger() {
-        return logger
+    Bindings getBindings() {
+        return bindings
     }
 
-    @CompileStatic
-    Bindings getBindings() {
-        return this.getContext().getBindings(ScriptContext.ENGINE_SCOPE)
+    Logger getLogger() {
+        return logger
     }
 }

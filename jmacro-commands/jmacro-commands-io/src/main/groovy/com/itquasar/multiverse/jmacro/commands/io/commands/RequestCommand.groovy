@@ -31,7 +31,7 @@ class RequestCommand extends Command {
     }
 
     Request call(Closure closure) {
-        def action = new Request(scriptEngine.getContext())
+        def action = new Request(getBindings())
         def requestConfig = scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE).get('configuration')?.request
         if (requestConfig?.headers) {
             action.headers.putAll(requestConfig.headers as Map<String, String>)

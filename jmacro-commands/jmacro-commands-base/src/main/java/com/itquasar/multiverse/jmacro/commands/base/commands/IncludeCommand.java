@@ -5,10 +5,10 @@ import com.itquasar.multiverse.jmacro.core.JMacroCore;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.itquasar.multiverse.jmacro.core.repository.GlobalScriptRepository;
 import com.itquasar.multiverse.jmacro.core.script.Script;
-import lombok.SneakyThrows;
 
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
+import javax.script.ScriptException;
 import java.util.Optional;
 
 public class IncludeCommand extends Command {
@@ -26,14 +26,14 @@ public class IncludeCommand extends Command {
         this.core = core;
     }
 
-    @SneakyThrows
+
     public Inclusion call(String... contextName) {
         return new Inclusion(this, core, contextName);
     }
 
     public record Inclusion(IncludeCommand includeCommand, JMacroCore core, String... contextName) {
 
-        @SneakyThrows
+
         void from(String includeName) {
             String extension = includeCommand.extension;
             includeName = includeName.endsWith(extension) ? includeName : includeName + '.' + extension;
@@ -44,18 +44,22 @@ public class IncludeCommand extends Command {
 
                 includeCommand.getLogger().warn("Including " + includeName);
 
-                core.getEngine().executeInclusion(
-                    script,
-                    engine -> {
-                        includeCommand.scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE).forEach(
-                            (key, value) -> {
-                                if (!key.startsWith("__")) {
-                                    engine.getBindings(ScriptContext.ENGINE_SCOPE).put(key, value);
-                                }
-                            });
-                    },
-                    engine -> {
-                    });
+                try {
+                    core.getEngine().executeInclusion(
+                        script,
+                        engine -> {
+                            includeCommand.scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE).forEach(
+                                (key, value) -> {
+                                    if (!key.startsWith("__")) {
+                                        engine.getBindings(ScriptContext.ENGINE_SCOPE).put(key, value);
+                                    }
+                                });
+                        },
+                        engine -> {
+                        });
+                } catch (ScriptException e) {
+                    throw new JMacroException("Error including script " + includeName, e);
+                }
             } else {
                 throw new JMacroException(this, "Could not find library " + includeName + " to include");
             }
