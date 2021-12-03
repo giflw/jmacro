@@ -1,6 +1,6 @@
 package com.itquasar.multiverse.jmacro.commands.terminal.commands.tn3270
 
-import com.itquasar.multiverse.jmacro.commands.terminal.commands.TN3270
+import com.itquasar.multiverse.jmacro.commands.terminal.commands.TN3270Command
 import com.itquasar.multiverse.tn3270j.TN3270j
 import com.itquasar.multiverse.tn3270j.WaitMode
 
@@ -8,7 +8,7 @@ class Writer {
     private final TN3270j tn3270j
     private final def logger;
 
-    Writer(TN3270 tn3270) {
+    Writer(TN3270Command tn3270) {
         this.tn3270j = tn3270.tn3270j
         this.logger = tn3270.getLogger()
     }

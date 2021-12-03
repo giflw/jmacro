@@ -1,12 +1,13 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
+import com.itquasar.multiverse.jmacro.core.Command;
 import com.itquasar.multiverse.jmacro.core.JMacroCore;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 
 import javax.script.ScriptEngine;
 
-public class RaiseCommandProvider implements CommandProvider<RaiseCommandProvider.Raise> {
+public class RaiseCommandProvider implements CommandProvider<RaiseCommandProvider.RaiseCommand> {
 
     @Override
     public String getName() {
@@ -14,16 +15,20 @@ public class RaiseCommandProvider implements CommandProvider<RaiseCommandProvide
     }
 
     @Override
-    public Class<Raise> getCommandType() {
-        return Raise.class;
+    public Class<RaiseCommand> getCommandType() {
+        return RaiseCommand.class;
     }
 
     @Override
-    public Raise getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new Raise();
+    public RaiseCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
+        return new RaiseCommand(jMacroCore, scriptEngine);
     }
 
-    public static class Raise {
+    public static class RaiseCommand extends Command {
+
+        public RaiseCommand(JMacroCore core, ScriptEngine scriptEngine) {
+            super(core, scriptEngine);
+        }
 
         void call(String message) {
             throw new JMacroException(message);

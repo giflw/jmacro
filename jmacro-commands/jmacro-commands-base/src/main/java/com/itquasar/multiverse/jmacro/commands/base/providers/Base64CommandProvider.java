@@ -1,24 +1,29 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
+import com.itquasar.multiverse.jmacro.core.Command;
 import com.itquasar.multiverse.jmacro.core.JMacroCore;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 
 import javax.script.ScriptEngine;
 import java.nio.charset.StandardCharsets;
 
-public class Base64CommandProvider implements CommandProvider<Base64CommandProvider.Base64> {
+public class Base64CommandProvider implements CommandProvider<Base64CommandProvider.Base64Command> {
 
     @Override
-    public Class<Base64> getCommandType() {
-        return Base64.class;
+    public Class<Base64Command> getCommandType() {
+        return Base64Command.class;
     }
 
     @Override
-    public Base64 getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new Base64();
+    public Base64Command getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
+        return new Base64Command(jMacroCore, scriptEngine);
     }
 
-    static public class Base64 {
+    static public class Base64Command extends Command {
+
+        public Base64Command(JMacroCore core, ScriptEngine scriptEngine) {
+            super(core, scriptEngine);
+        }
 
         /**
          * Encode to base64 and return String

@@ -1,28 +1,31 @@
 package com.itquasar.multiverse.jmacro.commands.io.commands
 
-import com.itquasar.multiverse.jmacro.commands.io.commands.file.File as FileAction
+import com.itquasar.multiverse.jmacro.commands.io.commands.file.File
+import com.itquasar.multiverse.jmacro.core.Command
+import com.itquasar.multiverse.jmacro.core.JMacroCore
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
-import groovy.transform.CompileStatic
-import groovy.util.logging.Log4j2
 
+import javax.script.ScriptEngine
 import javax.swing.*
 import javax.swing.filechooser.FileFilter
 import java.io.File as JFile
 import java.nio.file.Path
 
-@Log4j2
-@CompileStatic
-class File {
+class FileCommand extends Command {
 
-    FileAction call(String path) {
+    FileCommand(JMacroCore core, ScriptEngine scriptEngine) {
+        super(core, scriptEngine)
+    }
+
+    File call(String path) {
         return call(path, Closure.IDENTITY)
     }
 
-    FileAction call(JFile file) {
+    File call(JFile file) {
         return call(file, Closure.IDENTITY)
     }
 
-    FileAction call(Path path) {
+    File call(Path path) {
         return call(path, Closure.IDENTITY)
     }
 
@@ -32,18 +35,18 @@ class File {
      * @param closure
      * @return
      */
-    FileAction call(String path, Closure closure) {
+    File call(String path, Closure closure) {
         return call(Path.of(path), closure)
     }
 
-    FileAction call(JFile file, Closure closure) {
+    File call(JFile file, Closure closure) {
         return call(file.toPath(), closure)
     }
 
-    FileAction call(Path path, Closure closure) {
-        def fileAction = new FileAction(path)
-        fileAction.call(closure)
-        fileAction
+    File call(Path path, Closure closure) {
+        def file = new File(path)
+        file.call(closure)
+        file
     }
 
     /**
@@ -55,7 +58,7 @@ class File {
      * @param exts
      * @return
      */
-    FileAction call(Map<String, String> args, String... exts = []) {
+    File call(Map<String, String> args, String... exts = []) {
         JFileChooser chooser = new JFileChooser(args.directory ? args.directory : System.getProperty("user.home"))
         chooser.setDialogTitle(args.title ? args.title.toString() : 'Choose file')
         chooser.multiSelectionEnabled = false
@@ -78,7 +81,7 @@ class File {
         }
         if (chooser.showDialog(null, 'Select') == JFileChooser.APPROVE_OPTION) {
             JFile file = chooser.getSelectedFile()
-            return new FileAction(file)
+            return new File(file)
         }
         throw new JMacroException(this, 'No files selected')
     }

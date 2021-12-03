@@ -1,6 +1,6 @@
 package com.itquasar.multiverse.jmacro.commands.terminal.commands.tn3270
 
-import com.itquasar.multiverse.jmacro.commands.terminal.commands.TN3270
+import com.itquasar.multiverse.jmacro.commands.terminal.commands.TN3270Command
 import com.itquasar.multiverse.tn3270j.TN3270j
 
 class Reader extends LinkedHashMap<String, String> {
@@ -10,7 +10,7 @@ class Reader extends LinkedHashMap<String, String> {
     private final TN3270j tn3270j
     private final def logger
 
-    Reader(TN3270 tn3270, Mode mode) {
+    Reader(TN3270Command tn3270, Mode mode) {
         this.tn3270j = tn3270.tn3270j
         this.logger = tn3270.getLogger()
         this.mode = mode

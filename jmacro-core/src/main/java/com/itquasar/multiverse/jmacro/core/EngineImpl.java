@@ -154,10 +154,21 @@ public final class EngineImpl implements Engine {
                 throw new JMacroException(this,
                     "Command provider " + commandProvider.getName() + " returned null command");
             }
-            engineScope.put(
-                commandProvider.getName(),
-                command
-            );
+            var name = commandProvider.getName();
+            if (engineScope.containsKey(name)) {
+                throw new JMacroException("Command " + name + " already registered for " + engineScope.get(name).getClass() + ". Register attempt from " + commandProvider.getClass());
+            }
+            engineScope.put(name, command);
+
+            var scope = engineScope;
+            commandProvider.getAliases().forEach(alias -> {
+                if (scope.containsKey(alias)) {
+                    scriptLogger.error("Alias " + alias + " for command " + name + " already registered for another command: " + scope.get(alias).getClass() + ". Register attempt from " + commandProvider.getClass());
+                } else {
+                    scope.put(name, command);
+                }
+            });
+
             commandTypes.add(command.getClass());
         }
 

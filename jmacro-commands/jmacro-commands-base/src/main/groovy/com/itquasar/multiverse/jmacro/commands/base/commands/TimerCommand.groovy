@@ -1,7 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands
 
-import com.itquasar.multiverse.jmacro.core.GroovyCommand
-import com.itquasar.multiverse.jmacro.core.command.LoggingCommand
+import com.itquasar.multiverse.jmacro.core.Command
+import com.itquasar.multiverse.jmacro.core.JMacroCore
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
@@ -10,16 +10,16 @@ import javax.script.ScriptEngine
 import java.util.concurrent.atomic.AtomicBoolean
 
 @CompileStatic
-class Timer extends LoggingCommand implements GroovyCommand, AutoCloseable {
+class TimerCommand extends Command implements AutoCloseable {
 
     private AtomicBoolean running = new AtomicBoolean(false)
     private Map<String, BigDecimal> partials = new LinkedHashMap()
 
-    Timer(ScriptEngine scriptEngine) {
-        super(scriptEngine)
+    TimerCommand(JMacroCore core, ScriptEngine scriptEngine) {
+        super(core, scriptEngine)
     }
 
-    Timer start() {
+    TimerCommand start() {
         if (!this.running.compareAndSet(false, true)) {
             throw new JMacroException(this, 'Timer already started!')
         }
@@ -28,7 +28,7 @@ class Timer extends LoggingCommand implements GroovyCommand, AutoCloseable {
         return this
     }
 
-    Timer stop() {
+    TimerCommand stop() {
         if (!running.compareAndSet(true, false)) {
             throw new JMacroException(this, 'Timer not started!')
         }
@@ -36,7 +36,7 @@ class Timer extends LoggingCommand implements GroovyCommand, AutoCloseable {
         return this
     }
 
-    Timer partial(String label = null) {
+    TimerCommand partial(String label = null) {
         partials.put(label ?: 'Partial ' + (partials.size() + 1), (System.currentTimeMillis() / 1000) - this.partials['Start'])
         return this
     }
@@ -71,16 +71,16 @@ class Timer extends LoggingCommand implements GroovyCommand, AutoCloseable {
 
     void log() {
         this.toString().split("\n").each {
-            this.getLogger().warn(it)
+            this.logger.warn(it)
         }
     }
 
     @Override
     void close() throws Exception {
         if (this.running.get()) {
-            this.getLogger().debug('Closing timer...')
+            this.logger.debug('Closing timer...')
             this.stop()
-            this.getLogger().debug('...timer closed!')
+            this.logger.debug('...timer closed!')
         }
     }
 

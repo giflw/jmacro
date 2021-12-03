@@ -1,12 +1,12 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
-import com.itquasar.multiverse.jmacro.commands.base.commands.Credentials;
+import com.itquasar.multiverse.jmacro.commands.base.commands.CredentialsCommand;
 import com.itquasar.multiverse.jmacro.core.JMacroCore;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 
 import javax.script.ScriptEngine;
 
-public class CredentialsCommandProvider implements CommandProvider<Credentials> {
+public class CredentialsCommandProvider implements CommandProvider<CredentialsCommand> {
 
     @Override
     public String getName() {
@@ -14,12 +14,12 @@ public class CredentialsCommandProvider implements CommandProvider<Credentials> 
     }
 
     @Override
-    public Class<Credentials> getCommandType() {
-        return Credentials.class;
+    public Class<CredentialsCommand> getCommandType() {
+        return CredentialsCommand.class;
     }
 
     @Override
-    public Credentials getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new Credentials();
+    public CredentialsCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
+        return new CredentialsCommand(jMacroCore, scriptEngine);
     }
 }

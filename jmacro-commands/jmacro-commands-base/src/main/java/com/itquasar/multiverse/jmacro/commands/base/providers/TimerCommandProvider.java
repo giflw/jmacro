@@ -1,26 +1,21 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
-import com.itquasar.multiverse.jmacro.commands.base.commands.Timer;
+import com.itquasar.multiverse.jmacro.commands.base.commands.TimerCommand;
 import com.itquasar.multiverse.jmacro.core.JMacroCore;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 
 import javax.script.ScriptEngine;
 
-public class TimerCommandProvider implements CommandProvider<Timer> {
+public class TimerCommandProvider implements CommandProvider<TimerCommand> {
 
     @Override
-    public String getName() {
-        return "timer";
+    public Class<TimerCommand> getCommandType() {
+        return TimerCommand.class;
     }
 
     @Override
-    public Class<Timer> getCommandType() {
-        return Timer.class;
-    }
-
-    @Override
-    public Timer getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new Timer(scriptEngine);
+    public TimerCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
+        return new TimerCommand(jMacroCore, scriptEngine);
     }
 }
 

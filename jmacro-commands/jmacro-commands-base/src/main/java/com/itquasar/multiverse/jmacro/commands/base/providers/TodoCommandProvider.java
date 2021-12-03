@@ -1,12 +1,13 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
+import com.itquasar.multiverse.jmacro.core.Command;
 import com.itquasar.multiverse.jmacro.core.JMacroCore;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 
 import javax.script.ScriptEngine;
 
-public class TodoCommandProvider implements CommandProvider<TodoCommandProvider.Todo> {
+public class TodoCommandProvider implements CommandProvider<TodoCommandProvider.TodoCommand> {
 
     @Override
     public String getName() {
@@ -14,16 +15,20 @@ public class TodoCommandProvider implements CommandProvider<TodoCommandProvider.
     }
 
     @Override
-    public Class<Todo> getCommandType() {
-        return Todo.class;
+    public Class<TodoCommand> getCommandType() {
+        return TodoCommand.class;
     }
 
     @Override
-    public Todo getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new Todo();
+    public TodoCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
+        return new TodoCommand(jMacroCore, scriptEngine);
     }
 
-    public static class Todo {
+    public static class TodoCommand extends Command {
+
+        public TodoCommand(JMacroCore core, ScriptEngine scriptEngine) {
+            super(core, scriptEngine);
+        }
 
         void call() {
             this.call("");

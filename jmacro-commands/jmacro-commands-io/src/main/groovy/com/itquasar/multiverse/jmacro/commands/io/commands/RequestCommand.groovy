@@ -1,8 +1,9 @@
 package com.itquasar.multiverse.jmacro.commands.io.commands
 
-import com.itquasar.multiverse.jmacro.commands.io.commands.request.Request as RequestAction
+import com.itquasar.multiverse.jmacro.commands.io.commands.request.Request
+import com.itquasar.multiverse.jmacro.core.Command
+import com.itquasar.multiverse.jmacro.core.JMacroCore
 import groovy.transform.CompileDynamic
-import groovy.util.logging.Log4j2
 
 import javax.script.ScriptContext
 import javax.script.ScriptEngine
@@ -10,7 +11,7 @@ import javax.script.ScriptEngine
 /**
  * Request is used to make HTTP requests.
  * Request block are executed automatically at the end of the block,
- * or can be executed at any time using {@link Request#execute()}.
+ * or can be executed at any time using {@link RequestCommand#execute()}.
  *
  * Syntax:
  *
@@ -22,18 +23,15 @@ import javax.script.ScriptEngine
  *       body_call()
  *       // code
  *}* </pre>*/
-@Log4j2
 @CompileDynamic
-class Request {
+class RequestCommand extends Command {
 
-    private ScriptEngine scriptEngine
-
-    Request(ScriptEngine scriptEngine) {
-        this.scriptEngine = scriptEngine
+    RequestCommand(JMacroCore core, ScriptEngine scriptEngine) {
+        super(core, scriptEngine)
     }
 
-    RequestAction call(Closure closure) {
-        def action = new RequestAction(scriptEngine.getContext())
+    Request call(Closure closure) {
+        def action = new Request(scriptEngine.getContext())
         def requestConfig = scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE).get('configuration')?.request
         if (requestConfig?.headers) {
             action.headers.putAll(requestConfig.headers as Map<String, String>)

@@ -1,16 +1,22 @@
 package com.itquasar.multiverse.jmacro.commands.datax.commands
 
-
+import com.itquasar.multiverse.jmacro.core.Command
+import com.itquasar.multiverse.jmacro.core.JMacroCore
 import lombok.SneakyThrows
 import net.sourceforge.tess4j.ITesseract
 import net.sourceforge.tess4j.Tesseract
 
+import javax.script.ScriptEngine
 import java.awt.image.BufferedImage
 import java.nio.file.Path
 
-class OCRCommand {
+class OCRCommand extends Command {
 
     private ITesseract tesseract
+
+    OCRCommand(JMacroCore core, ScriptEngine scriptEngine) {
+        super(core, scriptEngine)
+    }
 
     private synchronized void init() {
         if (this.tesseract == null) {

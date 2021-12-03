@@ -1,20 +1,21 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands
 
+import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.Env
-import com.itquasar.multiverse.jmacro.core.GroovyCommand
-import com.itquasar.multiverse.jmacro.core.configuration.Configuration as JMacroConfiguration
+import com.itquasar.multiverse.jmacro.core.JMacroCore
 
-class Configuration implements GroovyCommand {
+import javax.script.ScriptEngine
 
-    JMacroConfiguration jMacroConfiguration
+class ConfigurationCommand extends Command {
+
     ConfigObject configs = new ConfigObject()
-    private excludeKeys = Credentials.declaredFields.collect { it.name }
+    private excludeKeys = CredentialsCommand.declaredFields.collect { it.name }
 
-    Configuration(JMacroConfiguration jMacroConfiguration) {
-        this.jMacroConfiguration = jMacroConfiguration
+    ConfigurationCommand(JMacroCore core, ScriptEngine scriptEngine) {
+        super(core, scriptEngine)
     }
 
-    def fill(Configuration configuration) {
+    def fill(ConfigurationCommand configuration) {
         fill(configuration.configs)
     }
 
@@ -29,11 +30,6 @@ class Configuration implements GroovyCommand {
         return this
     }
 
-    // FIXME is this really needed???
-    boolean getVisible() {
-        return this.configs.visible != null ? this.configs.visible : true
-    }
-
     def set(String name, value) {
         this.configs[name] = value
         return this
@@ -41,15 +37,15 @@ class Configuration implements GroovyCommand {
 
     def get(String name) {
         def value = this.configs[name] ? this.configs[name] : null
-        return value == null && this.jMacroConfiguration.hasProperty(name) ? this.jMacroConfiguration."$name" : value
+        return value == null && this.core.configuration.hasProperty(name) ? this.core.configuration."$name" : value
     }
 
     def propertyMissing(String name) {
         if (this.configs.hasVariable(name)) {
             return this.configs.getVariable(name)
         }
-        if (this.jMacroConfiguration.hasProperty(name)) {
-            return this.jMacroConfiguration."$name"
+        if (this.core.configuration.hasProperty(name)) {
+            return this.core.configuration."$name"
         }
         throw new MissingPropertyException("Property $name not found!")
     }

@@ -1,12 +1,12 @@
 package com.itquasar.multiverse.jmacro.commands.browser.command
 
-import com.itquasar.multiverse.jmacro.commands.base.commands.Configuration
+import com.itquasar.multiverse.jmacro.commands.base.commands.ConfigurationCommand
 import com.itquasar.multiverse.jmacro.commands.browser.BrowserExtensionMethods
 import com.itquasar.multiverse.jmacro.commands.browser.command.browser.BrowserElements
 import com.itquasar.multiverse.jmacro.commands.browser.command.browser.BrowserWait
 import com.itquasar.multiverse.jmacro.commands.browser.command.browser.WebElementWrapper
-import com.itquasar.multiverse.jmacro.core.GroovyCommand
-import com.itquasar.multiverse.jmacro.core.command.LoggingCommand
+import com.itquasar.multiverse.jmacro.core.Command
+import com.itquasar.multiverse.jmacro.core.JMacroCore
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
@@ -27,12 +27,12 @@ import ru.yandex.qatools.ashot.Screenshot
 import ru.yandex.qatools.ashot.shooting.ShootingStrategies
 
 import javax.imageio.ImageIO
-import javax.script.ScriptContext
+import javax.script.ScriptEngine
 import java.io.File as JFile
 
 @CompileStatic
 @ToString(includePackage = false, includeNames = true)
-class Browser extends LoggingCommand implements GroovyCommand, AutoCloseable {
+class BrowserCommand extends Command implements AutoCloseable {
 
     // FIXME
 //    static {
@@ -57,8 +57,10 @@ class Browser extends LoggingCommand implements GroovyCommand, AutoCloseable {
     Map<String, ?> elements = [:]
     Vendor vendor = Vendor.CHROME
 
-    Browser(ScriptContext scriptContext) {
-        super(scriptContext)
+
+
+    BrowserCommand(JMacroCore core, ScriptEngine scriptEngine) {
+        super(core, scriptEngine)
         Runtime.getRuntime().addShutdownHook(
             new Thread(
                 new Runnable() {
@@ -71,7 +73,7 @@ class Browser extends LoggingCommand implements GroovyCommand, AutoCloseable {
         )
     }
 
-    Browser start() {
+    BrowserCommand start() {
         if (driver == null || driver.sessionId == null) {
             if (vendor == Vendor.FIREFOX) {
                 ServerSocket serverSocket = new ServerSocket(0)
@@ -121,7 +123,7 @@ class Browser extends LoggingCommand implements GroovyCommand, AutoCloseable {
         }
     }
 
-    def configure(Configuration configuration) {
+    def configure(ConfigurationCommand configuration) {
         configure(configuration.configs)
     }
 
@@ -146,7 +148,7 @@ class Browser extends LoggingCommand implements GroovyCommand, AutoCloseable {
         return this.wait.call(this, element, timeout)
     }
 
-    Browser open(String url) {
+    BrowserCommand open(String url) {
         try {
             start()
             driver.get(url)
@@ -163,7 +165,7 @@ class Browser extends LoggingCommand implements GroovyCommand, AutoCloseable {
         }
     }
 
-    Browser elements(Closure closure) {
+    BrowserCommand elements(Closure closure) {
         BrowserElements fields = new BrowserElements(this)
         closure.delegate = fields
         closure.resolveStrategy = Closure.DELEGATE_ONLY

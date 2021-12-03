@@ -1,37 +1,35 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
+import com.itquasar.multiverse.jmacro.core.Command;
 import com.itquasar.multiverse.jmacro.core.JMacroCore;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
-import org.apache.logging.log4j.Logger;
 
 import javax.script.ScriptEngine;
 
-public class ErrorCommandProvider implements CommandProvider<ErrorCommandProvider.Error> {
+public class ErrorCommandProvider implements CommandProvider<ErrorCommandProvider.ErrorCommand> {
 
     @Override
-    public Class<Error> getCommandType() {
-        return Error.class;
+    public Class<ErrorCommand> getCommandType() {
+        return ErrorCommand.class;
     }
 
     @Override
-    public Error getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new Error((Logger) scriptEngine.getContext().getAttribute("logger"));
+    public ErrorCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
+        return new ErrorCommand(jMacroCore, scriptEngine);
     }
 
-    public static class Error {
+    public static class ErrorCommand extends Command {
 
-        private final Logger logger;
-
-        public Error(Logger logger) {
-            this.logger = logger;
+        public ErrorCommand(JMacroCore core, ScriptEngine scriptEngine) {
+            super(core, scriptEngine);
         }
 
         void call(Object arg) {
-            logger.error(arg);
+            this.getLogger().error(arg);
         }
 
         void call(Object arg, Throwable ex) {
-            logger.error(arg, ex);
+            this.getLogger().error(arg, ex);
         }
 
     }

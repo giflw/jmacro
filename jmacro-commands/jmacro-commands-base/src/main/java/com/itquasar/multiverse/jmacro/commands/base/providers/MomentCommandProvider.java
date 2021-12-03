@@ -1,24 +1,20 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
-import com.itquasar.multiverse.jmacro.commands.base.commands.Moment;
+import com.itquasar.multiverse.jmacro.commands.base.commands.MomentCommand;
 import com.itquasar.multiverse.jmacro.core.JMacroCore;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 
 import javax.script.ScriptEngine;
 
-public class MomentCommandProvider implements CommandProvider<Moment> {
+public class MomentCommandProvider implements CommandProvider<MomentCommand> {
+
     @Override
-    public String getName() {
-        return "moment";
+    public Class<MomentCommand> getCommandType() {
+        return MomentCommand.class;
     }
 
     @Override
-    public Class<Moment> getCommandType() {
-        return Moment.class;
-    }
-
-    @Override
-    public Moment getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new Moment();
+    public MomentCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
+        return new MomentCommand(jMacroCore, scriptEngine);
     }
 }

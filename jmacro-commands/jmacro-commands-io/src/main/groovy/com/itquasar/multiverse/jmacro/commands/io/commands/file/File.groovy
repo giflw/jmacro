@@ -1,10 +1,8 @@
 package com.itquasar.multiverse.jmacro.commands.io.commands.file
 
 import com.itquasar.multiverse.jmacro.commands.io.InputParsers
-import com.itquasar.multiverse.jmacro.core.GroovyCommand
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-import groovy.util.logging.Log4j2
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.Workbook
@@ -17,9 +15,8 @@ import java.nio.file.Files
 import java.nio.file.OpenOption
 import java.nio.file.Path
 
-@Log4j2
 @CompileStatic
-class File implements GroovyCommand, InputParsers {
+class File implements InputParsers {
 
     private Path path
 

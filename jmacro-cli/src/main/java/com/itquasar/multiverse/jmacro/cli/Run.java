@@ -1,7 +1,7 @@
 package com.itquasar.multiverse.jmacro.cli;
 
-import com.itquasar.multiverse.jmacro.commands.base.commands.Configuration;
-import com.itquasar.multiverse.jmacro.commands.base.commands.Credentials;
+import com.itquasar.multiverse.jmacro.commands.base.commands.ConfigurationCommand;
+import com.itquasar.multiverse.jmacro.commands.base.commands.CredentialsCommand;
 import com.itquasar.multiverse.jmacro.core.script.ScriptResult;
 import picocli.CommandLine;
 
@@ -84,9 +84,9 @@ public class Run implements Callable<CliResult> {
                 this.args != null ? Collections.unmodifiableList(this.args) : Collections.emptyList(),
                 scriptEngine -> {
                     Bindings bindings = scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
-                    Credentials bindedCredentials = (Credentials) bindings.get("credentials");
+                    CredentialsCommand bindedCredentials = (CredentialsCommand) bindings.get("credentials");
                     bindedCredentials.fill(credentials);
-                    Configuration bindedConfiguration = (Configuration) bindings.get("configuration");
+                    ConfigurationCommand bindedConfiguration = (ConfigurationCommand) bindings.get("configuration");
                     bindedConfiguration.fill(configuration);
                 }
             );

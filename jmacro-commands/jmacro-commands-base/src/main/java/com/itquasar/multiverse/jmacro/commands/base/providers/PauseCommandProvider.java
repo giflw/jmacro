@@ -1,13 +1,13 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
+import com.itquasar.multiverse.jmacro.core.Command;
 import com.itquasar.multiverse.jmacro.core.JMacroCore;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
-import com.itquasar.multiverse.jmacro.core.command.LoggingCommand;
 import lombok.SneakyThrows;
 
 import javax.script.ScriptEngine;
 
-public class PauseCommandProvider implements CommandProvider<PauseCommandProvider.Pause> {
+public class PauseCommandProvider implements CommandProvider<PauseCommandProvider.PauseCommand> {
 
     @Override
     public String getName() {
@@ -15,19 +15,19 @@ public class PauseCommandProvider implements CommandProvider<PauseCommandProvide
     }
 
     @Override
-    public Class<Pause> getCommandType() {
-        return Pause.class;
+    public Class<PauseCommand> getCommandType() {
+        return PauseCommand.class;
     }
 
     @Override
-    public Pause getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new Pause(scriptEngine);
+    public PauseCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
+        return new PauseCommand(jMacroCore, scriptEngine);
     }
 
-    public static class Pause extends LoggingCommand {
+    public static class PauseCommand extends Command {
 
-        public Pause(ScriptEngine scriptEngine) {
-            super(scriptEngine);
+        public PauseCommand(JMacroCore core, ScriptEngine scriptEngine) {
+            super(core, scriptEngine);
         }
 
         void call(Number seconds) {

@@ -1,13 +1,13 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
+import com.itquasar.multiverse.jmacro.core.Command;
 import com.itquasar.multiverse.jmacro.core.JMacroCore;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.Logger;
 
 import javax.script.ScriptEngine;
 
-public class EchoCommandProvider implements CommandProvider<EchoCommandProvider.Echo> {
+public class EchoCommandProvider implements CommandProvider<EchoCommandProvider.EchoCommand> {
 
     /**
      * New log level between WARN and INFO.
@@ -15,25 +15,23 @@ public class EchoCommandProvider implements CommandProvider<EchoCommandProvider.
     public static final Level ECHO = Level.forName("ECHO", 350);
 
     @Override
-    public Class<Echo> getCommandType() {
-        return Echo.class;
+    public Class<EchoCommand> getCommandType() {
+        return EchoCommand.class;
     }
 
     @Override
-    public Echo getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new Echo((Logger) scriptEngine.getContext().getAttribute("logger"));
+    public EchoCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
+        return new EchoCommand(jMacroCore, scriptEngine);
     }
 
-    public static class Echo {
+    public static class EchoCommand extends Command {
 
-        private final Logger logger;
-
-        public Echo(Logger logger) {
-            this.logger = logger;
+        public EchoCommand(JMacroCore core, ScriptEngine scriptEngine) {
+            super(core, scriptEngine);
         }
 
         void call(Object arg) {
-            logger.log(ECHO, arg);
+            this.getLogger().log(ECHO, arg);
         }
 
     }

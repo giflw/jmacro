@@ -1,25 +1,21 @@
 package com.itquasar.multiverse.jmacro.commands.datax.commands
 
+import com.itquasar.multiverse.jmacro.core.Command
+import com.itquasar.multiverse.jmacro.core.JMacroCore
 import com.jacob.activeX.ActiveXComponent
 import com.jacob.com.ComThread
-import com.jacob.com.Dispatch
 import com.jacob.com.LibraryLoader
 import com.jacob.com.Variant
 
-import java.util.concurrent.Callable
+import javax.script.ScriptEngine
 
-class COMCommand implements AutoCloseable {
+class COMCommand extends Command implements AutoCloseable {
 
     static {
         System.setProperty("jacob.dll.path", LibraryLoader.getPreferredDLLName() + ".dll")
     }
 
-    @Override
-    String toString() {
-        return context
-    }
-
-    static Variant NO_PARAM = { new Variant().putNoParam() }()
+    static final Variant NO_PARAM = { new Variant().putNoParam() }()
 
     static enum Application {
         EXCEL('Excel.Application');
@@ -29,10 +25,9 @@ class COMCommand implements AutoCloseable {
         private Application(String activeXName) {
             this.activeXName = activeXName
         }
-
     }
 
-    static start(Application application, Closure closure = null) {
+    def start(Application application, Closure closure = null) {
         if (!ComThread.haveSTA) {
             ComThread.InitSTA()
         }
@@ -45,49 +40,8 @@ class COMCommand implements AutoCloseable {
         return wrapper
     }
 
-    private def context
-    private Callable closeCallback
-
-    COMCommand(context = null, Callable closeCallback = null) {
-        if (Variant.isInstance(context)) {
-            Variant variant = (Variant) context
-            context = variant.getvt() == Variant.VariantDispatch ? variant.toDispatch() : variant
-        }
-        this.context = context
-        this.closeCallback = closeCallback
-    }
-
-    def call(Closure closure) {
-        closure.delegate = this
-        closure.resolveStrategy = Closure.DELEGATE_FIRST
-        closure()
-    }
-
-    /*def call(args) {
-        println("C $args")
-        String name = args.class.isArray() ? args[0] : args
-        Dispatch.call(context.toDispatch(), name, *(args.tail().collect { new Variant(it) }))
-    }*/
-
-    def methodMissing(String name, args) {
-        def object = context.respondsTo('toDispatch') ? context.toDispatch() : context
-        def transform = { value ->
-            value = GString.isInstance(value) ? value.toString() : value
-            value = List.isInstance(value) ? value.collect { new Variant(it) }.toArray() :
-                new Variant(value)
-            return value
-        }
-        return new COMCommand(Dispatch.call(object, name, *(args.collect {
-            transform(it)
-        })))
-    }
-
-    def propertyMissing(String name, def value = null) {
-        if (value) {
-            Dispatch.put(context, name, new Variant(value))
-        } else {
-            return new COMCommand(Dispatch.get(context, name))
-        }
+    COMCommand(JMacroCore core, ScriptEngine scriptEngine) {
+        super(core, scriptEngine)
     }
 
     @Override

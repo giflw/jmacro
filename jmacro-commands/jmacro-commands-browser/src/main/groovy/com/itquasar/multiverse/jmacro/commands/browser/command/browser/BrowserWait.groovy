@@ -1,7 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.browser.command.browser
 
 
-import com.itquasar.multiverse.jmacro.commands.browser.command.Browser
+import com.itquasar.multiverse.jmacro.commands.browser.command.BrowserCommand
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileStatic
 import org.openqa.selenium.By
@@ -24,23 +24,23 @@ class BrowserWait {
     ]
 
     private static final long DEFAULT_TIMEOUT = 30
-    private Browser browser
+    private BrowserCommand browser
     private WebDriverWait driverWait
     private String cssSelector
     private WebElementWrapper element
 
-    BrowserWait(Browser browser) {
+    BrowserWait(BrowserCommand browser) {
         this.browser = browser
         driverWait = new WebDriverWait(browser.driver, DEFAULT_TIMEOUT.longValue())
     }
 
-    BrowserWait(Browser browser, WebDriverWait driverWait, String cssSelector) {
+    BrowserWait(BrowserCommand browser, WebDriverWait driverWait, String cssSelector) {
         this.browser = browser
         this.driverWait = driverWait
         this.cssSelector = cssSelector
     }
 
-    BrowserWait(Browser browser, WebDriverWait driverWait, WebElementWrapper element) {
+    BrowserWait(BrowserCommand browser, WebDriverWait driverWait, WebElementWrapper element) {
         this.browser = browser
         this.driverWait = driverWait
         this.element = element
@@ -51,11 +51,11 @@ class BrowserWait {
         return driverWait.withTimeout(Duration.ofMillis(millis)) as WebDriverWait
     }
 
-    BrowserWait call(Browser browser, String cssSelector, BigDecimal timeout = DEFAULT_TIMEOUT) {
+    BrowserWait call(BrowserCommand browser, String cssSelector, BigDecimal timeout = DEFAULT_TIMEOUT) {
         return new BrowserWait(browser, waitWithtimeout(timeout), cssSelector)
     }
 
-    BrowserWait call(Browser browser, WebElementWrapper element, BigDecimal timeout = DEFAULT_TIMEOUT) {
+    BrowserWait call(BrowserCommand browser, WebElementWrapper element, BigDecimal timeout = DEFAULT_TIMEOUT) {
         return new BrowserWait(browser, waitWithtimeout(timeout), element)
     }
 

@@ -1,21 +1,18 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
 import com.itquasar.multiverse.jmacro.commands.base.Result;
-import com.itquasar.multiverse.jmacro.commands.base.commands.ConstantsCommand;
+import com.itquasar.multiverse.jmacro.core.Command;
+import com.itquasar.multiverse.jmacro.core.Constants;
 import com.itquasar.multiverse.jmacro.core.JMacroCore;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
-import com.itquasar.multiverse.jmacro.core.command.LoggingCommand;
 import com.itquasar.multiverse.jmacro.core.exception.ExitException;
 
 import javax.script.ScriptEngine;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import static com.itquasar.multiverse.jmacro.commands.base.commands.ConstantsCommand.QUIET;
-import static com.itquasar.multiverse.jmacro.commands.base.commands.ConstantsCommand.VERBOSE;
-
 // FIXME shouldnt have a "catch" block ???
-public class AttemptCommandProvider implements CommandProvider<AttemptCommandProvider.Attempt> {
+public class AttemptCommandProvider implements CommandProvider<AttemptCommandProvider.AttemptCommand> {
 
     @Override
     public String getName() {
@@ -23,30 +20,30 @@ public class AttemptCommandProvider implements CommandProvider<AttemptCommandPro
     }
 
     @Override
-    public Class<Attempt> getCommandType() {
-        return Attempt.class;
+    public Class<AttemptCommand> getCommandType() {
+        return AttemptCommand.class;
     }
 
     @Override
-    public Attempt getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new Attempt(scriptEngine);
+    public AttemptCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
+        return new AttemptCommand(jMacroCore, scriptEngine);
     }
 
-    public static class Attempt extends LoggingCommand {
+    public static class AttemptCommand extends Command implements Constants{
 
-        private static final List<ConstantsCommand> ALLOWED_VERBOSITIES = List.of(QUIET, VERBOSE);
+        private static final List<String> ALLOWED_VERBOSITY = List.of(QUIET, VERBOSE);
 
-        public Attempt(ScriptEngine scriptEngine) {
-            super(scriptEngine);
+        public AttemptCommand(JMacroCore core, ScriptEngine scriptEngine) {
+            super(core, scriptEngine);
         }
 
         Result call(Callable callable) {
             return call(VERBOSE, callable);
         }
 
-        Result call(ConstantsCommand verbosity, Callable callable) {
-            if (!ALLOWED_VERBOSITIES.contains(verbosity)) {
-                throw new IllegalArgumentException("Verbosity must be in " + ALLOWED_VERBOSITIES);
+        Result call(String verbosity, Callable callable) {
+            if (!ALLOWED_VERBOSITY.contains(verbosity)) {
+                throw new IllegalArgumentException("Verbosity must be in " + ALLOWED_VERBOSITY);
             }
             try {
                 return Result.ok(callable.call());

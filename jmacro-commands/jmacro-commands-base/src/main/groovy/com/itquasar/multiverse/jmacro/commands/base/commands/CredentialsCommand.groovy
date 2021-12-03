@@ -1,10 +1,10 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands
 
-import com.itquasar.multiverse.jmacro.core.GroovyCommand
+import com.itquasar.multiverse.jmacro.core.Command
+import com.itquasar.multiverse.jmacro.core.JMacroCore
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import com.kstruct.gethostname4j.Hostname
 import groovy.transform.ToString
-import groovy.util.logging.Log4j2
 import org.apache.hc.client5.http.auth.AuthScope
 import org.apache.hc.client5.http.auth.Credentials as HttpCredentials
 import org.apache.hc.client5.http.auth.CredentialsProvider
@@ -12,9 +12,10 @@ import org.apache.hc.client5.http.auth.NTCredentials
 import org.apache.hc.client5.http.auth.UsernamePasswordCredentials
 import org.apache.hc.core5.http.protocol.HttpContext
 
+import javax.script.ScriptEngine
+
 @ToString(includePackage = false, includeFields = true, includeNames = true, includes = ['login', 'impersonate', 'hostname', 'domain'])
-@Log4j2
-class Credentials implements GroovyCommand, CredentialsProvider {
+class CredentialsCommand extends Command implements CredentialsProvider {
 
     String login
     String password
@@ -24,7 +25,8 @@ class Credentials implements GroovyCommand, CredentialsProvider {
     String token
     String apiKey
 
-    Credentials() {
+    CredentialsCommand(JMacroCore core, ScriptEngine scriptEngine) {
+        super(core, scriptEngine)
     }
 
     void check() {
@@ -37,7 +39,7 @@ class Credentials implements GroovyCommand, CredentialsProvider {
         return (login && password) || token || (login && apiKey)
     }
 
-    void fill(Credentials credentials) {
+    void fill(CredentialsCommand credentials) {
         login = credentials.login
         password = credentials.password
         hostname = credentials.hostname ?: this.hostname

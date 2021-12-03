@@ -1,5 +1,6 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands
 
+import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.JMacroCore
 import lombok.Getter
 
@@ -8,17 +9,14 @@ import javax.script.ScriptEngine
 import java.util.concurrent.atomic.AtomicBoolean
 
 @Getter
-class SystemCommand {
+class SystemCommand extends Command {
 
     private final AtomicBoolean locked = new AtomicBoolean(false);
 
-    private final JMacroCore core;
-    private final ScriptEngine engine;
     private Map<String, Object> commands = new LinkedHashMap<>();
 
     SystemCommand(JMacroCore core, ScriptEngine engine) {
-        this.core = core;
-        this.engine = engine;
+        super(core, engine)
     }
 
     void lock() {
@@ -43,10 +41,5 @@ class SystemCommand {
     def prop(String name) {
         return System.getProperty(name)
     }
-
-    def getContext() {
-        return this.engine.getContext().getBindings(ScriptContext.ENGINE_SCOPE)
-    }
-
 
 }

@@ -1,16 +1,23 @@
 package com.itquasar.multiverse.jmacro.core.command;
 
+import com.itquasar.multiverse.jmacro.core.Command;
 import com.itquasar.multiverse.jmacro.core.JMacroCore;
 
 import javax.script.ScriptEngine;
+import java.util.Collections;
+import java.util.List;
 
-public interface CommandProvider<C> {
+public interface CommandProvider<C extends Command> {
 
     /**
      * @return Command name to be used to invoke in script.
      */
     default String getName() {
         return this.getClass().getSimpleName().replace(CommandProvider.class.getSimpleName(), "").toLowerCase();
+    }
+
+    default List<String> getAliases() {
+        return Collections.emptyList();
     }
 
     /**

@@ -1,7 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands;
 
+import com.itquasar.multiverse.jmacro.core.Command;
 import com.itquasar.multiverse.jmacro.core.JMacroCore;
-import com.itquasar.multiverse.jmacro.core.command.LoggingCommand;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.itquasar.multiverse.jmacro.core.repository.GlobalScriptRepository;
 import com.itquasar.multiverse.jmacro.core.script.Script;
@@ -11,15 +11,15 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import java.util.Optional;
 
-public class Include extends LoggingCommand {
+public class IncludeCommand extends Command {
 
     private final GlobalScriptRepository repository;
     private final ScriptEngine scriptEngine;
     private final String extension;
     private final JMacroCore core;
 
-    public Include(GlobalScriptRepository repository, ScriptEngine scriptEngine, JMacroCore core) {
-        super(scriptEngine.getContext());
+    public IncludeCommand(GlobalScriptRepository repository, JMacroCore core, ScriptEngine scriptEngine) {
+        super(core, scriptEngine);
         this.repository = repository;
         this.scriptEngine = scriptEngine;
         this.extension = scriptEngine.getFactory().getExtensions().get(0);
@@ -31,23 +31,23 @@ public class Include extends LoggingCommand {
         return new Inclusion(this, core, contextName);
     }
 
-    public record Inclusion(Include include, JMacroCore core, String... contextName) {
+    public record Inclusion(IncludeCommand includeCommand, JMacroCore core, String... contextName) {
 
         @SneakyThrows
         void from(String includeName) {
-            String extension = include.extension;
+            String extension = includeCommand.extension;
             includeName = includeName.endsWith(extension) ? includeName : includeName + '.' + extension;
 
-            Optional<Script> scriptOptional = include.repository.get(includeName);
+            Optional<Script> scriptOptional = includeCommand.repository.get(includeName);
             if (scriptOptional.isPresent()) {
                 Script script = scriptOptional.get();
 
-                include.getLogger().warn("Including " + includeName);
+                includeCommand.getLogger().warn("Including " + includeName);
 
                 core.getEngine().executeInclusion(
                     script,
                     engine -> {
-                        include.scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE).forEach(
+                        includeCommand.scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE).forEach(
                             (key, value) -> {
                                 if (!key.startsWith("__")) {
                                     engine.getBindings(ScriptContext.ENGINE_SCOPE).put(key, value);

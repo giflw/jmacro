@@ -14,6 +14,7 @@ module jmacro.core {
     requires org.checkerframework.checker.qual;
     requires org.apache.logging.log4j;
     requires org.apache.logging.log4j.core;
+    requires io.vavr;
 
     exports com.itquasar.multiverse.jmacro.core;
     exports com.itquasar.multiverse.jmacro.core.exception;

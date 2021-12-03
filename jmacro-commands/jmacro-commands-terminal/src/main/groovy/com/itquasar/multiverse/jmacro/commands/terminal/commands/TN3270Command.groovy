@@ -2,27 +2,27 @@ package com.itquasar.multiverse.jmacro.commands.terminal.commands
 
 import com.itquasar.multiverse.jmacro.commands.terminal.commands.tn3270.Reader
 import com.itquasar.multiverse.jmacro.commands.terminal.commands.tn3270.Writer
-import com.itquasar.multiverse.jmacro.core.command.LoggingCommand
-import com.itquasar.multiverse.jmacro.core.exception.JMacroException
+import com.itquasar.multiverse.jmacro.core.Command
+import com.itquasar.multiverse.jmacro.core.JMacroCore
 import com.itquasar.multiverse.tn3270j.TN3270j
 import com.itquasar.multiverse.tn3270j.TN3270jFactory
 import com.itquasar.multiverse.tn3270j.WaitMode
 import groovy.util.logging.Log4j2
+import io.vavr.control.Try
 
 import javax.script.Bindings
 import javax.script.ScriptEngine
 import java.nio.file.Path
 
 @Log4j2
-class TN3270 extends LoggingCommand implements AutoCloseable {
+class TN3270Command extends Command implements AutoCloseable {
 
     private final Bindings bindings
 
     private TN3270j tn3270j = null
 
-    TN3270(ScriptEngine scriptEngine, Bindings bindings) {
-        super(scriptEngine)
-        this.bindings = bindings
+    TN3270Command(JMacroCore core, ScriptEngine scriptEngine) {
+        super(core, scriptEngine)
     }
 
     // FIXME refactor to wrapper class to allow multiple tn3270 sessions in same script
@@ -60,42 +60,24 @@ class TN3270 extends LoggingCommand implements AutoCloseable {
     }
 
     def methodMissing(String name, def args) {
-        if (tn3270j.respondsTo(name)) {
-            if (args) {
-                return tn3270j."$name"(*args)
-            }
-            return tn3270j."$name"()
-        }
-        if (this.bindings.respondsTo(name)) {
-            if (args) {
-                return this.bindings."$name"(*args)
-            }
-            return this.bindings."$name"()
-        }
-        throw new JMacroException("methodMissing redirection error: $name ($args)")
+        return methodMissingOnOrChainToContext(this, tn3270j, name, args)
     }
 
-    // FIXME this is hell
     def propertyMissing(String name) {
-        try {
-            return WaitMode.valueOf(name)
-        } catch (IllegalArgumentException ex) {
-            // no op
-        }
-        try {
-            return Reader.Mode.valueOf(name)
-        } catch (IllegalArgumentException ex) {
-            // no op
-        }
-        if (this.bindings.hasProperty(name)) {
-            return this.bindings."$name"
-        }
-        logger.info("Sending key $name")
-        return tn3270j.send(name)
+        return Try.of({ WaitMode.valueOf(name) })
+            .onFailure(IllegalArgumentException.class, { Reader.Mode.valueOf(name) })
+            .onFailure(IllegalArgumentException.class, { super.propertyMissing(name) })
+            .onFailure(MissingPropertyException.class, {
+                logger.info("Sending key $name")
+                return tn3270j.send(name)
+            })
+            .getOrNull()
     }
 
     def propertyMissing(String name, def arg) {
-        tn3270j."$name" = arg
+        return Try.of({ tn3270j."$name" = arg })
+            .onFailure(MissingPropertyException.class, { super.propertyMissing(name, arg) })
+            .getOrNull()
     }
 
     def write(String... args) {

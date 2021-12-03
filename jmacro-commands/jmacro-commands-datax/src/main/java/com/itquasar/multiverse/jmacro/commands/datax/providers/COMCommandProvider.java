@@ -15,6 +15,6 @@ public class COMCommandProvider implements CommandProvider<COMCommand> {
 
     @Override
     public COMCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new COMCommand();
+        return new COMCommand(jMacroCore, scriptEngine);
     }
 }

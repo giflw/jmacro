@@ -1,16 +1,22 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands
 
 import com.itquasar.multiverse.jmacro.commands.base.commands.moment.LocalDateTimeWrapper
-import com.itquasar.multiverse.jmacro.core.GroovyCommand
+import com.itquasar.multiverse.jmacro.core.Command
+import com.itquasar.multiverse.jmacro.core.JMacroCore
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 
+import javax.script.ScriptEngine
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 @CompileStatic
-class Moment implements GroovyCommand {
+class MomentCommand extends Command {
+
+    MomentCommand(JMacroCore core, ScriptEngine scriptEngine) {
+        super(core, scriptEngine)
+    }
 
     LocalDateTimeWrapper today() {
         return LocalDateTimeWrapper.of(LocalDate.now().atStartOfDay())
