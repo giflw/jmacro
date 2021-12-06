@@ -3,6 +3,7 @@ package com.itquasar.multiverse.jmacro.commands.terminal.commands
 import com.itquasar.multiverse.jmacro.commands.terminal.commands.tn3270.Reader
 import com.itquasar.multiverse.jmacro.commands.terminal.commands.tn3270.Writer
 import com.itquasar.multiverse.jmacro.core.Command
+import com.itquasar.multiverse.jmacro.core.Constants
 import com.itquasar.multiverse.jmacro.core.JMacroCore
 import com.itquasar.multiverse.tn3270j.TN3270j
 import com.itquasar.multiverse.tn3270j.TN3270jFactory
@@ -15,7 +16,7 @@ import javax.script.ScriptEngine
 import java.nio.file.Path
 
 @Log4j2
-class TN3270Command extends Command implements AutoCloseable {
+class TN3270Command extends Command implements AutoCloseable, Constants {
 
     private final Bindings bindings
 
@@ -28,13 +29,10 @@ class TN3270Command extends Command implements AutoCloseable {
     // FIXME refactor to wrapper class to allow multiple tn3270 sessions in same script
     def _init(WaitMode waitMode = WaitMode.Seconds) {
         if (this.tn3270j == null) {
-            // FIXME
-            Path toolsDir = Path.of(System.getProperty('app.home')).resolve('tools')
-            boolean isWindows = System.getProperty('os.name').startsWith("Windows")
-            String arch = System.getProperty("os.arch").contains("64") ? "64" : "32"
+            Path toolsDir = core.configuration.folders.tools()
             String path = 's3270'
-            if (isWindows) {
-                Path toolPath = toolsDir.resolve("x3270/windows/$arch/ws3270.exe")
+            if (IS_WINDOWS) {
+                Path toolPath = toolsDir.resolve("x3270/windows/${ARCH}/ws3270.exe")
                 if (toolPath.toFile().exists()) {
                     path = toolPath.toString()
                 } else {

@@ -1,11 +1,11 @@
 package com.itquasar.multiverse.jmacro.commands.browser.command
 
 import com.itquasar.multiverse.jmacro.commands.base.commands.ConfigurationCommand
-import com.itquasar.multiverse.jmacro.commands.browser.BrowserExtensionMethods
 import com.itquasar.multiverse.jmacro.commands.browser.command.browser.BrowserElements
 import com.itquasar.multiverse.jmacro.commands.browser.command.browser.BrowserWait
 import com.itquasar.multiverse.jmacro.commands.browser.command.browser.WebElementWrapper
 import com.itquasar.multiverse.jmacro.core.Command
+import com.itquasar.multiverse.jmacro.core.Constants
 import com.itquasar.multiverse.jmacro.core.JMacroCore
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
@@ -32,32 +32,22 @@ import java.io.File as JFile
 
 @CompileStatic
 @ToString(includePackage = false, includeNames = true)
-class BrowserCommand extends Command implements AutoCloseable {
+class BrowserCommand extends Command implements AutoCloseable, Constants {
 
-    // FIXME
-//    static {
-//        System.setProperty("webdriver.gecko.driver", Engine.FOLDERS.vendor.resolve('browser/firefox/win_x64/geckodriver.exe').toString())
-//        System.setProperty("webdriver.chrome.driver", Engine.FOLDERS.vendor.resolve('browser/chrome/win_x32/chromedriver.exe').toString())
-//    }
+    static final Closure DRIVER_TEMPLATE = { String vendor -> core.configuration.folders.tools().resolve(vendor).resolve("${vendor}driver${BIN_EXT}").toString() }
+    static final Closure BINARY_TEMPLATE = { String vendor -> core.configuration.folders.tools().resolve(vendor).resolve("${vendor}${BIN_EXT}").toString() }
 
-    static Class<By> by = BrowserExtensionMethods.by
-
-    static enum Vendor {
-        CHROME, FIREFOX;
-
-        static boolean contains(String name) {
-            return values().find { it.name() == name }
-        }
-    }
-
-    Map<String, ?> config = [:]
-    DesiredCapabilities proxyCapabilities
+    Map<String, ?> config = [
+        visible   : false,
+        vendor    : FIREFOX,
+        driver    : DRIVER_TEMPLATE(FIREFOX),
+        binary    : BINARY_TEMPLATE(FIREFOX),
+        randomPort: true,
+    ]
+    DesiredCapabilities desiredCapabilities
     RemoteWebDriver driver = null
     BrowserWait wait = null
     Map<String, ?> elements = [:]
-    Vendor vendor = Vendor.CHROME
-
-
 
     BrowserCommand(JMacroCore core, ScriptEngine scriptEngine) {
         super(core, scriptEngine)
@@ -73,9 +63,22 @@ class BrowserCommand extends Command implements AutoCloseable {
         )
     }
 
+
+    BrowserCommand config(Closure closure) {
+        closure.setDelegate(this.config)
+        closure.resolveStrategy = Closure.DELEGATE_FIRST
+        closure()
+        return this
+    }
+
+    BrowserCommand config(Map<String, Object> configMap) {
+        this.config.putAll(config)
+        return this
+    }
+
     BrowserCommand start() {
         if (driver == null || driver.sessionId == null) {
-            if (vendor == Vendor.FIREFOX) {
+            if (config.vendor == FIREFOX) {
                 ServerSocket serverSocket = new ServerSocket(0)
                 int port = serverSocket?.getLocalPort() ?: 0
                 if (port == 0) {
@@ -84,7 +87,7 @@ class BrowserCommand extends Command implements AutoCloseable {
                 this.logger.fatal("WebDriver port: $port")
 
 
-                FirefoxOptions firefoxOptions = proxyCapabilities ? new FirefoxOptions(proxyCapabilities) : new FirefoxOptions()
+                FirefoxOptions firefoxOptions = desiredCapabilities ? new FirefoxOptions(desiredCapabilities) : new FirefoxOptions()
                 // HEADLESS
                 if (!config.visible) {
                     firefoxOptions.addArguments("--headless")
@@ -153,7 +156,7 @@ class BrowserCommand extends Command implements AutoCloseable {
             start()
             driver.get(url)
         } catch (Exception ex) {
-            throw new JMacroException(this, "Could not start/open ${vendor.name().toLowerCase().capitalize()}.", ex)
+            throw new JMacroException(this, "Could not start/open ${config.vendor.capitalize()}.", ex)
         }
     }
 
