@@ -16,12 +16,17 @@ import org.openqa.selenium.By
 import org.openqa.selenium.Keys
 import org.openqa.selenium.OutputType
 import org.openqa.selenium.chrome.ChromeDriver
+import org.openqa.selenium.chrome.ChromeDriverService
 import org.openqa.selenium.chrome.ChromeOptions
+import org.openqa.selenium.chromium.ChromiumOptions
+import org.openqa.selenium.edge.EdgeDriver
+import org.openqa.selenium.edge.EdgeDriverService
+import org.openqa.selenium.edge.EdgeOptions
 import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.firefox.FirefoxOptions
 import org.openqa.selenium.firefox.FirefoxProfile
-import org.openqa.selenium.remote.DesiredCapabilities
 import org.openqa.selenium.remote.RemoteWebDriver
+import org.openqa.selenium.remote.service.DriverService
 import ru.yandex.qatools.ashot.AShot
 import ru.yandex.qatools.ashot.Screenshot
 import ru.yandex.qatools.ashot.shooting.ShootingStrategies
@@ -29,22 +34,58 @@ import ru.yandex.qatools.ashot.shooting.ShootingStrategies
 import javax.imageio.ImageIO
 import javax.script.ScriptEngine
 import java.io.File as JFile
+import java.nio.file.Path
 
 @CompileStatic
 @ToString(includePackage = false, includeNames = true)
 class BrowserCommand extends Command implements AutoCloseable, Constants {
 
-    static final Closure DRIVER_TEMPLATE = { String vendor -> core.configuration.folders.tools().resolve(vendor).resolve("${vendor}driver${BIN_EXT}").toString() }
-    static final Closure BINARY_TEMPLATE = { String vendor -> core.configuration.folders.tools().resolve(vendor).resolve("${vendor}${BIN_EXT}").toString() }
+    static final Closure<String> DRIVER_TEMPLATE = { String vendor -> core.configuration.folders.tools().resolve(vendor).resolve("${vendor}driver${BIN_EXT}").toString() }
+    static final Closure<String> BINARY_TEMPLATE = { String vendor -> core.configuration.folders.tools().resolve(vendor).resolve("${vendor}${BIN_EXT}").toString() }
 
     Map<String, ?> config = [
-        visible   : false,
-        vendor    : FIREFOX,
-        driver    : DRIVER_TEMPLATE(FIREFOX),
-        binary    : BINARY_TEMPLATE(FIREFOX),
-        randomPort: true,
+        visible: false,
+        vendor : FIREFOX,
+        driver : DRIVER_TEMPLATE(FIREFOX),
+        binary : BINARY_TEMPLATE(FIREFOX),
+        port   : 0
     ]
-    DesiredCapabilities desiredCapabilities
+
+    private <CO extends ChromiumOptions, DSB extends DriverService.Builder, DS extends DriverService> Tuple2<DS, CO> chromium(CO options, DSB builder) {
+        if (!config.visible) {
+            options.setHeadless(true)
+        }
+        DriverService service = builder
+            .usingPort((int) config.port)
+            .build()
+        return new Tuple2<DS, CO>(service as DS, options)
+    }
+
+    Map<String, Closure<RemoteWebDriver>> driversHook = [
+        gecko : { ->
+            FirefoxOptions firefoxOptions = new FirefoxOptions()
+            if (!config.visible) {
+                firefoxOptions.addArguments("--headless")
+            }
+            firefoxOptions.setBinary(config.binary.toString())
+            firefoxOptions.setCapability(FirefoxDriver.Capability.MARIONETTE, true)
+
+            FirefoxProfile profile = firefoxOptions.getProfile() ?: new FirefoxProfile()
+            profile.setPreference(FirefoxProfile.PORT_PREFERENCE, config.port)
+            firefoxOptions.setProfile(profile)
+
+            return (RemoteWebDriver) new FirefoxDriver(firefoxOptions)
+        },
+        chrome: { ->
+            def (service, options) = this.chromium(new ChromeOptions(), new ChromeDriverService.Builder())
+            return (RemoteWebDriver) new ChromeDriver(service as ChromeDriverService, options as ChromeOptions)
+        },
+        edge  : { ->
+            def (service, options) = this.chromium(new EdgeOptions(), new EdgeDriverService.Builder())
+            return (RemoteWebDriver) new EdgeDriver(service as EdgeDriverService, options as EdgeOptions)
+        }
+    ]
+
     RemoteWebDriver driver = null
     BrowserWait wait = null
     Map<String, ?> elements = [:]
@@ -68,60 +109,36 @@ class BrowserCommand extends Command implements AutoCloseable, Constants {
         closure.setDelegate(this.config)
         closure.resolveStrategy = Closure.DELEGATE_FIRST
         closure()
+        this.postConfig()
         return this
     }
 
-    BrowserCommand config(Map<String, Object> configMap) {
+    BrowserCommand config(Map<String, Object> config) {
         this.config.putAll(config)
+        this.postConfig()
         return this
+    }
+
+    private void postConfig() {
+        if (this.config.port == 0) {
+            ServerSocket serverSocket = new ServerSocket(0)
+            int port = serverSocket?.getLocalPort()
+            if (port == -1) {
+                throw new JMacroException(this, "Error allocating free port")
+            }
+            this.logger.fatal("WebDriver port: $port")
+            this.config.port = port
+        }
     }
 
     BrowserCommand start() {
         if (driver == null || driver.sessionId == null) {
-            if (config.vendor == FIREFOX) {
-                ServerSocket serverSocket = new ServerSocket(0)
-                int port = serverSocket?.getLocalPort() ?: 0
-                if (port == 0) {
-                    throw new JMacroException(this, "Error allocating free port")
-                }
-                this.logger.fatal("WebDriver port: $port")
-
-
-                FirefoxOptions firefoxOptions = desiredCapabilities ? new FirefoxOptions(desiredCapabilities) : new FirefoxOptions()
-                // HEADLESS
-                if (!config.visible) {
-                    firefoxOptions.addArguments("--headless")
-                }
-                // BINARY PATH
-                // FIXME
-//                firefoxOptions.setBinary(
-//                        Engine.FOLDERS.vendor.resolve('browser/firefox/win_x64/firefox.exe').toString()
-//                )
-                // MARIONETTE
-                firefoxOptions.setCapability(FirefoxDriver.MARIONETTE, true)
-
-                FirefoxProfile profile = firefoxOptions.getProfile() ?: new FirefoxProfile()
-                profile.setPreference(FirefoxProfile.PORT_PREFERENCE, port)
-                firefoxOptions.setProfile(profile)
-
-                this.driver = new FirefoxDriver(firefoxOptions)
+            if (this.driversHook.containsKey(config.vendor)) {
+                this.driver = this.driversHook."${config.vendor}"()
             } else {
-                ChromeOptions chromeOptions = new ChromeOptions()
-                chromeOptions.setBinary("C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe")
-                // HEADLESS
-                if (!config.visible) {
-                    chromeOptions.setHeadless(true)
-                }
-//                 chromeOptions.setExperimentalOption("debuggerAddress", "127.0.0.1:${port}")
-//                ChromeDriverService chromeDriverService = new ChromeDriverService.Builder()
-//                        .usingDriverExecutable(new java.io.File(System.getProperty("webdriver.chrome.driver")))
-//                        .withVerbose(true)
-//                        .usingPort(port)
-//                        .build()
-                this.driver = new ChromeDriver(/*chromeDriverService,*/ chromeOptions)
+                throw new JMacroException("Unsupported browser vendor: ${config.vendor}")
             }
             this.wait = new BrowserWait(this)
-
             driver.manage().window().maximize()
         }
     }
@@ -232,12 +249,20 @@ class BrowserCommand extends Command implements AutoCloseable, Constants {
         }
     }
 
+    JFile takeScreenShot(Path destinationFile) {
+        return takeScreenShot(destinationFile.toString())
+    }
+
     JFile takeScreenShot(String destinationFile) {
         JFile scrFile = driver.getScreenshotAs(OutputType.FILE)
         JFile destFile = new JFile(destinationFile)
         this.logger.info("Screenshot: $destFile")
         FileUtils.copyFile(scrFile, destFile)
         return destFile
+    }
+
+    JFile takeFullPage(Path destinationFile) {
+        return takeFullPage(destinationFile.toString())
     }
 
     JFile takeFullPage(String destinationFile) {

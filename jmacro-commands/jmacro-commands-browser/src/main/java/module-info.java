@@ -5,6 +5,10 @@ module jmacro.commands.browser {
     requires org.checkerframework.checker.qual;
     requires org.apache.groovy;
     requires org.seleniumhq.selenium.support;
+    requires org.seleniumhq.selenium.chrome_driver;
+    requires org.seleniumhq.selenium.edge_driver;
+    requires org.seleniumhq.selenium.firefox_driver;
+    requires org.seleniumhq.selenium.remote_driver;
     requires org.apache.commons.io;
 
     requires java.desktop;

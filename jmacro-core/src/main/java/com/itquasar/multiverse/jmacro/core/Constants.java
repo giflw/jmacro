@@ -12,16 +12,8 @@ public interface Constants {
     String VERBOSE = "VERBOSE";
 
     // BROWSERS
-    // - chrome
     String CHROME = "chrome";
-    String CHROMIUM = CHROME;
-    // - edge/ie
     String EDGE = "edge";
-    String IE = "ie";
-    String INTERNET_EXPLORER = IE;
-    // - firefox/gecko
     String GECKO = "gecko";
     String FIREFOX = GECKO;
-    // - remote
-    String REMOTE = "remote";
 }
