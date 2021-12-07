@@ -37,7 +37,11 @@ class ConfigurationCommand extends Command {
 
     def get(String name) {
         def value = this.configs[name] ? this.configs[name] : null
-        return value == null && this.core.configuration.hasProperty(name) ? this.core.configuration."$name" : value
+        value = value == null && this.core.configuration.hasProperty(name) ? this.core.configuration."$name" : value
+        if (value == null) {
+            return this.context.getAttribute(name)
+        }
+        return value
     }
 
     def propertyMissing(String name) {
@@ -47,7 +51,7 @@ class ConfigurationCommand extends Command {
         if (this.core.configuration.hasProperty(name)) {
             return this.core.configuration."$name"
         }
-        throw new MissingPropertyException("Property $name not found!")
+        return propertyMissingOn(context, name)
     }
 
     @Override

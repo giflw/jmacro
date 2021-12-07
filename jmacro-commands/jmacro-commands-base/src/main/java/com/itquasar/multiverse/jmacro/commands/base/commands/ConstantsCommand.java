@@ -3,9 +3,11 @@ package com.itquasar.multiverse.jmacro.commands.base.commands;
 import com.itquasar.multiverse.jmacro.core.Command;
 import com.itquasar.multiverse.jmacro.core.Constants;
 import com.itquasar.multiverse.jmacro.core.JMacroCore;
+import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 
 import javax.script.Bindings;
 import javax.script.ScriptEngine;
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -21,8 +23,13 @@ public class ConstantsCommand extends Command implements Map<String, Object>, Co
     }
 
     private void init() {
-        this.put(QUIET);
-        this.put(VERBOSE);
+        for (Field declaredField : Constants.class.getDeclaredFields()) {
+            try {
+                this.put(declaredField.getName(), declaredField.get(null));
+            } catch (IllegalAccessException e) {
+                new JMacroException("Failed to get Constants." + declaredField.getName());
+            }
+        }
     }
 
     @Override
@@ -33,8 +40,9 @@ public class ConstantsCommand extends Command implements Map<String, Object>, Co
             if (bindings.containsKey(key)) {
                 getLogger().error(key + " constant cannot be registered in context. Command " + bindings.get(key).getClass() + " registered with " + key + " name");
             } else {
-                getLogger().warn("Registering constant " + key);
-                bindings.put(key, entry.getValue());
+                Object value = entry.getValue();
+                getLogger().warn("Registering constant " + key + " = " + value);
+                bindings.put(key, value);
             }
         });
     }

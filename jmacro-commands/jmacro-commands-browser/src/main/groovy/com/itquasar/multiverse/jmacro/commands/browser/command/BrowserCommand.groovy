@@ -1,32 +1,21 @@
 package com.itquasar.multiverse.jmacro.commands.browser.command
 
-import com.itquasar.multiverse.jmacro.commands.base.commands.ConfigurationCommand
+import com.itquasar.multiverse.jmacro.commands.browser.command.browser.BrowserDriverFactory
 import com.itquasar.multiverse.jmacro.commands.browser.command.browser.BrowserElements
 import com.itquasar.multiverse.jmacro.commands.browser.command.browser.BrowserWait
 import com.itquasar.multiverse.jmacro.commands.browser.command.browser.WebElementWrapper
 import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.Constants
 import com.itquasar.multiverse.jmacro.core.JMacroCore
+import com.itquasar.multiverse.jmacro.core.SPILoader
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-import groovy.transform.ToString
 import org.apache.commons.io.FileUtils
 import org.openqa.selenium.By
 import org.openqa.selenium.Keys
 import org.openqa.selenium.OutputType
-import org.openqa.selenium.chrome.ChromeDriver
-import org.openqa.selenium.chrome.ChromeDriverService
-import org.openqa.selenium.chrome.ChromeOptions
-import org.openqa.selenium.chromium.ChromiumOptions
-import org.openqa.selenium.edge.EdgeDriver
-import org.openqa.selenium.edge.EdgeDriverService
-import org.openqa.selenium.edge.EdgeOptions
-import org.openqa.selenium.firefox.FirefoxDriver
-import org.openqa.selenium.firefox.FirefoxOptions
-import org.openqa.selenium.firefox.FirefoxProfile
 import org.openqa.selenium.remote.RemoteWebDriver
-import org.openqa.selenium.remote.service.DriverService
 import ru.yandex.qatools.ashot.AShot
 import ru.yandex.qatools.ashot.Screenshot
 import ru.yandex.qatools.ashot.shooting.ShootingStrategies
@@ -37,55 +26,18 @@ import java.io.File as JFile
 import java.nio.file.Path
 
 @CompileStatic
-@ToString(includePackage = false, includeNames = true)
 class BrowserCommand extends Command implements AutoCloseable, Constants {
 
-    static final Closure<String> DRIVER_TEMPLATE = { String vendor -> core.configuration.folders.tools().resolve(vendor).resolve("${vendor}driver${BIN_EXT}").toString() }
-    static final Closure<String> BINARY_TEMPLATE = { String vendor -> core.configuration.folders.tools().resolve(vendor).resolve("${vendor}${BIN_EXT}").toString() }
-
-    Map<String, ?> config = [
-        visible: false,
-        vendor : FIREFOX,
-        driver : DRIVER_TEMPLATE(FIREFOX),
-        binary : BINARY_TEMPLATE(FIREFOX),
-        port   : 0
-    ]
-
-    private <CO extends ChromiumOptions, DSB extends DriverService.Builder, DS extends DriverService> Tuple2<DS, CO> chromium(CO options, DSB builder) {
-        if (!config.visible) {
-            options.setHeadless(true)
-        }
-        DriverService service = builder
-            .usingPort((int) config.port)
-            .build()
-        return new Tuple2<DS, CO>(service as DS, options)
+    static Map<String, BrowserDriverFactory> DRIVER_FACTORIES = new LinkedHashMap<>()
+    static {
+        new SPILoader<>(BrowserDriverFactory.class).load().forEachRemaining(factory -> {
+            factory.browserNames().forEach(name ->
+                DRIVER_FACTORIES.put(name, factory)
+            )
+        })
     }
 
-    Map<String, Closure<RemoteWebDriver>> driversHook = [
-        gecko : { ->
-            FirefoxOptions firefoxOptions = new FirefoxOptions()
-            if (!config.visible) {
-                firefoxOptions.addArguments("--headless")
-            }
-            firefoxOptions.setBinary(config.binary.toString())
-            firefoxOptions.setCapability(FirefoxDriver.Capability.MARIONETTE, true)
-
-            FirefoxProfile profile = firefoxOptions.getProfile() ?: new FirefoxProfile()
-            profile.setPreference(FirefoxProfile.PORT_PREFERENCE, config.port)
-            firefoxOptions.setProfile(profile)
-
-            return (RemoteWebDriver) new FirefoxDriver(firefoxOptions)
-        },
-        chrome: { ->
-            def (service, options) = this.chromium(new ChromeOptions(), new ChromeDriverService.Builder())
-            return (RemoteWebDriver) new ChromeDriver(service as ChromeDriverService, options as ChromeOptions)
-        },
-        edge  : { ->
-            def (service, options) = this.chromium(new EdgeOptions(), new EdgeDriverService.Builder())
-            return (RemoteWebDriver) new EdgeDriver(service as EdgeDriverService, options as EdgeOptions)
-        }
-    ]
-
+    Map<String, ?> config = [:]
     RemoteWebDriver driver = null
     BrowserWait wait = null
     Map<String, ?> elements = [:]
@@ -102,23 +54,10 @@ class BrowserCommand extends Command implements AutoCloseable, Constants {
                 }
             )
         )
-    }
-
-
-    BrowserCommand config(Closure closure) {
-        closure.setDelegate(this.config)
-        closure.resolveStrategy = Closure.DELEGATE_FIRST
-        closure()
         this.postConfig()
-        return this
     }
 
-    BrowserCommand config(Map<String, Object> config) {
-        this.config.putAll(config)
-        this.postConfig()
-        return this
-    }
-
+    @CompileDynamic
     private void postConfig() {
         if (this.config.port == 0) {
             ServerSocket serverSocket = new ServerSocket(0)
@@ -129,12 +68,19 @@ class BrowserCommand extends Command implements AutoCloseable, Constants {
             this.logger.fatal("WebDriver port: $port")
             this.config.port = port
         }
+
+        this.config.driverTemplate = this.config.driverTemplate ?: { String vendor -> this.core.configuration.folders.tools().resolve(vendor).resolve("${vendor}driver${BIN_EXT}").toString() }
+        this.config.binaryTemplate = this.config.binaryTemplate ?: { String vendor -> this.core.configuration.folders.tools().resolve(vendor).resolve("${vendor}${BIN_EXT}").toString() }
+        this.config.visible = this.config.visible ?: false
+        this.config.vendor = this.config.vendor ?: FIREFOX
+        this.config.driver = this.config.driver ?: config.driverTemplate(this.config.vendor)
+        this.config.binary = this.config.binary ?: config.binaryTemplate(this.config.vendor)
     }
 
     BrowserCommand start() {
         if (driver == null || driver.sessionId == null) {
-            if (this.driversHook.containsKey(config.vendor)) {
-                this.driver = this.driversHook."${config.vendor}"()
+            if (this.DRIVER_FACTORIES.containsKey(config.vendor)) {
+                this.driver = this.DRIVER_FACTORIES[config.vendor].create(this.config)
             } else {
                 throw new JMacroException("Unsupported browser vendor: ${config.vendor}")
             }
@@ -143,13 +89,25 @@ class BrowserCommand extends Command implements AutoCloseable, Constants {
         }
     }
 
-    def configure(ConfigurationCommand configuration) {
-        configure(configuration.configs)
+    BrowserCommand config(Map<String, Object> config) {
+        this.config.putAll(config)
+        this.postConfig()
+        return this
     }
 
     @CompileDynamic
-    def configure(ConfigObject configuration) {
-        config.putAll(configuration)
+    BrowserCommand config(ConfigObject config) {
+        this.config.putAll(config)
+        this.postConfig()
+        return this
+    }
+
+    @CompileDynamic
+    BrowserCommand config(def configuration) {
+        if (configuration.hasProperty("configs")) {
+            return config(configuration.configs.browser ?: configuration.configs)
+        }
+        throw new JMacroException("Object of type ${configuration.class} has no property configs of type Map<String, Object> or ConfigObjec")
     }
 
     def wait(String cssSelector) {
@@ -168,6 +126,7 @@ class BrowserCommand extends Command implements AutoCloseable, Constants {
         return this.wait.call(this, element, timeout)
     }
 
+    @CompileDynamic
     BrowserCommand open(String url) {
         try {
             start()
@@ -233,14 +192,11 @@ class BrowserCommand extends Command implements AutoCloseable, Constants {
 
     @CompileDynamic
     def propertyMissing(String name) {
-        if (Vendor.contains(name)) {
-            return Vendor.valueOf(name)
-        }
         if (this.elements.containsKey(name)) {
             return this.elements[name]
         }
-        if (this.context.hasVariable(name)) {
-            return this.context.getVariable(name)
+        if (this.context.name) {
+            return this.context.name
         }
         try {
             return Keys."$name"
