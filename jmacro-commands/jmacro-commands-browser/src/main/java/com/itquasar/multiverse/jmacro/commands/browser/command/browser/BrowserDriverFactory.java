@@ -10,6 +10,8 @@ public interface BrowserDriverFactory {
 
     List<String> browserNames();
 
+    String getSystemPropertyName(Map<String, ?> config);
+
     RemoteWebDriver create(Map<String, ?> config);
 
     default void checkVendor(Map<String, ?> config) {

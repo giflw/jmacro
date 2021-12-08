@@ -21,6 +21,11 @@ public class GeckoBrowserDriverFactory implements BrowserDriverFactory, Constant
     }
 
     @Override
+    public String getSystemPropertyName(Map<String, ?> config) {
+        return "webdriver.gecko.driver";
+    }
+
+    @Override
     public RemoteWebDriver create(Map<String, ?> config) {
         checkVendor(config);
 
@@ -32,7 +37,10 @@ public class GeckoBrowserDriverFactory implements BrowserDriverFactory, Constant
         if (!(boolean) config.get("visible")) {
             firefoxOptions.addArguments("--headless");
         }
-        firefoxOptions.setBinary(config.get("binary").toString());
+        String binary = (String) config.get("binary");
+        if (binary != null ) {
+            firefoxOptions.setBinary(binary);
+        }
         firefoxOptions.setCapability(FirefoxDriver.Capability.MARIONETTE, true);
 
         FirefoxProfile profile = firefoxOptions.getProfile();

@@ -6,7 +6,7 @@ public interface Constants {
     String EOL_ESCAPED = System.lineSeparator().replace("\r", "\\r").replace("\n", "\\n");
     boolean IS_WINDOWS = System.getProperty("os.name").startsWith("Windows");
     String ARCH = System.getProperty("os.arch").contains("64") ? "64" : "32";
-    String OS = (IS_WINDOWS ? "win" : "unix") + "_" + ARCH;
+    String OS_ID = (IS_WINDOWS ? "win" : "unix") + "_" + ARCH;
     String BIN_EXT = IS_WINDOWS ? ".exe" : "";
 
     // VERBOSITY

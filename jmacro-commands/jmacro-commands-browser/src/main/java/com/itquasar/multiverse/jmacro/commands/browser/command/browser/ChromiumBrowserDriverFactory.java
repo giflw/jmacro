@@ -25,6 +25,18 @@ public class ChromiumBrowserDriverFactory implements BrowserDriverFactory, Const
     }
 
     @Override
+    public String getSystemPropertyName(Map<String, ?> config) {
+        switch ((String) config.get("vendor")) {
+            case EDGE:
+                return "webdriver.edge.driver";
+            case CHROME:
+            case CHROMIUM:
+            default:
+                return "webdriver.chrome.driver";
+        }
+    }
+
+    @Override
     public RemoteWebDriver create(Map<String, ?> config) {
         checkVendor(config);
         switch ((String) config.get("vendor")) {
@@ -44,6 +56,10 @@ public class ChromiumBrowserDriverFactory implements BrowserDriverFactory, Const
     private <CO extends ChromiumOptions, DSB extends DriverService.Builder, DS extends DriverService> Tuple<DS, CO> chromium(Map<String, ?> config, CO options, DSB builder) {
         if (!(boolean) config.get("visible")) {
             options.setHeadless(true);
+        }
+        String binary = (String) config.get("binary");
+        if (binary != null) {
+            options.setBinary(binary);
         }
         DriverService service = builder
             .usingPort((int) config.get("port"))

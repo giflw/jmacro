@@ -8,6 +8,7 @@ import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.Constants
 import com.itquasar.multiverse.jmacro.core.JMacroCore
 import com.itquasar.multiverse.jmacro.core.SPILoader
+import com.itquasar.multiverse.jmacro.core.configuration.Configuration
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
@@ -37,7 +38,13 @@ class BrowserCommand extends Command implements AutoCloseable, Constants {
         })
     }
 
-    Map<String, ?> config = [:]
+    Map<String, ?> config = [
+        vendor : FIREFOX,
+        port   : 0, // random
+        visible: false, //  true -> visible;  false -> headless
+        driver: null, // driver binary path
+        binary : null // browser binary path
+    ]
     RemoteWebDriver driver = null
     BrowserWait wait = null
     Map<String, ?> elements = [:]
@@ -69,23 +76,41 @@ class BrowserCommand extends Command implements AutoCloseable, Constants {
             this.config.port = port
         }
 
-        this.config.driverTemplate = this.config.driverTemplate ?: { String vendor -> this.core.configuration.folders.tools().resolve(vendor).resolve("${vendor}driver${BIN_EXT}").toString() }
-        this.config.binaryTemplate = this.config.binaryTemplate ?: { String vendor -> this.core.configuration.folders.tools().resolve(vendor).resolve("${vendor}${BIN_EXT}").toString() }
         this.config.visible = this.config.visible ?: false
         this.config.vendor = this.config.vendor ?: FIREFOX
-        this.config.driver = this.config.driver ?: config.driverTemplate(this.config.vendor)
-        this.config.binary = this.config.binary ?: config.binaryTemplate(this.config.vendor)
+    }
+
+    @CompileDynamic
+    private static String driverFromVendor(Configuration configuration, Map<String, ?> config) {
+        String vendor = config.vendor == FIREFOX ? GECKO : config.vendor
+        return configuration.folders.tools()
+            .resolve('webdriver')
+            .resolve(vendor)
+            .resolve(Constants.OS_ID)
+            .resolve("${vendor}driver${BIN_EXT}")
+            .toString()
     }
 
     BrowserCommand start() {
         if (driver == null || driver.sessionId == null) {
+            this.config.driver = this.config.driver ?: driverFromVendor(this.core.configuration, this.config)
+
+            logger.warn("Starting browser ${config.vender.toString().capitalize()}")
+            this.config.forEach { key, value ->
+                logger.warn("Browser config ${key}=${value}")
+            }
             if (this.DRIVER_FACTORIES.containsKey(config.vendor)) {
-                this.driver = this.DRIVER_FACTORIES[config.vendor].create(this.config)
+                var factory = this.DRIVER_FACTORIES[config.vendor]
+                var sysProp = factory.getSystemPropertyName(config)
+                logger.warn("Setting ${sysProp} to [${config.driver}]")
+                System.setProperty(sysProp, (String) config.driver)
+                this.driver = factory.create(this.config)
             } else {
                 throw new JMacroException("Unsupported browser vendor: ${config.vendor}")
             }
             this.wait = new BrowserWait(this)
             driver.manage().window().maximize()
+            logger.warn("Browser ${config.vender.toString().capitalize()} started")
         }
     }
 
