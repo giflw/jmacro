@@ -2,6 +2,7 @@ package com.itquasar.multiverse.jmacro.commands.browser.command.browser;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import io.github.bonigarcia.wdm.config.DriverManagerType;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -33,13 +34,16 @@ public class DriverManager {
             .useLocalCommandsPropertiesFirst();
     }
 
-    public RemoteWebDriver getDriver(String browserName) {
+    public RemoteWebDriver getDriver(String browserName, Capabilities capabilities) {
         DriverManagerType type = DriverManagerType.valueOf(browserName.toUpperCase());
         WebDriverManager manager = webdriverManagerHook(WebDriverManager.getInstance(type))
             .cachePath(cacheDir.toString())
             .resolutionCachePath(cacheDir.toString())
             .ttl(TTL.intValue())
             .ttlBrowsers(TTL.intValue());
+        if (capabilities != null) {
+            manager.capabilities(capabilities);
+        }
         manager.setup();
         WebDriver webDriver = manager.create();
         return (RemoteWebDriver) webDriver;

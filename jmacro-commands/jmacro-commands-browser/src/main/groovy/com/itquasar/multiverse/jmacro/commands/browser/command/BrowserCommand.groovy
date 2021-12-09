@@ -8,14 +8,17 @@ import com.itquasar.multiverse.jmacro.commands.browser.command.browser.WebElemen
 import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.Constants
 import com.itquasar.multiverse.jmacro.core.JMacroCore
-import com.itquasar.multiverse.jmacro.core.configuration.Configuration
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.apache.commons.io.FileUtils
 import org.openqa.selenium.By
+import org.openqa.selenium.Capabilities
 import org.openqa.selenium.Keys
 import org.openqa.selenium.OutputType
+import org.openqa.selenium.chrome.ChromeOptions
+import org.openqa.selenium.edge.EdgeOptions
+import org.openqa.selenium.firefox.FirefoxOptions
 import org.openqa.selenium.remote.RemoteWebDriver
 import ru.yandex.qatools.ashot.AShot
 import ru.yandex.qatools.ashot.Screenshot
@@ -71,39 +74,40 @@ class BrowserCommand extends Command implements AutoCloseable, Constants {
         this.config.vendor = this.config.vendor ?: FIREFOX
     }
 
-    @CompileDynamic
-    private static String driverFromVendor(Configuration configuration, Map<String, ?> config) {
-        String vendor = config.vendor
-        switch (vendor) {
-            case FIREFOX:
-                vendor = 'gecko'
-                break
-            case IE:
-                vendor = 'ie'
-                break
-            case CHROMIUM:
-                vendor = CHROME;
-                break
-        }
-        vendor = vendor.toLowerCase()
-        return configuration.folders.tools()
-            .resolve('webdriver')
-            .resolve(vendor)
-            .resolve(Constants.OS_ID)
-            .resolve("${vendor}driver${BIN_EXT}")
-            .toString()
-    }
-
     BrowserCommand start() {
         if (driver == null || driver.sessionId == null) {
-            this.config.driver = this.config.driver ?: driverFromVendor(this.core.configuration, this.config)
+            Capabilities capabilities = null
+            switch (config.vendor) {
+                case FIREFOX:
+                    capabilities = new FirefoxOptions()
+                    if (config.binary != null) {
+                        capabilities.setBinary(config.binary.toString())
+                    }
+                    capabilities.setHeadless(!config.visible)
+                    break
+                case CHROMIUM:
+                case CHROME:
+                    capabilities = new ChromeOptions()
+                    if (config.binary != null) {
+                        capabilities.setBinary(config.binary.toString())
+                    }
+                    capabilities.setHeadless(!config.visible)
+                    break
+                case EDGE:
+                    capabilities = new EdgeOptions()
+                    if (config.binary != null) {
+                        capabilities.setBinary(config.binary.toString())
+                    }
+                    capabilities.setHeadless(!config.visible)
+                    break
+            }
 
             logger.warn("Starting browser ${config.vender.toString().capitalize()}")
             this.config.forEach { key, value ->
                 logger.warn("Browser config ${key}=${value}")
             }
             def driverManager = new DriverManager(core.configuration.folders.cache().resolve("webdriver"))
-            this.driver = driverManager.getDriver(config.vendor.toString())
+            this.driver = driverManager.getDriver(config.vendor.toString(), capabilities)
             getLogger().warn("Web driver instance ${this.driver}")
             if (this.driver == null) {
                 throw new JMacroException("Unsupported browser vendor: ${config.vendor}")
@@ -217,8 +221,8 @@ class BrowserCommand extends Command implements AutoCloseable, Constants {
         if (this.elements.containsKey(name)) {
             return this.elements[name]
         }
-        if (this.context.name) {
-            return this.context.name
+        if (this.context."$name") {
+            return this.context."$name"
         }
         try {
             return Keys."$name"
@@ -227,11 +231,11 @@ class BrowserCommand extends Command implements AutoCloseable, Constants {
         }
     }
 
-    JFile takeScreenShot(Path destinationFile) {
-        return takeScreenShot(destinationFile.toString())
+    JFile screenshot(Path destinationFile) {
+        return screenshot(destinationFile.toString())
     }
 
-    JFile takeScreenShot(String destinationFile) {
+    JFile screenshot(String destinationFile) {
         JFile scrFile = driver.getScreenshotAs(OutputType.FILE)
         JFile destFile = new JFile(destinationFile)
         this.logger.info("Screenshot: $destFile")
@@ -239,11 +243,11 @@ class BrowserCommand extends Command implements AutoCloseable, Constants {
         return destFile
     }
 
-    JFile takeFullPage(Path destinationFile) {
-        return takeFullPage(destinationFile.toString())
+    JFile fullpage(Path destinationFile) {
+        return fullpage(destinationFile.toString())
     }
 
-    JFile takeFullPage(String destinationFile) {
+    JFile fullpage(String destinationFile) {
         Screenshot screenshot = new AShot()
             .shootingStrategy(ShootingStrategies.viewportPasting(1000))
             .takeScreenshot(driver)
