@@ -1,6 +1,7 @@
 package com.itquasar.multiverse.jmacro.core;
 
 public interface Constants {
+    int API_VERSION = 1;
     // OS
     String EOL = System.lineSeparator();
     String EOL_ESCAPED = System.lineSeparator().replace("\r", "\\r").replace("\n", "\\n");
