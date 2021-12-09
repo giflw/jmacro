@@ -1,8 +1,23 @@
 package com.itquasar.multiverse.jmacro.core;
 
-import java.nio.file.Path;
+import lombok.extern.log4j.Log4j2;
 
-public record Folders(Path appHome) {
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+@Log4j2
+public class Folders {
+
+    private static final List<String> NON_OVERRIDABLES = List.of("bin", "etc", "java", "lib");
+    private final Path appHome;
+    private final Map<String, Path> paths = new LinkedHashMap<>();
+
+    public Folders(Path appHome) {
+        this.appHome = appHome;
+    }
 
     public static Folders fromSysProp() {
         return fromSysProp("app.home");
@@ -12,42 +27,65 @@ public record Folders(Path appHome) {
         return new Folders(Path.of(System.getProperty(sysPropKey)));
     }
 
+    private Path folder(String name) {
+        if (this.paths.containsKey(name)) {
+            return this.paths.get(name);
+        }
+        return this.appHome.resolve(name);
+    }
+
     /**
      * @return Path to dir containing executable files for main app.
      */
     public Path bin() {
-        return appHome.resolve("bin");
-    }
-
-    public Path cache() {
-        return appHome.resolve("cache");
-    }
-
-    public Path data() {
-        return appHome.resolve("data");
+        return this.appHome.resolve("bin");
     }
 
     public Path etc() {
-        return appHome.resolve("etc");
+        return this.appHome.resolve("etc");
     }
 
     public Path java() {
-        return appHome.resolve("java");
+        return this.appHome.resolve("java");
     }
 
     public Path lib() {
-        return appHome.resolve("lib");
+        return this.appHome.resolve("lib");
+    }
+
+    // OVERRIDABLES
+
+    public Path cache() {
+        return this.folder("cache");
+    }
+
+    public Path data() {
+        return this.folder("data");
     }
 
     public Path logs() {
-        return appHome.resolve("logs");
+        return this.folder("logs");
     }
 
     public Path tmp() {
-        return appHome.resolve("tmp");
+        return this.folder("tmp");
     }
 
     public Path tools() {
-        return appHome.resolve("tools");
+        return this.folder("tools");
+    }
+
+    public void configure(Map<String, String> paths) {
+        NON_OVERRIDABLES.forEach(it -> {
+            if (paths.containsKey(it)) {
+                LOGGER.error("Cannot override path to folder " + it);
+            }
+        });
+        this.paths.clear();
+        paths.forEach((key, value) -> {
+            Path path = Paths.get(value);
+            LOGGER.warn("Overriding folder " + key + " to " + path);
+            this.paths.put(key, path);
+        });
     }
 }

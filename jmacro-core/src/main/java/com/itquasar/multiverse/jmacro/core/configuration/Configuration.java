@@ -40,6 +40,7 @@ public final class Configuration {
             .flatMap(factory -> factory.getExtensions().stream())
             .toList()
     );
+
     private final Folders folders;
     /**
      * URI for repositories.
@@ -49,6 +50,10 @@ public final class Configuration {
      * Custom options mapping from configuration file.
      */
     private Map<String, String> options = new LinkedHashMap<>();
+    /**
+     * Store custom paths for folders
+     */
+    private Map<String, String> paths = new LinkedHashMap<>();
     /**
      * Global repository proxy for all registered repositories.
      */
@@ -83,7 +88,9 @@ public final class Configuration {
             }
         }
         LOGGER.warn("Configuration file 'jmacro-test.yaml' or 'jmacro.yaml' not found on classpath.");
-        return new Configuration();
+        Configuration configuration = new Configuration();
+        configuration.init();
+        return configuration;
     }
 
     /**
@@ -102,6 +109,7 @@ public final class Configuration {
      * Initializes intances objects from loaded configuration.
      */
     private void init() {
+        folders.configure(this.paths);
         this.repository = new GlobalScriptRepository(
             ScriptRepositoryFactory.create(this.repositories, this)
         );
