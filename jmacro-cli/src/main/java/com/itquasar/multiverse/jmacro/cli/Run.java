@@ -79,9 +79,13 @@ public class Run implements Callable<CliResult> {
         var script = cli.getCore().getConfiguration().getRepository().get(path);
 
         if (script.isPresent()) {
+            if (args != null && args.size() > 0) {
+                args.set(0, script.get().getLocation().toString());
+            }
+            List<String> args = this.args != null ? Collections.unmodifiableList(this.args) : Collections.emptyList();
             ScriptResult scriptResult = cli.getCore().getEngine().execute(
                 script.get(),
-                this.args != null ? Collections.unmodifiableList(this.args) : Collections.emptyList(),
+                args,
                 scriptEngine -> {
                     Bindings bindings = scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
                     CredentialsCommand bindedCredentials = (CredentialsCommand) bindings.get("credentials");
