@@ -1,5 +1,6 @@
 package com.itquasar.multiverse.jmacro.core.configuration;
 
+import com.itquasar.multiverse.jmacro.core.Constants;
 import com.itquasar.multiverse.jmacro.core.Folders;
 import com.itquasar.multiverse.jmacro.core.repository.GlobalScriptRepository;
 import com.itquasar.multiverse.jmacro.core.repository.ScriptRepositoryFactory;
@@ -133,6 +134,9 @@ public final class Configuration {
      * @return Found value.
      */
     public String getValue(final String key) {
+        if (Constants._MAP.containsKey(key)) {
+            return Constants._MAP.get(key).toString();
+        }
         String value = System.getenv(key);
         if (value == null) {
             value = this.options.get(key);

@@ -36,13 +36,16 @@ public class ConstantsCommand extends Command implements Map<String, Object>, Co
     public void allCommandsRegistered() {
         Bindings bindings = this.getBindings();
         this.entrySet().stream().forEach(entry -> {
-            String key = "$" + entry.getKey();
-            if (bindings.containsKey(key)) {
-                getLogger().error(key + " constant cannot be registered in context. Command " + bindings.get(key).getClass() + " registered with " + key + " name");
-            } else {
-                Object value = entry.getValue();
-                getLogger().warn("Registering constant " + key + " = " + value);
-                bindings.put(key, value);
+            String key = entry.getKey();
+            if (!key.startsWith("_")) {
+                key = "$" + key;
+                if (bindings.containsKey(key)) {
+                    getLogger().error(key + " constant cannot be registered in context. Command " + bindings.get(key).getClass() + " registered with " + key + " name");
+                } else {
+                    Object value = entry.getValue();
+                    getLogger().warn("Registering constant " + key + " = " + value);
+                    bindings.put(key, value);
+                }
             }
         });
     }

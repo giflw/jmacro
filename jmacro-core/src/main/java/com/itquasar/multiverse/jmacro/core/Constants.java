@@ -1,5 +1,12 @@
 package com.itquasar.multiverse.jmacro.core;
 
+import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
+
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 public interface Constants {
     int API_VERSION = 1;
     // OS
@@ -22,4 +29,15 @@ public interface Constants {
     String IE = "IExplorer";
     String OPERA = "Opera";
     String SAFARI = "Safari";
+
+    Map<String, ?> _MAP = Arrays.asList(Constants.class.getDeclaredFields())
+        .stream()
+        .filter(field -> !field.getName().equals("_MAP"))
+        .collect(Collectors.toMap(Field::getName, field -> {
+            try {
+                return field.get(null);
+            } catch (IllegalAccessException e) {
+                throw new JMacroException("Error getting constant value for " + field.getName());
+            }
+        }));
 }
