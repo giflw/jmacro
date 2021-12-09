@@ -19,6 +19,10 @@ public record Folders(Path appHome) {
         return appHome.resolve("bin");
     }
 
+    public Path cache() {
+        return appHome.resolve("cache");
+    }
+
     public Path data() {
         return appHome.resolve("data");
     }

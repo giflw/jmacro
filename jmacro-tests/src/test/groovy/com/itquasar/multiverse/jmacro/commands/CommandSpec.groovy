@@ -10,9 +10,11 @@ import com.itquasar.multiverse.jmacro.core.script.Metadata
 import com.itquasar.multiverse.jmacro.core.script.Script
 import com.itquasar.multiverse.jmacro.core.script.ScriptResult
 import groovy.util.logging.Log4j2
+import spock.lang.Ignore
 import spock.lang.Specification
 import spock.lang.Unroll
 
+@Ignore
 @Log4j2
 class CommandSpec extends Specification {
 

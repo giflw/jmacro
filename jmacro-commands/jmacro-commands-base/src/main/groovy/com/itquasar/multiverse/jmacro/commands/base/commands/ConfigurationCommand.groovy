@@ -30,34 +30,24 @@ class ConfigurationCommand extends Command {
         return this
     }
 
-    def set(String name, value) {
+    def contains(String name) {
+        return this.configs.containsKey(name)
+    }
+
+    def propertyMissing(String name, def value) {
         this.configs[name] = value
         return this
     }
 
-    def get(String name) {
-        def value = this.configs[name] ? this.configs[name] : null
-        value = value == null && this.core.configuration.hasProperty(name) ? this.core.configuration."$name" : value
-        if (value == null) {
-            return this.context.getAttribute(name)
-        }
-        return value
-    }
-
     def propertyMissing(String name) {
-        if (this.configs.hasVariable(name)) {
-            return this.configs.getVariable(name)
-        }
-        if (this.core.configuration.hasProperty(name)) {
-            return this.core.configuration."$name"
-        }
-        return propertyMissingOn(context, name)
+        def value = this.configs.containsKey(name) ? this.configs[name] : null
+        value = value == null && this.core.configuration.hasProperty(name) ? this.core.configuration."$name" : value
+        value = value != null ? value : this.context.getAttribute(name)
+        return value
     }
 
     @Override
     String toString() {
-        return "Configuration{" +
-            "configs=" + configs +
-            '}';
+        return "Configuration{configs=${configs}}"
     }
 }

@@ -31,7 +31,7 @@ class BrowserWait {
 
     BrowserWait(BrowserCommand browser) {
         this.browser = browser
-        driverWait = new WebDriverWait(browser.driver, DEFAULT_TIMEOUT.longValue())
+        driverWait = new WebDriverWait(browser.driver, Duration.ofSeconds(DEFAULT_TIMEOUT.longValue()))
     }
 
     BrowserWait(BrowserCommand browser, WebDriverWait driverWait, String cssSelector) {

@@ -52,6 +52,11 @@ public class AttemptCommandProvider implements CommandProvider<AttemptCommandPro
             } catch (Throwable ex) {
                 if (verbosity == QUIET) {
                     this.getLogger().error("Attempt failed: " + ex.getMessage());
+                    Throwable cause = ex.getCause();
+                    while(cause != null) {
+                        this.getLogger().error("Attempt failed caused by: " + cause.getMessage());
+                        cause = cause.getCause();
+                    }
                 } else {
                     this.getLogger().error("Attempt failed: " + ex.getMessage(), ex);
                 }

@@ -1,13 +1,13 @@
 package com.itquasar.multiverse.jmacro.commands.browser.command
 
-import com.itquasar.multiverse.jmacro.commands.browser.command.browser.BrowserDriverFactory
+
 import com.itquasar.multiverse.jmacro.commands.browser.command.browser.BrowserElements
 import com.itquasar.multiverse.jmacro.commands.browser.command.browser.BrowserWait
+import com.itquasar.multiverse.jmacro.commands.browser.command.browser.DriverManager
 import com.itquasar.multiverse.jmacro.commands.browser.command.browser.WebElementWrapper
 import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.Constants
 import com.itquasar.multiverse.jmacro.core.JMacroCore
-import com.itquasar.multiverse.jmacro.core.SPILoader
 import com.itquasar.multiverse.jmacro.core.configuration.Configuration
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
@@ -29,20 +29,11 @@ import java.nio.file.Path
 @CompileStatic
 class BrowserCommand extends Command implements AutoCloseable, Constants {
 
-    static Map<String, BrowserDriverFactory> DRIVER_FACTORIES = new LinkedHashMap<>()
-    static {
-        new SPILoader<>(BrowserDriverFactory.class).load().forEachRemaining(factory -> {
-            factory.browserNames().forEach(name ->
-                DRIVER_FACTORIES.put(name, factory)
-            )
-        })
-    }
-
     Map<String, ?> config = [
         vendor : FIREFOX,
         port   : 0, // random
         visible: false, //  true -> visible;  false -> headless
-        driver: null, // driver binary path
+        driver : null, // driver binary path
         binary : null // browser binary path
     ]
     RemoteWebDriver driver = null
@@ -82,7 +73,19 @@ class BrowserCommand extends Command implements AutoCloseable, Constants {
 
     @CompileDynamic
     private static String driverFromVendor(Configuration configuration, Map<String, ?> config) {
-        String vendor = config.vendor == FIREFOX ? GECKO : config.vendor
+        String vendor = config.vendor
+        switch (vendor) {
+            case FIREFOX:
+                vendor = 'gecko'
+                break
+            case IE:
+                vendor = 'ie'
+                break
+            case CHROMIUM:
+                vendor = CHROME;
+                break
+        }
+        vendor = vendor.toLowerCase()
         return configuration.folders.tools()
             .resolve('webdriver')
             .resolve(vendor)
@@ -99,13 +102,10 @@ class BrowserCommand extends Command implements AutoCloseable, Constants {
             this.config.forEach { key, value ->
                 logger.warn("Browser config ${key}=${value}")
             }
-            if (this.DRIVER_FACTORIES.containsKey(config.vendor)) {
-                var factory = this.DRIVER_FACTORIES[config.vendor]
-                var sysProp = factory.getSystemPropertyName(config)
-                logger.warn("Setting ${sysProp} to [${config.driver}]")
-                System.setProperty(sysProp, (String) config.driver)
-                this.driver = factory.create(this.config)
-            } else {
+            def driverManager = new DriverManager(core.configuration.folders.cache().resolve("webdriver"))
+            this.driver = driverManager.getDriver(config.vendor.toString())
+            getLogger().warn("Web driver instance ${this.driver}")
+            if (this.driver == null) {
                 throw new JMacroException("Unsupported browser vendor: ${config.vendor}")
             }
             this.wait = new BrowserWait(this)
@@ -129,10 +129,7 @@ class BrowserCommand extends Command implements AutoCloseable, Constants {
 
     @CompileDynamic
     BrowserCommand config(def configuration) {
-        if (configuration.hasProperty("configs")) {
-            return config(configuration.configs.browser ?: configuration.configs)
-        }
-        throw new JMacroException("Object of type ${configuration.class} has no property configs of type Map<String, Object> or ConfigObjec")
+        return config(configuration.contains('browser') ? configuration.browser : configuration.configs)
     }
 
     def wait(String cssSelector) {

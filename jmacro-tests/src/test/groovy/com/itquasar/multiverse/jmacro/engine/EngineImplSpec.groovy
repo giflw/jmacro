@@ -6,8 +6,10 @@ import com.itquasar.multiverse.jmacro.core.script.Metadata
 import com.itquasar.multiverse.jmacro.core.script.Script
 import com.itquasar.multiverse.jmacro.core.script.ScriptResult
 import com.itquasar.multiverse.jmacro.core.script.ValueHolder
+import spock.lang.Ignore
 import spock.lang.Specification
 
+@Ignore
 class EngineImplSpec extends Specification implements Constants {
 
     def "parse metadata"(extension) {

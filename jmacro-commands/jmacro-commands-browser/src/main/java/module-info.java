@@ -9,6 +9,7 @@ module jmacro.commands.browser {
     requires org.seleniumhq.selenium.edge_driver;
     requires org.seleniumhq.selenium.firefox_driver;
     requires org.seleniumhq.selenium.remote_driver;
+    requires io.github.bonigarcia.webdrivermanager;
     requires org.apache.commons.io;
 
     requires java.desktop;
