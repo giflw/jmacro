@@ -6,8 +6,19 @@ import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 
 import javax.script.ScriptEngine;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 public class Base64CommandProvider implements CommandProvider<Base64CommandProvider.Base64Command> {
+
+    @Override
+    public String getName() {
+        return "base64";
+    }
+
+    @Override
+    public List<String> getAliases() {
+        return List.of("b64");
+    }
 
     @Override
     public Class<Base64Command> getCommandType() {

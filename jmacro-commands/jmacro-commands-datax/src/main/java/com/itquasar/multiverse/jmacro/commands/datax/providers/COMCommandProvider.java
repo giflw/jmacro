@@ -9,6 +9,11 @@ import javax.script.ScriptEngine;
 public class COMCommandProvider implements CommandProvider<COMCommand> {
 
     @Override
+    public String getName() {
+        return "com";
+    }
+
+    @Override
     public Class<COMCommand> getCommandType() {
         return COMCommand.class;
     }

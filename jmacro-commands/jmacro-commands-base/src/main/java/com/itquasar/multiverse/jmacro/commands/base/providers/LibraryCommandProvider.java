@@ -9,6 +9,11 @@ import javax.script.ScriptEngine;
 public class LibraryCommandProvider implements CommandProvider<LibraryCommand> {
 
     @Override
+    public String getName() {
+        return "library";
+    }
+
+    @Override
     public Class<LibraryCommand> getCommandType() {
         return LibraryCommand.class;
     }

@@ -9,6 +9,11 @@ import javax.script.ScriptEngine;
 public class OCRCommandProvider implements CommandProvider<OCRCommand> {
 
     @Override
+    public String getName() {
+        return "ocr";
+    }
+
+    @Override
     public Class<OCRCommand> getCommandType() {
         return OCRCommand.class;
     }

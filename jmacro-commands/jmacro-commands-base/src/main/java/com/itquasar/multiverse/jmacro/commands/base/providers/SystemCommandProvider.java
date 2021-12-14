@@ -9,6 +9,11 @@ import javax.script.ScriptEngine;
 public class SystemCommandProvider implements CommandProvider<SystemCommand> {
 
     @Override
+    public String getName() {
+        return "system";
+    }
+
+    @Override
     public Class<SystemCommand> getCommandType() {
         return SystemCommand.class;
     }

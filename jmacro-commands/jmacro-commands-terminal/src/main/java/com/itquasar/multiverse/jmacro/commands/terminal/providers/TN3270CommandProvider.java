@@ -12,6 +12,11 @@ import javax.script.ScriptEngine;
 public class TN3270CommandProvider implements CommandProvider<TN3270Command> {
 
     @Override
+    public String getName() {
+        return "tn3270";
+    }
+
+    @Override
     public Class<TN3270Command> getCommandType() {
         return TN3270Command.class;
     }

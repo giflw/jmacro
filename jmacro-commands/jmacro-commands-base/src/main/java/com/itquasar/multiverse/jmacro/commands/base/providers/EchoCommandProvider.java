@@ -15,6 +15,11 @@ public class EchoCommandProvider implements CommandProvider<EchoCommandProvider.
     public static final Level ECHO = Level.forName("ECHO", 350);
 
     @Override
+    public String getName() {
+        return "echo";
+    }
+
+    @Override
     public Class<EchoCommand> getCommandType() {
         return EchoCommand.class;
     }

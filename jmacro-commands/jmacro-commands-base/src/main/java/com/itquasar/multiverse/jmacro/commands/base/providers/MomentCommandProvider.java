@@ -9,6 +9,11 @@ import javax.script.ScriptEngine;
 public class MomentCommandProvider implements CommandProvider<MomentCommand> {
 
     @Override
+    public String getName() {
+        return "moment";
+    }
+
+    @Override
     public Class<MomentCommand> getCommandType() {
         return MomentCommand.class;
     }

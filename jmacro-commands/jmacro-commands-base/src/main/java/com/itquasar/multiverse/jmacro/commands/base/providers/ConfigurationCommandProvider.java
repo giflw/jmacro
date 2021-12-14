@@ -11,6 +11,11 @@ import javax.script.ScriptEngine;
 public class ConfigurationCommandProvider implements CommandProvider<ConfigurationCommand> {
 
     @Override
+    public String getName() {
+        return "configuration";
+    }
+
+    @Override
     public Class<ConfigurationCommand> getCommandType() {
         return ConfigurationCommand.class;
     }

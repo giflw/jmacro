@@ -9,6 +9,11 @@ import javax.script.ScriptEngine;
 public class RequestCommandProvider implements CommandProvider<RequestCommand> {
 
     @Override
+    public String getName() {
+        return "request";
+    }
+
+    @Override
     public Class<RequestCommand> getCommandType() {
         return RequestCommand.class;
     }

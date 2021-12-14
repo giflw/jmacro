@@ -9,6 +9,11 @@ import javax.script.ScriptEngine;
 public class PDFCommandProvider implements CommandProvider<PDFCommand> {
 
     @Override
+    public String getName() {
+        return "pdf";
+    }
+
+    @Override
     public Class<PDFCommand> getCommandType() {
         return PDFCommand.class;
     }

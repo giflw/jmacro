@@ -9,6 +9,11 @@ import javax.script.ScriptEngine;
 public class TimerCommandProvider implements CommandProvider<TimerCommand> {
 
     @Override
+    public String getName() {
+        return "timer";
+    }
+
+    @Override
     public Class<TimerCommand> getCommandType() {
         return TimerCommand.class;
     }

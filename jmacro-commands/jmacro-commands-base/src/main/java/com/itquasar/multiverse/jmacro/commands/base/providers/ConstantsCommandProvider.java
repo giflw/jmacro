@@ -11,6 +11,11 @@ import java.util.List;
 public class ConstantsCommandProvider implements CommandProvider<ConstantsCommand> {
 
     @Override
+    public String getName() {
+        return "constants";
+    }
+
+    @Override
     public List<String> getAliases() {
         return List.of("C");
     }

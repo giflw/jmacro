@@ -12,9 +12,7 @@ public interface CommandProvider<C extends Command> {
     /**
      * @return Command name to be used to invoke in script.
      */
-    default String getName() {
-        return this.getClass().getSimpleName().replace(CommandProvider.class.getSimpleName(), "").toLowerCase();
-    }
+    String getName();
 
     default List<String> getAliases() {
         return Collections.emptyList();

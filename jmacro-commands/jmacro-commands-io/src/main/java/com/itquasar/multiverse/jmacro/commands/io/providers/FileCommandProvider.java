@@ -9,6 +9,11 @@ import javax.script.ScriptEngine;
 public class FileCommandProvider implements CommandProvider<FileCommand> {
 
     @Override
+    public String getName() {
+        return "file";
+    }
+
+    @Override
     public Class<FileCommand> getCommandType() {
         return FileCommand.class;
     }

@@ -10,6 +10,11 @@ import javax.script.ScriptEngine;
 public class IncludeCommandProvider implements CommandProvider<IncludeCommand> {
 
     @Override
+    public String getName() {
+        return "include";
+    }
+
+    @Override
     public Class<IncludeCommand> getCommandType() {
         return IncludeCommand.class;
     }

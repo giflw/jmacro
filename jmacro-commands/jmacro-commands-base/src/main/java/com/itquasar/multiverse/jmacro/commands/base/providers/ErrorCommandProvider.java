@@ -9,6 +9,11 @@ import javax.script.ScriptEngine;
 public class ErrorCommandProvider implements CommandProvider<ErrorCommandProvider.ErrorCommand> {
 
     @Override
+    public String getName() {
+        return "error";
+    }
+
+    @Override
     public Class<ErrorCommand> getCommandType() {
         return ErrorCommand.class;
     }
