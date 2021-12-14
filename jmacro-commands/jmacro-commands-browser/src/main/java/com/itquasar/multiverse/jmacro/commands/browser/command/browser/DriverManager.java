@@ -2,6 +2,7 @@ package com.itquasar.multiverse.jmacro.commands.browser.command.browser;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import io.github.bonigarcia.wdm.config.DriverManagerType;
+import lombok.extern.log4j.Log4j2;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -10,13 +11,14 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
+@Log4j2
 public class DriverManager {
 
     private final Long TTL;
     private final Path cacheDir;
 
-    public DriverManager(Path cacheDir) {
-        this(TimeUnit.SECONDS.convert(365, TimeUnit.DAYS), cacheDir);
+    public DriverManager(Path driversDir) {
+        this(TimeUnit.SECONDS.convert(365, TimeUnit.DAYS), driversDir);
     }
 
     public DriverManager(Long TTL, Path cacheDir) {

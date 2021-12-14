@@ -76,6 +76,7 @@ class BrowserCommand extends Command implements AutoCloseable, Constants {
 
     BrowserCommand start() {
         if (driver == null || driver.sessionId == null) {
+            this.postConfig()
             Capabilities capabilities = null
             switch (config.vendor) {
                 case FIREFOX:
@@ -102,11 +103,11 @@ class BrowserCommand extends Command implements AutoCloseable, Constants {
                     break
             }
 
-            logger.warn("Starting browser ${config.vender.toString().capitalize()}")
+            logger.warn("Starting browser ${config.vendor.toString().capitalize()}")
             this.config.forEach { key, value ->
                 logger.warn("Browser config ${key}=${value}")
             }
-            def driverManager = new DriverManager(core.configuration.folders.cache().resolve("webdriver"))
+            def driverManager = new DriverManager(core.configuration.folders.tools().resolve("webdriver"))
             this.driver = driverManager.getDriver(config.vendor.toString(), capabilities)
             getLogger().warn("Web driver instance ${this.driver}")
             if (this.driver == null) {
