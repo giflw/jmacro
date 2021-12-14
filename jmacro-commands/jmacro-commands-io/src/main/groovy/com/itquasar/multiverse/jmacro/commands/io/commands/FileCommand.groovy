@@ -45,8 +45,10 @@ class FileCommand extends Command {
 
     File call(Path path, Closure closure) {
         def file = new File(path)
-        file.call(closure)
-        file
+        closure.delegate = file
+        closure.resolveStrategy = Closure.DELEGATE_FIRST
+        closure.call()
+        return file
     }
 
     /**
