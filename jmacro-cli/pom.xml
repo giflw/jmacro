@@ -167,6 +167,7 @@
                     <overWriteSnapshots>true</overWriteSnapshots>
                 </configuration>
             </plugin>
+
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>3.2.0</version>
@@ -186,71 +187,155 @@
                             </resources>
                         </configuration>
                     </execution>
-                    <execution>
-                        <!-- Copy tools dir with binaries -->
-                        <id>copy-tools</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${basedir}/target/appassembler/tools</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${basedir}/../tools</directory>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <!-- Copy data dir with data files for tools or commands -->
-                        <id>copy-data</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${basedir}/target/appassembler/data</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${basedir}/../data</directory>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.igormaznitsa</groupId>
-                <artifactId>mvn-jlink-wrapper</artifactId>
-                <version>1.1.0</version>
-                <executions>
-                    <execution>
-                        <id>jlink-full</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>jlink</goal>
-                        </goals>
-                        <configuration>
-                            <provider>LOCAL</provider>
-                            <output>${project.build.directory}/appassembler/java</output>
-                            <modulePaths>
-                                <path>${java.home}${file.separator}jmods</path>
-                            </modulePaths>
-                            <options>
-                                <option>--add-modules</option>
-                                <option>
-                                    java.base,java.base,java.compiler,java.datatransfer,java.desktop,java.instrument,java.logging,java.management,java.management.rmi,java.naming,java.net.http,java.prefs,java.rmi,java.scripting,java.security.jgss,java.sql,java.sql.rowset,java.transaction.xa,java.xml,java.xml.crypto,jdk.attach,jdk.charsets,jdk.crypto.cryptoki,jdk.crypto.ec,jdk.javadoc,jdk.jdi,jdk.jsobject,jdk.localedata,jdk.naming.dns,jdk.net,jdk.sctp,jdk.unsupported,jdk.xml.dom,jdk.zipfs
-                                </option>
-                                <option>--compress=2</option>
-                                <option>--no-header-files</option>
-                                <option>--no-man-pages</option>
-                                <option>--strip-debug</option>
-                            </options>
-                        </configuration>
-                    </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>data</id>
+            <activation>
+                <file>
+                    <missing>${basedir}/target/appassembler/data</missing>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>3.2.0</version>
+                        <executions>
+                            <execution>
+                                <!-- Copy data dir with data files for tools or commands -->
+                                <id>copy-data</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${basedir}/target/appassembler/data</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${basedir}/../data</directory>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>jmacro-scripts</id>
+            <activation>
+                <file>
+                    <missing>${basedir}/target/appassembler/scripts</missing>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>3.2.0</version>
+                        <executions>
+                            <execution>
+                                <!-- Copy tools dir with binaries -->
+                                <id>copy-jmacro-scripts</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${basedir}/target/appassembler/scripts</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${basedir}/../jmacro-scripts</directory>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>tools</id>
+            <activation>
+                <file>
+                    <missing>${basedir}/target/appassembler/tools</missing>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>3.2.0</version>
+                        <executions>
+                            <execution>
+                                <!-- Copy tools dir with binaries -->
+                                <id>copy-tools</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${basedir}/target/appassembler/tools</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${basedir}/../tools</directory>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>java-embedded</id>
+            <activation>
+                <file>
+                    <missing>${project.build.directory}/appassembler/java/release</missing>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.igormaznitsa</groupId>
+                        <artifactId>mvn-jlink-wrapper</artifactId>
+                        <version>1.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>jlink-full</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>jlink</goal>
+                                </goals>
+                                <configuration>
+                                    <provider>LOCAL</provider>
+                                    <output>${project.build.directory}/appassembler/java</output>
+                                    <modulePaths>
+                                        <path>${java.home}${file.separator}jmods</path>
+                                    </modulePaths>
+                                    <options>
+                                        <option>--add-modules</option>
+                                        <option>
+                                            java.base,java.base,java.compiler,java.datatransfer,java.desktop,java.instrument,java.logging,java.management,java.management.rmi,java.naming,java.net.http,java.prefs,java.rmi,java.scripting,java.security.jgss,java.sql,java.sql.rowset,java.transaction.xa,java.xml,java.xml.crypto,jdk.attach,jdk.charsets,jdk.crypto.cryptoki,jdk.crypto.ec,jdk.javadoc,jdk.jdi,jdk.jsobject,jdk.localedata,jdk.naming.dns,jdk.net,jdk.sctp,jdk.unsupported,jdk.xml.dom,jdk.zipfs
+                                        </option>
+                                        <option>--compress=2</option>
+                                        <option>--no-header-files</option>
+                                        <option>--no-man-pages</option>
+                                        <option>--strip-debug</option>
+                                    </options>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
