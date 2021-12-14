@@ -44,7 +44,7 @@ class TerminalCommand extends Command implements Constants {
         return read(message, defaultValue, nonInteractive, true)
     }
 
-    def credential(Map<String, Map<String, String>> fields, boolean nonInteractive = false, Closure<Boolean> checkCredentials = { ->
+    def credentials(Map<String, Map<String, String>> fields, boolean nonInteractive = false, Closure<Boolean> checkCredentials = { ->
         true }) {
         while (!checkCredentials) {
             fields.each { entry ->

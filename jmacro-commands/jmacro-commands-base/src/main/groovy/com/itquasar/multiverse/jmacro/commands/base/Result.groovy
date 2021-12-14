@@ -2,7 +2,6 @@ package com.itquasar.multiverse.jmacro.commands.base
 
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 
-// FIXME add something similar to catch/finally
 class Result {
 
     private def value
@@ -52,6 +51,21 @@ class Result {
 
     def propertyMissing(String name) {
         return this."$name"
+    }
+
+    Result capture(Closure closure) {
+        return capture(Throwable.class, closure)
+    }
+
+    Result capture(Class<Throwable> throwableClass, Closure closure) {
+        if (!isValid() && throwableClass.isInstance(this.throwable)) {
+            closure.call(this.throwable)
+        }
+        return this
+    }
+
+    void lastly(Closure closure) {
+        closure.call()
     }
 }
 

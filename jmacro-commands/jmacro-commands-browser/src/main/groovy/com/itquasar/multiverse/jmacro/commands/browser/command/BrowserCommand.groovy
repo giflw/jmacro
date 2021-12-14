@@ -119,21 +119,21 @@ class BrowserCommand extends Command implements AutoCloseable, Constants {
         }
     }
 
-    BrowserCommand config(Map<String, Object> config) {
+    BrowserCommand configure(Map<String, Object> config) {
         this.config.putAll(config)
         this.postConfig()
         return this
     }
 
     @CompileDynamic
-    BrowserCommand config(ConfigObject config) {
+    BrowserCommand configure(ConfigObject config) {
         this.config.putAll(config)
         this.postConfig()
         return this
     }
 
     @CompileDynamic
-    BrowserCommand config(def configuration) {
+    BrowserCommand configure(def configuration) {
         return config(configuration.contains('browser') ? configuration.browser : configuration.configs)
     }
 
