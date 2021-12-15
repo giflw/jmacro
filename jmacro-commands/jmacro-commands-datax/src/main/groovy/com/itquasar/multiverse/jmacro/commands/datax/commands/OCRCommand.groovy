@@ -22,7 +22,7 @@ class OCRCommand extends Command {
             this.tesseract = new Tesseract()
             def datapath = core.configuration.getFolders().data().resolve("tessdata")
             def files = datapath.toFile().listFiles()
-            if (files.size() == 1) {
+            if (files != null && files.size() == 1) {
                 def language = files[0].name
                 this.tesseract.setLanguage(language.substring(0, language.indexOf('.')))
             }
@@ -81,11 +81,11 @@ class OCRCommand extends Command {
 
     def propertyMissing(String name) {
         this.init()
-        Command.propertyMissingOnOrChainToContext(context, this.tesseract, name)
+        Command.propertyMissingOnOrChainToContext(this, this.tesseract, name)
     }
 
     def propertyMissing(String name, def arg) {
         this.init()
-        Command.propertyMissingOnOrChainToContext(context, this.tesseract, name, arg)
+        Command.propertyMissingOnOrChainToContext(this, this.tesseract, name, arg)
     }
 }

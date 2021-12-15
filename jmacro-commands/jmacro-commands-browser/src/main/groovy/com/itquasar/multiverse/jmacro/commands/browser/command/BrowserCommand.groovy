@@ -134,7 +134,7 @@ class BrowserCommand extends Command implements AutoCloseable, Constants {
 
     @CompileDynamic
     BrowserCommand configure(def configuration) {
-        return config(configuration.contains('browser') ? configuration.browser : configuration.configs)
+        return configure(configuration.contains('browser') ? configuration.browser : configuration.configs)
     }
 
     def wait(String cssSelector) {
