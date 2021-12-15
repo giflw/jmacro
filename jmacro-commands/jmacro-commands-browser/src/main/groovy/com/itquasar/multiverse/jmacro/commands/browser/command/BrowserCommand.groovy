@@ -32,6 +32,10 @@ import java.nio.file.Path
 @CompileStatic
 class BrowserCommand extends Command implements AutoCloseable, Constants {
 
+    static final Map<String, ?> UTILS = [
+        by: (Object) By
+    ]
+
     Map<String, ?> config = [
         vendor : FIREFOX,
         port   : 0, // random
@@ -222,8 +226,14 @@ class BrowserCommand extends Command implements AutoCloseable, Constants {
         if (this.elements.containsKey(name)) {
             return this.elements[name]
         }
-        if (this.context."$name") {
-            return this.context."$name"
+        if (this.bindings.containsKey(name)) {
+            return this.bindings."$name"
+        }
+        if (BrowserWait.EXPECTED_CONDITIONS.containsKey(name)) {
+            return name
+        }
+        if (UTILS.containsKey(name)) {
+            return UTILS.get(name)
         }
         try {
             return Keys."$name"

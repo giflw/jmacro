@@ -4,6 +4,7 @@ package com.itquasar.multiverse.jmacro.commands.browser.command.browser
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
+import groovy.util.logging.Log4j2
 import org.openqa.selenium.By
 import org.openqa.selenium.Keys
 import org.openqa.selenium.WebDriver
@@ -11,6 +12,7 @@ import org.openqa.selenium.WebElement
 import org.openqa.selenium.remote.RemoteWebElement
 
 @CompileStatic
+@Log4j2
 class WebElementWrapper {
 
     static WebElementWrapper NONE = new WebElementWrapper(null, null)

@@ -59,6 +59,7 @@ class BrowserWait {
         return new BrowserWait(browser, waitWithtimeout(timeout), element)
     }
 
+    // FIXME allow ExpectedCondition instance
     WebElementWrapper has(String expectedCondition) {
         return applyCondition(expectedCondition, false)
     }
