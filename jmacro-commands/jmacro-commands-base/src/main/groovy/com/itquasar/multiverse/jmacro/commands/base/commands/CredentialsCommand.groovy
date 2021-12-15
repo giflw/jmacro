@@ -81,7 +81,7 @@ class CredentialsCommand extends Command implements CredentialsProvider {
 
     @Override
     HttpCredentials getCredentials(AuthScope authScope, HttpContext context) {
-        log.debug("Auth scope: $authScope")
+        logger.debug("Auth scope: $authScope")
         switch (authScope.schemeName) {
             case 'NTLM':
                 return new NTCredentials(login, password.toCharArray(), hostname, domain)

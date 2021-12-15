@@ -137,6 +137,7 @@ public final class EngineImpl implements Engine {
         int id = ID_GENERATOR.addAndGet(1);
         Logger scriptLogger = LogManager.getLogger("ScriptEngine#" + id);
 
+        globalScope.put("__MAIN__", normalExecution);
         globalScope.put("id", id);
         globalScope.put("uuid", UUID.randomUUID());
         globalScope.put("logger", scriptLogger);
@@ -150,7 +151,9 @@ public final class EngineImpl implements Engine {
 
         while (commandProviders.hasNext()) {
             var commandProvider = commandProviders.next();
-            scriptLogger.warn("Registering command [" + commandProvider.getName() + "] from " + commandProvider.getClass());
+            if (normalExecution) {
+                scriptLogger.info("Registering command [" + commandProvider.getName() + "] from " + commandProvider.getClass());
+            }
             var command = commandProvider.getCommand(this.jMacroCore, engine);
             if (command == null) {
                 throw new JMacroException(this,

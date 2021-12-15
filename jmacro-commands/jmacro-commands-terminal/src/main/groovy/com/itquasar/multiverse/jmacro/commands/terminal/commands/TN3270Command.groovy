@@ -11,14 +11,16 @@ import com.itquasar.multiverse.tn3270j.WaitMode
 import groovy.util.logging.Log4j2
 import io.vavr.control.Try
 
-import javax.script.Bindings
 import javax.script.ScriptEngine
 import java.nio.file.Path
 
 @Log4j2
 class TN3270Command extends Command implements AutoCloseable, Constants {
 
-    private final Bindings bindings
+    static enum Key {
+        F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12,
+        enter
+    }
 
     private TN3270j tn3270j = null
 
@@ -62,20 +64,34 @@ class TN3270Command extends Command implements AutoCloseable, Constants {
     }
 
     def propertyMissing(String name) {
-        return Try.of({ WaitMode.valueOf(name) })
-            .onFailure(IllegalArgumentException.class, { Reader.Mode.valueOf(name) })
-            .onFailure(IllegalArgumentException.class, { super.propertyMissing(name) })
-            .onFailure(MissingPropertyException.class, {
-                logger.info("Sending key $name")
-                return tn3270j.send(name)
-            })
-            .getOrNull()
+        try {
+            return WaitMode.valueOf(name)
+        } catch (IllegalArgumentException ex) {
+            logger.debug(ex.getMessage())
+        }
+        try {
+            return Reader.Mode.valueOf(name)
+        } catch (IllegalArgumentException ex) {
+            logger.debug(ex.getMessage())
+        }
+        if (bindings.containsKey(name)) {
+            return bindings."$name"
+        }
+        try {
+            def key = Key.valueOf(name)
+            logger.info("Sending key $key")
+            return tn3270j.send(key.name())
+        } catch (IllegalArgumentException ex) {
+            logger.error("Missing property $name", ex)
+        }
     }
 
     def propertyMissing(String name, def arg) {
-        return Try.of({ tn3270j."$name" = arg })
-            .onFailure(MissingPropertyException.class, { super.propertyMissing(name, arg) })
-            .getOrNull()
+        Try.of { ->
+            tn3270j."$name" = arg
+        } orElse { ->
+            super.propertyMissing(name, arg)
+        }
     }
 
     def write(String... args) {

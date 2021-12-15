@@ -45,6 +45,27 @@ public class RequireCommandProvider implements CommandProvider<RequireCommandPro
             }
             getLogger().warn("Required command found: " + commandName + " = " + command);
         }
+
+        void api(int version) {
+            this.call(version);
+        }
+
+        @Override
+        public Object methodMissing(String name, Object args) {
+            throw new JMacroException("Method missing not implemented in " + this.getClass().getSimpleName());
+        }
+
+        @Override
+        public Object propertyMissing(String name) {
+            call(name);
+            return null;
+        }
+
+        @Override
+        public Object propertyMissing(String name, Object arg) {
+            throw new JMacroException("Property missing (set) not implemented in " + this.getClass().getSimpleName());
+        }
+
     }
 
 }

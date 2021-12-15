@@ -44,7 +44,6 @@ class OCRCommand extends Command {
         this.tesseract.setDatapath(path)
     }
 
-
     String call(BufferedImage image) {
         this.init()
         return this.tesseract.doOCR(image)
@@ -58,12 +57,10 @@ class OCRCommand extends Command {
         return txt
     }
 
-
     String call(Path path) {
         this.init()
         return this.tesseract.doOCR(path.toFile())
     }
-
 
     String call(File file) {
         this.init()
@@ -79,19 +76,16 @@ class OCRCommand extends Command {
 
     def methodMissing(String name, def args) {
         this.init()
-        if (args) {
-            return this.tesseract."$name"(args)
-        }
-        return this.tesseract."$name"()
+        Command.methodMissingOnOrChainToContext(context, this.tesseract, name, args)
     }
 
     def propertyMissing(String name) {
         this.init()
-        return this.tesseract."$name"
+        Command.propertyMissingOnOrChainToContext(context, this.tesseract, name)
     }
 
     def propertyMissing(String name, def arg) {
         this.init()
-        this.tesseract."$name" = arg
+        Command.propertyMissingOnOrChainToContext(context, this.tesseract, name, arg)
     }
 }

@@ -28,5 +28,10 @@ class LibraryCommand extends Command {
             name,
             library
         )
+
+        if (library.respondsTo("libraryRegistered")) {
+            logger.warn("Executing libraryRegistered on library $name (${library.class})")
+            library.libraryRegistered()
+        }
     }
 }

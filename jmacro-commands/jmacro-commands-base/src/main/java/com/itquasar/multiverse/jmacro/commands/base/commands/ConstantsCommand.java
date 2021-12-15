@@ -43,7 +43,9 @@ public class ConstantsCommand extends Command implements Map<String, Object>, Co
                     getLogger().error(key + " constant cannot be registered in context. Command " + bindings.get(key).getClass() + " registered with " + key + " name");
                 } else {
                     Object value = entry.getValue();
-                    getLogger().warn("Registering constant " + key + " = " + value);
+                    if ((boolean) getContext().getAttribute("__MAIN__")) {
+                        getLogger().info("Registering constant " + key + " = " + value);
+                    }
                     bindings.put(key, value);
                 }
             }

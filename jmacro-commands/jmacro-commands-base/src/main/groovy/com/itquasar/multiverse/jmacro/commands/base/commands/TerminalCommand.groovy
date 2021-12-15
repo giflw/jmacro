@@ -33,7 +33,8 @@ class TerminalCommand extends Command implements Constants {
     String read(String label, String fallback = null, List<String> allowed = Collections.EMPTY_LIST, boolean nonInteractive = false, boolean password = false) {
         def showValue = fallback ?: ''
         showValue = password ? showValue.replaceAll('.', '*') : showValue
-        System.out.print "[INPT] $label [${allowed.join(',')}] [${showValue}]: "
+        def allowedStr = "[${allowed.join(',')}] "
+        System.out.print "[INPT] $label ${allowedStr.length() > 3 ? allowedStr : ''}[${showValue}]: "
         def value = nonInteractive
             ? println()
             : (password ? console.readPassword().toString() : console.readLine())?.trim()
@@ -44,9 +45,8 @@ class TerminalCommand extends Command implements Constants {
         return read(message, defaultValue, nonInteractive, true)
     }
 
-    def credentials(Map<String, Map<String, String>> fields, boolean nonInteractive = false, Closure<Boolean> checkCredentials = { ->
-        true }) {
-        while (!checkCredentials) {
+    def credentials(Map<String, Map<String, String>> fields, boolean nonInteractive = false, Closure<Boolean> checkCredentials = { -> true }) {
+        do {
             fields.each { entry ->
                 String field = entry.key
                 String label = entry.value.label
@@ -54,7 +54,7 @@ class TerminalCommand extends Command implements Constants {
                 List<String> allowed = entry.value.allowed ?: List.of()
                 this.credential(field, label, fallback, allowed, nonInteractive)
             }
-        }
+        } while (!checkCredentials())
     }
 
     def credential(String field, String label, String fallback, List<String> allowed, boolean nonInteractive = false) {

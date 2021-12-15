@@ -67,14 +67,10 @@ abstract class Command {
     }
 
     static methodMissingOn(def object, def name, def args) {
-        try {
-            if (args) {
-                return object."$name"(*args)
-            }
-            return object."$name"()
-        } catch (Exception ex) {
-            throw new JMacroException("[$name] method missing on [${object}]", ex)
+        if (args) {
+            return object."$name"(*args)
         }
+        return object."$name"()
     }
 
     static methodMissingOnOrChainToContext(Command command, def target, def name, def args) {
@@ -88,7 +84,7 @@ abstract class Command {
     static methodMissingOnOrChainToContext(def context, def target, def name, def args) {
         Try.of({ it -> methodMissingOn(target, name, args) })
             .orElse(Try.of ({ methodMissingOn(context, name, args) }))
-            .getOrElseThrow({ it -> throw new JMacroException("Method mising redirection error: $name ($args)", it) })
+            .getOrElseThrow({ it -> throw new JMacroException("Method missing redirection error: $name ($args)", it) })
     }
 
     static propertyMissingOn(Command command, def name) {
