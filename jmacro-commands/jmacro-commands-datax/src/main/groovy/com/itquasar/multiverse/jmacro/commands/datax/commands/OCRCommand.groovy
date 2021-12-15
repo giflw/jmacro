@@ -21,12 +21,17 @@ class OCRCommand extends Command {
         if (this.tesseract == null) {
             this.tesseract = new Tesseract()
             def datapath = core.configuration.getFolders().data().resolve("tessdata")
-            def files = datapath.toFile().listFiles()
+            def files = datapath.toFile().listFiles().findAll { !it.name.contains('-')}
+            println '*' * 80
+            println files
             if (files != null && files.size() == 1) {
                 def language = files[0].name
+                println language
                 this.tesseract.setLanguage(language.substring(0, language.indexOf('.')))
             }
+            println datapath.toString()
             this.tesseract.setDatapath(datapath.toString())
+            println '*' * 80
         }
     }
 

@@ -24,7 +24,7 @@ class WebElementWrapper {
         return webElement
     }
 
-    WebElementWrapper(By by, webElement) {
+    WebElementWrapper(By by, def webElement) {
         this.webElement = webElement
         this.by = by
     }
@@ -144,13 +144,12 @@ class WebElementWrapper {
                 key = 'cssSelector'
                 break
         }
-        key = key.capitalize()
         if (multi) {
-            return this.webElement."findElementsBy${key}"(value).collect {
+            return this.webElement.findElements(By."${key}"(value)).collect {
                 new WebElementWrapper(null, it)
             }
         }
-        return new WebElementWrapper(null, this.webElement."findElementBy${key}"(value))
+        return new WebElementWrapper(null, this.webElement.findElement(By."${key}"(value)))
     }
 
     @CompileDynamic

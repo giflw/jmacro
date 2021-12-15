@@ -118,7 +118,7 @@ class BrowserCommand extends Command implements AutoCloseable, Constants {
                 throw new JMacroException("Unsupported browser vendor: ${config.vendor}")
             }
             this.wait = new BrowserWait(this)
-            driver.manage().window().maximize()
+            // driver.manage().window().maximize()
             logger.warn("Browser ${config.vender.toString().capitalize()} started")
         }
     }
