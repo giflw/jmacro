@@ -5,7 +5,7 @@ module jmacro.commands.datax {
     requires org.apache.groovy;
     requires org.apache.logging.log4j;
     requires org.checkerframework.checker.qual;
-    requires pdfbox;
+    requires org.apache.pdfbox;
     requires tess4j;
     requires jacob;
 

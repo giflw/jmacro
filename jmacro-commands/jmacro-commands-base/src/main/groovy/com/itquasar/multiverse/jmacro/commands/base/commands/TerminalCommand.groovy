@@ -36,7 +36,7 @@ class TerminalCommand extends Command implements Constants {
         def allowedStr = "[${allowed.join(',')}] "
         System.out.print "[INPT] $label ${allowedStr.length() > 3 ? allowedStr : ''}[${showValue}]: "
         def value = nonInteractive
-            ? println()
+            ? System.out.println()
             : (password ? console.readPassword().toString() : console.readLine())?.trim()
         return (value ?: fallback) ?: ''
     }
