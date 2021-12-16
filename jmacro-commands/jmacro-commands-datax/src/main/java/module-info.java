@@ -8,6 +8,7 @@ module jmacro.commands.datax {
     requires org.apache.pdfbox;
     requires tess4j;
     requires jacob;
+    requires opencv;
 
     requires java.desktop;
     requires java.scripting;
