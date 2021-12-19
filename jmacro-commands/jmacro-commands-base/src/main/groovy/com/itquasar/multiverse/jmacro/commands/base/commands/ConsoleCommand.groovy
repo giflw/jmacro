@@ -7,11 +7,11 @@ import com.itquasar.multiverse.jmacro.core.JMacroCore
 
 import javax.script.ScriptEngine
 
-class TerminalCommand extends Command implements Constants {
+class ConsoleCommand extends Command implements Constants {
 
     private Console console = System.console()
 
-    TerminalCommand(JMacroCore core, ScriptEngine scriptEngine) {
+    ConsoleCommand(JMacroCore core, ScriptEngine scriptEngine) {
         super(core, scriptEngine)
     }
 
