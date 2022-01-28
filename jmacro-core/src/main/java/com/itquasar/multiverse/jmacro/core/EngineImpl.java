@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.script.*;
 import java.io.PrintWriter;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -135,7 +136,7 @@ public final class EngineImpl implements Engine {
         }
 
         int id = ID_GENERATOR.addAndGet(1);
-        Logger scriptLogger = LogManager.getLogger("ScriptEngine#" + id);
+        Logger scriptLogger = LogManager.getLogger("ScriptEngine#" + id + "+" + script.getPath());
 
         globalScope.put("__MAIN__", normalExecution);
         globalScope.put("id", id);
