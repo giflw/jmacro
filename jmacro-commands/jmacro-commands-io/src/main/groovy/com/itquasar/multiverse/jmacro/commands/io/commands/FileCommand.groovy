@@ -44,7 +44,7 @@ class FileCommand extends Command {
     }
 
     File call(Path path, Closure closure) {
-        def file = new File(path)
+        def file = new File(path, scriptEngine.context)
         closure.delegate = file
         closure.resolveStrategy = Closure.DELEGATE_FIRST
         closure.call()

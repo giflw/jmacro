@@ -4,6 +4,7 @@ import com.itquasar.multiverse.jmacro.commands.io.OutputSerializers
 import groovy.transform.CompileDynamic
 import groovy.util.logging.Log4j2
 import org.apache.hc.client5.http.entity.UrlEncodedFormEntity
+import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder
 import org.apache.hc.core5.http.ContentType
 import org.apache.hc.core5.http.HttpEntity
 import org.apache.hc.core5.http.NameValuePair
@@ -11,6 +12,7 @@ import org.apache.hc.core5.http.io.entity.StringEntity
 import org.apache.hc.core5.http.message.BasicNameValuePair
 
 import java.nio.charset.StandardCharsets
+import java.nio.file.Path
 
 @Log4j2
 @CompileDynamic
@@ -62,6 +64,22 @@ class Body implements OutputSerializers {
             }
         }
         entity = new UrlEncodedFormEntity(urlParameters, StandardCharsets.UTF_8)
+    }
+
+    void multipart(Map<String, ?> fields) {
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create()
+        fields.each { name, value ->
+            if (Path.isInstance(value)) {
+                value = value.toFile()
+            }
+            if (File.isInstance(value)) {
+                def octetStreamType = ContentType.APPLICATION_OCTET_STREAM
+                builder.addBinaryBody(name, value, octetStreamType, value.name)
+            } else {
+                builder.addTextBody(name, value)
+            }
+        }
+        entity = builder.build()
     }
 //
 //    def methodMissing(String name, def args) {

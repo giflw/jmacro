@@ -1,6 +1,8 @@
 package com.itquasar.multiverse.jmacro.commands.io.commands.file
 
 import com.itquasar.multiverse.jmacro.commands.io.InputParsers
+import com.itquasar.multiverse.jmacro.core.Command
+import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
@@ -8,35 +10,98 @@ import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 
+import javax.script.ScriptContext
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 import java.nio.file.CopyOption
 import java.nio.file.Files
 import java.nio.file.OpenOption
 import java.nio.file.Path
+import java.nio.file.StandardCopyOption
 
 @CompileStatic
 class File implements InputParsers {
 
     private Path path
+    private final ScriptContext scriptContext
 
-    File(java.io.File file) {
-        this(file.toPath())
+    File(java.io.File file, ScriptContext scriptContext) {
+        this(file.toPath(), scriptContext)
     }
 
-    File(String path) {
-        this(Path.of(path))
+    File(String path, ScriptContext scriptContext) {
+        this(Path.of(path), scriptContext)
     }
 
-    File(Path path) {
+    File(Path path, ScriptContext scriptContext) {
+        // if ~ is first char on path, replaces it by user home
+        if (path.startsWith("~")) {
+            path = Path.of("~").relativize(path)
+            path = Path.of(System.getProperty("user.home")).resolve(path)
+        }
         this.path = path
         this.name = this.path.getFileName()
+        this.scriptContext = scriptContext
+    }
+
+    @CompileDynamic
+    def methodMissing(String name, def args) {
+        try {
+            return Command.methodMissingOn(this.path, name, args)
+        } catch (MissingMethodException ex1) {
+            MetaMethod method
+
+            if (args.length > 0) {
+                // try using this.path + given args
+                def filesArgs = [this.path, *args]
+                method = Files.metaClass.getMetaMethod(name, *filesArgs)
+                if (method) {
+                    return method.invoke(null, method.correctArguments(filesArgs))
+                }
+
+                // try using only given args
+                method = Files.metaClass.getMetaMethod(name, *args)
+                if (method) {
+                    return method.invoke(null, method.correctArguments(args))
+                }
+            }
+
+            // try using only this.path
+            method = Files.metaClass.getMetaMethod(name, this.path)
+            if (method) {
+                return method.invoke(null, this.path)
+            }
+
+            return Command.methodMissingOnOrChainToContext(this.scriptContext, this.path.toFile(), name, args)
+        }
+    }
+
+    @CompileDynamic
+    def propertyMissing(String name) {
+        try {
+            return Command.propertyMissingOn(this.path, name)
+        } catch (JMacroException ex) {
+            def enumValue = StandardCopyOption.values().find { it.name() == name }
+            if (enumValue) {
+                return enumValue
+            }
+            return Command.propertyMissingOnOrChainToContext(this.scriptContext, this.path.toFile(), name)
+        }
+    }
+
+    @CompileDynamic
+    def propertyMissing(String name, def arg) {
+        try {
+            Command.propertyMissingOn(this.path, name, arg)
+        } catch (JMacroException ex) {
+            Command.propertyMissingOnOrChainToContext(this.scriptContext, this.path.toFile(), name, arg)
+        }
     }
 
     @Override
     Object getData() {
         if (InputParsers.super.data == null) {
-            read()
+            return read()
         }
         return InputParsers.super.data
     }

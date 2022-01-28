@@ -152,7 +152,7 @@ public final class EngineImpl implements Engine {
         while (commandProviders.hasNext()) {
             var commandProvider = commandProviders.next();
             if (normalExecution) {
-                scriptLogger.info("Registering command [" + commandProvider.getName() + "] from " + commandProvider.getClass());
+                scriptLogger.debug("Registering command [" + commandProvider.getName() + "] from " + commandProvider.getClass());
             }
             var command = commandProvider.getCommand(this.jMacroCore, engine);
             if (command == null) {

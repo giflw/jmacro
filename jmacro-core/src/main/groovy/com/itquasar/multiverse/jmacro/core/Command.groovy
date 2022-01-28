@@ -66,6 +66,7 @@ abstract class Command {
         // no op
     }
 
+    // FIXME refactor to throw JMacroException, or change missingPropertyOn
     static methodMissingOn(def object, def name, def args) {
         if (args) {
             return object."$name"(*args)
@@ -101,8 +102,12 @@ abstract class Command {
     }
 
     static propertyMissingOnOrChainToContext(Command command, def target, def name) {
+        return propertyMissingOnOrChainToContext(command.context,target, name)
+    }
+
+    static propertyMissingOnOrChainToContext(ScriptContext context, def target, def name) {
         return Try.of({ propertyMissingOn(target, name) })
-            .orElse(Try.of({ propertyMissingOn(command.bindings, name) }))
+            .orElse(Try.of({ propertyMissingOn(context.getBindings(ScriptContext.ENGINE_SCOPE), name) }))
             .getOrElseThrow({ it -> new JMacroException("Property missing (get) redirection error: $name", it) })
     }
 
@@ -121,8 +126,12 @@ abstract class Command {
     }
 
     static propertyMissingOnOrChainToContext(Command command, def target, def name, def arg) {
+        return propertyMissingOnOrChainToContext(command.context, target, name, arg)
+    }
+
+    static propertyMissingOnOrChainToContext(ScriptContext context, def target, def name, def arg) {
         return Try.of({ propertyMissingOn(target, name, arg) })
-            .orElse(Try.of({ propertyMissingOn(command.context, name, arg) }))
+            .orElse(Try.of({ propertyMissingOn(context, name, arg) }))
             .getOrElseThrow({ it -> new JMacroException("Property missing (set) redirection error: $name = $arg", it) })
     }
 
