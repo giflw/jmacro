@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public interface Constants {
-    int API_VERSION = 1;
+    String API_VERSION = "1.1";
     // OS
     String EOL = System.lineSeparator();
     String EOL_ESCAPED = System.lineSeparator().replace("\r", "\\r").replace("\n", "\\n");
