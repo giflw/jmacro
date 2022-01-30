@@ -49,12 +49,12 @@ public class IncludeCommand extends Command {
     }
 
     public class ContextName {
+
         private final List<String> names = new ArrayList<>();
 
         public void propertyMissing(String name) {
             names.add(name);
         }
-
     }
 
     public record Inclusion(IncludeCommand includeCommand, JMacroCore core, List contextName) {
@@ -69,7 +69,7 @@ public class IncludeCommand extends Command {
             if (scriptOptional.isPresent()) {
                 Script script = scriptOptional.get();
 
-                logger.warn("Including " + includeName);
+                logger.debug("Including " + includeName);
 
                 try {
                     core.getEngine().executeInclusion(
@@ -78,13 +78,13 @@ public class IncludeCommand extends Command {
                             includeCommand.scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE).forEach(
                                 (key, value) -> {
                                     if (!key.startsWith("__") && !key.equals("export")) {
-                                        logger.warn("Transferring [" + key + "] to new engine");
+                                        logger.debug("Transferring [" + key + "] to new engine");
                                         engine.getBindings(ScriptContext.ENGINE_SCOPE).put(key, value);
                                     }
                                 });
                             SPILoader.load(CommandProvider.class).forEachRemaining(provider -> {
                                 if (ExportCommandProvider.class.isInstance(provider)) {
-                                    logger.warn("Creating [" + provider.getName() + "] command in new engine");
+                                    logger.debug("Creating [" + provider.getName() + "] command in new engine");
                                     provider.getCommand(this.core, engine);
                                 }
                             });
@@ -95,10 +95,10 @@ public class IncludeCommand extends Command {
                             if (contextNames.isEmpty()) {
                                 contextNames = exportsMap.keySet();
                             }
-                            logger.warn(contextNames + " will be transferred to original engine");
+                            logger.warn(contextNames + " will be included in original engine");
                             contextNames.forEach(name -> {
                                 Object library = exportsMap.get(name);
-                                logger.warn("Transferring [" + name + "] to original engine (" + library + ")");
+                                logger.debug("Including [" + name + "] to original engine (" + library + ")");
                                 includeCommand.scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE).put(name, library);
                             });
                         });

@@ -21,7 +21,7 @@ class ExportCommand extends Command {
         def globalScope = this.scriptEngine.getBindings(ScriptContext.GLOBAL_SCOPE)
 
         if (!globalScope.get(EXPORTS_KEY)) {
-            logger.warn("Creating $EXPORTS_KEY")
+            logger.debug("Creating $EXPORTS_KEY")
             globalScope.put(EXPORTS_KEY, [:])
         }
     }
@@ -36,12 +36,11 @@ class ExportCommand extends Command {
         library.metaClass.propertyMissing = { String n -> Command.propertyMissingOn(bindings, n) }
         library.metaClass.propertyMissing = { String n, def arg -> Command.propertyMissingOn(bindings, n, arg) }
 
-        getLogger().warn("Registering library object $name")
+        getLogger().warn("Exporting library object $name: $library")
 
         def exports = this.scriptEngine.getBindings(ScriptContext.GLOBAL_SCOPE).get(EXPORTS_KEY)
-        logger.warn("Exports: $exports")
         exports[name] = library
-        logger.warn("Exports: $exports")
+        logger.debug("Exports: $exports")
 
         if (library.respondsTo("libraryRegistered")) {
             logger.warn("Executing libraryRegistered on library $name (${library.class})")
