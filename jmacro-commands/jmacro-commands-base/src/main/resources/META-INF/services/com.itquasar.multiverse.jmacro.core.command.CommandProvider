@@ -8,7 +8,7 @@ com.itquasar.multiverse.jmacro.commands.base.providers.ErrorCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.ExitCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.FixmeCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.IncludeCommandProvider
-com.itquasar.multiverse.jmacro.commands.base.providers.LibraryCommandProvider
+com.itquasar.multiverse.jmacro.commands.base.providers.ExportCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.LoggerCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.MomentCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.PauseCommandProvider
