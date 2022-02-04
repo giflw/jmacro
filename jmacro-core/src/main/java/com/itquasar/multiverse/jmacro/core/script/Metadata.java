@@ -9,6 +9,7 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,12 +22,12 @@ public class Metadata {
 
     public static final Metadata EMPTY = new Metadata();
 
-    private String name;
-    private String version;
-    private String author;
-    private String description;
+    private String name = "";
+    private String version = "";
+    private String author = "";
+    private String description = "";
 
-    private Map<String, ?> infos;
+    private Map<String, ?> infos = new HashMap<>();
 
     private Metadata(String name, String version, String author, String description, Map<String, ?> infos) {
         this.name = name;

@@ -13,6 +13,7 @@ import javax.script.ScriptEngine
 @CompileDynamic
 abstract class Command {
 
+    private final String name
     private final JMacroCore core
     private final ScriptEngine scriptEngine
     private final ScriptContext context
@@ -26,10 +27,23 @@ abstract class Command {
     /**
      * @param scriptEngine Script engine instance to get context, from which we get logger attribute.
      */
-    @CompileStatic
+    @Deprecated
     Command(final JMacroCore core, final ScriptEngine scriptEngine) {
+        this('', core, scriptEngine)
+    }
+
+    /**
+     * @param scriptEngine Script engine instance to get context, from which we get logger attribute.
+     */
+    @CompileStatic
+    Command(String name, final JMacroCore core, final ScriptEngine scriptEngine) {
+        if (name == '') {
+            name = this.getClass().name
+        }
+        Objects.requireNonNull(name, "Name must be not null")
         Objects.requireNonNull(core, "Core must be not null")
         Objects.requireNonNull(scriptEngine, "Script engine must be not null")
+        this.name = name
         this.core = core
         this.scriptEngine = scriptEngine
 
@@ -133,6 +147,10 @@ abstract class Command {
         return Try.of({ propertyMissingOn(target, name, arg) })
             .orElse(Try.of({ propertyMissingOn(context, name, arg) }))
             .getOrElseThrow({ it -> new JMacroException("Property missing (set) redirection error: $name = $arg", it) })
+    }
+
+    String getName() {
+        return name
     }
 
     JMacroCore getCore() {

@@ -26,6 +26,11 @@ class ConsoleCommand extends Command implements Constants {
         return closure.call()
     }
 
+    String read() {
+        System.out.print '[INPT]$> '
+        return console.readLine()
+    }
+
     String read(Map<String, ?> args) {
         return read(args.label, args.fallback ?: '', args.allowed ?: Collections.EMPTY_LIST, args.nonInteractive ?: false, args.password ?: false)
     }

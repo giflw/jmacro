@@ -8,7 +8,10 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Path;
+import java.util.Enumeration;
 import java.util.concurrent.TimeUnit;
 
 @Log4j2
@@ -18,7 +21,7 @@ public class DriverManager {
     private final Path cacheDir;
 
     public DriverManager(Path driversDir) {
-        this(TimeUnit.SECONDS.convert(365, TimeUnit.DAYS), driversDir);
+        this(TimeUnit.SECONDS.convert(0, TimeUnit.DAYS), driversDir);
     }
 
     public DriverManager(Long TTL, Path cacheDir) {
@@ -31,18 +34,34 @@ public class DriverManager {
     }
 
     protected WebDriverManager webdriverManagerHook(WebDriverManager manager) {
-        return manager.avoidUseChromiumDriverSnap()
+        WebDriverManager webDriverManager = manager.avoidUseChromiumDriverSnap()
             .useLocalVersionsPropertiesFirst()
             .useLocalCommandsPropertiesFirst();
+
+        URL versionsUrl = DriverManager.class.getResource("/webdrivermanager/versions.properties");
+        LOGGER.warn("webdrivermanager versions url: " + versionsUrl);
+        if (versionsUrl != null) {
+            webDriverManager = webDriverManager.versionsPropertiesUrl(versionsUrl);
+        }
+
+        URL commandsUrl = ClassLoader.getSystemResource("webdrivermanager/commands.properties");
+        LOGGER.warn("webdrivermanager commands url: " + commandsUrl);
+        if (commandsUrl != null) {
+            webDriverManager = webDriverManager.commandsPropertiesUrl(commandsUrl);
+        }
+
+        return webDriverManager
+            .cachePath(cacheDir.toString())
+            .resolutionCachePath(cacheDir.toString())
+            .ttl(TTL.intValue())
+            .ttlBrowsers(TTL.intValue())
+            .clearResolutionCache()
+            .avoidResolutionCache();
     }
 
     public RemoteWebDriver getDriver(String browserName, Capabilities capabilities) {
         DriverManagerType type = DriverManagerType.valueOf(browserName.toUpperCase());
-        WebDriverManager manager = webdriverManagerHook(WebDriverManager.getInstance(type))
-            .cachePath(cacheDir.toString())
-            .resolutionCachePath(cacheDir.toString())
-            .ttl(TTL.intValue())
-            .ttlBrowsers(TTL.intValue());
+        WebDriverManager manager = webdriverManagerHook(WebDriverManager.getInstance(type));
         if (capabilities != null) {
             manager.capabilities(capabilities);
         }

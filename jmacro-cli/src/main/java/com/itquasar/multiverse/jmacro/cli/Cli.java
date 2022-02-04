@@ -19,6 +19,7 @@ import static picocli.CommandLine.ScopeType.INHERIT;
     mixinStandardHelpOptions = true,
     version = "1.0",
     subcommands = {
+        Shell.class,
         Run.class
     }
 )
