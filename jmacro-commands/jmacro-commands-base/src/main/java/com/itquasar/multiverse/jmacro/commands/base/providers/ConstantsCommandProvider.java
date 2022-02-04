@@ -3,7 +3,6 @@ package com.itquasar.multiverse.jmacro.commands.base.providers;
 import com.itquasar.multiverse.jmacro.commands.base.commands.ConstantsCommand;
 import com.itquasar.multiverse.jmacro.core.JMacroCore;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
-import lombok.SneakyThrows;
 
 import javax.script.ScriptEngine;
 import java.util.List;
@@ -28,7 +27,7 @@ public class ConstantsCommandProvider implements CommandProvider<ConstantsComman
     @Override
 
     public ConstantsCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new ConstantsCommand(jMacroCore, scriptEngine);
+        return new ConstantsCommand(getName(), jMacroCore, scriptEngine);
     }
 
 }

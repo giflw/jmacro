@@ -24,13 +24,13 @@ public class ExitCommandProvider implements CommandProvider<ExitCommandProvider.
 
     @Override
     public ExitCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new ExitCommand(jMacroCore, scriptEngine);
+        return new ExitCommand(getName(), jMacroCore, scriptEngine);
     }
 
     public static class ExitCommand extends Command {
 
-        public ExitCommand(JMacroCore core, ScriptEngine scriptEngine) {
-            super(core, scriptEngine);
+        public ExitCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+            super(name, core, scriptEngine);
         }
 
         void call() {

@@ -20,13 +20,13 @@ public class ErrorCommandProvider implements CommandProvider<ErrorCommandProvide
 
     @Override
     public ErrorCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new ErrorCommand(jMacroCore, scriptEngine);
+        return new ErrorCommand(getName(), jMacroCore, scriptEngine);
     }
 
     public static class ErrorCommand extends Command {
 
-        public ErrorCommand(JMacroCore core, ScriptEngine scriptEngine) {
-            super(core, scriptEngine);
+        public ErrorCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+            super(name, core, scriptEngine);
         }
 
         void call(Object arg) {

@@ -3,7 +3,6 @@ package com.itquasar.multiverse.jmacro.cli;
 import com.itquasar.multiverse.jmacro.commands.base.commands.ConfigurationCommand;
 import com.itquasar.multiverse.jmacro.commands.base.commands.ConsoleCommand;
 import com.itquasar.multiverse.jmacro.commands.base.commands.CredentialsCommand;
-import com.itquasar.multiverse.jmacro.commands.base.providers.ExitCommandProvider;
 import com.itquasar.multiverse.jmacro.core.script.Metadata;
 import com.itquasar.multiverse.jmacro.core.script.Script;
 import com.itquasar.multiverse.jmacro.core.script.ScriptResult;

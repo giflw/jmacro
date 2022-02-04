@@ -20,7 +20,7 @@ public class TimerCommandProvider implements CommandProvider<TimerCommand> {
 
     @Override
     public TimerCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new TimerCommand(jMacroCore, scriptEngine);
+        return new TimerCommand(getName(), jMacroCore, scriptEngine);
     }
 }
 

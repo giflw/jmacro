@@ -25,6 +25,6 @@ public class TN3270CommandProvider implements CommandProvider<TN3270Command> {
     public TN3270Command getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
         Bindings bindings = scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
         bindings.put("WaitMode", WaitMode.class);
-        return new TN3270Command(jMacroCore, scriptEngine);
+        return new TN3270Command(getName(), jMacroCore, scriptEngine);
     }
 }

@@ -17,8 +17,8 @@ public class ConstantsCommand extends Command implements Map<String, Object>, Co
 
     private final Map<String, Object> map = new LinkedHashMap<>();
 
-    public ConstantsCommand(JMacroCore core, ScriptEngine scriptEngine) {
-        super(core, scriptEngine);
+    public ConstantsCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+        super(name, core, scriptEngine);
         this.init();
     }
 

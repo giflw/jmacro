@@ -47,8 +47,8 @@ class BrowserCommand extends Command implements AutoCloseable, Constants {
     BrowserWait wait = null
     Map<String, ?> elements = [:]
 
-    BrowserCommand(JMacroCore core, ScriptEngine scriptEngine) {
-        super(core, scriptEngine)
+    BrowserCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+        super(name, core, scriptEngine)
         Runtime.getRuntime().addShutdownHook(
             new Thread(
                 new Runnable() {

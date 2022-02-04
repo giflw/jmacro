@@ -25,8 +25,8 @@ class OCRCommand extends Command {
     private ITesseract tesseract
     private boolean opencvLoaded = false
 
-    OCRCommand(JMacroCore core, ScriptEngine scriptEngine) {
-        super(core, scriptEngine)
+    OCRCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+        super(name, core, scriptEngine)
     }
 
     private synchronized void init() {

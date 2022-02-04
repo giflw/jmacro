@@ -20,6 +20,6 @@ public class FileCommandProvider implements CommandProvider<FileCommand> {
 
     @Override
     public FileCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new FileCommand(jMacroCore, scriptEngine);
+        return new FileCommand(getName(), jMacroCore, scriptEngine);
     }
 }

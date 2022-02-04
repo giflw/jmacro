@@ -20,6 +20,6 @@ public class OCRCommandProvider implements CommandProvider<OCRCommand> {
 
     @Override
     public OCRCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new OCRCommand(jMacroCore, scriptEngine);
+        return new OCRCommand(getName(), jMacroCore, scriptEngine);
     }
 }

@@ -26,13 +26,13 @@ public class EchoCommandProvider implements CommandProvider<EchoCommandProvider.
 
     @Override
     public EchoCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new EchoCommand(jMacroCore, scriptEngine);
+        return new EchoCommand(getName(), jMacroCore, scriptEngine);
     }
 
     public static class EchoCommand extends Command {
 
-        public EchoCommand(JMacroCore core, ScriptEngine scriptEngine) {
-            super(core, scriptEngine);
+        public EchoCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+            super(name, core, scriptEngine);
         }
 
         void call(Object arg) {

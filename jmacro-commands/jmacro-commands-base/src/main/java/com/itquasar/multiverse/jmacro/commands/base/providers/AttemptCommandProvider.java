@@ -26,15 +26,15 @@ public class AttemptCommandProvider implements CommandProvider<AttemptCommandPro
 
     @Override
     public AttemptCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new AttemptCommand(jMacroCore, scriptEngine);
+        return new AttemptCommand(getName(), jMacroCore, scriptEngine);
     }
 
     public static class AttemptCommand extends Command implements Constants{
 
         private static final List<String> ALLOWED_VERBOSITY = List.of(QUIET, VERBOSE);
 
-        public AttemptCommand(JMacroCore core, ScriptEngine scriptEngine) {
-            super(core, scriptEngine);
+        public AttemptCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+            super(name, core, scriptEngine);
         }
 
         Result call(Callable callable) {

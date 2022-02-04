@@ -2,7 +2,6 @@ package com.itquasar.multiverse.jmacro.commands.base.commands;
 
 import com.itquasar.multiverse.jmacro.commands.base.providers.ExportCommandProvider;
 import com.itquasar.multiverse.jmacro.core.Command;
-import com.itquasar.multiverse.jmacro.core.Constants;
 import com.itquasar.multiverse.jmacro.core.JMacroCore;
 import com.itquasar.multiverse.jmacro.core.SPILoader;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
@@ -10,10 +9,8 @@ import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.itquasar.multiverse.jmacro.core.repository.GlobalScriptRepository;
 import com.itquasar.multiverse.jmacro.core.script.Script;
 import groovy.lang.Closure;
-import groovy.lang.GroovyObject;
 import org.apache.logging.log4j.Logger;
 
-import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
@@ -26,8 +23,8 @@ public class IncludeCommand extends Command {
     private final String extension;
     private final JMacroCore core;
 
-    public IncludeCommand(GlobalScriptRepository repository, JMacroCore core, ScriptEngine scriptEngine) {
-        super(core, scriptEngine);
+    public IncludeCommand(String name, GlobalScriptRepository repository, JMacroCore core, ScriptEngine scriptEngine) {
+        super(name, core, scriptEngine);
         this.repository = repository;
         this.scriptEngine = scriptEngine;
         this.extension = scriptEngine.getFactory().getExtensions().get(0);

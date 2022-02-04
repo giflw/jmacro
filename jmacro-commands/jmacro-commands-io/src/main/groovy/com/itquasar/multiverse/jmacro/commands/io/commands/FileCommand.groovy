@@ -13,8 +13,8 @@ import java.nio.file.Path
 
 class FileCommand extends Command {
 
-    FileCommand(JMacroCore core, ScriptEngine scriptEngine) {
-        super(core, scriptEngine)
+    FileCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+        super(name, core, scriptEngine)
     }
 
     File call(String path) {

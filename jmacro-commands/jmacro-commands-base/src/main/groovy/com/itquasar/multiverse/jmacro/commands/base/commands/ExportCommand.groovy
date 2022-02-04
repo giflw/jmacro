@@ -13,10 +13,10 @@ class ExportCommand extends Command {
     private final JMacroCore core;
     private final ScriptEngine scriptEngine;
 
-    ExportCommand(JMacroCore core, ScriptEngine scriptEngine) {
-        super(core, scriptEngine);
-        this.scriptEngine = scriptEngine;
-        this.core = core;
+    ExportCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+        super(name, core, scriptEngine)
+        this.scriptEngine = scriptEngine
+        this.core = core
 
         def globalScope = this.scriptEngine.getBindings(ScriptContext.GLOBAL_SCOPE)
 

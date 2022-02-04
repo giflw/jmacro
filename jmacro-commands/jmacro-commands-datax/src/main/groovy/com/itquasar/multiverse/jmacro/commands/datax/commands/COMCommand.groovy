@@ -40,8 +40,8 @@ class COMCommand extends Command implements AutoCloseable {
         return wrapper
     }
 
-    COMCommand(JMacroCore core, ScriptEngine scriptEngine) {
-        super(core, scriptEngine)
+    COMCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+        super(name, core, scriptEngine)
         if (!System.getProperty("jacob.dll.path")) {
             def dllPath = core.configuration.folders.bin().resolve(LibraryLoader.getPreferredDLLName() + ".dll").toString()
             System.setProperty("jacob.dll.path", dllPath);

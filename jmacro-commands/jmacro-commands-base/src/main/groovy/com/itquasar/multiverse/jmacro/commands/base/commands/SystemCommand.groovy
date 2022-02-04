@@ -14,8 +14,8 @@ class SystemCommand extends Command {
 
     private Map<String, Object> commands = new LinkedHashMap<>();
 
-    SystemCommand(JMacroCore core, ScriptEngine engine) {
-        super(core, engine)
+    SystemCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+        super(name, core, scriptEngine)
     }
 
     @Override

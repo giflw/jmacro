@@ -12,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 
 import javax.script.*;
 import java.io.PrintWriter;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;

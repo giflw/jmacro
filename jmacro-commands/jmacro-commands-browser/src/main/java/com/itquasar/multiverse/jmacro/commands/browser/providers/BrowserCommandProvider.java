@@ -20,6 +20,6 @@ public class BrowserCommandProvider implements CommandProvider<BrowserCommand> {
 
     @Override
     public BrowserCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new BrowserCommand(jMacroCore, scriptEngine);
+        return new BrowserCommand(getName(), jMacroCore, scriptEngine);
     }
 }

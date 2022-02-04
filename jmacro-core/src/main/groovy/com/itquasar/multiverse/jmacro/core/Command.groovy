@@ -25,14 +25,8 @@ abstract class Command {
     private final Logger logger
 
     /**
-     * @param scriptEngine Script engine instance to get context, from which we get logger attribute.
-     */
-    @Deprecated
-    Command(final JMacroCore core, final ScriptEngine scriptEngine) {
-        this('', core, scriptEngine)
-    }
-
-    /**
+     * @param name Injected from command provider
+     * @param core Injected from command provider
      * @param scriptEngine Script engine instance to get context, from which we get logger attribute.
      */
     @CompileStatic

@@ -8,10 +8,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
-import java.util.Enumeration;
 import java.util.concurrent.TimeUnit;
 
 @Log4j2

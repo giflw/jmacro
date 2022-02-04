@@ -15,8 +15,8 @@ class TimerCommand extends Command implements AutoCloseable {
     private AtomicBoolean running = new AtomicBoolean(false)
     private Map<String, BigDecimal> partials = new LinkedHashMap()
 
-    TimerCommand(JMacroCore core, ScriptEngine scriptEngine) {
-        super(core, scriptEngine)
+    TimerCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+        super(name, core, scriptEngine)
     }
 
     TimerCommand start() {

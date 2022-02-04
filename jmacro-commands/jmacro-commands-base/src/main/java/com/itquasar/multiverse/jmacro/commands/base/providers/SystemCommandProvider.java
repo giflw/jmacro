@@ -20,6 +20,6 @@ public class SystemCommandProvider implements CommandProvider<SystemCommand> {
 
     @Override
     public SystemCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new SystemCommand(jMacroCore, scriptEngine);
+        return new SystemCommand(getName(), jMacroCore, scriptEngine);
     }
 }

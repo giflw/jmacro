@@ -21,13 +21,13 @@ public class PauseCommandProvider implements CommandProvider<PauseCommandProvide
 
     @Override
     public PauseCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new PauseCommand(jMacroCore, scriptEngine);
+        return new PauseCommand(getName(), jMacroCore, scriptEngine);
     }
 
     public static class PauseCommand extends Command {
 
-        public PauseCommand(JMacroCore core, ScriptEngine scriptEngine) {
-            super(core, scriptEngine);
+        public PauseCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+            super(name, core, scriptEngine);
         }
 
         void call(Number seconds) {

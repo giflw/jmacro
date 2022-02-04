@@ -27,13 +27,13 @@ public class Base64CommandProvider implements CommandProvider<Base64CommandProvi
 
     @Override
     public Base64Command getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new Base64Command(jMacroCore, scriptEngine);
+        return new Base64Command(getName(), jMacroCore, scriptEngine);
     }
 
     static public class Base64Command extends Command {
 
-        public Base64Command(JMacroCore core, ScriptEngine scriptEngine) {
-            super(core, scriptEngine);
+        public Base64Command(String name, JMacroCore core, ScriptEngine scriptEngine) {
+            super(name, core, scriptEngine);
         }
 
         /**

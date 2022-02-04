@@ -20,6 +20,6 @@ public class PDFCommandProvider implements CommandProvider<PDFCommand> {
 
     @Override
     public PDFCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new PDFCommand(jMacroCore, scriptEngine);
+        return new PDFCommand(getName(), jMacroCore, scriptEngine);
     }
 }

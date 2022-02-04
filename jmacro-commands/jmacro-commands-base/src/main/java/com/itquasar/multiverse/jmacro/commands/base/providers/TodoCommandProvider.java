@@ -21,13 +21,13 @@ public class TodoCommandProvider implements CommandProvider<TodoCommandProvider.
 
     @Override
     public TodoCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new TodoCommand(jMacroCore, scriptEngine);
+        return new TodoCommand(getName(), jMacroCore, scriptEngine);
     }
 
     public static class TodoCommand extends Command {
 
-        public TodoCommand(JMacroCore core, ScriptEngine scriptEngine) {
-            super(core, scriptEngine);
+        public TodoCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+            super(name, core, scriptEngine);
         }
 
         void call() {

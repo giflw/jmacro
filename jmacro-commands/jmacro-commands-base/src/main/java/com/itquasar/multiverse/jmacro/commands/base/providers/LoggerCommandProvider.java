@@ -21,7 +21,7 @@ public class LoggerCommandProvider implements CommandProvider<WrappingCommand> {
 
     @Override
     public WrappingCommand<Logger> getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new WrappingCommand<>(it -> it.getLogger(), jMacroCore, scriptEngine);
+        return new WrappingCommand<>(it -> it.getLogger(), getName(), jMacroCore, scriptEngine);
     }
 
 }

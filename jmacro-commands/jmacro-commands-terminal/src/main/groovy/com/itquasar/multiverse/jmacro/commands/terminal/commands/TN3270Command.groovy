@@ -24,8 +24,8 @@ class TN3270Command extends Command implements AutoCloseable, Constants {
 
     private TN3270j tn3270j = null
 
-    TN3270Command(JMacroCore core, ScriptEngine scriptEngine) {
-        super(core, scriptEngine)
+    TN3270Command(String name, JMacroCore core, ScriptEngine scriptEngine) {
+        super(name, core, scriptEngine)
     }
 
     // FIXME refactor to wrapper class to allow multiple tn3270 sessions in same script

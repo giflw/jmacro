@@ -14,8 +14,8 @@ import java.time.LocalDateTime
 @CompileStatic
 class MomentCommand extends Command {
 
-    MomentCommand(JMacroCore core, ScriptEngine scriptEngine) {
-        super(core, scriptEngine)
+    MomentCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+        super(name, core, scriptEngine)
     }
 
     LocalDateTimeWrapper today() {

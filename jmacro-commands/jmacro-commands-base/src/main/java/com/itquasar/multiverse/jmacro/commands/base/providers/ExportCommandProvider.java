@@ -20,6 +20,6 @@ public class ExportCommandProvider implements CommandProvider<ExportCommand> {
 
     @Override
     public ExportCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new ExportCommand(jMacroCore, scriptEngine);
+        return new ExportCommand(getName(), jMacroCore, scriptEngine);
     }
 }

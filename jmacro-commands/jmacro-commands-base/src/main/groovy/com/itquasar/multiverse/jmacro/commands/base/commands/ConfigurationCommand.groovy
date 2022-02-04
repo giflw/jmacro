@@ -11,8 +11,8 @@ class ConfigurationCommand extends Command {
     ConfigObject configs = new ConfigObject()
     private excludeKeys = CredentialsCommand.declaredFields.collect { it.name }
 
-    ConfigurationCommand(JMacroCore core, ScriptEngine scriptEngine) {
-        super(core, scriptEngine)
+    ConfigurationCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+        super(name, core, scriptEngine)
     }
 
     def fill(ConfigurationCommand configuration) {

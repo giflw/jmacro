@@ -25,8 +25,8 @@ class CredentialsCommand extends Command implements CredentialsProvider {
     String token
     String apiKey
 
-    CredentialsCommand(JMacroCore core, ScriptEngine scriptEngine) {
-        super(core, scriptEngine)
+    CredentialsCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+        super(name, core, scriptEngine)
     }
 
     void check() {

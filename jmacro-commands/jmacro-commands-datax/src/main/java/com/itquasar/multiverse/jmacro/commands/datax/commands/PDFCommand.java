@@ -11,8 +11,8 @@ import java.nio.file.Path;
 
 public class PDFCommand extends Command {
 
-    public PDFCommand(JMacroCore core, ScriptEngine scriptEngine) {
-        super(core, scriptEngine);
+    public PDFCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+        super(name, core, scriptEngine);
     }
 
     public Object call(String path, Closure closure) {

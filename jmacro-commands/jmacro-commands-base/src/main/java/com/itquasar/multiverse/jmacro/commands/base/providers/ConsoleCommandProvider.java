@@ -20,7 +20,7 @@ public class ConsoleCommandProvider implements CommandProvider<ConsoleCommand> {
 
     @Override
     public ConsoleCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new ConsoleCommand(jMacroCore, scriptEngine);
+        return new ConsoleCommand(getName(), jMacroCore, scriptEngine);
     }
 
 }

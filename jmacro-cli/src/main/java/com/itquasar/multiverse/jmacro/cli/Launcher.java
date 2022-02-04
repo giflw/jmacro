@@ -2,8 +2,6 @@ package com.itquasar.multiverse.jmacro.cli;
 
 import com.itquasar.multiverse.jmacro.core.JMacroCore;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.Logger;
-import org.apache.logging.log4j.core.LoggerContext;
 import picocli.CommandLine;
 
 import java.util.Arrays;

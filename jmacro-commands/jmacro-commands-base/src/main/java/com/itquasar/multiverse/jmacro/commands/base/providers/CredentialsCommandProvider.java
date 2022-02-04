@@ -20,6 +20,6 @@ public class CredentialsCommandProvider implements CommandProvider<CredentialsCo
 
     @Override
     public CredentialsCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new CredentialsCommand(jMacroCore, scriptEngine);
+        return new CredentialsCommand(getName(), jMacroCore, scriptEngine);
     }
 }

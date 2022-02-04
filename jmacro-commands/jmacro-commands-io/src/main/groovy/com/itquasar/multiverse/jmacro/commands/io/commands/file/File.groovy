@@ -13,11 +13,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import javax.script.ScriptContext
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
-import java.nio.file.CopyOption
-import java.nio.file.Files
-import java.nio.file.OpenOption
-import java.nio.file.Path
-import java.nio.file.StandardCopyOption
+import java.nio.file.*
 
 @CompileStatic
 class File implements InputParsers {

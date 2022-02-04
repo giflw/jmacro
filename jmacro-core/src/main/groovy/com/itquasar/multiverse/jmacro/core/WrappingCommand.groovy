@@ -5,16 +5,15 @@ import javax.script.ScriptEngine
 import java.util.function.Function
 
 class WrappingCommand<T> extends Command {
-
     private final T target
 
-    WrappingCommand(Function<WrappingCommand<T>, T> function, JMacroCore core, ScriptEngine scriptEngine) {
-        super(core, scriptEngine)
+    WrappingCommand(Function<WrappingCommand<T>, T> function, String name, JMacroCore core, ScriptEngine scriptEngine) {
+        super(name, core, scriptEngine)
         this.target = function.apply(this)
     }
 
-    WrappingCommand(T target, JMacroCore core, ScriptEngine scriptEngine) {
-        super(core, scriptEngine)
+    WrappingCommand(T target,String name, JMacroCore core, ScriptEngine scriptEngine) {
+        super(name, core, scriptEngine)
         this.target = target
     }
 

@@ -20,6 +20,6 @@ public class RequestCommandProvider implements CommandProvider<RequestCommand> {
 
     @Override
     public RequestCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new RequestCommand(jMacroCore, scriptEngine);
+        return new RequestCommand(getName(), jMacroCore, scriptEngine);
     }
 }

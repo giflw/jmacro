@@ -11,8 +11,8 @@ class ConsoleCommand extends Command implements Constants {
 
     private Console console = System.console()
 
-    ConsoleCommand(JMacroCore core, ScriptEngine scriptEngine) {
-        super(core, scriptEngine)
+    ConsoleCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+        super(name, core, scriptEngine)
     }
 
     Result call(Console console, Closure closure) {

@@ -21,13 +21,13 @@ public class RaiseCommandProvider implements CommandProvider<RaiseCommandProvide
 
     @Override
     public RaiseCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new RaiseCommand(jMacroCore, scriptEngine);
+        return new RaiseCommand(getName(), jMacroCore, scriptEngine);
     }
 
     public static class RaiseCommand extends Command {
 
-        public RaiseCommand(JMacroCore core, ScriptEngine scriptEngine) {
-            super(core, scriptEngine);
+        public RaiseCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+            super(name, core, scriptEngine);
         }
 
         void call(String message) {

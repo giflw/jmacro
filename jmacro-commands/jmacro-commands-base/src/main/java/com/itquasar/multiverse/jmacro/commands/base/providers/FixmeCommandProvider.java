@@ -21,13 +21,13 @@ public class FixmeCommandProvider implements CommandProvider<FixmeCommandProvide
 
     @Override
     public FixmeCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new FixmeCommand(jMacroCore, scriptEngine);
+        return new FixmeCommand(getName(), jMacroCore, scriptEngine);
     }
 
     public static class FixmeCommand extends Command {
 
-        public FixmeCommand(JMacroCore core, ScriptEngine scriptEngine) {
-            super(core, scriptEngine);
+        public FixmeCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+            super(name, core, scriptEngine);
         }
 
         void call(String message) {

@@ -25,13 +25,13 @@ public class RequireCommandProvider implements CommandProvider<RequireCommandPro
 
     @Override
     public RequireCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new RequireCommand(jMacroCore, scriptEngine);
+        return new RequireCommand(getName(), jMacroCore, scriptEngine);
     }
 
     public static class RequireCommand extends Command implements Constants {
 
-        public RequireCommand(JMacroCore core, ScriptEngine scriptEngine) {
-            super(core, scriptEngine);
+        public RequireCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+            super(name, core, scriptEngine);
         }
 
         void api(int version) {

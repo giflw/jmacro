@@ -26,8 +26,8 @@ import javax.script.ScriptEngine
 @CompileDynamic
 class RequestCommand extends Command {
 
-    RequestCommand(JMacroCore core, ScriptEngine scriptEngine) {
-        super(core, scriptEngine)
+    RequestCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+        super(name, core, scriptEngine)
     }
 
     Request call(Closure closure) {
