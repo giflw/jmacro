@@ -65,7 +65,6 @@ public class JMXManagement {
     }
 
 
-
     public void register(Object mbean) {
         try {
             this.server.register(mbean);

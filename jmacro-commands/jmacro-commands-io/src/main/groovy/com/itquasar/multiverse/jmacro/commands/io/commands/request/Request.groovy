@@ -17,6 +17,7 @@ import org.apache.hc.core5.http.NoHttpResponseException
 
 import javax.script.Bindings
 import java.nio.charset.StandardCharsets
+
 /**
  * Request is used to make HTTP requests.
  * Request block are executed automatically at the end of the block,

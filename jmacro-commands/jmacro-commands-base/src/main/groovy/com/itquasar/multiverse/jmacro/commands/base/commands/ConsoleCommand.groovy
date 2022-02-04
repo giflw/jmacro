@@ -50,7 +50,8 @@ class ConsoleCommand extends Command implements Constants {
         return read(message, defaultValue, nonInteractive, true)
     }
 
-    def credentials(Map<String, Map<String, String>> fields, boolean nonInteractive = false, Closure<Boolean> checkCredentials = { -> true }) {
+    def credentials(Map<String, Map<String, String>> fields, boolean nonInteractive = false, Closure<Boolean> checkCredentials = { ->
+        true }) {
         do {
             fields.each { entry ->
                 String field = entry.key

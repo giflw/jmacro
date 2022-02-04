@@ -180,7 +180,7 @@ class OCRCommand extends Command {
 
     Mat bwi(Mat source, double thresh = 177, double maxval = 255) {
         Mat destination = new Mat(source.height(), source.width(), CvType.CV_8UC1)
-        Imgproc.threshold(source, destination,thresh, maxval, Imgproc.THRESH_BINARY_INV)
+        Imgproc.threshold(source, destination, thresh, maxval, Imgproc.THRESH_BINARY_INV)
         return destination
     }
 

@@ -15,7 +15,7 @@ import java.util.List;
  * Based on GetLinesFromPDF.java from Tutorial Kart.
  *
  * @see <a href="https://www.tutorialkart.com/pdfbox/extract-text-line-by-line-from-pdf/">
- *     How to extract text line by line from PDF using PDFBox? - Tutorial Kart
+ * How to extract text line by line from PDF using PDFBox? - Tutorial Kart
  * </a>
  */
 public class GetLinesFromPDF extends PDFTextStripper {

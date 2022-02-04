@@ -19,7 +19,7 @@ import java.util.List;
  * Based on SaveImagesInPdf.java from Tutorial Kart.
  *
  * @see <a href="https://www.tutorialkart.com/pdfbox/extract-images-from-pdf-using-pdfbox/">
- *     How to extract images from pdf using PDFBox - Tutorial Kart
+ * How to extract images from pdf using PDFBox - Tutorial Kart
  * </a>
  */
 public class PDFImageExtractor {

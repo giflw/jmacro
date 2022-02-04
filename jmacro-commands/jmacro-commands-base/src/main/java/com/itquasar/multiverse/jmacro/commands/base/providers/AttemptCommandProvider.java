@@ -29,7 +29,7 @@ public class AttemptCommandProvider implements CommandProvider<AttemptCommandPro
         return new AttemptCommand(getName(), jMacroCore, scriptEngine);
     }
 
-    public static class AttemptCommand extends Command implements Constants{
+    public static class AttemptCommand extends Command implements Constants {
 
         private static final List<String> ALLOWED_VERBOSITY = List.of(QUIET, VERBOSE);
 
@@ -53,7 +53,7 @@ public class AttemptCommandProvider implements CommandProvider<AttemptCommandPro
                 if (verbosity == QUIET) {
                     this.getLogger().error("Attempt failed: " + ex.getMessage());
                     Throwable cause = ex.getCause();
-                    while(cause != null) {
+                    while (cause != null) {
                         this.getLogger().error("Attempt failed caused by: " + cause.getMessage());
                         cause = cause.getCause();
                     }

@@ -12,7 +12,7 @@ class WrappingCommand<T> extends Command {
         this.target = function.apply(this)
     }
 
-    WrappingCommand(T target,String name, JMacroCore core, ScriptEngine scriptEngine) {
+    WrappingCommand(T target, String name, JMacroCore core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
         this.target = target
     }

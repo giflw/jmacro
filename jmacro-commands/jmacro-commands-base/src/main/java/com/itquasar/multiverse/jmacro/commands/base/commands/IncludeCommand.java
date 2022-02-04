@@ -45,15 +45,6 @@ public class IncludeCommand extends Command {
         return new Inclusion(this, core, contextName.names);
     }
 
-    public class ContextName {
-
-        private final List<String> names = new ArrayList<>();
-
-        public void propertyMissing(String name) {
-            names.add(name);
-        }
-    }
-
     public record Inclusion(IncludeCommand includeCommand, JMacroCore core, List contextName) {
 
         void from(String includeName) {
@@ -105,6 +96,15 @@ public class IncludeCommand extends Command {
             } else {
                 throw new JMacroException(this, "Could not find library " + includeName + " to include");
             }
+        }
+    }
+
+    public class ContextName {
+
+        private final List<String> names = new ArrayList<>();
+
+        public void propertyMissing(String name) {
+            names.add(name);
         }
     }
 }

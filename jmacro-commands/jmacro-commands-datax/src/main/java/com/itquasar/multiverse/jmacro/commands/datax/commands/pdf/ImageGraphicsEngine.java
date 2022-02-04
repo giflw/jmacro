@@ -43,10 +43,6 @@ public class ImageGraphicsEngine extends PDFGraphicsStreamEngine {
         super(page);
     }
 
-    public List<BufferedImage> getImages() {
-        return images;
-    }
-
     static List<BufferedImage> extract(PDDocument document) throws IOException {
         List<BufferedImage> images = new ArrayList<>();
         for (PDPage page : document.getPages()) {
@@ -54,6 +50,10 @@ public class ImageGraphicsEngine extends PDFGraphicsStreamEngine {
             extractor.run();
             images.addAll(extractor.getImages());
         }
+        return images;
+    }
+
+    public List<BufferedImage> getImages() {
         return images;
     }
 
