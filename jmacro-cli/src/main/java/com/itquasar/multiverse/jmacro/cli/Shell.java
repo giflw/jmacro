@@ -3,6 +3,8 @@ package com.itquasar.multiverse.jmacro.cli;
 import com.itquasar.multiverse.jmacro.commands.base.commands.ConfigurationCommand;
 import com.itquasar.multiverse.jmacro.commands.base.commands.ConsoleCommand;
 import com.itquasar.multiverse.jmacro.commands.base.commands.CredentialsCommand;
+import com.itquasar.multiverse.jmacro.commands.base.providers.LoggerCommandProvider;
+import com.itquasar.multiverse.jmacro.core.WrappingCommand;
 import com.itquasar.multiverse.jmacro.core.script.Metadata;
 import com.itquasar.multiverse.jmacro.core.script.Script;
 import com.itquasar.multiverse.jmacro.core.script.ScriptResult;
@@ -94,6 +96,7 @@ public class Shell implements Callable<CliResult> {
             scriptEngine -> {
                 boolean run = true;
                 ConsoleCommand console = (ConsoleCommand) scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE).get("console");
+                WrappingCommand logger = (WrappingCommand) scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE).get("logger");
                 while (run) {
                     try {
                         String read = console.read();
@@ -105,8 +108,12 @@ public class Shell implements Callable<CliResult> {
                             }
                         }
                     } catch (ScriptException e) {
-                        // FIXME
-                        e.printStackTrace();
+                        if (cli.isDebug()) {
+                            e.printStackTrace();
+                        } else {
+                            logger.methodMissing("error", e.getLocalizedMessage());
+                            logger.methodMissing("error", "Caused by: " + e.getCause());
+                        }
                     }
                 }
             }

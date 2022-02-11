@@ -4,6 +4,7 @@ import com.itquasar.multiverse.jmacro.commands.base.providers.ExportCommandProvi
 import com.itquasar.multiverse.jmacro.core.Command;
 import com.itquasar.multiverse.jmacro.core.JMacroCore;
 import com.itquasar.multiverse.jmacro.core.SPILoader;
+import com.itquasar.multiverse.jmacro.core.command.Doc;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.itquasar.multiverse.jmacro.core.repository.GlobalScriptRepository;
@@ -16,11 +17,19 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 import java.util.*;
 
+@Doc("Allows script inclusion, of any extensions installed on the engine")
 public class IncludeCommand extends Command {
 
+    @Doc("Global repository instance")
     private final GlobalScriptRepository repository;
+
+    @Doc("Script engine instance running this script")
     private final ScriptEngine scriptEngine;
+
+    @Doc("File extension of running script")
     private final String extension;
+
+    @Doc("Core running this script")
     private final JMacroCore core;
 
     public IncludeCommand(String name, GlobalScriptRepository repository, JMacroCore core, ScriptEngine scriptEngine) {
@@ -31,13 +40,26 @@ public class IncludeCommand extends Command {
         this.core = core;
     }
 
-    public void call(String... includeName) {
+    @Doc(
+        """
+            Include all exported objects from included scripts.
+            IF extension is not supplied, same extensions as origin script will be used.
+
+            ```
+            include 'script_name_2.ext', 'script_name_2'
+            ```
+
+            See `export` command
+            """
+    )
+    public void call(@Doc(name = "includeName") String... includeName) {
         Arrays.stream(includeName).forEach(it ->
             new Inclusion(this, core, Collections.emptyList()).from(it)
         );
     }
 
-    public Inclusion call(Closure contextNames) {
+    @Doc("include { ObjA, ObjB } from 'script_name.ext'")
+    public Inclusion call(@Doc(name = "includeObjects") Closure contextNames) {
         ContextName contextName = new ContextName();
         contextNames.setDelegate(contextName);
         contextNames.setResolveStrategy(Closure.DELEGATE_FIRST);

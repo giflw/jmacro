@@ -27,7 +27,7 @@ class ConsoleCommand extends Command implements Constants {
     }
 
     String read() {
-        System.out.print '[INPT]$> '
+        System.out.print '[INPT] $> '
         return console.readLine()
     }
 

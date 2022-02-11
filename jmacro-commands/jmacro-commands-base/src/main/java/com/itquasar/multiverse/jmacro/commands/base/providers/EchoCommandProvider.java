@@ -2,6 +2,7 @@ package com.itquasar.multiverse.jmacro.commands.base.providers;
 
 import com.itquasar.multiverse.jmacro.core.Command;
 import com.itquasar.multiverse.jmacro.core.JMacroCore;
+import com.itquasar.multiverse.jmacro.core.command.Doc;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import org.apache.logging.log4j.Level;
 
@@ -29,13 +30,15 @@ public class EchoCommandProvider implements CommandProvider<EchoCommandProvider.
         return new EchoCommand(getName(), jMacroCore, scriptEngine);
     }
 
+    @Doc("Echoes given argument to script output")
     public static class EchoCommand extends Command {
 
         public EchoCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
             super(name, core, scriptEngine);
         }
 
-        void call(Object arg) {
+        @Doc("Make this object behaves as function on groovy environment.")
+        void call(@Doc("Object to print to script output") Object arg) {
             this.getLogger().log(ECHO, arg);
         }
 
