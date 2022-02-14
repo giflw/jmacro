@@ -19,53 +19,68 @@ class HelpCommand extends Command {
         super(name, core, scriptEngine)
     }
 
+    @Doc("Show help for this command.")
     @CompileDynamic
     void call() {
         echo toString(this)
     }
 
+    @Doc("Show help for given command.")
     @CompileDynamic
     void call(Command command) {
         echo toString(command)
     }
 
+    @Doc("Show help for given command or object.")
     @CompileDynamic
-    void call(Object command, String name) {
-        echo(
-            [
-                fields(command).findAll { it.name == name }.collect {
-                    toString(it)
-                }.join("\n"),
-                methods(command).findAll { it.name == name }.collect {
-                    toString(it)
-                }.join("\n")
-            ].join("\n")
-        )
+    void call(Object object) {
+        echo toString(object)
     }
 
-    List<Field> fields(Object command) {
-        return command.class.declaredFields.toList().findAll {
+    @Doc("Show help for fields and methods with given name on given command instance.")
+    @CompileDynamic
+    void call(Command command, String name) {
+        echo toString(command, command.name, name)
+    }
+
+    @Doc("Show help for fields and methods with given name on given object instance.")
+    @CompileDynamic
+    void call(Object object, String name) {
+        echo toString(object, object.class.simpleName, name)
+    }
+
+    private List<Field> fields(Object object) {
+        return object.class.declaredFields.toList().findAll {
             !it.name.startsWith('_') && !it.name.startsWith('$')
             // && Modifier.isPublic(it.modifiers)
         }
     }
 
-    List<Method> methods(Object command) {
-        return command.class.declaredMethods.toList().findAll {
+    private List<Method> methods(Object object) {
+        return object.class.declaredMethods.toList().findAll {
             !it.name.contains('$') && Modifier.isPublic(it.modifiers)
         }
     }
 
-    private String toString(Command c) {
+    private String toString(Command command) {
+        return toString(command, command.name, name)
+    }
+
+    private String toString(Object object) {
+        return toString(object, object.class.simpleName, name)
+    }
+
+    private String toString(Object obj, String commandName, String fieldOrMethodName) {
+        String fields = fields(obj).findAll { fieldOrMethodName == null || it.name == fieldOrMethodName }.collect { toString(it) }.join("\n\n")
+        String methods = methods(obj).findAll { fieldOrMethodName == null || it.name == fieldOrMethodName }.collect { toString(it) }.join("\n\n")
+
         return new StringBuilder()
-            .append("\n\nCOMMAND\n\n")
-            .append("${c.name}: ${c.class.simpleName}\n")
-            .append("\tSuper classes: ${getSupers(c.class).join('\n\t\t\t\t')}\n\n")
-            .append("\t\t\t${(c.class.getAnnotation(Doc.class)?.value() ?: 'Documentation not provided').split('\n').join('\n\t\t\t')}\n")
-            .append("\n\nFIELDS:\n\n")
-            .append("${fields(c).collect { toString(it) }.join("\n\n")}")
-            .append("\n\nMETHODS:\n\n")
-            .append("${methods(c).collect { toString(it) }.join("\n\n")}")
+            .append("\n\n${Command.isInstance(obj) ? 'COMMAND' : 'OBJECT'}\n\n")
+            .append("${commandName}: ${obj.class.simpleName}\n")
+            .append("\tSuper classes: ${getSupers(obj.class).join('\n\t\t\t\t')}\n\n")
+            .append("\t\t\t${(obj.class.getAnnotation(Doc.class)?.value() ?: 'Documentation not provided').split('\n').join('\n\t\t\t')}\n")
+            .append("${fields ? "\n\nFIELDS:\n\n$fields" : ''}")
+            .append("${methods ? "\n\nMETHODS:\n\n$methods" : ''}")
             .replaceAll("\n", "\n\t")
             .replaceAll("\t", "  ")
             .toString()
@@ -73,12 +88,12 @@ class HelpCommand extends Command {
 
     private String toString(Method m) {
         return new StringBuilder()
-            .append("\t${m.name}(${m.parameters.collect { "${doc(it)?.name() ?: it.name}: ${it.type.simpleName}" }.join(',')}): ${m.returnType.simpleName}\n")
+            .append("\t${m.name}(${m.parameters.collect { "${doc(it)?.name() ?: it.name}: ${it.type.simpleName}" }.join(', ')}): ${m.returnType.simpleName}\n")
             .append(m.getDeclaringClass().name ? "\t\tDeclaring class: ${m.getDeclaringClass().name}\n" : '')
-            .append("\t\t${m.parameters.collect { toString(it) }.join(',')}\n")
-            .append("\t\tReturn type: ${getSupers(m.returnType).join(',')}\n")
+            .append("${m.parameters.collect { "\t\t${toString(it)}\n" }.join('')}")
+            .append("\t\tReturn type: ${getSupers(m.returnType).join(' < ')}\n")
             .append("\n")
-            .append("\t\t\t${(m.getAnnotation(Doc.class)?.value() ?: 'Documentation not provided').split("\n").join("\n\t\t\t")}\n")
+            .append("\t\t\t${(m.getAnnotation(Doc.class)?.value()?.stripIndent(true) ?: 'Documentation not provided').split("\n").join("\n\t\t\t")}\n")
             .replaceAll("\t", "  ")
             .toString()
     }
@@ -115,7 +130,11 @@ class HelpCommand extends Command {
     private List<String> getSupers(Class<?> clazz) {
         List<String> classes = []
         while (clazz != null) {
-            classes.add(clazz.canonicalName.split('\\.').collect { it.charAt(0).isLowerCase() ? it.charAt(0) : it }.join('.'))
+            classes.add(
+                clazz.canonicalName.contains('.')
+                    ? clazz.canonicalName.split('\\.').collect { it.charAt(0).isLowerCase() ? it.charAt(0) : it }.join('.')
+                    : clazz.canonicalName
+            )
             clazz = clazz.getSuperclass()
         }
         return classes

@@ -17,54 +17,46 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 import java.util.*;
 
-@Doc("Allows script inclusion, of any extensions installed on the engine")
+@Doc("Allows script inclusion, of any extensions installed on the engine.")
 public class IncludeCommand extends Command {
 
-    @Doc("Global repository instance")
+    @Doc("Global repository instance.")
     private final GlobalScriptRepository repository;
 
-    @Doc("Script engine instance running this script")
-    private final ScriptEngine scriptEngine;
-
-    @Doc("File extension of running script")
+    @Doc("File extension of running script.")
     private final String extension;
-
-    @Doc("Core running this script")
-    private final JMacroCore core;
 
     public IncludeCommand(String name, GlobalScriptRepository repository, JMacroCore core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine);
         this.repository = repository;
-        this.scriptEngine = scriptEngine;
         this.extension = scriptEngine.getFactory().getExtensions().get(0);
-        this.core = core;
     }
 
     @Doc(
         """
             Include all exported objects from included scripts.
-            IF extension is not supplied, same extensions as origin script will be used.
+            If extension is not supplied, same extensions as origin script will be used.
 
             ```
             include 'script_name_2.ext', 'script_name_2'
             ```
 
-            See `export` command
+            See `export` command.
             """
     )
     public void call(@Doc(name = "includeName") String... includeName) {
         Arrays.stream(includeName).forEach(it ->
-            new Inclusion(this, core, Collections.emptyList()).from(it)
+            new Inclusion(this, getCore(), Collections.emptyList()).from(it)
         );
     }
 
-    @Doc("include { ObjA, ObjB } from 'script_name.ext'")
+    @Doc("include { ObjA, ObjB } from 'script_name.ext'.")
     public Inclusion call(@Doc(name = "includeObjects") Closure contextNames) {
         ContextName contextName = new ContextName();
         contextNames.setDelegate(contextName);
         contextNames.setResolveStrategy(Closure.DELEGATE_FIRST);
         contextNames.call();
-        return new Inclusion(this, core, contextName.names);
+        return new Inclusion(this, getCore(), contextName.names);
     }
 
     public record Inclusion(IncludeCommand includeCommand, JMacroCore core, List contextName) {
@@ -85,7 +77,7 @@ public class IncludeCommand extends Command {
                     core.getEngine().executeInclusion(
                         script,
                         (ScriptEngine engine) -> {
-                            includeCommand.scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE).forEach(
+                            includeCommand.getScriptEngine().getBindings(ScriptContext.ENGINE_SCOPE).forEach(
                                 (key, value) -> {
                                     if (!key.startsWith("__") && !key.equals("export")) {
                                         logger.debug("Transferring [" + key + "] to new engine");
@@ -109,7 +101,7 @@ public class IncludeCommand extends Command {
                             contextNames.forEach(name -> {
                                 Object library = exportsMap.get(name);
                                 logger.debug("Including [" + name + "] to original engine (" + library + ")");
-                                includeCommand.scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE).put(name, library);
+                                includeCommand.getScriptEngine().getBindings(ScriptContext.ENGINE_SCOPE).put(name, library);
                             });
                         });
                 } catch (ScriptException e) {

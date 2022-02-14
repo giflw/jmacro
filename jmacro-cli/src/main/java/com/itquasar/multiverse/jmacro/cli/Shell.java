@@ -3,11 +3,11 @@ package com.itquasar.multiverse.jmacro.cli;
 import com.itquasar.multiverse.jmacro.commands.base.commands.ConfigurationCommand;
 import com.itquasar.multiverse.jmacro.commands.base.commands.ConsoleCommand;
 import com.itquasar.multiverse.jmacro.commands.base.commands.CredentialsCommand;
-import com.itquasar.multiverse.jmacro.commands.base.providers.LoggerCommandProvider;
 import com.itquasar.multiverse.jmacro.core.WrappingCommand;
 import com.itquasar.multiverse.jmacro.core.script.Metadata;
 import com.itquasar.multiverse.jmacro.core.script.Script;
 import com.itquasar.multiverse.jmacro.core.script.ScriptResult;
+import org.apache.logging.log4j.Logger;
 
 import javax.script.Bindings;
 import javax.script.ScriptContext;
@@ -96,10 +96,12 @@ public class Shell implements Callable<CliResult> {
             scriptEngine -> {
                 boolean run = true;
                 ConsoleCommand console = (ConsoleCommand) scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE).get("console");
-                WrappingCommand logger = (WrappingCommand) scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE).get("logger");
+                Logger logger = ((WrappingCommand) scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE).get("logger")).getLogger();
+
                 while (run) {
+                    String read = null;
                     try {
-                        String read = console.read();
+                        read = console.read();
                         if (read != null) {
                             if (read.trim().equals("exit()")) {
                                 run = false;
@@ -108,12 +110,7 @@ public class Shell implements Callable<CliResult> {
                             }
                         }
                     } catch (ScriptException e) {
-                        if (cli.isDebug()) {
-                            e.printStackTrace();
-                        } else {
-                            logger.methodMissing("error", e.getLocalizedMessage());
-                            logger.methodMissing("error", "Caused by: " + e.getCause());
-                        }
+                        logger.error(read, e);
                     }
                 }
             }
