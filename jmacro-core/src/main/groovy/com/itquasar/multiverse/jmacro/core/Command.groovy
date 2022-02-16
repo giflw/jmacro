@@ -55,13 +55,6 @@ abstract class Command {
         // called after command is registered
     }
 
-//    def call(Closure closure) {
-//        closure.delegate = this
-//        closure.resolveStrategy = Closure.DELEGATE_FIRST
-//        closure()
-//        this
-//    }
-
     def methodMissing(String name, def args) {
         return this.bindings."$name"(*args)
     }

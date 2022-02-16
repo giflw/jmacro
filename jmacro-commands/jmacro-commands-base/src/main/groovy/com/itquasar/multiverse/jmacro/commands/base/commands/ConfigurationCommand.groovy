@@ -1,5 +1,6 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands
 
+import com.itquasar.multiverse.jmacro.core.CallableCommand
 import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.Env
 import com.itquasar.multiverse.jmacro.core.JMacroCore
@@ -8,7 +9,7 @@ import com.itquasar.multiverse.jmacro.core.command.Doc
 import javax.script.ScriptEngine
 
 @Doc("Hold script engine configuration, shared on `include`.")
-class ConfigurationCommand extends Command {
+class ConfigurationCommand extends CallableCommand {
 
     @Doc("Hold script context configurations.")
     ConfigObject configs = new ConfigObject()

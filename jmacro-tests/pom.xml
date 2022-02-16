@@ -64,6 +64,18 @@
             <groupId>com.itquasar.multiverse.jmacro.commands</groupId>
             <artifactId>jmacro-commands-terminal</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.itquasar.multiverse.jmacro.commands</groupId>
+            <artifactId>jmacro-commands-datax</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.itquasar.multiverse.jmacro.commands</groupId>
+            <artifactId>jmacro-commands-browser</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.itquasar.multiverse.jmacro.commands</groupId>
+            <artifactId>jmacro-commands-server</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>

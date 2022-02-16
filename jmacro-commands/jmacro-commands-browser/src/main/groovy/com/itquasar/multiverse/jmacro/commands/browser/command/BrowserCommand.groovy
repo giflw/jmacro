@@ -1,6 +1,5 @@
 package com.itquasar.multiverse.jmacro.commands.browser.command
 
-
 import com.itquasar.multiverse.jmacro.commands.browser.command.browser.BrowserElements
 import com.itquasar.multiverse.jmacro.commands.browser.command.browser.BrowserWait
 import com.itquasar.multiverse.jmacro.commands.browser.command.browser.DriverManager
@@ -12,10 +11,7 @@ import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.apache.commons.io.FileUtils
-import org.openqa.selenium.By
-import org.openqa.selenium.Capabilities
-import org.openqa.selenium.Keys
-import org.openqa.selenium.OutputType
+import org.openqa.selenium.*
 import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.edge.EdgeOptions
 import org.openqa.selenium.firefox.FirefoxOptions
@@ -266,6 +262,16 @@ class BrowserCommand extends Command implements AutoCloseable, Constants {
         this.logger.info("FullPage screenshot: $destFile")
         ImageIO.write(screenshot.getImage(), 'PNG', destFile)
         return destFile
+    }
+
+    Dimension windowSize(int width, int height) {
+        Dimension dimension = new Dimension(width, height)
+        driver.manage().window().setSize(dimension)
+        return dimension
+    }
+
+    void maximize() {
+        driver.manage().window().maximize()
     }
 
 }

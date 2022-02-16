@@ -1,5 +1,6 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
+import com.itquasar.multiverse.jmacro.core.CallableCommand;
 import com.itquasar.multiverse.jmacro.core.Command;
 import com.itquasar.multiverse.jmacro.core.Constants;
 import com.itquasar.multiverse.jmacro.core.JMacroCore;
@@ -28,7 +29,7 @@ public class RequireCommandProvider implements CommandProvider<RequireCommandPro
         return new RequireCommand(getName(), jMacroCore, scriptEngine);
     }
 
-    public static class RequireCommand extends Command implements Constants {
+    public static class RequireCommand extends CallableCommand implements Constants {
 
         public RequireCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
             super(name, core, scriptEngine);

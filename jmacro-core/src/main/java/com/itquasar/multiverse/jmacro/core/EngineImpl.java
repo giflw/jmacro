@@ -210,6 +210,9 @@ public final class EngineImpl implements Engine {
                 evalReturn = engine.eval(script.getSource());
                 postExecHook.accept(engine);
             } catch (Throwable exception) {
+                if (!normalExecution) {
+                    throw new ExitException(ExitException.SCRIPT_ENGINE_ERROR, exception);
+                }
                 exitCode.set(ExitException.SCRIPT_ENGINE_ERROR);
                 Throwable cause = exception;
                 while ((cause = cause.getCause()) != null) {

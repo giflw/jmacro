@@ -20,4 +20,9 @@ public final class ExitException extends RuntimeException {
         super("Exiting script with code " + exitCode);
         this.exitCode = exitCode;
     }
+
+    public ExitException(final int exitCode, Throwable throwable) {
+        super("Exiting script with code " + exitCode, throwable);
+        this.exitCode = exitCode;
+    }
 }

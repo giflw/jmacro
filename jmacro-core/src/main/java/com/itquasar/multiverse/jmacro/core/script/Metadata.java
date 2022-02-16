@@ -1,6 +1,5 @@
 package com.itquasar.multiverse.jmacro.core.script;
 
-import com.itquasar.multiverse.jmacro.core.exception.FieldAlreadySet;
 import com.itquasar.multiverse.jmacro.core.util.RepresenterNonNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -63,35 +62,19 @@ public class Metadata {
     }
 
     public void setName(String name) {
-        if (this.name == null) {
-            this.name = name;
-        } else {
-            throw new FieldAlreadySet("Field 'name' already setted");
-        }
+        this.name = name;
     }
 
     public void setVersion(String version) {
-        if (this.version == null) {
-            this.version = version;
-        } else {
-            throw new FieldAlreadySet("Field 'version' already setted");
-        }
+        this.version = version;
     }
 
     public void setAuthor(String author) {
-        if (this.author == null) {
-            this.author = author;
-        } else {
-            throw new FieldAlreadySet("Field 'author' already setted");
-        }
+        this.author = author;
     }
 
     public void setDescription(String description) {
-        if (this.description == null) {
-            this.description = description;
-        } else {
-            throw new FieldAlreadySet("Field 'description' already setted");
-        }
+        this.description = description;
     }
 
     public Map<String, ?> getInfos() {
@@ -99,11 +82,7 @@ public class Metadata {
     }
 
     public void setInfos(Map<String, ?> infos) {
-        if (this.infos == null) {
-            this.infos = Collections.unmodifiableMap(infos);
-        } else {
-            throw new FieldAlreadySet("Field 'infos' already setted");
-        }
+        this.infos = Collections.unmodifiableMap(infos);
     }
 
     public String getBanner() {
@@ -128,4 +107,3 @@ public class Metadata {
     }
 
 }
-
