@@ -327,7 +327,7 @@
                                     <options>
                                         <option>--add-modules</option>
                                         <option>
-                                            java.base,java.base,java.compiler,java.datatransfer,java.desktop,java.instrument,java.logging,java.management,java.management.rmi,java.naming,java.net.http,java.prefs,java.rmi,java.scripting,java.security.jgss,java.sql,java.sql.rowset,java.transaction.xa,java.xml,java.xml.crypto,jdk.attach,jdk.charsets,jdk.crypto.cryptoki,jdk.crypto.ec,jdk.javadoc,jdk.jdi,jdk.jsobject,jdk.localedata,jdk.naming.dns,jdk.net,jdk.sctp,jdk.unsupported,jdk.xml.dom,jdk.zipfs
+                                            java.base,java.se,jdk.attach,jdk.charsets,jdk.crypto.cryptoki,jdk.crypto.ec,jdk.crypto.mscapi,jdk.jdi,jdk.jdwp.agent,jdk.jsobject,jdk.localedata,jdk.management.agent,jdk.management.jfr,jdk.management,jdk.naming.dns,jdk.net,jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported,jdk.xml.dom,jdk.zipfs
                                         </option>
                                         <option>--compress=2</option>
                                         <option>--no-header-files</option>

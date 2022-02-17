@@ -4,6 +4,7 @@ import com.itquasar.multiverse.jmacro.commands.browser.command.browser.BrowserEl
 import com.itquasar.multiverse.jmacro.commands.browser.command.browser.BrowserWait
 import com.itquasar.multiverse.jmacro.commands.browser.command.browser.DriverManager
 import com.itquasar.multiverse.jmacro.commands.browser.command.browser.WebElementWrapper
+import com.itquasar.multiverse.jmacro.core.CallableCommand
 import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.Constants
 import com.itquasar.multiverse.jmacro.core.JMacroCore
@@ -26,7 +27,7 @@ import java.io.File as JFile
 import java.nio.file.Path
 
 @CompileStatic
-class BrowserCommand extends Command implements AutoCloseable, Constants {
+class BrowserCommand extends CallableCommand implements AutoCloseable, Constants {
 
     static final Map<String, ?> UTILS = [
         by: (Object) By
