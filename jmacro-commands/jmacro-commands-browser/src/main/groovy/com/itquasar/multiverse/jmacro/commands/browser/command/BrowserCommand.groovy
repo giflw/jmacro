@@ -67,7 +67,7 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
             if (port == -1) {
                 throw new JMacroException(this, "Error allocating free port")
             }
-            this.logger.fatal("WebDriver port: $port")
+            this.logger.debug("WebDriver port: $port")
             this.config.port = port
         }
 
@@ -116,7 +116,7 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
             }
             this.wait = new BrowserWait(this)
             // driver.manage().window().maximize()
-            logger.warn("Browser ${config.vender.toString().capitalize()} started")
+            logger.warn("Browser ${config.vendor.toString().capitalize()} started")
         }
     }
 
