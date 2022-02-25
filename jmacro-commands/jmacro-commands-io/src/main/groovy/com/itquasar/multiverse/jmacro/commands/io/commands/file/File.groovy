@@ -14,6 +14,7 @@ import javax.script.ScriptContext
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 import java.nio.file.*
+import java.nio.file.attribute.FileAttribute
 
 @CompileStatic
 class File implements InputParsers {
@@ -62,11 +63,23 @@ class File implements InputParsers {
                 }
             }
 
-            // try using only this.path
-            method = Files.metaClass.getMetaMethod(name, this.path)
-            if (method) {
-                return method.invoke(null, this.path)
+            // try using this.path and option empty array
+            for(def arr : [new OpenOption[0], new CopyOption[0], new LinkOption[0], new FileAttribute[0], new FileAttribute[0]]) {
+                args = [this.path, arr]
+                method = Files.metaClass.getMetaMethod(name, *args)
+                if (method) {
+                    return method.invoke(null, method.correctArguments(*args))
+                }
             }
+
+            // try using only this.path
+            args = [this.path]
+            method = Files.metaClass.getMetaMethod(name, *args)
+            if (method) {
+                return method.invoke(null, method.correctArguments(*args))
+            }
+
+
 
             return Command.methodMissingOnOrChainToContext(this.scriptContext, this.path.toFile(), name, args)
         }
@@ -77,9 +90,13 @@ class File implements InputParsers {
         try {
             return Command.propertyMissingOn(this.path, name)
         } catch (JMacroException ex) {
-            def enumValue = StandardCopyOption.values().find { it.name() == name }
-            if (enumValue) {
-                return enumValue
+            def openOption = StandardOpenOption.values().find { it.name() == name }
+            if (openOption) {
+                return openOption
+            }
+            def copyOption = StandardCopyOption.values().find { it.name() == name }
+            if (copyOption) {
+                return copyOption
             }
             return Command.propertyMissingOnOrChainToContext(this.scriptContext, this.path.toFile(), name)
         }
