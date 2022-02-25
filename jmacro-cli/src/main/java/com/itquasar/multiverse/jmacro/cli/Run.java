@@ -76,7 +76,9 @@ public class Run implements Callable<CliResult> {
             });
         }
 
-        var script = cli.getCore().getConfiguration().getRepository().get(path);
+        var script = cli.getCore().getConfiguration().getRepository().get(
+            path.matches(".*\\.(?<ext>[a-zA-Z0-9]+)") ? path : path + ".groovy"
+        );
 
         if (script.isPresent()) {
             if (args != null && args.size() > 0) {
