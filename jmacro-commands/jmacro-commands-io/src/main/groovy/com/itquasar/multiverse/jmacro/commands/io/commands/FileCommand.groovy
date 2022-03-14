@@ -17,15 +17,15 @@ class FileCommand extends Command {
         super(name, core, scriptEngine)
     }
 
-    File call(String path) {
+    def call(String path) {
         return call(path, Closure.IDENTITY)
     }
 
-    File call(JFile file) {
+    def call(JFile file) {
         return call(file, Closure.IDENTITY)
     }
 
-    File call(Path path) {
+    def call(Path path) {
         return call(path, Closure.IDENTITY)
     }
 
@@ -35,20 +35,19 @@ class FileCommand extends Command {
      * @param closure
      * @return
      */
-    File call(String path, Closure closure) {
+    def call(String path, Closure closure) {
         return call(Path.of(path), closure)
     }
 
-    File call(JFile file, Closure closure) {
+    def call(JFile file, Closure closure) {
         return call(file.toPath(), closure)
     }
 
-    File call(Path path, Closure closure) {
+    def call(Path path, Closure closure) {
         def file = new File(path, scriptEngine.context)
         closure.delegate = file
         closure.resolveStrategy = Closure.DELEGATE_FIRST
-        closure.call()
-        return file
+        return closure.call() ?: file
     }
 
     /**

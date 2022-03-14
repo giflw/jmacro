@@ -1,11 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.browser.command
 
-import com.itquasar.multiverse.jmacro.commands.browser.command.browser.BrowserElements
-import com.itquasar.multiverse.jmacro.commands.browser.command.browser.BrowserWait
-import com.itquasar.multiverse.jmacro.commands.browser.command.browser.DriverManager
-import com.itquasar.multiverse.jmacro.commands.browser.command.browser.WebElementWrapper
+import com.itquasar.multiverse.jmacro.commands.browser.command.browser.*
 import com.itquasar.multiverse.jmacro.core.CallableCommand
-import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.Constants
 import com.itquasar.multiverse.jmacro.core.JMacroCore
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
@@ -24,6 +20,7 @@ import ru.yandex.qatools.ashot.shooting.ShootingStrategies
 import javax.imageio.ImageIO
 import javax.script.ScriptEngine
 import java.io.File as JFile
+import java.nio.file.Files
 import java.nio.file.Path
 
 @CompileStatic
@@ -34,13 +31,17 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
     ]
 
     Map<String, ?> config = [
+        mode   : EMBEDDED,
         vendor : FIREFOX,
         port   : 0, // random
         visible: false, //  true -> visible;  false -> headless
         driver : null, // driver binary path
-        binary : null // browser binary path
+        binary : null, // browser binary path or path#version
+        version: null // browser binary version
     ]
     RemoteWebDriver driver = null
+    @Lazy()
+    BrowserDevTools devTools = new BrowserDevTools(this)
     BrowserWait wait = null
     Map<String, ?> elements = [:]
 
@@ -70,9 +71,13 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
             this.logger.debug("WebDriver port: $port")
             this.config.port = port
         }
-
+        if (this.config.binary?.contains('#')) {
+            def parts = this.config.binary.split('#')
+            this.config.binary = parts[0]
+            this.config.version = parts[1]
+        }
         this.config.visible = this.config.visible ?: false
-        this.config.vendor = this.config.vendor ?: FIREFOX
+        this.config.vendor = this.config.vendor ?: EMBEDDED
     }
 
     BrowserCommand start() {
@@ -81,6 +86,14 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
             Capabilities capabilities = null
             switch (config.vendor) {
                 case FIREFOX:
+                    if (config.mode == EMBEDDED) {
+                        Path ffDir = core.configuration.folders.tools().resolve('firefox')
+                        config.binary = ffDir.resolve(IS_WINDOWS ? 'firefox.exe' : 'firefox')
+                        // Version=95.0 -> 95
+                        config.version = Files.readAllLines(ffDir.resolve("application.ini"))
+                            .find { it.startsWith('Version=') }
+                            .split('[=.]')[1]
+                    }
                     capabilities = new FirefoxOptions()
                     if (config.binary != null) {
                         capabilities.setBinary(config.binary.toString())
@@ -89,6 +102,16 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
                     break
                 case CHROMIUM:
                 case CHROME:
+                    if (config.mode == EMBEDDED) {
+                        Path chromeDir = core.configuration.folders.tools().resolve('chrome')
+                        config.binary = chromeDir.resolve(IS_WINDOWS ? 'chrome.exe' : 'chrome')
+                        // 99.0.4844.51 -> 99
+                        config.version = Files.list(chromeDir).filter {
+                            it.fileName.toString().matches("[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+")
+                        }.findFirst().get()
+                            .fileName.toString()
+                            .split('[.]').first()
+                    }
                     capabilities = new ChromeOptions()
                     if (config.binary != null) {
                         capabilities.setBinary(config.binary.toString())
@@ -109,8 +132,21 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
                 logger.warn("Browser config ${key}=${value}")
             }
             def driverManager = new DriverManager(core.configuration.folders.tools().resolve("webdriver"))
-            this.driver = driverManager.getDriver(config.vendor.toString(), capabilities)
-            getLogger().warn("Web driver instance ${this.driver}")
+            def manager = driverManager.getManager(config.vendor.toString())
+            if (this.config.binary) {
+                getLogger().warn("Binary path given. Avoiding browser detection and using ${this.config.version} as browser version.")
+                manager = manager.avoidBrowserDetection().browserVersion((String) this.config.version)
+                if (capabilities) {
+                    manager.capabilities(capabilities)
+                }
+                manager.setup()
+                this.driver = (RemoteWebDriver) manager.create()
+            } else {
+                getLogger().warn("Binary path not given. Trying browser detection with no specific version.")
+                this.driver = driverManager.getDriver(config.vendor.toString(), capabilities)
+            }
+
+            getLogger().warn("Web driver instance ${this.driver} with ${capabilities.asMap()}")
             if (this.driver == null) {
                 throw new JMacroException("Unsupported browser vendor: ${config.vendor}")
             }

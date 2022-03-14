@@ -32,7 +32,9 @@ public class DriverManager {
     }
 
     protected WebDriverManager webdriverManagerHook(WebDriverManager manager) {
-        WebDriverManager webDriverManager = manager.avoidUseChromiumDriverSnap()
+        WebDriverManager webDriverManager = manager
+            .avoidUseChromiumDriverSnap()
+            .avoidReadReleaseFromRepository()
             .useLocalVersionsPropertiesFirst()
             .useLocalCommandsPropertiesFirst();
 
@@ -52,15 +54,30 @@ public class DriverManager {
             .cachePath(cacheDir.toString())
             .resolutionCachePath(cacheDir.toString())
             .ttl(TTL.intValue())
-            .ttlBrowsers(TTL.intValue())
-            .clearResolutionCache()
-            .avoidResolutionCache();
+            .ttlBrowsers(TTL.intValue());
+        //.clearResolutionCache()
+        //.avoidResolutionCache();
+    }
+
+    public WebDriverManager getManager(String browserName) {
+        return getManager(browserName, false);
+    }
+
+    public WebDriverManager getManager(String browserName, boolean avoidDefaultManagerSetup) {
+        DriverManagerType type = DriverManagerType.valueOf(browserName.toUpperCase());
+        WebDriverManager manager = WebDriverManager.getInstance(type);
+        manager = avoidDefaultManagerSetup ? manager : webdriverManagerHook(manager);
+        return manager;
     }
 
     public RemoteWebDriver getDriver(String browserName, Capabilities capabilities) {
-        DriverManagerType type = DriverManagerType.valueOf(browserName.toUpperCase());
-        WebDriverManager manager = webdriverManagerHook(WebDriverManager.getInstance(type));
+        return getDriver(browserName, capabilities, false);
+    }
+
+    public RemoteWebDriver getDriver(String browserName, Capabilities capabilities, boolean avoidDefaultManagerSetup) {
+        WebDriverManager manager = getManager(browserName, avoidDefaultManagerSetup);
         if (capabilities != null) {
+            LOGGER.warn("Adding driver capabilities: " + capabilities);
             manager.capabilities(capabilities);
         }
         manager.setup();

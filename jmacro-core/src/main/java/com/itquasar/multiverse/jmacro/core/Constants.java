@@ -20,6 +20,15 @@ public interface Constants {
     // VERBOSITY
     String QUIET = "QUIET";
     String VERBOSE = "VERBOSE";
+    String ALL = "ALL";
+
+    // CONNECTIVITY
+    String KEEP_ALIVE = "KeepAlive";
+    String CLOSE = "Close";
+
+    // DIRECTIONS
+    String SENT = "SENT";
+    String RECEIVED = "RECEIVED";
 
     // BROWSERS
     String CHROME = "Chrome";
@@ -29,6 +38,11 @@ public interface Constants {
     String IE = "IExplorer";
     String OPERA = "Opera";
     String SAFARI = "Safari";
+    String EMBEDDED = "Embedded";
+    String EXTERNAL = "External";
+
+    // DEVTOOLS
+    String NETWORK = "Network";
 
     Map<String, ?> _MAP = Arrays.asList(Constants.class.getDeclaredFields())
         .stream()
