@@ -43,6 +43,7 @@ class Request {
     private HttpEntity entity
     private Response response
     private boolean prepared = false
+    boolean skipExecution = false
     private boolean executed = false
 
     Request(Bindings bindings) {
@@ -54,13 +55,23 @@ class Request {
         closure.delegate = this
         closure.resolveStrategy = Closure.DELEGATE_FIRST
         closure()
-        if (!this.executed) {
-            this.execute()
+        if (this.skipExecution) {
+            logger.warn("Skipping execution: skipExecution = ${skipExecution}")
+        } else {
+            if (!this.executed) {
+                this.execute()
+            }
         }
         return this
     }
 
-    /**
+    Response getResponse() {
+        if(!this.executed) {
+            raise 'Request not executed yet'
+        }
+        return response
+    }
+/**
      *
      * @param name HTTP header name
      * @return HTTP header value

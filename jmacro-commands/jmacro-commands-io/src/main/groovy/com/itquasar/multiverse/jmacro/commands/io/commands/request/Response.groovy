@@ -5,9 +5,11 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Log4j2
 import org.apache.hc.client5.http.fluent.Content
 import org.apache.hc.core5.http.ContentType
+import org.apache.hc.core5.http.Header
 import org.apache.hc.core5.http.HttpResponse
 
 import java.nio.charset.StandardCharsets
+import java.util.stream.Collectors
 
 import static org.apache.hc.core5.http.ContentType.*
 
@@ -110,12 +112,29 @@ class Response implements InputParsers {
         598: '(Informal convention) Network read timeout error'
     ])
 
-    int statusCode = -1
-    ContentType contentType
-    InputStream inputStream
+    private final HttpResponse httpResponse
+    private int statusCode = -1
+    private ContentType contentType
+    private InputStream inputStream
+
+    HttpResponse unwrap() {
+        return httpResponse
+    }
 
     String getStatusMessage() {
         return HTTP_STATUS[statusCode]
+    }
+
+    List<Header> getHeaders() {
+        return Collections.unmodifiableList(Arrays.asList(this.httpResponse.headers))
+    }
+
+    String header(String name) {
+        this.httpResponse.getHeader(name).value
+    }
+
+    List<String> headers(String name) {
+        return Arrays.asList(this.httpResponse.getHeaders(name)).stream().map(it -> it.value).collect(Collectors.toList())
     }
 
     @Override
@@ -125,6 +144,7 @@ class Response implements InputParsers {
 
     // do not read in advance, let parse be called by script
     Response(String name, HttpResponse httpResponse, Content content) {
+        this.httpResponse = httpResponse
         this.name = name
         this.statusCode = httpResponse.code
         this.contentType = content.type
@@ -161,6 +181,12 @@ class Response implements InputParsers {
 
     def getData() {
         return InputParsers.super.data
+    }
+
+    def call(Closure closure) {
+        closure.delegate = this
+        closure.resolveStrategy = Closure.DELEGATE_FIRST
+        return closure.call()
     }
 
 }
