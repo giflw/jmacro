@@ -1,5 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands.moment
 
+import groovy.transform.CompileDynamic
+
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -16,23 +18,23 @@ class LocalDateTimeWrapper {
     }
 
     LocalDateTimeWrapper(Temporal localDateTime) {
-        this.localDateTime = localDateTime
+        this.localDateTime = LocalDateTime.from(localDateTime)
     }
 
     LocalDateTimeWrapper minus(TemporalAmount amount) {
-        return LocalDateTimeWrapper.of(localDateTime.minus(amount))
+        return of(localDateTime - amount)
     }
 
     LocalDateTimeWrapper plus(TemporalAmount amount) {
-        return LocalDateTimeWrapper.of(localDateTime.plus(amount))
+        return of(localDateTime + amount)
     }
 
     LocalDateTimeWrapper workDayOrNext() {
         switch (localDateTime.dayOfWeek) {
             case DayOfWeek.SUNDAY:
-                return this.plus(1.day())
+                return this + 1.day()
             case DayOfWeek.SATURDAY:
-                return this.plus(2.days())
+                return this + 2.days()
             default:
                 return this
         }
@@ -41,9 +43,9 @@ class LocalDateTimeWrapper {
     LocalDateTimeWrapper workDayOrPrevious() {
         switch (localDateTime.dayOfWeek) {
             case DayOfWeek.SATURDAY:
-                return this.minus(1.day())
+                return this - 1.day()
             case DayOfWeek.SUNDAY:
-                return this.minus(2.days())
+                return this - 2.days()
             default:
                 return this
         }
@@ -57,6 +59,7 @@ class LocalDateTimeWrapper {
         return LocalDateTime.from(localDateTime instanceof LocalDate ? localDateTime.atStartOfDay() : localDateTime)
     }
 
+    @CompileDynamic
     def propertyMissing(String name) {
         switch (name) {
             case 'month':

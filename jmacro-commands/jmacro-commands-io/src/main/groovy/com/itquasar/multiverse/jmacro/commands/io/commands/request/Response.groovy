@@ -1,7 +1,6 @@
 package com.itquasar.multiverse.jmacro.commands.io.commands.request
 
 import com.itquasar.multiverse.jmacro.commands.io.InputParsers
-import groovy.transform.CompileStatic
 import groovy.util.logging.Log4j2
 import org.apache.hc.client5.http.fluent.Content
 import org.apache.hc.core5.http.ContentType
@@ -14,7 +13,6 @@ import java.util.stream.Collectors
 import static org.apache.hc.core5.http.ContentType.*
 
 @Log4j2
-@CompileStatic
 class Response implements InputParsers {
 
     static final Map<Integer, String> HTTP_STATUS = Collections.unmodifiableMap([

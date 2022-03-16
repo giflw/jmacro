@@ -8,6 +8,7 @@ import com.itquasar.multiverse.jmacro.core.JMacroCore
 import com.itquasar.multiverse.tn3270j.TN3270j
 import com.itquasar.multiverse.tn3270j.TN3270jFactory
 import com.itquasar.multiverse.tn3270j.WaitMode
+import groovy.transform.CompileDynamic
 import groovy.util.logging.Log4j2
 import io.vavr.control.Try
 
@@ -26,6 +27,10 @@ class TN3270Command extends Command implements AutoCloseable, Constants {
 
     TN3270Command(String name, JMacroCore core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
+    }
+
+    TN3270j getTn3270j() {
+        return tn3270j
     }
 
     // FIXME refactor to wrapper class to allow multiple tn3270 sessions in same script
@@ -63,6 +68,7 @@ class TN3270Command extends Command implements AutoCloseable, Constants {
         return methodMissingOnOrChainToContext(this, tn3270j, name, args)
     }
 
+    @CompileDynamic
     def propertyMissing(String name) {
         try {
             return WaitMode.valueOf(name)
@@ -86,6 +92,7 @@ class TN3270Command extends Command implements AutoCloseable, Constants {
         }
     }
 
+    @CompileDynamic
     def propertyMissing(String name, def arg) {
         Try.of { ->
             tn3270j."$name" = arg

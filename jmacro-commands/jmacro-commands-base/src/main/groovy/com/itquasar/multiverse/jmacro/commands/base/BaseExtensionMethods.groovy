@@ -1,14 +1,12 @@
 package com.itquasar.multiverse.jmacro.commands.base
 
 import com.itquasar.multiverse.jmacro.commands.base.commands.moment.LocalDateTimeWrapper
-import groovy.transform.CompileDynamic
 
 import java.time.LocalDateTime
 import java.time.Period
 import java.time.temporal.TemporalAmount
 
 // FIXME review
-@CompileDynamic
 class BaseExtensionMethods {
 
     //////////////////////////////////////////////////////////////////////////////////////

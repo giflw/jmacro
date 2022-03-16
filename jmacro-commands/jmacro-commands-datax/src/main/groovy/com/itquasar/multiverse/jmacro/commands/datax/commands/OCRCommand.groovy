@@ -155,8 +155,8 @@ class OCRCommand extends Command {
     }
 
     BufferedImage scale(BufferedImage originalImage, float factor) {
-        int targetWidth = originalImage.width * factor
-        int targetHeight = originalImage.height * factor
+        int targetWidth = Float.valueOf(originalImage.width * factor).intValue()
+        int targetHeight = Float.valueOf((int) originalImage.height * factor).intValue()
         Image resultingImage = originalImage.getScaledInstance(targetWidth, targetHeight, Image.SCALE_REPLICATE)
         BufferedImage outputImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB)
         outputImage.getGraphics().drawImage(resultingImage, 0, 0, null)

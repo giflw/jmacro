@@ -1,10 +1,10 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands
 
 import com.itquasar.multiverse.jmacro.core.CallableCommand
-import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.Env
 import com.itquasar.multiverse.jmacro.core.JMacroCore
 import com.itquasar.multiverse.jmacro.core.command.Doc
+import groovy.transform.CompileDynamic
 
 import javax.script.ScriptEngine
 
@@ -23,7 +23,7 @@ class ConfigurationCommand extends CallableCommand {
 
     @Doc("Add all configurations from given `configuration` instance.")
     def fill(ConfigurationCommand configuration) {
-        fill(configuration.configs)
+        fill(configuration.configs.toSpreadMap())
     }
 
     @Doc("Add all configurations from given map instance.")
@@ -34,7 +34,7 @@ class ConfigurationCommand extends CallableCommand {
             }
             this[key] = value
         }
-        this['env'] = this['env'] ? Env.env(this['env']) : Env.env("DEV")
+        this['env'] = this['env'] ? Env.env((String) this['env']) : Env.env("DEV")
         return this
     }
 
@@ -53,6 +53,7 @@ class ConfigurationCommand extends CallableCommand {
         Map missing property getter to map get on `configs` field.
         If not found, redirect to `core.configuration`, or else to script context attribute.
     """)
+    @CompileDynamic
     def propertyMissing(String name) {
         def value = this.configs.containsKey(name) ? this.configs[name] : null
         value = value == null && this.core.configuration.hasProperty(name) ? this.core.configuration."$name" : value

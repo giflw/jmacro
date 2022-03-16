@@ -6,14 +6,12 @@ import com.itquasar.multiverse.jmacro.core.JMacroCore
 import com.itquasar.multiverse.jmacro.core.command.Doc
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
-import groovy.transform.CompileStatic
 
 import javax.script.ScriptEngine
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Doc("Date and time command")
-@CompileStatic
 class MomentCommand extends Command {
 
     MomentCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {

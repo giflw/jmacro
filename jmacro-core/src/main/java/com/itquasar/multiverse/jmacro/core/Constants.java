@@ -22,6 +22,14 @@ public interface Constants {
     String VERBOSE = "VERBOSE";
     String ALL = "ALL";
 
+    // LOG LEVEL
+    String TRACE = "trace";
+    String DEBUG = "debug";
+    String INFO = "info";
+    String WARNING = "warn";
+    String ERROR = "error";
+
+
     // CONNECTIVITY
     String KEEP_ALIVE = "KeepAlive";
     String CLOSE = "Close";

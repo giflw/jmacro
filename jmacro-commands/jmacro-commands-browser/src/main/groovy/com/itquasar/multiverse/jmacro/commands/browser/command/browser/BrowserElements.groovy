@@ -1,15 +1,12 @@
 package com.itquasar.multiverse.jmacro.commands.browser.command.browser
 
-
 import com.itquasar.multiverse.jmacro.commands.browser.command.BrowserCommand
 import groovy.transform.CompileDynamic
-import groovy.transform.CompileStatic
 import groovy.transform.ToString
 import org.openqa.selenium.By
 import org.openqa.selenium.support.ui.Select
 
 @ToString(includeNames = true, includeFields = true, includePackage = false, includes = ['name'])
-@CompileStatic
 class BrowserElements<T> {
 
     BrowserCommand browser

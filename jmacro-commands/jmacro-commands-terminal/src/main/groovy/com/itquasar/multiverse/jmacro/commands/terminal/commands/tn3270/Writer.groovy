@@ -3,6 +3,7 @@ package com.itquasar.multiverse.jmacro.commands.terminal.commands.tn3270
 import com.itquasar.multiverse.jmacro.commands.terminal.commands.TN3270Command
 import com.itquasar.multiverse.tn3270j.TN3270j
 import com.itquasar.multiverse.tn3270j.WaitMode
+import groovy.transform.CompileDynamic
 
 class Writer {
     private final TN3270j tn3270j
@@ -13,6 +14,7 @@ class Writer {
         this.logger = tn3270.getLogger()
     }
 
+    @CompileDynamic
     def methodMissing(String name, def args) {
         if (tn3270j.respondsTo(name, args)) {
             if (args) {

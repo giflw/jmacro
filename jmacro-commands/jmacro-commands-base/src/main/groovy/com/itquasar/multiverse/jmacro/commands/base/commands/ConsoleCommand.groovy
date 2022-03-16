@@ -5,6 +5,7 @@ import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.Constants
 import com.itquasar.multiverse.jmacro.core.JMacroCore
 import com.itquasar.multiverse.jmacro.core.command.Doc
+import groovy.transform.CompileDynamic
 
 import javax.script.ScriptEngine
 
@@ -45,7 +46,7 @@ class ConsoleCommand extends Command implements Constants {
     Result call(@Doc(name = "closure") Closure closure) {
         closure.delegate = this
         closure.resolveStrategy = Closure.DELEGATE_FIRST
-        return closure.call()
+        return (Result) closure.call()
     }
 
     @Doc("Read line from console.")
@@ -58,7 +59,13 @@ class ConsoleCommand extends Command implements Constants {
     String read(
         @Doc(name = "args", value = "Map describing field to read: `[label: 'Label', fallback: 'default value', allowed: ['allowed', 'values'], nonInteractive: false, password: false]`")
             Map<String, ?> args) {
-        return read(args.label, args.fallback ?: '', args.allowed ?: Collections.EMPTY_LIST, args.nonInteractive ?: false, args.password ?: false)
+        return read(
+            (String) args.label,
+            (String) args.fallback ?: '',
+            (List<String>)args.allowed ?: Collections.EMPTY_LIST,
+            (boolean) args.nonInteractive ?: false,
+            (boolean) args.password ?: false
+        )
     }
 
     @Doc("Read line as field from console using explicit parameter configuration.")
@@ -70,6 +77,7 @@ class ConsoleCommand extends Command implements Constants {
         @Doc(name = "password", value = "Password flag. Change read mode to password if `true`. Default is `false`")boolean password = false) {
         def showValue = fallback ?: ''
         showValue = password ? showValue.replaceAll('.', '*') : showValue
+        allowed = allowed ?: []
         def allowedStr = "[${allowed.join(',')}] "
         System.out.print "${PROMPT}$label ${allowedStr.length() > 3 ? allowedStr : ''}[${showValue}]: "
         def value = nonInteractive
@@ -83,9 +91,10 @@ class ConsoleCommand extends Command implements Constants {
         @Doc(name = "message", value = "Message to show.") String message,
         @Doc(name = "defaultValue", value = "Default value.") String defaultValue = "",
         @Doc(name = "nonInteractive", value = "Non interactive flag.") boolean nonInteractive = false) {
-        return read(message, defaultValue, nonInteractive, true)
+        return read(message, defaultValue, null, true)
     }
 
+    @CompileDynamic
     def credentials(Map<String, Map<String, String>> fields, boolean nonInteractive = false, Closure<Boolean> checkCredentials = {
         ->
         true
@@ -101,11 +110,13 @@ class ConsoleCommand extends Command implements Constants {
         } while (!checkCredentials())
     }
 
+    @CompileDynamic
     def credential(String field, String label, String fallback, List<String> allowed, boolean nonInteractive = false) {
         bindings.credentials."$field" = read(label, bindings.credentials."$field" ?: fallback, allowed, nonInteractive, field == 'password')
         return bindings.credentials."$field"
     }
 
+    @CompileDynamic
     boolean assureCredentials(String... fields) {
         boolean isOk = true
         fields.each { field ->

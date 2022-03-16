@@ -1,6 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.base
 
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
+import groovy.transform.CompileDynamic
 
 class Result {
 
@@ -42,6 +43,7 @@ class Result {
         return isValid()
     }
 
+    @CompileDynamic
     def methodMissing(String name, args) {
         if (args) {
             this.value."$name"(args)
@@ -49,6 +51,7 @@ class Result {
         this.value."$name"()
     }
 
+    @CompileDynamic
     def propertyMissing(String name) {
         return this."$name"
     }

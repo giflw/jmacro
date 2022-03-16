@@ -23,13 +23,13 @@ import javax.script.ScriptEngine
  *       body_call()
  *       // code
  *}* </pre>*/
-@CompileDynamic
 class RequestCommand extends Command {
 
     RequestCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
     }
 
+    @CompileDynamic
     Request call(Closure closure) {
         def action = new Request(getBindings())
         def requestConfig = scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE).get('configuration')?.request

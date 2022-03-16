@@ -2,6 +2,7 @@ package com.itquasar.multiverse.jmacro.commands.terminal.commands.tn3270
 
 import com.itquasar.multiverse.jmacro.commands.terminal.commands.TN3270Command
 import com.itquasar.multiverse.tn3270j.TN3270j
+import groovy.transform.CompileDynamic
 
 class Reader extends LinkedHashMap<String, String> {
 
@@ -16,6 +17,7 @@ class Reader extends LinkedHashMap<String, String> {
         this.mode = mode
     }
 
+    @CompileDynamic
     def methodMissing(String name, def args) {
         int row = args[0]
         int col = args[1]

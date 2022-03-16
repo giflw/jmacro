@@ -1,11 +1,11 @@
 package com.itquasar.multiverse.jmacro.commands.datax.commands.com
 
-import com.itquasar.multiverse.jmacro.core.JMacroCore
+
 import com.jacob.com.ComThread
 import com.jacob.com.Dispatch
 import com.jacob.com.Variant
+import groovy.transform.CompileDynamic
 
-import javax.script.ScriptEngine
 import java.util.concurrent.Callable
 
 class COMWrapper implements AutoCloseable {
@@ -13,10 +13,7 @@ class COMWrapper implements AutoCloseable {
     private def context
     private Callable closeCallback
 
-    COMWrapper(JMacroCore core, ScriptEngine scriptEngine) {
-        super(core, scriptEngine)
-    }
-
+    // FIXME Refactor to factory for Variant and Dispatch
     COMWrapper(context = null, Callable closeCallback = null) {
         if (Variant.isInstance(context)) {
             Variant variant = (Variant) context
@@ -32,12 +29,12 @@ class COMWrapper implements AutoCloseable {
         closure()
     }
 
+    @CompileDynamic
     def methodMissing(String name, args) {
         def object = context.respondsTo('toDispatch') ? context.toDispatch() : context
         def transform = { value ->
             value = GString.isInstance(value) ? value.toString() : value
-            value = List.isInstance(value) ? value.collect { new Variant(it) }.toArray() :
-                new Variant(value)
+            value = List.isInstance(value) ? value.collect { new Variant(it) }.toArray() : new Variant(value)
             return value
         }
         return new COMWrapper(Dispatch.call(object, name, *(args.collect {
@@ -47,9 +44,9 @@ class COMWrapper implements AutoCloseable {
 
     def propertyMissing(String name, def value = null) {
         if (value) {
-            Dispatch.put(context, name, new Variant(value))
+            Dispatch.put((Dispatch) context, name, new Variant(value))
         } else {
-            return new COMWrapper(Dispatch.get(context, name))
+            return new COMWrapper(Dispatch.get((Dispatch) context, name))
         }
     }
 

@@ -3,10 +3,10 @@ package com.itquasar.multiverse.jmacro.commands.base.commands
 import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.JMacroCore
 import com.itquasar.multiverse.jmacro.core.command.Doc
+import groovy.transform.CompileDynamic
 import lombok.Getter
 
 import javax.script.ScriptEngine
-import java.util.concurrent.atomic.AtomicBoolean
 
 @Getter
 class SystemCommand extends Command {
@@ -28,11 +28,13 @@ class SystemCommand extends Command {
     }
 
     @Doc("Redirect missing method call to command list, calling command by given name with given arguments (if any).")
+    @CompileDynamic
     def methodMissing(String name, def args) {
         return args ? this.commands."$name".call(*args) : this.commands."$name".call()
     }
 
     @Doc("Redirect missing method call to command list, returning command of given name.")
+    @CompileDynamic
     def propertyMissing(String name) {
         return this.commands."$name"
     }

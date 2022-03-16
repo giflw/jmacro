@@ -1,9 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.browser.command.browser
 
-
 import com.itquasar.multiverse.jmacro.commands.browser.command.BrowserCommand
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
-import groovy.transform.CompileStatic
 import org.openqa.selenium.By
 import org.openqa.selenium.support.ui.ExpectedCondition
 import org.openqa.selenium.support.ui.ExpectedConditions
@@ -11,7 +9,6 @@ import org.openqa.selenium.support.ui.WebDriverWait
 
 import java.time.Duration
 
-@CompileStatic
 class BrowserWait {
 
     static Map<String, Closure<? extends ExpectedCondition<? extends Object>>> EXPECTED_CONDITIONS = [

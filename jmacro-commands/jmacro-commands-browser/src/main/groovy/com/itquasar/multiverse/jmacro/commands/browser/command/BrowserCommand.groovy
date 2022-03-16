@@ -6,7 +6,6 @@ import com.itquasar.multiverse.jmacro.core.Constants
 import com.itquasar.multiverse.jmacro.core.JMacroCore
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
-import groovy.transform.CompileStatic
 import org.apache.commons.io.FileUtils
 import org.openqa.selenium.*
 import org.openqa.selenium.chrome.ChromeOptions
@@ -23,7 +22,6 @@ import java.io.File as JFile
 import java.nio.file.Files
 import java.nio.file.Path
 
-@CompileStatic
 class BrowserCommand extends CallableCommand implements AutoCloseable, Constants {
 
     static final Map<String, ?> UTILS = [
@@ -41,7 +39,7 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
     ]
     RemoteWebDriver driver = null
     @Lazy()
-    BrowserDevTools devTools = new BrowserDevTools(this)
+    BrowserDevTools devTools = new BrowserDevTools(bindings, this)
     BrowserWait wait = null
     Map<String, ?> elements = [:]
 
@@ -72,7 +70,7 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
             this.config.port = port
         }
         if (this.config.binary?.contains('#')) {
-            def parts = this.config.binary.split('#')
+            Collection parts = this.config.binary.split('#')
             this.config.binary = parts[0]
             this.config.version = parts[1]
         }
@@ -162,9 +160,8 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
         return this
     }
 
-    @CompileDynamic
     BrowserCommand configure(ConfigObject config) {
-        this.config.putAll(config)
+        this.config.putAll(config.spread())
         this.postConfig()
         return this
     }
@@ -190,13 +187,12 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
         return this.wait.call(this, element, timeout)
     }
 
-    @CompileDynamic
     BrowserCommand open(String url) {
         try {
             start()
             driver.get(url)
         } catch (Exception ex) {
-            throw new JMacroException(this, "Could not start/open ${config.vendor.capitalize()}.", ex)
+            throw new JMacroException(this, "Could not start/open ${config.vendor.toString().capitalize()}.", ex)
         }
     }
 

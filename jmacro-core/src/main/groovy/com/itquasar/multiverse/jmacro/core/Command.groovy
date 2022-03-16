@@ -2,7 +2,6 @@ package com.itquasar.multiverse.jmacro.core
 
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
-import groovy.transform.CompileStatic
 import io.vavr.control.Try
 import org.apache.logging.log4j.Logger
 
@@ -10,8 +9,7 @@ import javax.script.Bindings
 import javax.script.ScriptContext
 import javax.script.ScriptEngine
 
-@CompileDynamic
-abstract class Command {
+abstract class Command implements Constants{
 
     private final String name
     private final JMacroCore core
@@ -29,7 +27,6 @@ abstract class Command {
      * @param core Injected from command provider
      * @param scriptEngine Script engine instance to get context, from which we get logger attribute.
      */
-    @CompileStatic
     Command(String name, final JMacroCore core, final ScriptEngine scriptEngine) {
         if (name == '') {
             name = this.getClass().name
@@ -55,10 +52,12 @@ abstract class Command {
         // called after command is registered
     }
 
+    @CompileDynamic
     def methodMissing(String name, def args) {
         return this.bindings."$name"(*args)
     }
 
+    @CompileDynamic
     def propertyMissing(String name) {
         return this.bindings."$name"
     }
@@ -68,45 +67,47 @@ abstract class Command {
     }
 
     // FIXME refactor to throw JMacroException, or change missingPropertyOn
-    static methodMissingOn(def object, def name, def args) {
+    @CompileDynamic
+    static methodMissingOn(def object, String name, def args) {
         if (args) {
             return object."$name"(*args)
         }
         return object."$name"()
     }
 
-    static methodMissingOnOrChainToContext(Command command, def target, def name, def args) {
+    static methodMissingOnOrChainToContext(Command command, def target, String name, def args) {
         return methodMissingOnOrChainToContext(command.bindings, target, name, args)
     }
 
-    static methodMissingOnOrChainToContext(ScriptContext context, def target, def name, def args) {
+    static methodMissingOnOrChainToContext(ScriptContext context, def target, String name, def args) {
         return methodMissingOnOrChainToContext(context.getBindings(ScriptContext.ENGINE_SCOPE), target, name, args)
     }
 
-    static methodMissingOnOrChainToContext(def context, def target, def name, def args) {
+    static methodMissingOnOrChainToContext(def context, def target, String name, def args) {
         Try.of({ it -> methodMissingOn(target, name, args) })
             .orElse(Try.of({ methodMissingOn(context, name, args) }))
             .getOrElseThrow({ it -> throw new JMacroException("Method missing redirection error: $name ($args)", it) })
     }
 
-    static propertyMissingOn(Command command, def name) {
+    static propertyMissingOn(Command command, String name) {
         return propertyMissingOn(command.bindings, name)
     }
 
-    static propertyMissingOn(ScriptContext context, def name) {
+    static propertyMissingOn(ScriptContext context, String name) {
         return propertyMissingOn(context.getBindings(ScriptContext.ENGINE_SCOPE), name)
     }
 
-    static propertyMissingOn(def target, def name) {
+    @CompileDynamic
+    static propertyMissingOn(def target, String name) {
         return Try.of({ target."$name" })
             .getOrElseThrow({ it -> new JMacroException("Property missing (get) redirection error: $name", it) })
     }
 
-    static propertyMissingOnOrChainToContext(Command command, def target, def name) {
+    static propertyMissingOnOrChainToContext(Command command, def target, String name) {
         return propertyMissingOnOrChainToContext(command.context, target, name)
     }
 
-    static propertyMissingOnOrChainToContext(ScriptContext context, def target, def name) {
+    static propertyMissingOnOrChainToContext(ScriptContext context, def target, String name) {
         return Try.of({ propertyMissingOn(target, name) })
             .orElse(Try.of({ propertyMissingOn(context.getBindings(ScriptContext.ENGINE_SCOPE), name) }))
             .getOrElseThrow({ it -> new JMacroException("Property missing (get) redirection error: $name", it) })
@@ -120,20 +121,59 @@ abstract class Command {
         return propertyMissingOn(context.getBindings(ScriptContext.ENGINE_SCOPE), name, arg)
     }
 
+    @CompileDynamic
     static propertyMissingOn(def target, String name, def arg) {
         return Try.of({ target."$name" = arg })
             .getOrElseThrow({ it -> new JMacroException("Property missing (set) redirection error: $name = $arg", it) })
 
     }
 
-    static propertyMissingOnOrChainToContext(Command command, def target, def name, def arg) {
+    static propertyMissingOnOrChainToContext(Command command, def target, String name, def arg) {
         return propertyMissingOnOrChainToContext(command.context, target, name, arg)
     }
 
-    static propertyMissingOnOrChainToContext(ScriptContext context, def target, def name, def arg) {
+    static propertyMissingOnOrChainToContext(ScriptContext context, def target, String name, def arg) {
         return Try.of({ propertyMissingOn(target, name, arg) })
+        // FIXME, is not property, BUT map like
             .orElse(Try.of({ propertyMissingOn(context, name, arg) }))
             .getOrElseThrow({ it -> new JMacroException("Property missing (set) redirection error: $name = $arg", it) })
+    }
+
+
+    void echo(Object message) {
+        echo(bindings, message)
+    }
+
+    void raise(String message) {
+        raise(bindings, message)
+    }
+
+    static callOn(Bindings bindings, String name, def object) {
+        return bindings.get(name).invokeMethod('call', object)
+    }
+
+    static echo(Bindings bindings, String message) {
+        return callOn(bindings, 'echo', message)
+    }
+
+    static echo(Bindings bindings, Object message) {
+        return callOn(bindings, 'echo', message)
+    }
+
+    static raise(Bindings bindings, String message) {
+        return callOn(bindings, 'raise', message)
+    }
+
+    static log(ScriptContext scriptContext, String level = DEBUG, String message, Throwable throwable = null) {
+        log(scriptContext.getBindings(ScriptContext.ENGINE_SCOPE), level, message, throwable)
+    }
+
+    static log(Bindings bindings, String level = DEBUG, String message, Throwable throwable = null) {
+        if (level == ERROR) {
+            bindings.get('logger').invokeMethod(level, [message, throwable])
+        } else {
+            bindings.get('logger').invokeMethod(level, message)
+        }
     }
 
     String getName() {

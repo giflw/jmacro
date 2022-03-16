@@ -82,7 +82,7 @@ class FileCommand extends Command {
         }
         if (chooser.showDialog(null, 'Select') == JFileChooser.APPROVE_OPTION) {
             JFile file = chooser.getSelectedFile()
-            return new File(file)
+            return new File(file, scriptEngine.getContext())
         }
         throw new JMacroException(this, 'No files selected')
     }

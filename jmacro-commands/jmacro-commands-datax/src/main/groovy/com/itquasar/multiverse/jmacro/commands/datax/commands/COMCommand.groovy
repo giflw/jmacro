@@ -1,5 +1,6 @@
 package com.itquasar.multiverse.jmacro.commands.datax.commands
 
+import com.itquasar.multiverse.jmacro.commands.datax.commands.com.COMWrapper
 import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.JMacroCore
 import com.jacob.activeX.ActiveXComponent
@@ -31,7 +32,7 @@ class COMCommand extends Command implements AutoCloseable {
         if (!ComThread.haveSTA) {
             ComThread.InitSTA()
         }
-        COMCommand wrapper = new COMCommand(
+        COMWrapper wrapper = new COMWrapper(
             new ActiveXComponent(application.activeXName) // Instance of application object created.
         )
         if (closure != null) {
@@ -54,6 +55,10 @@ class COMCommand extends Command implements AutoCloseable {
         if (ComThread.haveSTA) {
             ComThread.Release()
         }
+    }
+
+    def call(Object) {
+        throw new UnsupportedOperationException("NOT IMPLEMENTED YET!")
     }
 }
 

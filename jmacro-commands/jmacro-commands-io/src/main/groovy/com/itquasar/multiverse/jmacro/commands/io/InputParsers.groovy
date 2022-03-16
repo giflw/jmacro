@@ -2,7 +2,6 @@ package com.itquasar.multiverse.jmacro.commands.io
 
 import com.xlson.groovycsv.CsvParser
 import groovy.json.JsonSlurper
-import groovy.util.logging.Log4j2
 import groovy.xml.XmlSlurper
 import groovy.xml.slurpersupport.GPathResult
 import org.jsoup.Jsoup
@@ -22,7 +21,7 @@ trait InputParsers {
 
     List<String> getLines() {
         //log.debug("Using readLines to parse input")
-        return text.split(/\r\n+/)
+        return Arrays.asList(text.split(/\r\n+/))
     }
 
     Object getJson() {

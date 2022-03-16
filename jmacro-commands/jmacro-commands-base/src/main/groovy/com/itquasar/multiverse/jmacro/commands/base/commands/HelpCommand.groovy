@@ -3,8 +3,6 @@ package com.itquasar.multiverse.jmacro.commands.base.commands
 import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.JMacroCore
 import com.itquasar.multiverse.jmacro.core.command.Doc
-import groovy.transform.CompileDynamic
-import groovy.transform.CompileStatic
 
 import javax.script.ScriptEngine
 import java.lang.reflect.Field
@@ -12,7 +10,6 @@ import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import java.lang.reflect.Parameter
 
-@CompileStatic
 class HelpCommand extends Command {
 
     HelpCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
@@ -20,31 +17,26 @@ class HelpCommand extends Command {
     }
 
     @Doc("Show help for this command.")
-    @CompileDynamic
     void call() {
         echo toString(this)
     }
 
     @Doc("Show help for given command.")
-    @CompileDynamic
     void call(Command command) {
         echo toString(command)
     }
 
     @Doc("Show help for given command or object.")
-    @CompileDynamic
     void call(Object object) {
         echo toString(object)
     }
 
     @Doc("Show help for fields and methods with given name on given command instance.")
-    @CompileDynamic
     void call(Command command, String name) {
         echo toString(command, command.name, name)
     }
 
     @Doc("Show help for fields and methods with given name on given object instance.")
-    @CompileDynamic
     void call(Object object, String name) {
         echo toString(object, object.class.simpleName, name)
     }

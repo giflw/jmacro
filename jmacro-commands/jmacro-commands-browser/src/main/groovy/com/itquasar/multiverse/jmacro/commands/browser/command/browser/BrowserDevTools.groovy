@@ -10,15 +10,19 @@ import org.openqa.selenium.devtools.v97.network.Network
 import org.openqa.selenium.devtools.v97.network.model.RequestWillBeSent
 import org.openqa.selenium.devtools.v97.network.model.ResponseReceived
 
+import javax.script.Bindings
+
 class BrowserDevTools implements Constants, AutoCloseable {
 
+    private final Bindings bindings
     private final BrowserCommand browser
     private DevTools devTools
 
-    BrowserDevTools(BrowserCommand browser) {
+    BrowserDevTools(Bindings bindings, BrowserCommand browser) {
+        this.bindings = bindings
         if (HasDevTools.class.isInstance(browser.driver)) {
             this.browser = browser
-            this.devTools = browser.driver.getDevTools()
+            this.devTools = ((HasDevTools) browser.driver).getDevTools()
             this.devTools.createSession()
         }
     }
@@ -61,14 +65,17 @@ class BrowserDevTools implements Constants, AutoCloseable {
             } else {
                 callback = { RequestWillBeSent requestWillBeSent ->
                     def request = requestWillBeSent.getRequest()
-                    def postData = postData(requestWillBeSent)?: ''
-                    echo """
-                    ------------------------------------------------------
-                    Request URL        => ${request.getUrl()}
-                    Request Method     => ${request.getMethod()}
-                    Request Headers    => ${request.getHeaders()}
-                    Request PostData   => ${postData.stripLeading().take(100).replaceAll("[\r\n]+", '').take(50)}
-                    ------------------------------------------------------""".stripIndent()
+                    def postData = postData(requestWillBeSent) ?: ''
+                    Command.echo(
+                        bindings,
+                        """
+                        ------------------------------------------------------
+                        Request URL        => ${request.getUrl()}
+                        Request Method     => ${request.getMethod()}
+                        Request Headers    => ${request.getHeaders()}
+                        Request PostData   => ${postData.stripLeading().take(100).replaceAll("[\r\n]+", '').take(50)}
+                        ------------------------------------------------------""".stripIndent()
+                    )
                 }
             }
 
@@ -85,14 +92,17 @@ class BrowserDevTools implements Constants, AutoCloseable {
                 callback = { ResponseReceived responseReceived ->
                     def response = responseReceived.getResponse()
                     def body = body(responseReceived)?.body ?: ''
-                    echo """
-                    ------------------------------------------------------
-                    Response Url       => ${response.getUrl()}
-                    Response Status    => ${response.getStatus()}
-                    Response Headers   => ${response.getHeaders()}
-                    Response MIME Type => ${response.getMimeType()}
-                    Response Body      => ${body.stripLeading().take(100).replaceAll("[\r\n]+", '').take(50)}
-                    ------------------------------------------------------""".stripIndent()
+                    Command.echo(
+                        bindings,
+                        """
+                        ------------------------------------------------------
+                        Response Url       => ${response.getUrl()}
+                        Response Status    => ${response.getStatus()}
+                        Response Headers   => ${response.getHeaders()}
+                        Response MIME Type => ${response.getMimeType()}
+                        Response Body      => ${body.stripLeading().take(100).replaceAll("[\r\n]+", '').take(50)}
+                        ------------------------------------------------------""".stripIndent()
+                    )
                 }
             }
             this.devTools.addListener(Network.responseReceived(), callback)

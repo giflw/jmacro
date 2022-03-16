@@ -1,9 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.browser.command.browser
 
-
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
-import groovy.transform.CompileStatic
 import groovy.util.logging.Log4j2
 import org.openqa.selenium.By
 import org.openqa.selenium.Keys
@@ -11,7 +9,6 @@ import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.remote.RemoteWebElement
 
-@CompileStatic
 @Log4j2
 class WebElementWrapper {
 
@@ -107,7 +104,6 @@ class WebElementWrapper {
         return webElement.respondsTo('getAttribute') ? webElement.getAttribute(name) : null
     }
 
-
     @CompileDynamic
     def attr(String name, String value) {
         this.passOrRaiseNullElement()
@@ -134,7 +130,7 @@ class WebElementWrapper {
     @CompileDynamic
     def find(Map<String, ?> params, boolean multi = false) {
         def entry = params.find()
-        def key = entry.key
+        String key = entry.key
         def value = entry.value
         switch (key) {
             case 'tag':
@@ -145,21 +141,20 @@ class WebElementWrapper {
                 break
         }
         if (multi) {
-            return this.webElement.findElements(By."${key}"(value)).collect {
+            return this.webElement.findElements(By.invokeMethod(key, value)).collect {
                 new WebElementWrapper(null, it)
             }
         }
-        return new WebElementWrapper(null, this.webElement.findElement(By."${key}"(value)))
+        return new WebElementWrapper(null, this.webElement.findElement(By.invokeMethod(key, value)))
     }
 
-    @CompileDynamic
     def findAll(Map<String, ?> params) {
         return find(params, true)
     }
 
     @CompileDynamic
     def methodMissing(String name, args) {
-        this.passOrRaiseNullElement("Invoking method $name on element $element")
+        this.passOrRaiseNullElement("Invoking method $name on element $webElement")
         def result
         try {
             //noinspection GroovyAssignabilityCheck

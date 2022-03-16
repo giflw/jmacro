@@ -2,9 +2,9 @@ package com.itquasar.multiverse.jmacro.commands.io.commands.file
 
 import com.itquasar.multiverse.jmacro.commands.io.InputParsers
 import com.itquasar.multiverse.jmacro.core.Command
+import com.itquasar.multiverse.jmacro.core.Constants
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
-import groovy.transform.CompileStatic
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.Workbook
@@ -16,8 +16,7 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.*
 import java.nio.file.attribute.FileAttribute
 
-@CompileStatic
-class File implements InputParsers {
+class File implements InputParsers, Constants {
 
     private Path path
     private final ScriptContext scriptContext
@@ -94,7 +93,6 @@ class File implements InputParsers {
         }
     }
 
-    @CompileDynamic
     def propertyMissing(String name) {
         try {
             return Command.propertyMissingOn(this.path, name)
@@ -111,7 +109,6 @@ class File implements InputParsers {
         }
     }
 
-    @CompileDynamic
     def propertyMissing(String name, def arg) {
         try {
             Command.propertyMissingOn(this.path, name, arg)
@@ -190,9 +187,8 @@ class File implements InputParsers {
         return xls()
     }
 
-    @CompileDynamic
     def xlsx(Map<String, ?> args = [drop: 0]) {
-        log.debug("Using ${XSSFWorkbook.class} to parse input")
+        Command.log(scriptContext, DEBUG, "Using ${XSSFWorkbook.class} to parse input")
         this.path = this.path ?: Path.of(this.name)
         Workbook workbook = new XSSFWorkbook(this.path.toFile())
         Map<String, List<List>> map = workbook.sheetIterator().collectEntries { sheet ->
@@ -205,7 +201,7 @@ class File implements InputParsers {
                         case CellType.BLANK:
                             return ''
                         default:
-                            return cell."get${type}CellValue"()
+                            return cell.invokeMethod("get${type}CellValue", null)
                     }
                 }
             }
@@ -213,16 +209,15 @@ class File implements InputParsers {
         }
         workbook.close()
         map = map.collectEntries {
-            [(it.key): matrixToMap(it.value.drop(args.drop))]
+            [(it.key): matrixToMap(it.value.drop((int) args.drop))]
         }
         this.data = map.size() == 1 ? map.find { true }.value : map
         return this.data
     }
 
 
-    @CompileDynamic
     def xls(Map<String, ?> args = [drop: 0]) {
-        log.debug("Using ${HSSFWorkbook.class} to parse input")
+        Command.log(scriptContext, DEBUG, "Using ${HSSFWorkbook.class} to parse input")
         this.path = this.path ?: Path.of(this.name)
         Workbook workbook = new HSSFWorkbook(new FileInputStream(this.path.toFile()))
         Map<String, List<List>> map = workbook.sheetIterator().collectEntries { sheet ->
@@ -236,7 +231,7 @@ class File implements InputParsers {
                             case CellType.BLANK:
                                 return ''
                             default:
-                                return cell."get${type}CellValue"()
+                                return cell.invokeMethod("get${type}CellValue", null)
                         }
                     }
                 }
@@ -244,14 +239,13 @@ class File implements InputParsers {
         }
         workbook.close()
         map = map.collectEntries {
-            [(it.key): matrixToMap(it.value.drop(args.drop))]
+            [(it.key): matrixToMap(it.value.drop((int) args.drop))]
         }
         this.data = map.size() == 1 ? map.find { true }.value : map
         return this.data
     }
 
-    @CompileDynamic
-    private List<Map<String, ?>> matrixToMap(List<List> matrix) {
+    static private List<Map<String, ?>> matrixToMap(List<List> matrix) {
         List headers = matrix.first()
         List<List> rows = matrix.tail()
         return rows.collect { row ->

@@ -5,7 +5,7 @@ enum HttpMethod {
 
     private static Map<String, HttpMethod> VALUE_MAP
 
-    static valuesMap() {
+    static Map<String, HttpMethod> valuesMap() {
         if (!VALUE_MAP) {
             VALUE_MAP = values().collectEntries { item ->
                 [(item.name()): item]

@@ -3,17 +3,14 @@ package com.itquasar.multiverse.jmacro.commands.base.commands
 import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.JMacroCore
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
-import groovy.transform.CompileDynamic
-import groovy.transform.CompileStatic
 
 import javax.script.ScriptEngine
 import java.util.concurrent.atomic.AtomicBoolean
 
-@CompileStatic
 class TimerCommand extends Command implements AutoCloseable {
 
     private AtomicBoolean running = new AtomicBoolean(false)
-    private Map<String, BigDecimal> partials = new LinkedHashMap()
+    private Map<String, Float> partials = new LinkedHashMap()
 
     TimerCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
@@ -24,7 +21,7 @@ class TimerCommand extends Command implements AutoCloseable {
             throw new JMacroException(this, 'Timer already started!')
         }
         this.partials = new LinkedHashMap()
-        this.partials.put('Start', System.currentTimeMillis() / 1000)
+        this.partials.put('Start', (System.currentTimeMillis() / 1000).floatValue())
         return this
     }
 
@@ -32,26 +29,25 @@ class TimerCommand extends Command implements AutoCloseable {
         if (!running.compareAndSet(true, false)) {
             throw new JMacroException(this, 'Timer not started!')
         }
-        this.partials.put('Stop', (System.currentTimeMillis() / 1000) - this.partials['Start'])
+        this.partials.put('Stop', ((System.currentTimeMillis() / 1000) - this.partials['Start']).floatValue())
         return this
     }
 
     TimerCommand partial(String label = null) {
-        partials.put(label ?: 'Partial ' + (partials.size() + 1), (System.currentTimeMillis() / 1000) - this.partials['Start'])
+        partials.put(label ?: 'Partial ' + (partials.size() + 1), ((System.currentTimeMillis() / 1000) - this.partials['Start']).floatValue())
         return this
     }
 
-    BigDecimal getStart() {
+    Float getStart() {
         return this.partials['Start']
     }
 
-    BigDecimal getStop() {
+    Float getStop() {
         return this.partials['Stop']
     }
 
-    @CompileDynamic
-    Map<String, Double> get() {
-        Map<String, Double> all = new LinkedHashMap()
+    Map<String, Float> get() {
+        Map<String, Float> all = new LinkedHashMap()
         all.putAll(partials)
         return all
     }
@@ -65,7 +61,7 @@ class TimerCommand extends Command implements AutoCloseable {
         return this.partials[label]
     }
 
-    Map<String, BigDecimal> getPartials() {
+    Map<String, Float> getPartials() {
         return this.partials
     }
 

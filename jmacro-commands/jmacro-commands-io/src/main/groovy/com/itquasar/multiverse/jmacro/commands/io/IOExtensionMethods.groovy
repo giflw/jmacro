@@ -1,12 +1,9 @@
 package com.itquasar.multiverse.jmacro.commands.io
 
-
 import groovy.json.JsonBuilder
-import groovy.transform.CompileDynamic
 
 import java.nio.charset.StandardCharsets
 
-@CompileDynamic
 class IOExtensionMethods {
 
     //////////////////////////////////////////////////////////////////////////////////////

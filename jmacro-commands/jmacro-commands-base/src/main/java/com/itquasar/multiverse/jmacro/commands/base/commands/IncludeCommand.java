@@ -4,8 +4,8 @@ import com.itquasar.multiverse.jmacro.commands.base.providers.ExportCommandProvi
 import com.itquasar.multiverse.jmacro.core.Command;
 import com.itquasar.multiverse.jmacro.core.JMacroCore;
 import com.itquasar.multiverse.jmacro.core.SPILoader;
-import com.itquasar.multiverse.jmacro.core.command.Doc;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
+import com.itquasar.multiverse.jmacro.core.command.Doc;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.itquasar.multiverse.jmacro.core.repository.GlobalScriptRepository;
 import com.itquasar.multiverse.jmacro.core.script.Script;
@@ -46,8 +46,12 @@ public class IncludeCommand extends Command {
     )
     public void call(@Doc(name = "includeName") String... includeName) {
         Arrays.stream(includeName).forEach(it ->
-            new Inclusion(this, getCore(), Collections.emptyList()).from(it)
+            this.call(includeName)
         );
+    }
+
+    public void call(@Doc(name = "includeName") String includeName) {
+        new Inclusion(this, getCore(), Collections.emptyList()).from(includeName);
     }
 
     @Doc("include { ObjA, ObjB } from 'script_name.ext'.")
@@ -66,6 +70,8 @@ public class IncludeCommand extends Command {
 
             String extension = includeCommand.extension;
             includeName = includeName.endsWith(extension) ? includeName : includeName + '.' + extension;
+
+            // FIXME allow repository selection on inclusion
 
             Optional<Script> scriptOptional = includeCommand.repository.get(includeName);
             if (scriptOptional.isPresent()) {
