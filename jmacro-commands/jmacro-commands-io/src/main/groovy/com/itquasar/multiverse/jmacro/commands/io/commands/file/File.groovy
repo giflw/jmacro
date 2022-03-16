@@ -19,6 +19,9 @@ import java.nio.file.attribute.FileAttribute
 class File implements InputParsers, Constants {
 
     private Path path
+    private Path _
+    private String ext
+    private String baseName
     private final ScriptContext scriptContext
 
     File(java.io.File file, ScriptContext scriptContext) {
@@ -36,7 +39,15 @@ class File implements InputParsers, Constants {
             path = Path.of(System.getProperty("user.home")).resolve(path)
         }
         this.path = path
-        this.name = this.path.getFileName()
+        this._ = path
+        this.name = this.path.getFileName().toString()
+        if (this.name.contains('.')) {
+            this.baseName = this.name.substring(0, this.name.lastIndexOf('.'))
+            this.ext = this.name.substring(this.name.lastIndexOf('.') + 1)
+        } else {
+            this.baseName = this.name
+            this.ext = ''
+        }
         this.scriptContext = scriptContext
     }
 
@@ -104,6 +115,10 @@ class File implements InputParsers, Constants {
             def copyOption = StandardCopyOption.values().find { it.name() == name }
             if (copyOption) {
                 return copyOption
+            }
+            def linkOption = LinkOption.values().find { it.name() == name }
+            if (linkOption) {
+                return linkOption
             }
             return Command.propertyMissingOnOrChainToContext(this.scriptContext, this.path.toFile(), name)
         }
