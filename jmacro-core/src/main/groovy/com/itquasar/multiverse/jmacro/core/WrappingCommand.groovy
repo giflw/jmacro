@@ -8,10 +8,12 @@ import java.util.function.Supplier
 class WrappingCommand<T> extends CallableCommand {
     private final Supplier<T> targetSupplier
     private T target
+    private final boolean redirectMissingToContext
 
-    WrappingCommand(Function<WrappingCommand<T>, T> function, String name, JMacroCore core, ScriptEngine scriptEngine) {
+    WrappingCommand(Function<WrappingCommand<T>, T> function, String name, JMacroCore core, ScriptEngine scriptEngine, boolean redirectMissingToContext = true) {
         super(name, core, scriptEngine)
         this.targetSupplier = () -> function.apply(this)
+        this.redirectMissingToContext = redirectMissingToContext
     }
 
     WrappingCommand(T target, String name, JMacroCore core, ScriptEngine scriptEngine) {
@@ -25,15 +27,24 @@ class WrappingCommand<T> extends CallableCommand {
     }
 
     Object methodMissing(String name, Object args) {
-        return methodMissingOnOrChainToContext(this, this.unwrap(), name, args)
+        if (redirectMissingToContext) {
+            return methodMissingOnOrChainToContext(this, this.unwrap(), name, args)
+        }
+        return this.unwrap().invokeMethod(name, args)
     }
 
     Object propertyMissing(String name) {
-        return propertyMissingOnOrChainToContext(this, this.unwrap(), name)
+        if(redirectMissingToContext) {
+            return propertyMissingOnOrChainToContext(this, this.unwrap(), name)
+        }
+        return this.unwrap()[name]
     }
 
     Object propertyMissing(String name, Object arg) {
-        return propertyMissingOnOrChainToContext(this, this.unwrap(), name, arg)
+        if(redirectMissingToContext) {
+            return propertyMissingOnOrChainToContext(this, this.unwrap(), name, arg)
+        }
+        return this.unwrap()[name] = arg
     }
 
     T unwrap() {

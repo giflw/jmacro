@@ -1,5 +1,6 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands;
 
+import com.itquasar.multiverse.jmacro.commands.base.providers.ArgsCommandProvider;
 import com.itquasar.multiverse.jmacro.commands.base.providers.ExportCommandProvider;
 import com.itquasar.multiverse.jmacro.core.Command;
 import com.itquasar.multiverse.jmacro.core.JMacroCore;
@@ -85,10 +86,15 @@ public class IncludeCommand extends Command {
                         (ScriptEngine engine) -> {
                             includeCommand.getScriptEngine().getBindings(ScriptContext.ENGINE_SCOPE).forEach(
                                 (key, value) -> {
-                                    if (!key.startsWith("__") && !key.equals("export")) {
+                                    if (!key.startsWith("__") && !key.equals("export") && !key.equals(ARGS)) {
                                         logger.debug("Transferring [" + key + "] to new engine");
                                         engine.getBindings(ScriptContext.ENGINE_SCOPE).put(key, value);
                                     }
+                                    // FIXME APPEND PARENT SCRIPT ARGS
+                                    // if (key.equals(ARGS)) {
+                                    //     ArgsCommandProvider.ArgsCommand args = (ArgsCommandProvider.ArgsCommand) engine.getBindings(ScriptContext.ENGINE_SCOPE).get(ARGS);
+                                    //     args.appendArgs()
+                                    // }
                                 });
                             SPILoader.load(CommandProvider.class).forEachRemaining(provider -> {
                                 if (ExportCommandProvider.class.isInstance(provider)) {
@@ -103,7 +109,11 @@ public class IncludeCommand extends Command {
                             if (contextNames.isEmpty()) {
                                 contextNames = exportsMap.keySet();
                             }
-                            logger.warn(contextNames + " will be included in original engine");
+                            if(contextNames.isEmpty()) {
+                                logger.warn("Nothing will be included in original engine");
+                            } else {
+                                logger.warn(contextNames + " will be included in original engine");
+                            }
                             contextNames.forEach(name -> {
                                 Object library = exportsMap.get(name);
                                 logger.debug("Including [" + name + "] to original engine (" + library + ")");

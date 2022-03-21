@@ -60,25 +60,25 @@ class File implements InputParsers, Constants {
 
             def argsToUse
 
-            if (args.length > 0) {
+            if (Object[].class.isInstance(args) && ((Object[]) args).length > 0) {
                 // try using this.path and option empty array
                 for (def attrib : [new OpenOption[0], new CopyOption[0], new LinkOption[0], new FileAttribute[0], new FileAttribute[0]]) {
                     argsToUse = [this.path, *args, attrib]
-                    method = Files.metaClass.getMetaMethod(name, *argsToUse)
+                    method = Files.metaClass.getMetaMethod(name, argsToUse)
                     if (method) {
-                        return method.invoke(null, method.correctArguments(*argsToUse))
+                        return method.invoke(null, method.correctArguments(argsToUse))
                     }
                 }
 
                 // try using this.path + given args
                 argsToUse = [this.path, *args]
-                method = Files.metaClass.getMetaMethod(name, *argsToUse)
+                method = Files.metaClass.getMetaMethod(name, argsToUse)
                 if (method) {
                     return method.invoke(null, method.correctArguments(argsToUse))
                 }
 
                 // try using only given args
-                method = Files.metaClass.getMetaMethod(name, *args)
+                method = Files.metaClass.getMetaMethod(name, args)
                 if (method) {
                     return method.invoke(null, method.correctArguments(args))
                 }
@@ -87,20 +87,20 @@ class File implements InputParsers, Constants {
             // try using this.path and option empty array
             for (def arr : [new OpenOption[0], new CopyOption[0], new LinkOption[0], new FileAttribute[0], new FileAttribute[0]]) {
                 argsToUse = [this.path, arr]
-                method = Files.metaClass.getMetaMethod(name, *argsToUse)
+                method = Files.metaClass.getMetaMethod(name, argsToUse)
                 if (method) {
-                    return method.invoke(null, method.correctArguments(*argsToUse))
+                    return method.invoke(null, method.correctArguments(argsToUse))
                 }
             }
 
             // try using only this.path
             argsToUse = [this.path]
-            method = Files.metaClass.getMetaMethod(name, *argsToUse)
+            method = Files.metaClass.getMetaMethod(name, argsToUse)
             if (method) {
-                return method.invoke(null, method.correctArguments(*argsToUse))
+                return method.invoke(null, method.correctArguments(argsToUse))
             }
 
-            return Command.propertyMissingOnOrChainToContext(this.scriptContext, this.path.toFile(), name, args)
+            return Command.methodMissingOnOrChainToContext(this.scriptContext, this.path.toFile(), name, args)
         }
     }
 

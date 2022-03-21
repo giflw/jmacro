@@ -36,8 +36,7 @@ class Request implements Constants {
     private String method
     private String url
     private Map<String, String> headers = new LinkedHashMap<>()
-    @Lazy
-    private Body body = new Body(bindings)
+    private Body _body = null
     private HTTPFluentRequest httpRequest
     private HttpEntity entity
     private Response response
@@ -62,6 +61,13 @@ class Request implements Constants {
             }
         }
         return this
+    }
+
+    Body getBody() {
+        if (_body == null) {
+            this._body = new Body(bindings)
+        }
+        return _body
     }
 
     Response getResponse() {

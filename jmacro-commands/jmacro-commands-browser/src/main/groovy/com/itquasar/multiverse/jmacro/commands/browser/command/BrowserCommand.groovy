@@ -2,6 +2,7 @@ package com.itquasar.multiverse.jmacro.commands.browser.command
 
 import com.itquasar.multiverse.jmacro.commands.browser.command.browser.*
 import com.itquasar.multiverse.jmacro.core.CallableCommand
+import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.Constants
 import com.itquasar.multiverse.jmacro.core.JMacroCore
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
@@ -37,9 +38,9 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
         binary : null, // browser binary path or path#version
         version: null // browser binary version
     ]
+
     RemoteWebDriver driver = null
-    @Lazy()
-    BrowserDevTools devTools = new BrowserDevTools(bindings, this)
+    private BrowserDevTools _devTools = null
     BrowserWait wait = null
     Map<String, ?> elements = [:]
 
@@ -56,6 +57,13 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
             )
         )
         this.postConfig()
+    }
+
+    BrowserDevTools getDevTools() {
+        if (this._devTools == null) {
+            this._devTools = new BrowserDevTools(bindings, this)
+        }
+        return _devTools
     }
 
     @CompileDynamic
@@ -199,6 +207,9 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
     void close() {
         if (driver) {
             this.logger.warn("Closing browser...")
+            if (this._devTools) {
+                this._devTools.close()
+            }
             driver.quit()
             this.logger.warn("...browser closed.")
         }
@@ -269,6 +280,11 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
         } catch (Exception ex) {
             return name
         }
+    }
+
+    @CompileDynamic
+    def methodMissing(String name, def args) {
+        return Command.methodMissingOn(context, name, args)
     }
 
     JFile screenshot(Path destinationFile) {

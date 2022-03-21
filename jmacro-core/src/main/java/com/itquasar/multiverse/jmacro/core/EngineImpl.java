@@ -20,7 +20,7 @@ import static javax.script.ScriptContext.ENGINE_SCOPE;
 import static javax.script.ScriptContext.GLOBAL_SCOPE;
 
 @Log4j2
-public final class EngineImpl implements Engine {
+public final class EngineImpl implements Engine, Constants {
 
 
     private static final String DOUBLE_SEPARATOR =
@@ -177,16 +177,18 @@ public final class EngineImpl implements Engine {
 
             commandTypes.add(command.getClass());
         }
-        commands.forEach(command -> command.allCommandsRegistered());
 
-        var valueHolder = new ValueHolder.ObjectValueHolder();
-
-        engineScope.put("args", args);
-
+        List<String> argsFinal = normalExecution ? args : List.of(script.getLocation().toString(), INCLUDED);
+        scriptLogger.warn("Script args: " + argsFinal);
+        engineScope.put(ARGV, argsFinal);
         engineScope.put("__SCRIPT__", script);
         engineScope.put("__METADATA__", script.getMetadata());
         engineScope.put("__CONTEXT__", engineScope);
+        var valueHolder = new ValueHolder.ObjectValueHolder();
         engineScope.put("__RESULT__", valueHolder);
+
+        commands.forEach(command -> command.allCommandsRegistered());
+
 
         if (this.languageAdaptors.containsKey(extension)) {
             LOGGER.warn("Running adaptor for " + extension);

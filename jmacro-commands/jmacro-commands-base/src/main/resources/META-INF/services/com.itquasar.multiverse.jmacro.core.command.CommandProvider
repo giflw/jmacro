@@ -1,4 +1,5 @@
 com.itquasar.multiverse.jmacro.commands.base.providers.AttemptCommandProvider
+com.itquasar.multiverse.jmacro.commands.base.providers.ArgsCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.Base64CommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.ConfigurationCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.ConstantsCommandProvider

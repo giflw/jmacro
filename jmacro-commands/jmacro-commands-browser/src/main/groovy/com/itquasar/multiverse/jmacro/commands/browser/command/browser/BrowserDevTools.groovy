@@ -4,6 +4,7 @@ import com.itquasar.multiverse.jmacro.commands.browser.command.BrowserCommand
 import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.Constants
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
+import groovy.transform.CompileDynamic
 import org.openqa.selenium.devtools.DevTools
 import org.openqa.selenium.devtools.HasDevTools
 import org.openqa.selenium.devtools.v97.network.Network
@@ -24,6 +25,8 @@ class BrowserDevTools implements Constants, AutoCloseable {
             this.browser = browser
             this.devTools = ((HasDevTools) browser.driver).getDevTools()
             this.devTools.createSession()
+        } else {
+            throw new JMacroException("Dev tools not supported by this web driver (${browser.driver})")
         }
     }
 
@@ -31,24 +34,43 @@ class BrowserDevTools implements Constants, AutoCloseable {
         return devTools
     }
 
-    def enable(String feature) {
-        switch (feature) {
-            case NETWORK -> devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()))
-            default -> throw new JMacroException("Feature $feature not supported")
+    def call(Closure closure) {
+        closure.delegate = this
+        closure.resolveStrategy = Closure.DELEGATE_FIRST
+        return closure.call()
+    }
+
+
+    @CompileDynamic
+    void enable(String... features) {
+        for (String feature : features) {
+            switch (feature) {
+                case NETWORK -> devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()))
+                default -> throw new JMacroException("Feature $feature not supported")
+            }
         }
     }
 
-    def disable(String feature) {
-        switch (feature) {
-            case NETWORK -> devTools.send(Network.disable())
-            default -> throw new JMacroException("Feature $feature not supported")
+    @CompileDynamic
+    void disable(String... features) {
+        for (String feature : features) {
+            switch (feature) {
+                case NETWORK -> devTools.send(Network.disable())
+                default -> throw new JMacroException("Feature $feature not supported")
+            }
         }
     }
 
 
     void close() {
-        this.devTools.clearListeners()
-        this.devTools.disconnectSession()
+        if (this.devTools) {
+            try {
+                this.devTools.clearListeners()
+            } catch (Exception ex) {
+                Command.log(bindings, ERROR, ex.getMessage())
+            }
+            this.devTools.disconnectSession()
+        }
     }
 
     def listen(Closure closure) {
@@ -127,8 +149,7 @@ class BrowserDevTools implements Constants, AutoCloseable {
         }
     }
 
-
     def methodMissing(String name, def args) {
-        return Command.methodMissingOnOrChainToContext(browser, browser, name, args)
+        return Command.methodMissingOn(devTools, name, args, browser.bindings)
     }
 }

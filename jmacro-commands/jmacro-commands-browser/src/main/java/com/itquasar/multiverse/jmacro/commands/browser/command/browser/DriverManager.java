@@ -37,26 +37,11 @@ public class DriverManager {
             .avoidReadReleaseFromRepository()
             .useLocalVersionsPropertiesFirst()
             .useLocalCommandsPropertiesFirst();
-
-        URL versionsUrl = DriverManager.class.getResource("/webdrivermanager/versions.properties");
-        LOGGER.warn("webdrivermanager versions url: " + versionsUrl);
-        if (versionsUrl != null) {
-            webDriverManager = webDriverManager.versionsPropertiesUrl(versionsUrl);
-        }
-
-        URL commandsUrl = ClassLoader.getSystemResource("webdrivermanager/commands.properties");
-        LOGGER.warn("webdrivermanager commands url: " + commandsUrl);
-        if (commandsUrl != null) {
-            webDriverManager = webDriverManager.commandsPropertiesUrl(commandsUrl);
-        }
-
         return webDriverManager
             .cachePath(cacheDir.toString())
             .resolutionCachePath(cacheDir.toString())
             .ttl(TTL.intValue())
             .ttlBrowsers(TTL.intValue());
-        //.clearResolutionCache()
-        //.avoidResolutionCache();
     }
 
     public WebDriverManager getManager(String browserName) {

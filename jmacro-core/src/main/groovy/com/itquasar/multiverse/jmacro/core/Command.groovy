@@ -66,9 +66,13 @@ abstract class Command implements Constants{
         // no op
     }
 
+    static methodMissingOn(def object, String name, def args) {
+        return methodMissingOn(object, name, args, null)
+    }
+
     // FIXME refactor to throw JMacroException, or change missingPropertyOn
     @CompileDynamic
-    static methodMissingOn(def object, String name, def args) {
+    static methodMissingOn(def object, String name, def args, Bindings bindings) {
         if (args) {
             return object."$name"(*args)
         }
@@ -83,9 +87,9 @@ abstract class Command implements Constants{
         return methodMissingOnOrChainToContext(context.getBindings(ScriptContext.ENGINE_SCOPE), target, name, args)
     }
 
-    static methodMissingOnOrChainToContext(def context, def target, String name, def args) {
-        Try.of({ it -> methodMissingOn(target, name, args) })
-            .orElse(Try.of({ methodMissingOn(context, name, args) }))
+    static methodMissingOnOrChainToContext(Bindings bindings, def target, String name, def args) {
+        Try.of({ it -> methodMissingOn(target, name, args, bindings) })
+            .orElse(Try.of({ methodMissingOn(bindings, name, args, bindings) }))
             .getOrElseThrow({ it -> throw new JMacroException("Method missing redirection error: $name ($args)", it) })
     }
 
@@ -134,7 +138,6 @@ abstract class Command implements Constants{
 
     static propertyMissingOnOrChainToContext(ScriptContext context, def target, String name, def arg) {
         return Try.of({ propertyMissingOn(target, name, arg) })
-        // FIXME, is not property, BUT map like
             .orElse(Try.of({ propertyMissingOn(context, name, arg) }))
             .getOrElseThrow({ it -> new JMacroException("Property missing (set) redirection error: $name = $arg", it) })
     }

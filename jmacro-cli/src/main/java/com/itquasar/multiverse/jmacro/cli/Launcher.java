@@ -12,7 +12,7 @@ public class Launcher {
         System.setProperty("app.pid", String.valueOf(ProcessHandle.current().pid()));
         System.setProperty("app.startime", String.valueOf(System.currentTimeMillis()));
 
-        LogManager.getLogger(Launcher.class).warn("ARGS: " + Arrays.toString(args).replaceAll("password=[\\w]*,", "password=********"));
+        LogManager.getLogger(Launcher.class).warn("PLATFORM ARGS: " + Arrays.toString(args).replaceAll("password=[\\w]*,", "password=********"));
 
         var core = new JMacroCore();
         core.start();

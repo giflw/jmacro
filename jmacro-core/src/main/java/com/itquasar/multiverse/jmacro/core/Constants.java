@@ -17,6 +17,12 @@ public interface Constants {
     String OS_ID = (IS_WINDOWS ? "win" : "unix") + "_" + ARCH;
     String BIN_EXT = IS_WINDOWS ? ".exe" : "";
 
+    // ARGS
+    String ARGS = "args";
+    String ARGV = "argv";
+    String INCLUDED = "INCLUDED";
+    String SCRIPT_LOCATION = "script-location";
+
     // VERBOSITY
     String QUIET = "QUIET";
     String VERBOSE = "VERBOSE";
