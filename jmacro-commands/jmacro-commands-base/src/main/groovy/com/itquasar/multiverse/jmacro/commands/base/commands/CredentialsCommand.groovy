@@ -39,6 +39,10 @@ class CredentialsCommand extends Command implements CredentialsProvider {
         return (login && password) || token || (login && apiKey)
     }
 
+    def call(Closure closure) {
+        return Command.callDelegating(this, closure)
+    }
+
     void fill(CredentialsCommand credentials) {
         login = credentials.login
         password = credentials.password

@@ -148,6 +148,12 @@ abstract class Command implements Constants {
         raise(bindings, message)
     }
 
+    static callDelegating(Object delegate, Closure closure) {
+        closure.delegate = delegate
+        closure.resolveStrategy = Closure.DELEGATE_FIRST
+        return closure()
+    }
+
     static callOn(Bindings bindings, String name, def object) {
         return bindings.get(name).invokeMethod('call', object)
     }
