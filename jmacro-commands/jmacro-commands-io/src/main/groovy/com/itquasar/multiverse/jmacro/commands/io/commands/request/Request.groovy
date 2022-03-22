@@ -3,6 +3,7 @@ package com.itquasar.multiverse.jmacro.commands.io.commands.request
 import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.Constants
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
+import groovy.transform.CompileDynamic
 import org.apache.hc.client5.http.HttpResponseException
 import org.apache.hc.client5.http.auth.CredentialsProvider
 import org.apache.hc.client5.http.fluent.Content
@@ -36,7 +37,7 @@ class Request implements Constants {
     private String method
     private String url
     private Map<String, String> headers = new LinkedHashMap<>()
-    private Body _body = null
+    private Body body = null
     private HTTPFluentRequest httpRequest
     private HttpEntity entity
     private Response response
@@ -47,6 +48,7 @@ class Request implements Constants {
     Request(Bindings bindings) {
         Objects.requireNonNull(bindings, "Bindings must be not null")
         this.bindings = bindings
+        this.body = new Body(bindings)
     }
 
     Request call(Closure closure) {
@@ -61,13 +63,6 @@ class Request implements Constants {
             }
         }
         return this
-    }
-
-    Body getBody() {
-        if (_body == null) {
-            this._body = new Body(bindings)
-        }
-        return _body
     }
 
     Response getResponse() {
@@ -108,6 +103,7 @@ class Request implements Constants {
      * @param args Method arg
      * @return According method called
      */
+    @CompileDynamic
     def methodMissing(String name, def args) {
         if (HttpMethod.valuesMap().containsKey(name)) {
             this.method = name

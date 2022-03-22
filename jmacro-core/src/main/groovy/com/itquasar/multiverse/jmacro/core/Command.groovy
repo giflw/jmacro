@@ -9,7 +9,7 @@ import javax.script.Bindings
 import javax.script.ScriptContext
 import javax.script.ScriptEngine
 
-abstract class Command implements Constants{
+abstract class Command implements Constants {
 
     private final String name
     private final JMacroCore core
@@ -73,10 +73,7 @@ abstract class Command implements Constants{
     // FIXME refactor to throw JMacroException, or change missingPropertyOn
     @CompileDynamic
     static methodMissingOn(def object, String name, def args, Bindings bindings) {
-        if (args) {
-            return object."$name"(*args)
-        }
-        return object."$name"()
+        return args != null ? object."$name"(*args) : object."$name"()
     }
 
     static methodMissingOnOrChainToContext(Command command, def target, String name, def args) {

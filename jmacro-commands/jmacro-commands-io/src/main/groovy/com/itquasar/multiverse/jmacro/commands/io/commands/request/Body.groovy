@@ -25,20 +25,20 @@ class Body implements OutputSerializers {
 
     String csv(Iterable<Map<String, ?>> raw, Object separator, Object enclosing) {
         String csv = OutputSerializers.super.csv(raw, separator, enclosing)
-        Command.log(bindings, DEBUG, "[Body|csv] ${raw?.toString().substring(0, 100)}")
+        Command.log(bindings, DEBUG, "[Body|csv] ${raw?.toString().take(100)}")
         entity = new StringEntity(csv, ContentType.TEXT_PLAIN, StandardCharsets.UTF_8.name(), false)
     }
 
     @Override
     String text(Object raw) {
-        Command.log(bindings, DEBUG, "[Body|text] ${raw?.toString().substring(0, 100)}")
+        Command.log(bindings, DEBUG, "[Body|text] ${raw?.toString().take(100)}")
         entity = new StringEntity(OutputSerializers.super.text(raw), ContentType.TEXT_PLAIN, StandardCharsets.UTF_8.name(), false)
     }
 
     @Override
     String json(Object raw) {
         String json = OutputSerializers.super.json(raw)
-        Command.log(bindings, DEBUG, "[Body|json] ${raw?.toString().substring(0, 100)}")
+        Command.log(bindings, DEBUG, "[Body|json] ${raw?.toString().take(100)}")
         entity = new StringEntity(json, ContentType.APPLICATION_JSON, StandardCharsets.UTF_8.name(), false)
     }
 

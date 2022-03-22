@@ -12,13 +12,17 @@ import javax.script.ScriptEngine
 class ConfigurationCommand extends CallableCommand {
 
     @Doc("Hold script context configurations.")
-    ConfigObject configs = new ConfigObject()
+    private ConfigObject configs = new ConfigObject()
 
     @Doc("List of keys that are held on `credentials` command instead of `configuration`.")
     private excludeKeys = CredentialsCommand.declaredFields.collect { it.name }
 
     ConfigurationCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
+    }
+
+    ConfigObject getConfigs() {
+        return configs
     }
 
     @Doc("Add all configurations from given `configuration` instance.")
@@ -34,7 +38,7 @@ class ConfigurationCommand extends CallableCommand {
             }
             this[key] = value
         }
-        this['env'] = this['env'] ? Env.env((String) this['env']) : Env.env("DEV")
+        this['env'] = this['env'] ? (Env.isInstance(this['env']) ? Env.env((Env) this['env']) : Env.env((String) this['env'])) : Env.env("DEV")
         return this
     }
 
