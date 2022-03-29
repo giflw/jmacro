@@ -10,7 +10,7 @@ public class Launcher {
 
     public static void main(String... args) {
         System.setProperty("app.pid", String.valueOf(ProcessHandle.current().pid()));
-        System.setProperty("app.startime", String.valueOf(System.currentTimeMillis()));
+        System.setProperty("app.starttime", String.valueOf(System.currentTimeMillis()));
 
         LogManager.getLogger(Launcher.class).warn("PLATFORM ARGS: " + Arrays.toString(args).replaceAll("password=[\\w]*,", "password=********"));
 

@@ -5,6 +5,7 @@ import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.Constants
 import com.itquasar.multiverse.jmacro.core.JMacroCore
 import com.itquasar.multiverse.jmacro.core.command.Doc
+import com.itquasar.multiverse.jmacro.core.exception.ExitException
 import groovy.transform.CompileDynamic
 
 import javax.script.ScriptEngine
@@ -12,20 +13,53 @@ import javax.script.ScriptEngine
 @Doc("Allows reading from java console.")
 class ConsoleCommand extends Command implements Constants {
 
+    static class InReader implements Closeable {
+
+        private final Object reader
+
+        InReader() {
+            def reader = System.console()
+            if (reader == null) {
+                reader = new BufferedReader(new InputStreamReader(System.in))
+            }
+            this.reader = reader
+        }
+
+        String readLine() {
+            String line = (String) this.reader.invokeMethod('readLine', null)
+            if (line == null) {
+                throw new ExitException(0)
+            }
+            return line
+        }
+
+        char[] readPassword() {
+            if (this.reader.respondsTo('readPassword')) {
+                return (char[]) this.reader.invokeMethod('readPassword', null)
+            } else {
+                return this.reader.invokeMethod('readLine', null)?.toString()?.toCharArray()
+            }
+        }
+
+
+        @CompileDynamic
+        @Override
+        void close() throws IOException {
+            if (reader != null && reader.respondsTo('close')) {
+                reader.invokeMethod('close', null)
+            }
+        }
+    }
+
     @Doc("Prompt prefix constant.")
     private static final String PROMPT = '[INPT] '
 
     @Doc("Java system console.")
-    private Console console = System.console()
+    private InReader readerAndWriter = new InReader()
 
     ConsoleCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
     }
-
-    /*Result call(Console console, Closure closure) {
-        this.console = console
-        return call(closure)
-    }*/
 
     @Doc("""
             Allow calling console as function, redirecting closure calls to console as delegate:
@@ -52,7 +86,7 @@ class ConsoleCommand extends Command implements Constants {
     @Doc("Read line from console.")
     String read() {
         System.out.print "${PROMPT}\$> "
-        return console.readLine()
+        return readerAndWriter.readLine()
     }
 
     @Doc("Read line as field from console using map as parameter configuration.")
@@ -62,7 +96,7 @@ class ConsoleCommand extends Command implements Constants {
         return read(
             (String) args.label,
             (String) args.fallback ?: '',
-            (List<String>)args.allowed ?: Collections.EMPTY_LIST,
+            (List<String>) args.allowed ?: Collections.EMPTY_LIST,
             (boolean) args.nonInteractive ?: false,
             (boolean) args.password ?: false
         )
@@ -70,19 +104,23 @@ class ConsoleCommand extends Command implements Constants {
 
     @Doc("Read line as field from console using explicit parameter configuration.")
     String read(
-        @Doc(name = "label", value = "Field label")        String label,
+        @Doc(name = "label", value = "Field label") String label,
         @Doc(name = "fallback", value = "Fallback (default) value. Default is `null`.") String fallback = null,
         @Doc(name = "allowed", value = "List of allowed values as String. Default is empty list.") List<String> allowed = Collections.EMPTY_LIST,
-        @Doc(name = "nonInteractive", value = "Non interactive flag. Disable interaction if value is `true`. Useful for automation. Default is `false`")boolean nonInteractive = false,
-        @Doc(name = "password", value = "Password flag. Change read mode to password if `true`. Default is `false`")boolean password = false) {
+        @Doc(name = "nonInteractive", value = "Non interactive flag. Disable interaction if value is `true`. Useful for automation. Default is `false`") boolean nonInteractive = false,
+        @Doc(name = "password", value = "Password flag. Change read mode to password if `true`. Default is `false`") boolean password = false) {
         def showValue = fallback ?: ''
         showValue = password ? showValue.replaceAll('.', '*') : showValue
         allowed = allowed ?: []
         def allowedStr = "[${allowed.join(',')}] "
-        System.out.print "${PROMPT}$label ${allowedStr.length() > 3 ? allowedStr : ''}[${showValue}]: "
+        String prompt = "$label ${allowedStr.length() > 3 ? allowedStr : ''}${showValue ? '[' + showValue + ']' : ''}"
+        if (!prompt.trim().isEmpty()) {
+            prompt = "${prompt}: "
+        }
+        System.out.print "${PROMPT}${prompt}"
         def value = nonInteractive
             ? System.out.println()
-            : (password ? console.readPassword().toString() : console.readLine())?.trim()
+            : (password ? readerAndWriter.readPassword().toString() : readerAndWriter.readLine())?.trim()
         return (value ?: fallback) ?: ''
     }
 

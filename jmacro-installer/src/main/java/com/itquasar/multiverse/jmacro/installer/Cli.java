@@ -1,8 +1,6 @@
-package com.itquasar.multiverse.jmacro.cli;
+package com.itquasar.multiverse.jmacro.installer;
 
-import com.itquasar.multiverse.jmacro.core.JMacroCore;
 import lombok.Getter;
-import lombok.ToString;
 
 import static picocli.CommandLine.Command;
 import static picocli.CommandLine.Option;
@@ -10,26 +8,23 @@ import static picocli.CommandLine.ScopeType.INHERIT;
 
 
 @Getter
-@ToString
 @Command(
-    name = "jmacro-cli",
-    description = "JMacro command line client",
+    name = "jmacro-installer",
+    description = "JMacro installer",
     scope = INHERIT,
     showAtFileInUsageHelp = true,
     mixinStandardHelpOptions = true,
     subcommands = {
-        Shell.class,
-        Run.class
+        Update.class,
+        Prepare.class
     }
 )
 public class Cli {
 
-    private final JMacroCore core;
     @Option(names = {"-d", "--debug"}, description = "Debug mode")
     private boolean debug;
 
-    public Cli(JMacroCore core) {
-        this.core = core;
+    public Cli() {
     }
 
 }

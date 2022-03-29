@@ -4,13 +4,6 @@ import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.JMacroCore
 import net.sourceforge.tess4j.ITesseract
 import net.sourceforge.tess4j.Tesseract
-import nu.pattern.OpenCV
-import org.opencv.core.CvType
-import org.opencv.core.Mat
-import org.opencv.core.MatOfByte
-import org.opencv.core.Size
-import org.opencv.imgcodecs.Imgcodecs
-import org.opencv.imgproc.Imgproc
 
 import javax.imageio.ImageIO
 import javax.script.ScriptEngine
@@ -23,7 +16,6 @@ import java.util.List
 class OCRCommand extends Command {
 
     private ITesseract tesseract
-    private boolean opencvLoaded = false
 
     OCRCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
@@ -107,53 +99,6 @@ class OCRCommand extends Command {
         Command.propertyMissingOnOrChainToContext(this, this.tesseract, name, arg)
     }
 
-    private void loadOpenCV() {
-        if (!this.opencvLoaded) {
-            this.opencvLoaded = true
-            OpenCV.loadLocally()
-        }
-    }
-
-
-    // FIXME move opencv to another command/package
-    Mat mat(BufferedImage image) {
-        this.loadOpenCV()
-        byte[] pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData()
-        int rows = image.getWidth()
-        int cols = image.getHeight()
-        int type = CvType.CV_8UC3
-        Mat mat = new Mat(rows, cols, type)
-        mat.put(0, 0, pixels)
-        return mat
-    }
-
-    Mat mat(def path) {
-        this.loadOpenCV()
-        Imgcodecs imageCodecs = new Imgcodecs();
-        return imageCodecs.imread(path.toString())
-    }
-
-    Mat dilate(Mat source, int erosionSize = 5) {
-        this.loadOpenCV()
-        Mat element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(2 * erosionSize + 1, 2 * erosionSize + 1))
-        Mat destination = new Mat(source.rows(), source.cols(), source.type())
-        Imgproc.dilate(source, destination, element)
-        return destination
-    }
-
-    Mat erode(Mat source, int dilationSize = 5) {
-        this.loadOpenCV()
-        Mat element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(2 * dilationSize + 1, 2 * dilationSize + 1))
-        Mat destination = new Mat(source.rows(), source.cols(), source.type())
-        Imgproc.erode(source, destination, element)
-        return destination
-    }
-
-    boolean writeMat(Mat mat, def path) {
-        this.loadOpenCV()
-        return Imgcodecs.imwrite(path.toString(), mat)
-    }
-
     BufferedImage scale(BufferedImage originalImage, float factor) {
         int targetWidth = Float.valueOf(originalImage.width * factor).intValue()
         int targetHeight = Float.valueOf((int) originalImage.height * factor).intValue()
@@ -161,40 +106,6 @@ class OCRCommand extends Command {
         BufferedImage outputImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB)
         outputImage.getGraphics().drawImage(resultingImage, 0, 0, null)
         return outputImage
-    }
-
-    Mat bufferedImage2Mat(BufferedImage image) throws IOException {
-        this.loadOpenCV()
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()
-        ImageIO.write(image, "jpg", byteArrayOutputStream)
-        byteArrayOutputStream.flush()
-        return Imgcodecs.imdecode(new MatOfByte(byteArrayOutputStream.toByteArray()), Imgcodecs.IMREAD_UNCHANGED)
-    }
-
-    Mat gray(Mat source) {
-        this.loadOpenCV()
-        Mat destination = new Mat(source.height(), source.width(), CvType.CV_8UC1)
-        Imgproc.cvtColor(source, destination, Imgproc.COLOR_RGB2GRAY)
-        return destination
-    }
-
-    Mat bwi(Mat source, double thresh = 177, double maxval = 255) {
-        Mat destination = new Mat(source.height(), source.width(), CvType.CV_8UC1)
-        Imgproc.threshold(source, destination, thresh, maxval, Imgproc.THRESH_BINARY_INV)
-        return destination
-    }
-
-    Mat bw(Mat source, double thresh = 177, double maxval = 255) {
-        Mat destination = new Mat(source.height(), source.width(), CvType.CV_8UC1)
-        Imgproc.threshold(source, destination, thresh, maxval, Imgproc.THRESH_BINARY)
-        return destination
-    }
-
-    BufferedImage mat2BufferedImage(Mat matrix) throws IOException {
-        this.loadOpenCV()
-        MatOfByte mob = new MatOfByte()
-        Imgcodecs.imencode(".jpg", matrix, mob)
-        return ImageIO.read(new ByteArrayInputStream(mob.toArray()))
     }
 
 }

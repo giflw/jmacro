@@ -4,6 +4,7 @@ import com.itquasar.multiverse.jmacro.commands.base.commands.ConfigurationComman
 import com.itquasar.multiverse.jmacro.commands.base.commands.ConsoleCommand;
 import com.itquasar.multiverse.jmacro.commands.base.commands.CredentialsCommand;
 import com.itquasar.multiverse.jmacro.core.WrappingCommand;
+import com.itquasar.multiverse.jmacro.core.exception.ExitException;
 import com.itquasar.multiverse.jmacro.core.script.Metadata;
 import com.itquasar.multiverse.jmacro.core.script.Script;
 import com.itquasar.multiverse.jmacro.core.script.ScriptResult;
@@ -17,6 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.stream.IntStream;
 
 import static picocli.CommandLine.*;
 import static picocli.CommandLine.Model.CommandSpec;
@@ -98,19 +100,35 @@ public class Shell implements Callable<CliResult> {
                 ConsoleCommand console = (ConsoleCommand) scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE).get("console");
                 Logger logger = ((WrappingCommand) scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE).get("logger")).getLogger();
 
+                StringBuilder block = new StringBuilder();
+                int opens = 0;
+                String tab = "....";
                 while (run) {
-                    String read = null;
+                    String line = null;
                     try {
-                        read = console.read();
-                        if (read != null) {
-                            if (read.trim().equals("exit()")) {
-                                run = false;
-                            } else {
-                                scriptEngine.eval(read);
+                        StringBuilder tabs = new StringBuilder();
+                        IntStream.range(0, opens).forEach(it -> tabs.append(tab));
+                        line = console.read(tabs.toString() + "$");
+                        if (line.trim().equals("exit()")) {
+                            run = false;
+                        } else {
+                            block.append(line).append("\n");
+                            if (line.matches(".*[({\\[]\\s*")) {
+                                opens++;
+                            } else if (line.matches(".*[)}\\]]\\s*")) {
+                                opens--;
+                            }
+                            if (opens == 0) {
+                                String script = block.toString();
+                                block = new StringBuilder();
+                                scriptEngine.eval(script, scriptEngine.getContext());
                             }
                         }
+                    } catch (ExitException e) {
+                        logger.info("Exiting");
+                        break;
                     } catch (ScriptException e) {
-                        logger.error(read, e);
+                        logger.error(block, e);
                     }
                 }
             }

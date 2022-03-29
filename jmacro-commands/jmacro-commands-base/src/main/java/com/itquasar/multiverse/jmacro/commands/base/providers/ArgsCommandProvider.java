@@ -47,11 +47,18 @@ public class ArgsCommandProvider implements CommandProvider<ArgsCommandProvider.
             this.setArgs((List<String>) bindings.get(ARGV));
         }
 
-        synchronized private void setArgs(List<String> args) {
+        synchronized private void setArgs(List<String> argsOrig) {
             if (this.args == null) {
-                args = new ArrayList<>(args);
-                args.set(0, SCRIPT_LOCATION  + "=" + args.get(0));
+                var args = new ArrayList<String>();
+                args.addAll(argsOrig);
+                String scriptLocation= SCRIPT_LOCATION  + "=" + (args.size() > 0 ? args.get(0) : "");
+                if (args.size() > 0) {
+                    args.set(0, scriptLocation);
+                } else {
+                    args.add(scriptLocation);
+                }
                 this.args = Collections.unmodifiableList(args);
+
                 Map<String, Object> argsMap = new LinkedHashMap<>();
                 this.args.forEach(arg -> {
                     String key = cleanKey(arg);
