@@ -60,6 +60,20 @@ public class Update implements Callable<CliResult>, Constants, KeyFunctions {
 
     @Override
     public CliResult call() throws Exception {
+        if (this.askLogin) {
+            var providedLogin = this.login;
+            this.login = System.console().readLine("Login [%s]: ", providedLogin);
+            if (providedLogin != null && this.login.isEmpty()) {
+                this.login = providedLogin;
+            }
+        }
+        if (this.askPassword) {
+            this.password = new String(System.console().readPassword("Password: "));
+        }
+        if (this.login != null || this.password != null) {
+            this.setAuthenticator();
+        }
+
         for (Map.Entry<URI, Path> entry : apps.entrySet()) {
             URI baseUri = entry.getKey();
             Path basePath = entry.getValue();
@@ -84,20 +98,6 @@ public class Update implements Callable<CliResult>, Constants, KeyFunctions {
         LOGGER.info("Configuring update for:");
         LOGGER.info("    Base path: " + basePath);
         LOGGER.info("    Base uri: " + baseUri);
-
-        if (this.askLogin) {
-            var providedLogin = this.login;
-            this.login = System.console().readLine("Login [%s]: ", providedLogin);
-            if (providedLogin != null && this.login.isEmpty()) {
-                this.login = providedLogin;
-            }
-        }
-        if (this.askPassword) {
-            this.password = new String(System.console().readPassword("Password: "));
-        }
-        if (this.login != null || this.password != null) {
-            this.setAuthenticator();
-        }
 
         PublicKey publicKey = null;
         if (this.publicKeyFile != null) {
