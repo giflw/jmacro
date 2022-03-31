@@ -82,9 +82,8 @@ public class Prepare implements Callable<CliResult>, Constants, KeyFunctions {
             builder.signer(readPrivateKey(privateKeyFile, keyAlgorithm));
         }
 
-        builder.property(APP_NAME, System.getProperty(APP_NAME));
         builder.property(BASE_URI, baseUri.toString());
-        builder.property(BASE_PATH, "/base/path");
+        builder.property(BASE_PATH, "");
         builder.dynamicProperty(BASE_PATH, basePath.toString());
         this.properties.forEach((key, value) -> builder.property(key, value));
 

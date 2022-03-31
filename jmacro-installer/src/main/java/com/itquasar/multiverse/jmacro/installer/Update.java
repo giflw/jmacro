@@ -1,6 +1,9 @@
 package com.itquasar.multiverse.jmacro.installer;
 
-import org.update4j.*;
+import org.update4j.Archive;
+import org.update4j.Configuration;
+import org.update4j.UpdateOptions;
+import org.update4j.UpdateResult;
 import org.update4j.service.DefaultUpdateHandler;
 
 import java.io.BufferedReader;
@@ -13,7 +16,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.security.PublicKey;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
@@ -93,8 +95,6 @@ public class Update implements Callable<CliResult>, Constants, KeyFunctions {
     }
 
     private void update(URI baseUri, Path basePath) throws Exception {
-        baseUri = baseUri.normalize();
-        basePath = basePath.normalize();
         LOGGER.info("Configuring update for:");
         LOGGER.info("    Base path: " + basePath);
         LOGGER.info("    Base uri: " + baseUri);
@@ -140,9 +140,6 @@ public class Update implements Callable<CliResult>, Constants, KeyFunctions {
                 configuration = Configuration.read(reader, dynamicProperties);
             }
         }
-
-        List<Property> appName = configuration.getProperties(APP_NAME);
-        appName.forEach(it -> System.out.println(it.getKey() + ": " + it.getValue()));
 
         UpdateResult updateResult = configuration.update(archive);
 
