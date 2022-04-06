@@ -178,6 +178,8 @@ public final class EngineImpl implements Engine, Constants {
             commandTypes.add(command.getClass());
         }
 
+        commands.forEach(command -> command.allCommandsLoaded());
+
         List<String> argsFinal = normalExecution ? args : List.of(script.getLocation().toString(), INCLUDED);
         scriptLogger.warn("Script args: " + argsFinal);
         engineScope.put(ARGV, argsFinal);

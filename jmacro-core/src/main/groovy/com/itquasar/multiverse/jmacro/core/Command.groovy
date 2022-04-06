@@ -48,6 +48,11 @@ abstract class Command implements Constants {
         Objects.requireNonNull(this.logger, "Logger must be not null")
     }
 
+    // FIXME find better name
+    void allCommandsLoaded() {
+        // called after registration and before allCommandsRegistered hook
+    }
+
     void allCommandsRegistered() {
         // called after command is registered
     }

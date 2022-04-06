@@ -7,15 +7,20 @@ import com.jacob.activeX.ActiveXComponent
 import com.jacob.com.ComThread
 import com.jacob.com.LibraryLoader
 import com.jacob.com.Variant
+import groovy.transform.CompileDynamic
 
 import javax.script.ScriptEngine
+import java.util.concurrent.atomic.AtomicBoolean
 
 class COMCommand extends Command implements AutoCloseable {
 
     @Lazy
     static final Variant NO_PARAM = { new Variant().putNoParam() }()
 
+    private final AtomicBoolean started = new AtomicBoolean(false)
+
     static enum Application {
+        ACCESS('Access.Application'),
         EXCEL('Excel.Application'),
         OUTLOOK('Outlook.Application'),
         POWERPOINT('PowerPoint.Application'),
@@ -28,11 +33,23 @@ class COMCommand extends Command implements AutoCloseable {
         }
     }
 
-    def start(Application application, Closure closure = null) {
+    @CompileDynamic
+    @Override
+    void allCommandsLoaded() {
+        Application.values().each {
+            bindings.constants.put(it.name(), it)
+        }
+    }
+
+    def call(Application application, Closure closure = null) {
+        if (started.compareAndSet(false, true)) {
+            ComThread.startMainSTA()
+        }
         if (!ComThread.haveSTA) {
             ComThread.InitSTA()
         }
         COMWrapper wrapper = new COMWrapper(
+            this.bindings,
             new ActiveXComponent(application.activeXName) // Instance of application object created.
         )
         if (closure != null) {
@@ -55,10 +72,9 @@ class COMCommand extends Command implements AutoCloseable {
         if (ComThread.haveSTA) {
             ComThread.Release()
         }
-    }
-
-    def call(Object) {
-        throw new UnsupportedOperationException("NOT IMPLEMENTED YET!")
+        if (started.compareAndSet(true, false)) {
+            ComThread.quitMainSTA()
+        }
     }
 }
 
