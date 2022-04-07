@@ -101,4 +101,155 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>generate-com-enums</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>generate.com.enums</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+
+                    <plugin>
+                        <groupId>org.codehaus.gmavenplus</groupId>
+                        <artifactId>gmavenplus-plugin</artifactId>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.apache.groovy</groupId>
+                                <artifactId>groovy-json</artifactId>
+                                <version>${groovy.version}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.jsoup</groupId>
+                                <artifactId>jsoup</artifactId>
+                                <version>1.14.3</version>
+                            </dependency>
+                        </dependencies>
+                        <executions>
+                            <execution>
+                                <id>vba-enums</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>execute</goal>
+                                </goals>
+                                <configuration>
+                                    <scripts>
+                                        <script><![CDATA[
+                                        import groovy.json.JsonSlurper
+                                        import org.jsoup.Jsoup
+                                        import java.nio.file.Paths
+
+                                        record EnumValue(String name, long value, String description){}
+
+                                        System.setProperty("java.net.useSystemProxies", "true");
+                                        def toc = "https://docs.microsoft.com/en-us/office/vba/api/toc.json".toURL().text
+                                        toc = new JsonSlurper().parseText(toc)
+
+                                        def apps = ['Access', 'Excel', 'Outlook', 'PowerPoint', 'Project', 'Publisher', 'Visio', 'Word']
+                                        toc.items.first().children.each { app ->
+                                            def appName = app.toc_title
+                                            if (apps.contains(appName)) {
+                                                println '*' * 80
+                                                println '*' * 80
+                                                println appName
+                                                println '*' * 80
+
+                                                def packageName = "com.itquasar.multiverse.jmacro.commands.datax.commands.com.enums.${appName.toLowerCase()}"
+                                                def genSrcDirPath = Paths.get(project.build.sourceDirectory)
+                                                packageName.split('\\.').each {
+                                                    genSrcDirPath = genSrcDirPath.resolve(it)
+                                                }
+                                                println genSrcDirPath
+                                                // create target directory
+                                                genSrcDirPath.toFile().mkdirs()
+
+                                                app.children
+                                                    .find { it.toc_title == 'Object model' }.children
+                                                    .find { it.toc_title == 'Enumerations' }.children
+                                                    .each { enumeration ->
+                                                        println "${enumeration.toc_title} : ${enumeration.href}"
+                                                        def enumUrl = "https://docs.microsoft.com/en-us/office/vba/api/${enumeration.href}"
+                                                        def enumInfo = Jsoup.connect(enumUrl).get()
+                                                        def description = enumInfo.select('.content > p').first()?.text()?.trim()
+                                                        if (description.startsWith('Have questions or feedback about')) {
+                                                            return
+                                                        }
+                                                        println "     $description"
+                                                        def table = enumInfo.select('.content table').first().select("tr").tail()
+                                                        table = table.collect { row ->
+                                                            def cels = row.select("td")
+                                                            def enumKeyName = cels[0].text().trim().split(' ').first()
+                                                            println "    $enumKeyName"
+                                                            if (enumKeyName) {
+                                                                String sValue = cels[1].text().trim().split(' ').first()
+                                                                int sBase = 10
+                                                                if (sValue.startsWith('&H')) {
+                                                                    sValue = sValue.substring(2)
+                                                                    sBase = 16
+                                                                }
+                                                                return new EnumValue(enumKeyName, Long.parseLong(sValue, sBase) , cels[2]?.text() ?: 'No description provided')
+                                                            } else {
+                                                                return null
+                                                            }
+                                                        }.findAll { it != null }
+
+                                                        def values = table.collect {
+                                                            return """
+                                                                /**@ ${it.description()} */
+                                                                ${it.name()}(${it.value()}),""".stripIndent()
+                                                        }
+
+                                                        def enumSource = """
+                                                            package ${packageName};
+
+                                                            import com.itquasar.multiverse.jmacro.commands.datax.commands.com.enums.COMEnum;
+                                                            import com.jacob.com.Variant;
+
+                                                            /**@
+                                                              ${description}
+
+                                                              {@see <a href="${enumUrl}">${enumUrl}</a>}
+                                                            */
+                                                            public enum ${enumeration.toc_title} implements COMEnum {
+                                                                %s;
+
+                                                                private final long value;
+
+                                                                ${enumeration.toc_title}(long value) {
+                                                                    this.value = value;
+                                                                }
+
+                                                                @Override
+                                                                public Variant toVariant() {
+                                                                    return new Variant(this.value);
+                                                                }
+
+                                                                @Override
+                                                                public long getValue() {
+                                                                    return this.value;
+                                                                }
+                                                            }
+                                                        """.stripIndent().formatted(
+                                                            values.collect { it.split("\n").join("\n    ") }.join("    ").replaceAll('.$', '')
+                                                        ).trim() + '\n'
+                                                        genSrcDirPath.resolve(enumeration.toc_title + '.java').toFile().write(enumSource)
+                                                    }
+                                                println '*' * 80
+                                            }
+                                        }
+                                        ]]></script>
+                                    </scripts>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 </project>
