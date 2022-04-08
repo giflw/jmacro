@@ -1,30 +1,32 @@
 package com.itquasar.multiverse.jmacro.commands.datax.commands.com
 
+import com.itquasar.multiverse.jmacro.commands.datax.commands.COMCommand.Application
+import com.itquasar.multiverse.jmacro.commands.datax.commands.com.enums.COMEnum
 import com.itquasar.multiverse.jmacro.core.Command
 import com.jacob.com.ComThread
 import com.jacob.com.Dispatch
 import com.jacob.com.Variant
-import com.jacob.com.VariantUtilities
 import groovy.transform.CompileDynamic
 
 import javax.script.Bindings
-import java.util.concurrent.Callable
 
 class COMWrapper implements AutoCloseable {
 
-    private def context
-    private Callable closeCallback
-    private Bindings bindings
+    private final Application application
+    private final def context
+    private final Bindings bindings
+    private final Map<String, Long> enums
 
     // FIXME Refactor to factory for Variant and Dispatch
-    COMWrapper(Bindings bindings, context = null, Callable closeCallback = null) {
+    COMWrapper(Application application, Map<String, Long> enums, Bindings bindings, context = null) {
+        this.application = application
+        this.enums = enums
         this.bindings = bindings
         if (Variant.isInstance(context)) {
             Variant variant = (Variant) context
             context = variant.getvt() == Variant.VariantDispatch ? variant.toDispatch() : variant
         }
         this.context = context
-        this.closeCallback = closeCallback
     }
 
     def call(Closure closure) {
@@ -45,15 +47,18 @@ class COMWrapper implements AutoCloseable {
                 return value
             }
             return new COMWrapper(
+                this.application,
+                this.enums,
                 this.bindings,
-                Dispatch.call(
-                    object,
-                    name,
-                    *(args.collect {
-                        transform(it)
-                    })
-                )
+                Dispatch.call(object, name, *(args.collect { transform(it) }))
             )
+        }
+    }
+
+    def enumeration(String name) {
+        Class<Enum<COMEnum>> enumClass = Class.forName("${this.class.packageName}.enums.${application.name().toLowerCase()}.${name}")
+        enumClass.invokeMethod("values", null).each { COMEnum it ->
+            this.enums.put(it.name(), it.value)
         }
     }
 
@@ -64,7 +69,10 @@ class COMWrapper implements AutoCloseable {
             if (this.bindings.containsKey(name)) {
                 return this.bindings.get(name)
             }
-            return new COMWrapper(this.bindings, Dispatch.get((Dispatch) context, name))
+            if (this.enums.containsKey(name)) {
+                return this.enums.get(name)
+            }
+            return new COMWrapper(this.application, this.enums, this.bindings, Dispatch.get((Dispatch) context, name))
         }
     }
 

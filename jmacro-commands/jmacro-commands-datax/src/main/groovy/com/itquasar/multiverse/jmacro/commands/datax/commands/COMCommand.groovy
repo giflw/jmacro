@@ -1,8 +1,10 @@
 package com.itquasar.multiverse.jmacro.commands.datax.commands
 
+
 import com.itquasar.multiverse.jmacro.commands.datax.commands.com.COMWrapper
 import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.JMacroCore
+import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import com.jacob.activeX.ActiveXComponent
 import com.jacob.com.ComThread
 import com.jacob.com.LibraryLoader
@@ -11,6 +13,7 @@ import groovy.transform.CompileDynamic
 
 import javax.script.ScriptEngine
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.stream.Collectors
 
 class COMCommand extends Command implements AutoCloseable {
 
@@ -24,11 +27,14 @@ class COMCommand extends Command implements AutoCloseable {
         EXCEL('Excel.Application'),
         OUTLOOK('Outlook.Application'),
         POWERPOINT('PowerPoint.Application'),
+        PROJECT('Project.Application'),
+        PUBLISHER('Publisher.Application'),
+        VISIO('Visio.Application'),
         WORD('Word.Application');
 
         private final String activeXName
 
-        private Application(String activeXName) {
+        Application(String activeXName) {
             this.activeXName = activeXName
         }
     }
@@ -49,6 +55,8 @@ class COMCommand extends Command implements AutoCloseable {
             ComThread.InitSTA()
         }
         COMWrapper wrapper = new COMWrapper(
+            application,
+            [:],
             this.bindings,
             new ActiveXComponent(application.activeXName) // Instance of application object created.
         )
