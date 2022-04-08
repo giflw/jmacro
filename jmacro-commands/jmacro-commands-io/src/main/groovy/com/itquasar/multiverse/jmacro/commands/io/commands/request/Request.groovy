@@ -10,11 +10,23 @@ import org.apache.hc.client5.http.fluent.Content
 import org.apache.hc.client5.http.fluent.Request as HTTPFluentRequest
 import org.apache.hc.client5.http.fluent.Response as HTTPFluentResponse
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder
 import org.apache.hc.client5.http.impl.classic.HttpClients
+import org.apache.hc.client5.http.impl.io.BasicHttpClientConnectionManager
+import org.apache.hc.client5.http.socket.ConnectionSocketFactory
+import org.apache.hc.client5.http.socket.PlainConnectionSocketFactory
+import org.apache.hc.client5.http.ssl.NoopHostnameVerifier
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory
 import org.apache.hc.core5.http.HttpEntity
+import org.apache.hc.core5.http.HttpHost
 import org.apache.hc.core5.http.HttpResponse
 import org.apache.hc.core5.http.NoHttpResponseException
+import org.apache.hc.core5.http.config.Registry
+import org.apache.hc.core5.http.config.RegistryBuilder
+import org.apache.hc.core5.ssl.SSLContexts
+import org.apache.hc.core5.ssl.TrustStrategy
 
+import javax.net.ssl.SSLContext
 import javax.script.Bindings
 import java.nio.charset.StandardCharsets
 
@@ -36,6 +48,8 @@ class Request implements Constants {
 
     private String method
     private String url
+    private String proxy
+    private boolean ignoreSSL = false
     private Map<String, String> headers = new LinkedHashMap<>()
     private Body body = null
     private HTTPFluentRequest httpRequest
@@ -70,6 +84,14 @@ class Request implements Constants {
             Command.raise(bindings, 'Request not executed yet')
         }
         return response
+    }
+
+    void proxy(String proxy) {
+        this.proxy = proxy
+    }
+
+    void ignoreSSL() {
+        this.ignoreSSL = true
     }
 
     /**
@@ -134,7 +156,6 @@ class Request implements Constants {
     Request prepare() {
         if (!this.prepared) {
             this.prepared = true
-
             if (httpRequest) {
                 this.entity = body.entity
                 if (entity) {
@@ -181,9 +202,30 @@ class Request implements Constants {
 
         def credentials = this.bindings.get('credentials') as CredentialsProvider
         Command.log(bindings, WARNING, "HTTP Credentials: $credentials")
-        CloseableHttpClient client = HttpClients.custom()
+
+        HttpClientBuilder clientBuilder = HttpClients.custom()
+
+        if (ignoreSSL) {
+            TrustStrategy acceptingTrustStrategy = (cert, authType) -> true
+            SSLContext sslContext = SSLContexts.custom().loadTrustMaterial(null, acceptingTrustStrategy).build()
+            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE)
+
+            Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory> create()
+                .register("https", sslsf)
+                .register("http", new PlainConnectionSocketFactory())
+                .build()
+            BasicHttpClientConnectionManager connectionManager = new BasicHttpClientConnectionManager(socketFactoryRegistry)
+            clientBuilder.setConnectionManager(connectionManager)
+        }
+
+        if (this.proxy) {
+            clientBuilder.setProxy(HttpHost.create(this.proxy))
+        }
+
+        CloseableHttpClient client = clientBuilder
             .setDefaultCredentialsProvider(credentials)
             .build()
+
         HTTPFluentResponse fluentResponse = httpRequest.execute(client)
         Tuple tuple = fluentResponse.handleResponse(new ResponseAndContentHttpresponseHandler()) as Tuple
 
