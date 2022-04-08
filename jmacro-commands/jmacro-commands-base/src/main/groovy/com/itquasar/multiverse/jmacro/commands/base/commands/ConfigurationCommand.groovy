@@ -4,12 +4,13 @@ import com.itquasar.multiverse.jmacro.core.CallableCommand
 import com.itquasar.multiverse.jmacro.core.Env
 import com.itquasar.multiverse.jmacro.core.JMacroCore
 import com.itquasar.multiverse.jmacro.core.command.Doc
+import com.itquasar.multiverse.jmacro.core.interfaces.ToMap
 import groovy.transform.CompileDynamic
 
 import javax.script.ScriptEngine
 
 @Doc("Hold script engine configuration, shared on `include`.")
-class ConfigurationCommand extends CallableCommand {
+class ConfigurationCommand extends CallableCommand implements ToMap {
 
     @Doc("Hold script context configurations.")
     private ConfigObject configs = new ConfigObject()
@@ -22,6 +23,11 @@ class ConfigurationCommand extends CallableCommand {
     }
 
     ConfigObject getConfigs() {
+        return configs
+    }
+
+    @Override
+    <A, B> Map<A, B> toMap() {
         return configs
     }
 

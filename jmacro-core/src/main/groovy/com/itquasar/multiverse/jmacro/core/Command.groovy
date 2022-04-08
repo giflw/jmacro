@@ -105,6 +105,7 @@ abstract class Command implements Constants {
 
     @CompileDynamic
     static propertyMissingOn(def target, String name) {
+        // FIXME is there a way to check if value exists or is undefined?
         return Try.of({ target."$name" })
             .getOrElseThrow({ it -> new JMacroException("Property missing (get) redirection error: $name", it) })
     }

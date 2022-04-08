@@ -3,6 +3,7 @@ package com.itquasar.multiverse.jmacro.commands.base.commands
 import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.JMacroCore
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
+import com.itquasar.multiverse.jmacro.core.interfaces.ToMap
 import com.kstruct.gethostname4j.Hostname
 import groovy.transform.ToString
 import org.apache.hc.client5.http.auth.AuthScope
@@ -15,7 +16,7 @@ import org.apache.hc.core5.http.protocol.HttpContext
 import javax.script.ScriptEngine
 
 @ToString(includePackage = false, includeFields = true, includeNames = true, includes = ['login', 'impersonate', 'hostname', 'domain'])
-class CredentialsCommand extends Command implements CredentialsProvider {
+class CredentialsCommand extends Command implements CredentialsProvider, ToMap {
 
     String login
     String password
@@ -93,4 +94,8 @@ class CredentialsCommand extends Command implements CredentialsProvider {
         return new UsernamePasswordCredentials(login, password.toCharArray())
     }
 
+    @Override
+    <A, B> Map<A, B> toMap() {
+       this.properties
+    }
 }

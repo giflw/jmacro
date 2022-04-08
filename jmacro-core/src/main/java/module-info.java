@@ -33,4 +33,5 @@ module jmacro.core {
 
     opens com.itquasar.multiverse.jmacro.core.configuration to org.yaml.snakeyaml;
     exports com.itquasar.multiverse.jmacro.core.repository;
+    exports com.itquasar.multiverse.jmacro.core.interfaces;
 }

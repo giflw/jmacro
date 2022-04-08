@@ -13,6 +13,7 @@ module jmacro.commands.datax {
     requires java.scripting;
 
     requires jmacro.core;
+    requires java.naming;
 
     uses com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 

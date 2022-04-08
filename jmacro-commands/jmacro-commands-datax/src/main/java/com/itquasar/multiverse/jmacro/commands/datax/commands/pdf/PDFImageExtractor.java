@@ -55,14 +55,7 @@ public class PDFImageExtractor {
                 if (pdxObject instanceof PDImageXObject) {
                     PDImageXObject image = (PDImageXObject) pdxObject;
                     BufferedImage bImage = image.getImage();
-                    // File
-//                    String randomName = UUID.randomUUID().toString();
-//                    File outputFile = new File("path/to/dirname",randomName + ".png");
-//
-//                    // Write image to file
-//                    ImageIO.write(bImage, "PNG", outputFile);
                     images.add(bImage);
-//                    System.out.println("================ imagefound: " + images.size());
                 } else if (pdxObject instanceof PDFormXObject) {
                     PDFormXObject form = (PDFormXObject) pdxObject;
                     showForm(form);

@@ -1,3 +1,4 @@
 com.itquasar.multiverse.jmacro.commands.datax.providers.COMCommandProvider
+com.itquasar.multiverse.jmacro.commands.datax.providers.LDAPommandProvider
 com.itquasar.multiverse.jmacro.commands.datax.providers.PDFCommandProvider
 com.itquasar.multiverse.jmacro.commands.datax.providers.OCRCommandProvider
