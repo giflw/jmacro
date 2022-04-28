@@ -16,6 +16,8 @@ import org.apache.logging.log4j.Logger;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
+import java.net.URI;
+import java.net.URL;
 import java.util.*;
 
 @Doc("Allows script inclusion, of any extensions installed on the engine.")
@@ -52,7 +54,7 @@ public class IncludeCommand extends Command {
     }
 
     public void call(@Doc(name = "includeName") String includeName) {
-        new Inclusion(this, getCore(), Collections.emptyList()).from(includeName);
+        new Inclusion(this, getCore(), getScriptEngine(), Collections.emptyList()).from(includeName);
     }
 
     @Doc("include { ObjA, ObjB } from 'script_name.ext'.")
@@ -61,16 +63,19 @@ public class IncludeCommand extends Command {
         contextNames.setDelegate(contextName);
         contextNames.setResolveStrategy(Closure.DELEGATE_FIRST);
         contextNames.call();
-        return new Inclusion(this, getCore(), contextName.names);
+        return new Inclusion(this, getCore(), getScriptEngine(), contextName.names);
     }
 
-    public record Inclusion(IncludeCommand includeCommand, JMacroCore core, List contextName) {
+    public record Inclusion(IncludeCommand includeCommand, JMacroCore core, ScriptEngine scriptEngine, List contextName) {
 
         void from(String includeName) {
             Logger logger = includeCommand.getLogger();
 
             String extension = includeCommand.extension;
             includeName = includeName.endsWith(extension) ? includeName : includeName + '.' + extension;
+
+            // FIXME use path of script calling include to allow relative imports
+            // FIXME create syntax for abosulte and relaive? (like @ prefix on node?)
 
             // FIXME allow repository selection on inclusion
 
