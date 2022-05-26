@@ -39,7 +39,9 @@ public class FileScriptRepository extends ScriptRepositoryAbstract {
                                     var source = Files.readString(file.toPath());
                                     Metadata metadata = Metadata.extractMetadata(source);
                                     String path = repoPath.toPath().relativize(file.toPath()).toString().replace("\\", "/");
-                                    String location = "file://" + file.getAbsolutePath().replace("\\", "/");
+                                    URI location = URI.create(
+                                        "file://" + file.getAbsolutePath().replace("\\", "/").replaceAll(" ","%20")
+                                    );
                                     return new Script(metadata, path, location, source);
                                 } catch (IOException e) {
                                     LOGGER.error("Error reading file " + file, e);

@@ -1,3 +1,9 @@
+.project
+.settings
+
+
+
+
 appassembler/
 tools/
 .tools-cache/

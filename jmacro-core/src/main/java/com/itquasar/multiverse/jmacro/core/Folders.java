@@ -1,7 +1,10 @@
 package com.itquasar.multiverse.jmacro.core;
 
+import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 
+import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedHashMap;
@@ -27,11 +30,16 @@ public class Folders {
         return new Folders(Path.of(System.getProperty(sysPropKey)));
     }
 
+    @SneakyThrows
     private Path folder(String name) {
         if (this.paths.containsKey(name)) {
             return this.paths.get(name);
         }
-        return this.appHome.resolve(name);
+        Path path = this.appHome.resolve(name);
+        if (!Files.exists(path)){
+            Files.createDirectory(path);
+        }
+        return path;
     }
 
     /**

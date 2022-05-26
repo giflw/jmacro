@@ -43,7 +43,7 @@
         <spock-reports.version>2.1-groovy-3.0</spock-reports.version>
         <spotbugs.version>4.4.1</spotbugs.version>
 
-        <javalin.version>4.0.0</javalin.version>
+        <javalin.version>4.3.0</javalin.version>
         <httpclient5.version>5.1.1</httpclient5.version>
     </properties>
 
@@ -110,6 +110,7 @@
                     </configuration>
                     <executions>
                         <execution>
+                            <?m2e execute onConfiguration,onIncremental?>
                             <goals>
                                 <goal>addSources</goal>
                                 <goal>addTestSources</goal>
@@ -224,6 +225,7 @@
                 <version>1.0</version>
                 <executions>
                     <execution>
+                    <?m2e ignore?>
                         <id>directories</id>
                         <goals>
                             <goal>highest-basedir</goal>
@@ -306,6 +308,7 @@
                 </configuration>
                 <executions>
                     <execution>
+                    <?m2e ignore?>
                         <phase>validate</phase>
                         <goals>
                             <goal>toolchain</goal>
@@ -350,7 +353,7 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>3.1.2</version>
             </plugin>
-            <plugin>
+            <!--<plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>taglist-maven-plugin</artifactId>
                 <version>2.4</version>
@@ -379,7 +382,7 @@
                         </tagClasses>
                     </tagListOptions>
                 </configuration>
-            </plugin>
+            </plugin>-->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>

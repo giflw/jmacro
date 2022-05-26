@@ -168,6 +168,6 @@ public final class Configuration {
                 interpolation = interpolation.replace(matcher.group("var"), value);
             }
         }
-        return interpolation;
+        return interpolation.replace(" ", "%20");
     }
 }

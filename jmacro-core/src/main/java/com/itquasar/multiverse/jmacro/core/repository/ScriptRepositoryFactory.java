@@ -28,7 +28,7 @@ public interface ScriptRepositoryFactory {
             .map(URI::create)
             .map(uri -> {
                     String id = uri.getScheme();
-                    URI suburi = URI.create(uri.getSchemeSpecificPart());
+                    URI suburi = URI.create(uri.getRawSchemeSpecificPart());
                     var factory = repositoryFactoryMap.get(suburi.getScheme());
                     return factory.create(id, suburi);
                 }
