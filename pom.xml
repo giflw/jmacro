@@ -55,7 +55,6 @@
         <module>jmacro-core</module>
         <module>jmacro-commands</module>
         <module>jmacro-cli</module>
-        <module>jmacro-rest</module>
         <module>jmacro-tests</module>
     </modules>
 
