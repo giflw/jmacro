@@ -1,6 +1,5 @@
 package com.itquasar.multiverse.jmacro.cli;
 
-import com.itquasar.multiverse.jmacro.core.JMacroCore;
 import org.apache.logging.log4j.LogManager;
 import picocli.CommandLine;
 
@@ -14,22 +13,12 @@ public class Launcher {
 
         LogManager.getLogger(Launcher.class).warn("PLATFORM ARGS: " + Arrays.toString(args).replaceAll("password=[\\w]*,", "password=********"));
 
-        var core = new JMacroCore();
-        core.start();
-
         int exitCode = 0;
-        try {
-            CommandLine commandLine = new CommandLine(new Cli(core));
-
-            exitCode = commandLine.execute(args);
-
-            CliResult cliResult = commandLine.getExecutionResult();
-
-            if ((exitCode == 0) && (cliResult != null) && (cliResult.scriptResult() != null)) {
-                exitCode = cliResult.scriptResult().getExitCode();
-            }
-        } finally {
-            core.stop();
+        CommandLine commandLine = new CommandLine(new Cli());
+        exitCode = commandLine.execute(args);
+        CliResult cliResult = commandLine.getExecutionResult();
+        if ((exitCode == 0) && (cliResult != null) && (cliResult.scriptResult() != null)) {
+            exitCode = cliResult.scriptResult().getExitCode();
         }
         System.exit(exitCode);
     }

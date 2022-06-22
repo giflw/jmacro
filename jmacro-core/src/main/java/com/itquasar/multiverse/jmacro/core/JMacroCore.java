@@ -8,6 +8,7 @@ import lombok.Getter;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.nio.file.Path;
 
 public final class JMacroCore {
 
@@ -26,7 +27,11 @@ public final class JMacroCore {
     private Engine engine;
 
     public JMacroCore() {
-        this(Configuration.load());
+        this(null, null, 0);
+    }
+
+    public JMacroCore(Path configPath) {
+            this(Configuration.load(configPath));
     }
 
     public JMacroCore(Configuration configuration) {

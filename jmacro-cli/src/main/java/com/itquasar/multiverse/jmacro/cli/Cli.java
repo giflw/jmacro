@@ -4,6 +4,8 @@ import com.itquasar.multiverse.jmacro.core.JMacroCore;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.nio.file.Path;
+
 import static picocli.CommandLine.Command;
 import static picocli.CommandLine.Option;
 import static picocli.CommandLine.ScopeType.INHERIT;
@@ -18,18 +20,40 @@ import static picocli.CommandLine.ScopeType.INHERIT;
     showAtFileInUsageHelp = true,
     mixinStandardHelpOptions = true,
     subcommands = {
-        Shell.class,
-        Run.class
+        Dumb.class,
+        Run.class,
+        Shell.class
     }
 )
 public class Cli {
 
-    private final JMacroCore core;
     @Option(names = {"-d", "--debug"}, description = "Debug mode")
     private boolean debug;
 
-    public Cli(JMacroCore core) {
-        this.core = core;
+    @Option(
+        names = {"-C", "--config-path"},
+        paramLabel = "CONFIG_PATH",
+        description = "Configuration file path to be used. Can be set using JVM System Property jmacro.config or environment variable JMACRO_CONFIG"
+    )
+    private Path configPath;
+
+    private JMacroCore core;
+
+    public JMacroCore getCore() {
+        if (core == null) {
+            core = new JMacroCore(configPath);
+            core.start();
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> core.stop()));
+        }
+        return core;
     }
 
+    @Override
+    public String toString() {
+        return "Cli{" +
+            "debug=" + debug +
+            ", configPath=" + configPath +
+            ", core=" + core +
+            '}';
+    }
 }

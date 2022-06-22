@@ -6,6 +6,7 @@ import com.itquasar.multiverse.jmacro.core.repository.GlobalScriptRepository;
 import com.itquasar.multiverse.jmacro.core.repository.ScriptRepositoryFactory;
 import com.itquasar.multiverse.jmacro.core.util.RepresenterNonNull;
 import lombok.Data;
+import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -15,6 +16,8 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -84,6 +87,7 @@ public final class Configuration {
         for (String path : CONFIGURATION_PATHS) {
             InputStream inputStream = Configuration.class.getResourceAsStream(path);
             if (inputStream != null) {
+                LOGGER.warn("Configuration file found: %s".formatted(path));
                 Reader reader = new BufferedReader(new InputStreamReader(inputStream));
                 return load(reader);
             }
@@ -92,6 +96,16 @@ public final class Configuration {
         Configuration configuration = new Configuration();
         configuration.init();
         return configuration;
+    }
+
+    /**
+     * @param path Path to configuration file
+     * @return Loaded configuration
+     */
+    @SneakyThrows
+    public static Configuration load(Path path) {
+        LOGGER.warn("Configuration file in use: %s".formatted(path));
+        return load(Files.newBufferedReader(path));
     }
 
     /**
@@ -105,6 +119,7 @@ public final class Configuration {
         configuration.init();
         return configuration;
     }
+
 
     /**
      * Initializes intances objects from loaded configuration.
