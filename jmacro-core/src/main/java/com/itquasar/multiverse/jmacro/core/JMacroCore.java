@@ -31,7 +31,7 @@ public final class JMacroCore {
     }
 
     public JMacroCore(Path configPath) {
-            this(Configuration.load(configPath));
+            this(configPath != null ? Configuration.load(configPath) : Configuration.load());
     }
 
     public JMacroCore(Configuration configuration) {
