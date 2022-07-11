@@ -4,6 +4,7 @@ import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.Constants
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
+import org.apache.hc.client5.http.HttpHostConnectException
 import org.apache.hc.client5.http.HttpResponseException
 import org.apache.hc.client5.http.auth.CredentialsProvider
 import org.apache.hc.client5.http.fluent.Content
@@ -17,12 +18,10 @@ import org.apache.hc.client5.http.socket.ConnectionSocketFactory
 import org.apache.hc.client5.http.socket.PlainConnectionSocketFactory
 import org.apache.hc.client5.http.ssl.NoopHostnameVerifier
 import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory
-import org.apache.hc.core5.http.HttpEntity
-import org.apache.hc.core5.http.HttpHost
-import org.apache.hc.core5.http.HttpResponse
-import org.apache.hc.core5.http.NoHttpResponseException
+import org.apache.hc.core5.http.*
 import org.apache.hc.core5.http.config.Registry
 import org.apache.hc.core5.http.config.RegistryBuilder
+import org.apache.hc.core5.http.impl.nio.DefaultHttpResponseFactory
 import org.apache.hc.core5.ssl.SSLContexts
 import org.apache.hc.core5.ssl.TrustStrategy
 
@@ -226,15 +225,22 @@ class Request implements Constants {
             .setDefaultCredentialsProvider(credentials)
             .build()
 
-        HTTPFluentResponse fluentResponse = httpRequest.execute(client)
-        Tuple tuple = fluentResponse.handleResponse(new ResponseAndContentHttpresponseHandler()) as Tuple
+        HttpResponse httpResponse = null;
+        Content content = null;
+        try {
+            HTTPFluentResponse fluentResponse = httpRequest.execute(client)
+            Tuple tuple = fluentResponse.handleResponse(new ResponseAndContentHttpresponseHandler()) as Tuple
 
-        HttpResponse httpResponse = (HttpResponse) tuple.get(0)
-        Content content = (Content) tuple.get(1)
+            httpResponse = (HttpResponse) tuple.get(0)
+            content = (Content) tuple.get(1)
+        } catch (HttpHostConnectException ex) {
+            Command.log(bindings, ERROR, "Error requesting $method $url: ${ex?.message}")
+            Command.log(bindings, DEBUG, "Error requesting $method $url: ${ex?.message}", ex)
+            httpResponse = DefaultHttpResponseFactory.INSTANCE.newHttpResponse(520, "Web Server Returned an Unknown Error")
+            content = new Content(ex.getMessage(), ContentType.TEXT_PLAIN)
+        }
 
-        Response response = new Response("$method $url",
-            httpResponse,
-            content)
+        Response response = new Response("$method $url", httpResponse, content)
         if (httpResponse.code >= 400) {
             Command.log(bindings, ERROR, "Request returned ${httpResponse.code}: ${Response.HTTP_STATUS[httpResponse.code]}")
             def message = response?.data
