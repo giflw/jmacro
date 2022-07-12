@@ -237,7 +237,7 @@ class Request implements Constants {
             Command.log(bindings, ERROR, "Error requesting $method $url: ${ex?.message}")
             Command.log(bindings, DEBUG, "Error requesting $method $url: ${ex?.message}", ex)
             httpResponse = DefaultHttpResponseFactory.INSTANCE.newHttpResponse(520, "Web Server Returned an Unknown Error")
-            content = new Content(ex.getMessage(), ContentType.TEXT_PLAIN)
+            content = new Content(ex.getMessage().getBytes(StandardCharsets.UTF_8),  ContentType.create("text/plain", StandardCharsets.UTF_8))
         }
 
         Response response = new Response("$method $url", httpResponse, content)

@@ -1,3 +1,4 @@
 com.itquasar.multiverse.jmacro.commands.io.providers.FileCommandProvider
 com.itquasar.multiverse.jmacro.commands.io.providers.ParserCommandProvider
 com.itquasar.multiverse.jmacro.commands.io.providers.RequestCommandProvider
+com.itquasar.multiverse.jmacro.commands.io.providers.ZipCommandProvider
