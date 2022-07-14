@@ -278,7 +278,13 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
         try {
             return Keys."$name"
         } catch (Exception ex) {
-            return name
+            // FIXME ADD debug logger
+            try {
+                Command.propertyMissingOn(context, name)
+            } catch (Exception ex2) {
+                // FIXME ADD debug logger
+                return name
+            }
         }
     }
 

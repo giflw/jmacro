@@ -1,23 +1,36 @@
 package com.itquasar.multiverse.jmacro.core;
 
+import static javax.script.ScriptContext.ENGINE_SCOPE;
+import static javax.script.ScriptContext.GLOBAL_SCOPE;
+
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
+
+import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
+import javax.script.ScriptEngineManager;
+import javax.script.SimpleScriptContext;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.exception.ExitException;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.itquasar.multiverse.jmacro.core.script.Script;
 import com.itquasar.multiverse.jmacro.core.script.ScriptResult;
 import com.itquasar.multiverse.jmacro.core.script.ValueHolder;
+
 import lombok.extern.log4j.Log4j2;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import javax.script.*;
-import java.io.PrintWriter;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
-
-import static javax.script.ScriptContext.ENGINE_SCOPE;
-import static javax.script.ScriptContext.GLOBAL_SCOPE;
 
 @Log4j2
 public final class EngineImpl implements Engine, Constants {
@@ -69,7 +82,7 @@ public final class EngineImpl implements Engine, Constants {
     public EngineImpl(final JMacroCore jMacroCore) {
         this.jMacroCore = jMacroCore;
         ENGINE_MANAGER.getEngineFactories().forEach(engine -> {
-            var engineInfo = """
+            final var engineInfo = """
                 %s
                     Name: %s
                     Language: %s v %s
@@ -84,7 +97,7 @@ public final class EngineImpl implements Engine, Constants {
                 String.join(",", engine.getNames()),
                 String.join(",", engine.getMimeTypes())
             );
-            engine.getExtensions().forEach(ext -> engines.put(ext, engine));
+            engine.getExtensions().forEach(ext -> this.engines.put(ext, engine));
             LOGGER.trace(engineInfo);
         });
 
@@ -110,11 +123,11 @@ public final class EngineImpl implements Engine, Constants {
         return this.executeInternal(script, Collections.emptyList(), preExecHook, postExecHook, false);
     }
 
-    private ScriptResult executeInternal(final Script script, final List<String> args, final Consumer<ScriptEngine> preExecHook, final Consumer<ScriptEngine> postExecHook, boolean normalExecution) {
-        var extension = script.getPath().substring(script.getPath().lastIndexOf('.') + 1);
-        var engine = engines.get(extension).getScriptEngine();
+    private ScriptResult executeInternal(final Script script, final List<String> args, final Consumer<ScriptEngine> preExecHook, final Consumer<ScriptEngine> postExecHook, final boolean normalExecution) {
+        final var extension = script.getPath().substring(script.getPath().lastIndexOf('.') + 1);
+        final var engine = this.engines.get(extension).getScriptEngine();
 
-        ScriptContext context = engine.getContext();
+        var context = engine.getContext();
         if (context == null) {
             context = new SimpleScriptContext();
             engine.setContext(context);
@@ -122,20 +135,20 @@ public final class EngineImpl implements Engine, Constants {
 
         context.setWriter(new PrintWriter(System.out));
 
-        Bindings globalScope = context.getBindings(GLOBAL_SCOPE);
+        var globalScope = context.getBindings(GLOBAL_SCOPE);
         if (globalScope == null) {
             context.setBindings(engine.createBindings(), ScriptContext.GLOBAL_SCOPE);
             globalScope = context.getBindings(GLOBAL_SCOPE);
         }
 
-        Bindings engineScope = context.getBindings(ENGINE_SCOPE);
+        var engineScope = context.getBindings(ENGINE_SCOPE);
         if (engineScope == null) {
             context.setBindings(engine.createBindings(), ENGINE_SCOPE);
             engineScope = context.getBindings(ENGINE_SCOPE);
         }
 
-        int id = ID_GENERATOR.addAndGet(1);
-        Logger scriptLogger = LogManager.getLogger("ScriptEngine#" + id + "+" + script.getPath());
+        final var id = ID_GENERATOR.addAndGet(1);
+        final var scriptLogger = LogManager.getLogger("ScriptEngine#" + id + "+" + script.getPath());
 
         globalScope.put("__MAIN__", normalExecution);
         globalScope.put("id", id);
@@ -143,30 +156,30 @@ public final class EngineImpl implements Engine, Constants {
         globalScope.put("logger", scriptLogger);
         globalScope.put("#jsr223.groovy.engine.keep.globals", "weak");
 
-        var commandTypes = new ArrayList<Class>();
-        var commandProviderLoader = new SPILoader<>(CommandProvider.class);
-        var commandProviders = commandProviderLoader.load();
+        final var commandTypes = new ArrayList<Class>();
+        final var commandProviderLoader = new SPILoader<>(CommandProvider.class);
+        final var commandProviders = commandProviderLoader.load();
 
-        var commands = new ArrayList<Command>();
+        final var commands = new ArrayList<Command>();
 
         while (commandProviders.hasNext()) {
-            var commandProvider = commandProviders.next();
+            final var commandProvider = commandProviders.next();
             if (normalExecution) {
                 scriptLogger.debug("Registering command [" + commandProvider.getName() + "] from " + commandProvider.getClass());
             }
-            var command = commandProvider.getCommand(this.jMacroCore, engine);
+            final var command = commandProvider.getCommand(this.jMacroCore, engine);
             if (command == null) {
                 throw new JMacroException(this,
                     "Command provider " + commandProvider.getName() + " returned null command");
             }
-            var name = commandProvider.getName();
+            final var name = commandProvider.getName();
             if (engineScope.containsKey(name)) {
                 throw new JMacroException("Command [" + name + "] already registered for " + engineScope.get(name).getClass() + ". Register attempt from " + commandProvider.getClass());
             }
             engineScope.put(name, command);
             commands.add(command);
 
-            var scope = engineScope;
+            final var scope = engineScope;
             commandProvider.getAliases().forEach(alias -> {
                 if (scope.containsKey(alias)) {
                     scriptLogger.error("Alias [" + alias + "] for command " + name + " already registered for another command: " + scope.get(alias).getClass() + ". Register attempt from " + commandProvider.getClass());
@@ -178,18 +191,18 @@ public final class EngineImpl implements Engine, Constants {
             commandTypes.add(command.getClass());
         }
 
-        commands.forEach(command -> command.allCommandsLoaded());
+        commands.forEach(Command::allCommandsLoaded);
 
-        List<String> argsFinal = normalExecution ? args : List.of(script.getLocation().toString(), INCLUDED);
+        final var argsFinal = normalExecution ? args : List.of(script.getLocation().toString(), INCLUDED);
         scriptLogger.warn("Script args: " + argsFinal);
         engineScope.put(ARGV, argsFinal);
         engineScope.put("__SCRIPT__", script);
         engineScope.put("__METADATA__", script.getMetadata());
         engineScope.put("__CONTEXT__", engineScope);
-        var valueHolder = new ValueHolder.ObjectValueHolder();
+        final var valueHolder = new ValueHolder.ObjectValueHolder();
         engineScope.put("__RESULT__", valueHolder);
 
-        commands.forEach(command -> command.allCommandsRegistered());
+        commands.forEach(Command::allCommandsRegistered);
 
 
         if (this.languageAdaptors.containsKey(extension)) {
@@ -197,13 +210,11 @@ public final class EngineImpl implements Engine, Constants {
             this.languageAdaptors.get(extension).adapt(engine);
         }
 
-        var exitCode = new ValueHolder<>(0);
-        var evalResult = script.run(() -> {
+        final var exitCode = new ValueHolder<>(0);
+        final var evalResult = script.run(() -> {
             if (normalExecution) {
                 scriptLogger.warn(DOUBLE_SEPARATOR);
                 scriptLogger.warn(DOUBLE_SEPARATOR);
-            }
-            if (normalExecution) {
                 Arrays.stream(script.getMetadata().getBanner().split("\n")).forEach(scriptLogger::warn);
                 scriptLogger.warn(SINGLE_SEPARATOR);
                 scriptLogger.warn(SINGLE_SEPARATOR);
@@ -213,14 +224,14 @@ public final class EngineImpl implements Engine, Constants {
                 preExecHook.accept(engine);
                 evalReturn = engine.eval(script.getSource());
                 postExecHook.accept(engine);
-            } catch (Throwable exception) {
+            } catch (final Throwable exception) {
                 if (!normalExecution) {
                     throw new ExitException(ExitException.SCRIPT_ENGINE_ERROR, exception);
                 }
                 exitCode.set(ExitException.SCRIPT_ENGINE_ERROR);
-                Throwable cause = exception;
+                var cause = exception;
                 while ((cause = cause.getCause()) != null) {
-                    if (ExitException.class.isInstance(cause)) {
+                    if ((cause instanceof ExitException)) {
                         exitCode.set(((ExitException) cause).getExitCode());
                         break;
                     }
@@ -234,7 +245,7 @@ public final class EngineImpl implements Engine, Constants {
                 }
             }
 
-            var scriptExitCodeDescription = (exitCode.get() == ExitException.SCRIPT_ENGINE_ERROR)
+            final var scriptExitCodeDescription = (exitCode.get() == ExitException.SCRIPT_ENGINE_ERROR)
                 ? " (Script engine error)"
                 : " (Script exit code)";
 
@@ -257,14 +268,14 @@ public final class EngineImpl implements Engine, Constants {
         return new ScriptResult(script, exitCode.get(), valueHolder, evalResult);
     }
 
-    private void closeCommands(ScriptEngine engine) {
-        for (int scope : new int[]{ENGINE_SCOPE, GLOBAL_SCOPE}) {
+    private void closeCommands(final ScriptEngine engine) {
+        for (final int scope : new int[]{ENGINE_SCOPE, GLOBAL_SCOPE}) {
             engine.getBindings(scope).forEach((key, value) -> {
-                if (AutoCloseable.class.isInstance(value)) {
+                if ((value instanceof AutoCloseable)) {
                     try {
                         LOGGER.warn("Closing command " + key + " as it is AutoCloseable");
                         ((AutoCloseable) value).close();
-                    } catch (Exception exception) {
+                    } catch (final Exception exception) {
                         LOGGER.error("Error closing command " + key, exception);
                     }
                 }
