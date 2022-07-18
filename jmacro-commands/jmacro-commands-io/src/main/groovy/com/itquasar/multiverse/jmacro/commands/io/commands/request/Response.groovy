@@ -141,7 +141,7 @@ class Response implements InputParsers {
     }
 
     // do not read in advance, let parse be called by script
-    Response(String name, HttpResponse httpResponse, Content content) {
+    Response(String name, HttpResponse httpResponse, Content content, boolean disableParser = false) {
         this.httpResponse = httpResponse
         this.name = name
         this.statusCode = httpResponse.code
@@ -150,26 +150,30 @@ class Response implements InputParsers {
         this.charset = content?.type?.charset?.name() ?: StandardCharsets.UTF_8.name()
         this.inputStream = content.asStream()
 
-        switch (this.type) {
-            case APPLICATION_XML.mimeType:
-                this.data = this.getXml()
-                break
-            case APPLICATION_JSON.mimeType:
-                this.data = this.getJson()
-                break
-            case 'text/csv':
-                this.data = this.getCsv()
-                break
-            case TEXT_HTML.mimeType:
-                this.data = this.getHtml()
-                break
-            case TEXT_PLAIN.mimeType:
-                this.data = text
-                break
-            case APPLICATION_OCTET_STREAM.mimeType:
-            default:
-                this.data = this.inputStream
-                log.warn("Content-Type $type unknow!")
+        if(!disableParser) {
+            switch (this.type) {
+                case APPLICATION_XML.mimeType:
+                    this.data = this.getXml()
+                    break
+                case APPLICATION_JSON.mimeType:
+                    this.data = this.getJson()
+                    break
+                case 'text/csv':
+                    this.data = this.getCsv()
+                    break
+                case TEXT_HTML.mimeType:
+                    this.data = this.getHtml()
+                    break
+                case TEXT_PLAIN.mimeType:
+                    this.data = text
+                    break
+                case APPLICATION_OCTET_STREAM.mimeType:
+                default:
+                    this.data = this.inputStream
+                    log.warn("Content-Type $type unknow!")
+            }
+        } else {
+            this.data = this.inputStream
         }
     }
 

@@ -57,6 +57,7 @@ class Request implements Constants {
     private boolean prepared = false
     boolean skipExecution = false
     private boolean executed = false
+    private boolean doNotParseResponse = false
 
     Request(Bindings bindings) {
         Objects.requireNonNull(bindings, "Bindings must be not null")
@@ -91,6 +92,10 @@ class Request implements Constants {
 
     void ignoreSSL() {
         this.ignoreSSL = true
+    }
+    
+    void doNotParseResponse() {
+        this.doNotParseResponse = true
     }
 
     /**
@@ -240,7 +245,7 @@ class Request implements Constants {
             content = new Content(ex.getMessage().getBytes(StandardCharsets.UTF_8),  ContentType.create("text/plain", StandardCharsets.UTF_8))
         }
 
-        Response response = new Response("$method $url", httpResponse, content)
+        Response response = new Response("$method $url", httpResponse, content, doNotParseResponse)
         if (httpResponse.code >= 400) {
             Command.log(bindings, ERROR, "Request returned ${httpResponse.code}: ${Response.HTTP_STATUS[httpResponse.code]}")
             def message = response?.data
