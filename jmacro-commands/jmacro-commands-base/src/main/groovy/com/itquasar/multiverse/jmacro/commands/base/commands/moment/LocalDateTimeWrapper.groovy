@@ -7,9 +7,14 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.Temporal
+import java.time.temporal.TemporalAdjusters
 import java.time.temporal.TemporalAmount
 
-class LocalDateTimeWrapper {
+/**
+ * @author c101054
+ *
+ */
+class LocalDateTimeWrapper implements Comparable<LocalDateTimeWrapper> {
 
     private LocalDateTime localDateTime
 
@@ -51,6 +56,10 @@ class LocalDateTimeWrapper {
         }
     }
 
+    LocalDateTimeWrapper lastDayOfMonth() {
+        return of(this.localDateTime.with(TemporalAdjusters.lastDayOfMonth()))
+    }
+
     LocalDate date() {
         return LocalDate.from(localDateTime)
     }
@@ -80,5 +89,14 @@ class LocalDateTimeWrapper {
         }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(name)
         return formatter.format(localDateTime)
+    }
+
+    @Override
+    public String toString() {
+        return this.localDateTime.toString()
+    }
+
+    int compareTo(LocalDateTimeWrapper other) {
+        return this.localDateTime.compareTo(other.localDateTime)
     }
 }

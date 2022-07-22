@@ -30,8 +30,15 @@ class MomentCommand extends Command {
 
     @CompileDynamic
     def propertyMissing(String name) {
-        if (respondsTo(name, null)) {
+        if (this.respondsTo(name, null)) {
             return this."$name"()
+        }
+        def now = this.now()
+        if (now.hasProperty(name)) {
+            return now."$name"
+        }
+        if (now.respondsTo(name, null)) {
+            return now."$name"()
         }
         throw new JMacroException(this, "Property $name not found even as method with no arguments.")
     }
