@@ -62,7 +62,13 @@ class File implements InputParsers, Constants {
 
             if (Object[].class.isInstance(args) && ((Object[]) args).length > 0) {
                 // try using this.path and option empty array
-                for (def attrib : [new OpenOption[0], new CopyOption[0], new LinkOption[0], new FileAttribute[0], new FileAttribute[0]]) {
+                for (def attrib : [
+                            new OpenOption[0],
+                            new CopyOption[0],
+                            new LinkOption[0],
+                            new FileAttribute[0],
+                            new FileAttribute[0]
+                        ]) {
                     argsToUse = [this.path, *args, attrib]
                     method = Files.metaClass.getMetaMethod(name, argsToUse)
                     if (method) {
@@ -85,7 +91,13 @@ class File implements InputParsers, Constants {
             }
 
             // try using this.path and option empty array
-            for (def arr : [new OpenOption[0], new CopyOption[0], new LinkOption[0], new FileAttribute[0], new FileAttribute[0]]) {
+            for (def arr : [
+                        new OpenOption[0],
+                        new CopyOption[0],
+                        new LinkOption[0],
+                        new FileAttribute[0],
+                        new FileAttribute[0]
+                    ]) {
                 argsToUse = [this.path, arr]
                 method = Files.metaClass.getMetaMethod(name, argsToUse)
                 if (method) {
@@ -202,40 +214,47 @@ class File implements InputParsers, Constants {
         return xls()
     }
 
-    def xlsx(Map<String, ?> args = [drop: 0]) {
-        Command.log(scriptContext, DEBUG, "Using ${XSSFWorkbook.class} to parse input")
-        this.path = this.path ?: Path.of(this.name)
-        Workbook workbook = new XSSFWorkbook(this.path.toFile())
-        Map<String, List<List>> map = workbook.sheetIterator().collectEntries { sheet ->
-            [(sheet.sheetName): sheet.rowIterator().collect { row ->
-                row.cellIterator().collect { cell ->
-                    String type = cell.cellType.name().toLowerCase().capitalize()
-                    switch (cell.cellType) {
-                        case CellType.FORMULA:
-                            return cell.getCellFormula()
-                        case CellType.BLANK:
-                            return ''
-                        default:
-                            return cell.invokeMethod("get${type}CellValue", null)
-                    }
-                }
-            }
-            ]
-        }
-        workbook.close()
-        map = map.collectEntries {
-            [(it.key): matrixToMap(it.value.drop((int) args.drop))]
-        }
-        this.data = map.size() == 1 ? map.find { true }.value : map
+    def xlsx(Map<String, Object> args = null) {
+        this.data = xlWorkbook(XSSFWorkbook.class, args)
         return this.data
     }
 
+    def xls(Map<String, Object> args = null) {
+        this.data = xlWorkbook(HSSFWorkbook.class, args)
+        return this.data
+    }
 
-    def xls(Map<String, ?> args = [drop: 0]) {
-        Command.log(scriptContext, DEBUG, "Using ${HSSFWorkbook.class} to parse input")
+    private def xlWorkbook(Class<?> workbookHandler, Map<String, Object> args) {
+        Map<String, Object> defaults  = [drop: 0, map: true, sheet: null, firstSheetAsRoot: true, headers: [:]]
+        args = args ?: defaults
+        defaults.each { k, v ->
+            args.putIfAbsent(k, v)
+        }
         this.path = this.path ?: Path.of(this.name)
-        Workbook workbook = new HSSFWorkbook(new FileInputStream(this.path.toFile()))
-        Map<String, List<List>> map = workbook.sheetIterator().collectEntries { sheet ->
+        Command.log(scriptContext, DEBUG, "Using ${workbookHandler} to parse input with ${args}")
+
+        Workbook workbook = (Workbook) workbookHandler.newInstance(new FileInputStream(this.path.toFile()))
+        def data = extractXLData(workbook)
+        workbook.close()
+        
+        if (args.map) {
+            data = data.findAll { !it.value.isEmpty() } .collectEntries {
+                [(it.key): matrixToMap(it.value.drop((int) args.drop), (Map<String, String>) args.headers)]
+            }
+        }
+        // get given sheet by name
+        if (args.sheet != null) {
+            data = data[args.sheet]
+        } else {
+            // git first sheet if only one found
+            data = args.firstSheetAsRoot && data.size() == 1 ? data.find { true }.value : data
+        }
+
+        return data
+    }
+
+    static private Map<String, List<List>> extractXLData(Workbook workbook) {
+        return workbook.sheetIterator().collectEntries { sheet ->
             [
                 (sheet.sheetName): sheet.rowIterator().collect { row ->
                     row.cellIterator().collect { cell ->
@@ -252,22 +271,16 @@ class File implements InputParsers, Constants {
                 }
             ]
         }
-        workbook.close()
-        map = map.collectEntries {
-            [(it.key): matrixToMap(it.value.drop((int) args.drop))]
-        }
-        this.data = map.size() == 1 ? map.find { true }.value : map
-        return this.data
     }
 
-    static private List<Map<String, ?>> matrixToMap(List<List> matrix) {
+    static private List<Map<String, ?>> matrixToMap(List<List> matrix, Map<String, String> headersMap) {
         List headers = matrix.first()
         List<List> rows = matrix.tail()
         return rows.collect { row ->
             row.withIndex().collectEntries { element, Integer index ->
-                [(headers[index]): element]
+                String name = headers[index]
+                [(headersMap.getOrDefault(name, name)): element]
             }
         }
     }
-
 }
