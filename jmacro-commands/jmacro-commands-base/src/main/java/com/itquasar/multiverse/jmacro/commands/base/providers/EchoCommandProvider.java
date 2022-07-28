@@ -1,12 +1,13 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
-import com.itquasar.multiverse.jmacro.core.Command;
-import com.itquasar.multiverse.jmacro.core.JMacroCore;
-import com.itquasar.multiverse.jmacro.core.command.Doc;
-import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
+import javax.script.ScriptEngine;
+
 import org.apache.logging.log4j.Level;
 
-import javax.script.ScriptEngine;
+import com.itquasar.multiverse.jmacro.core.Command;
+import com.itquasar.multiverse.jmacro.core.JMacroCore;
+import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
+import com.itquasar.multiverse.jmacro.core.command.Doc;
 
 public class EchoCommandProvider implements CommandProvider<EchoCommandProvider.EchoCommand> {
 
@@ -26,19 +27,21 @@ public class EchoCommandProvider implements CommandProvider<EchoCommandProvider.
     }
 
     @Override
-    public EchoCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new EchoCommand(getName(), jMacroCore, scriptEngine);
+    public EchoCommand getCommand(final JMacroCore jMacroCore, final ScriptEngine scriptEngine) {
+        return new EchoCommand(this.getName(), jMacroCore, scriptEngine);
     }
 
+
+    // TODO add option to skip new line
     @Doc("Echoes given argument to script output")
     public static class EchoCommand extends Command {
 
-        public EchoCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+        public EchoCommand(final String name, final JMacroCore core, final ScriptEngine scriptEngine) {
             super(name, core, scriptEngine);
         }
 
         @Doc("Make this object behaves as function on groovy environment.")
-        void call(@Doc("Object to print to script output") Object arg) {
+        void call(@Doc("Object to print to script output") final Object arg) {
             this.getLogger().log(ECHO, arg);
         }
 

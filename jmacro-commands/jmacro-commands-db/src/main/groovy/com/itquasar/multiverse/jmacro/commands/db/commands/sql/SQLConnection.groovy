@@ -21,6 +21,8 @@ public class SQLConnection implements AutoCloseable, Constants {
         this.sqlCommand = sqlCommand
     }
 
+    // TODO add support to receive another Sql instance 
+	// FIXME return this
     Sql connect(final String url, final String user = null, final String password = null) {
         Command.log(this.sqlCommand.bindings, WARNING, "Connecting to ${url} as ${user}")
         this.sql = Sql.newInstance(url, user, password)
