@@ -127,9 +127,9 @@ class ConsoleCommand extends Command implements Constants {
     @Doc("Read password from console.")
     String password(
         @Doc(name = "message", value = "Message to show.") String message,
-        @Doc(name = "defaultValue", value = "Default value.") String defaultValue = "",
+        @Doc(name = "fallback", value = "Default value.") String fallback = "",
         @Doc(name = "nonInteractive", value = "Non interactive flag.") boolean nonInteractive = false) {
-        return read(message, defaultValue, null, true)
+        return read(message, fallback, null, true)
     }
 
     @CompileDynamic

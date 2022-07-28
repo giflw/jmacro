@@ -20,10 +20,11 @@
 
     <modules>
         <module>jmacro-commands-base</module>
-        <module>jmacro-commands-io</module>
         <module>jmacro-commands-browser</module>
-        <module>jmacro-commands-terminal</module>
         <module>jmacro-commands-datax</module>
+        <module>jmacro-commands-db</module>
+        <module>jmacro-commands-io</module>
         <module>jmacro-commands-server</module>
+        <module>jmacro-commands-terminal</module>
     </modules>
 </project>

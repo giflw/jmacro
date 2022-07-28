@@ -20,7 +20,7 @@ class CredentialsCommand extends Command implements CredentialsProvider, ToMap {
 
     String login
     String password
-    String hostname = Hostname.getHostname()
+    String hostname
     String domain
     String impersonate
     String token
@@ -28,16 +28,35 @@ class CredentialsCommand extends Command implements CredentialsProvider, ToMap {
 
     CredentialsCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
+        this.reset()
     }
 
-    void check() {
+    CredentialsCommand check() {
         if (!exists()) {
             throw new JMacroException(this, 'Credentials not informed!')
         }
+        return this
     }
 
     boolean exists() {
         return (login && password) || token || (login && apiKey)
+    }
+
+    CredentialsCommand clear() {
+        login = null
+        password = null
+        hostname = null
+        domain = null
+        impersonate = null
+        token = null
+        apiKey = null
+        return this
+    }
+
+    CredentialsCommand reset() {
+        this.clear()
+        hostname = Hostname.getHostname()
+        return this
     }
 
     def call(Closure closure) {
@@ -45,31 +64,52 @@ class CredentialsCommand extends Command implements CredentialsProvider, ToMap {
     }
 
     void fill(CredentialsCommand credentials) {
-        login = credentials.login
-        password = credentials.password
-        hostname = credentials.hostname ?: this.hostname
-        domain = credentials.domain
-        impersonate = credentials.impersonate
-        token = credentials.token
-        apiKey = credentials.apiKey
+        this.fill(credentials.toMap())
     }
 
     void fill(Map<String, ?> values) {
         login = values.login
         password = values.password
-        hostname = values.hostname ?: this.hostname
+        hostname = values.hostname
         domain = values.domain
         impersonate = values.impersonate
         token = values.token
         apiKey = values.apiKey
+    }
+    
+    CredentialsCommand update(CredentialsCommand credentials) {
+        return this.fill(credentials.toMap())
+    }
+
+    CredentialsCommand update(Map<String, ?> values) {
+        login = values.login ?: this.login
+        password = values.password ?: this.password
+        hostname = values.hostname ?: this.hostname
+        domain = values.domain ?: this.domain
+        impersonate = values.impersonate ?: this.impersonate
+        token = values.token ?: this.token
+        apiKey = values.apiKey ?: this.apiKey
+        return this
+    }
+    
+    // FIXME extract credentials holder to allow use of multiple instances
+    public CredentialsCommand of(String login, String password = null) {
+        def cred = new CredentialsCommand("credentials", core, scriptEngine)
+        return cred.update(login: login, password: password)
     }
 
     String getPassword() {
         return password
     }
 
-    void setPassword(char[] password) {
-        this.password = String.valueOf(password)
+    CredentialsCommand setPassword(char[] password) {
+        this.setPassword(password != null ? String.valueOf(password) : null)
+        return this
+    }
+
+    CredentialsCommand setPassword(String password) {
+        this.password = password
+        return this
     }
 
     String getFullUser() {
@@ -96,6 +136,6 @@ class CredentialsCommand extends Command implements CredentialsProvider, ToMap {
 
     @Override
     <A, B> Map<A, B> toMap() {
-       this.properties
+        this.properties
     }
 }
