@@ -85,4 +85,8 @@ public class SQLConnection implements AutoCloseable, Constants {
         }
         return Command.methodMissingOn(this.sqlCommand.bindings, name, args)
     }
+    
+    def propertyMissing(String name) {
+        return Command.propertyMissingOnOrChainToContext(this.sqlCommand, this.sql, name)
+    }
 }

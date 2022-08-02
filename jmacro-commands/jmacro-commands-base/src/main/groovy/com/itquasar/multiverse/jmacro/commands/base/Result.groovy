@@ -56,6 +56,8 @@ class Result {
         return this."$name"
     }
 
+	// FIXME maybe change to except or use both????
+	// if we use only except we may cause python keyword collision
     Result capture(Closure closure) {
         return capture(Throwable.class, closure)
     }
