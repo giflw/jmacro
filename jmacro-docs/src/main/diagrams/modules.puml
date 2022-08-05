@@ -1,0 +1,15 @@
+@startuml
+!theme crt-green
+package jmacro{
+    [cli]
+    package commands{
+        [base]
+        [browser]
+        [datax]
+        [io]
+        [terminal]
+    }
+    [core]
+    [installer]
+}
+@enduml
