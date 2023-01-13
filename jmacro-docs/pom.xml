@@ -47,7 +47,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <scripts>
-                                <script>./src/main/groovy/modules.groovy</script>
+                                <script>${project.basedir}/src/main/groovy/modules.groovy</script>
                             </scripts>
                         </configuration>
                     </execution>
