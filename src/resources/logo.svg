@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="512"
+   height="512"
+   viewBox="0 0 135.46667 135.46667"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   sodipodi:docname="logo.svg"
+   inkscape:export-filename="logo-008.png"
+   inkscape:export-xdpi="1.5000118"
+   inkscape:export-ydpi="1.5000118"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="1"
+     inkscape:cx="221.5"
+     inkscape:cy="294"
+     inkscape:window-width="1366"
+     inkscape:window-height="715"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Camada 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-29.177349,-100.94746)">
+    <g
+       id="g1328">
+      <g
+         id="g1318">
+        <g
+           aria-label="M"
+           id="text236"
+           style="font-size:3.175px;fill:#aa0088;stroke-width:0.264583"
+           transform="matrix(76.138661,0,0,76.138661,-2192.3469,-7585.0566)">
+          <path
+             id="path575"
+             d="m 29.177349,100.94746 v 1.77921 h 0.667203 l -0.333602,-0.22241 v -1.2232 l 0.444803,0.556 v 0.2224 h 0.222401 l 1e-6,-0.2224 0.444788,-0.556 v 1.2232 l -0.333602,0.22241 h 0.667204 v -1.77921 h -0.444803 l -0.444787,0.556 -0.444818,-0.556 z"
+             sodipodi:nodetypes="cccccccccccccccccc"
+             style="fill:#aa0088" />
+        </g>
+        <g
+           aria-label="M"
+           id="text236-1"
+           style="font-size:3.175px;fill:#aa0088;stroke-width:0.264583;fill-opacity:1"
+           transform="matrix(76.138661,0,0,76.138661,-2042.3277,-7593.3767)">
+          <path
+             id="path575-1"
+             d="m 27.985411,102.61354 v 0.2224 h 0.222401 l 1e-6,-0.2224 z"
+             sodipodi:nodetypes="ccccc"
+             style="fill:#aa0088;fill-opacity:1" />
+        </g>
+      </g>
+      <g
+         id="g745">
+        <path
+           style="fill:#800000;stroke-width:20.145"
+           d="m 54.577318,185.61403 33.866698,16.93343 -33.866698,-76.2 z"
+           id="path342"
+           sodipodi:nodetypes="cccc" />
+        <path
+           style="fill:#800000;stroke-width:20.145"
+           d="m 139.24404,185.61413 -33.86669,16.93333 33.86669,-76.19992 z"
+           id="path342-6"
+           sodipodi:nodetypes="cccc" />
+      </g>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:65.1423px;fill:#800000;stroke-width:5.42851"
+       x="101.38302"
+       y="232.42325"
+       id="text441"
+       transform="scale(0.92935999,1.0760093)"><tspan
+         sodipodi:role="line"
+         id="tspan439"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Candara;-inkscape-font-specification:Candara;stroke-width:5.42851"
+         x="101.38302"
+         y="232.42325" /></text>
+  </g>
+</svg>
