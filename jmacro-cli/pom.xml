@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>jmacro</artifactId>
         <groupId>com.itquasar.multiverse.jmacro</groupId>
@@ -336,6 +337,124 @@
                                         <option>--no-man-pages</option>
                                         <option>--strip-debug</option>
                                     </options>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>launcher</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>3.3.0</version>
+                        <executions>
+                            <execution>
+                                <id>exe-copy-icon</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.basedir}/../git-modules/knx-launcher/src/mingwX64Main/resources/
+                                    </outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.basedir}/../src/resources/</directory>
+                                            <includes>
+                                                <include>icon.ico</include>
+                                            </includes>
+                                            <filtering>false</filtering>
+                                        </resource>
+                                        <resource>
+                                            <directory>${project.basedir}/src/main/knx-launcher/</directory>
+                                            <includes>
+                                                <include>knx-launcher.*</include>
+                                            </includes>
+                                            <filtering>true</filtering>
+                                        </resource>
+                                    </resources>
+                                    <overwrite>true</overwrite>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <configuration>
+                            <executable>gradle.cmd</executable>
+                            <workingDirectory>${project.basedir}/../git-modules/knx-launcher</workingDirectory>
+                            <useMavenLogger>true</useMavenLogger>
+                            <arguments>
+                                <argument>clean</argument>
+                                <argument>nativeBinaries</argument>
+                            </arguments>
+                            <environmentVariables>
+                                <KNX_EXE_NAME>jmacro</KNX_EXE_NAME>
+                            </environmentVariables>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>exe-build-launcher</id>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>3.3.0</version>
+                        <executions>
+                            <execution>
+                                <id>exe-copy-launcher</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.basedir}/target/appassembler/</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>
+                                                ${project.basedir}/../git-modules/knx-launcher/build/bin/native/knxLauncherReleaseExecutable/
+                                            </directory>
+                                            <includes>
+                                                <include>jmacro.exe</include>
+                                            </includes>
+                                            <filtering>false</filtering>
+                                        </resource>
+                                        <resource>
+                                            <directory>
+                                                ${project.basedir}/../git-modules/knx-launcher/build/bin/native/knxLauncherDebugExecutable/
+                                            </directory>
+                                            <includes>
+                                                <include>jmacro_debug_.exe</include>
+                                            </includes>
+                                            <filtering>false</filtering>
+                                        </resource>
+                                        <resource>
+                                            <directory>${project.basedir}/src/main/knx-launcher/</directory>
+                                            <includes>
+                                                <include>*.knx</include>
+                                            </includes>
+                                            <filtering>false</filtering>
+                                        </resource>
+                                    </resources>
+                                    <overwrite>true</overwrite>
                                 </configuration>
                             </execution>
                         </executions>

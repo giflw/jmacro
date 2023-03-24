@@ -1,0 +1,48 @@
+// this is a UTF-8 file
+#pragma code_page(65001)
+#pragma execution_character_set("utf-8")
+
+// this is the Common Controls 6 manifest
+// 1 is the value of CREATEPROCESS_MANIFEST_RESOURCE_ID and 24 is the value of RT_MANIFEST
+#define CREATEPROCESS_MANIFEST_RESOURCE_ID 1
+#define RT_MANIFEST 24
+CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "knx-launcher.manifest"
+
+icon ICON "icon.ico"
+
+#include "winver.h"
+
+// FIXME versions from filtering
+#define VERSION             0,1,0,0
+#define FULLVERSION_STRING  "0.1.0.0"
+#define NAME                "${project.parent.name}"
+#define EXE_NAME            "${project.parent.artifactId}"
+#define DESCRIPTION         "${project.parent.description}"
+
+VS_VERSION_INFO     VERSIONINFO
+    FILEVERSION     VERSION
+    PRODUCTVERSION  VERSION
+    FILETYPE        VFT_APP
+    FILEFLAGS       VS_FF_DEBUG
+{
+    BLOCK "StringFileInfo"
+    {
+        BLOCK "040904E4"
+        {
+            VALUE "Comments",           DESCRIPTION
+            VALUE "CompanyName",        "${project.parent.groupId}"
+            VALUE "FileDescription",    DESCRIPTION
+            VALUE "FileVersion",        FULLVERSION_STRING
+            VALUE "InternalName",       EXE_NAME
+            VALUE "LegalCopyright",     "${project.parent.copyright}"
+            VALUE "LegalTrademarks",    "${project.parent.license}"
+            VALUE "OriginalFilename",   EXE_NAME
+            VALUE "ProductName",        NAME
+            VALUE "ProductVersion",     FULLVERSION_STRING
+        }
+    }
+    BLOCK "VarFileInfo"
+    {
+        VALUE "Translation", 0x0409, 0x4E4
+    }
+}
