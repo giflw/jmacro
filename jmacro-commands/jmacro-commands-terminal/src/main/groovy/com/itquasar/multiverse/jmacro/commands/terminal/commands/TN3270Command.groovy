@@ -14,6 +14,8 @@ import io.vavr.control.Try
 
 import javax.script.ScriptEngine
 import java.nio.file.Path
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentMap
 
 @Log4j2
 class TN3270Command extends Command implements AutoCloseable, Constants {
@@ -23,17 +25,15 @@ class TN3270Command extends Command implements AutoCloseable, Constants {
         enter
     }
 
+    private static final DEFAULT = "default"
+    private ConcurrentMap<String, TN3270Command> instances = new ConcurrentHashMap()
+    private String instanceName = null
     private TN3270j tn3270j = null
 
     TN3270Command(String name, JMacroCore core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
     }
 
-    TN3270j getTn3270j() {
-        return tn3270j
-    }
-
-    // FIXME refactor to wrapper class to allow multiple tn3270 sessions in same script
     def _init(WaitMode waitMode = WaitMode.Seconds) {
         if (this.tn3270j == null) {
             Path toolsDir = core.configuration.folders.tools()
@@ -53,13 +53,20 @@ class TN3270Command extends Command implements AutoCloseable, Constants {
         }
     }
 
-    def call(Closure closure) {
-        return call(WaitMode.Seconds, closure)
-    }
+    def call(String instanceName = DEFAULT, WaitMode waitMode = WaitMode.Seconds, Closure closure) {
+        TN3270Command command = this.instances.get(instanceName)
+        if (command == null) {
+            if (this.instanceName == null && instanceName == DEFAULT) {
+                command = this
+            } else {
+                command = new TN3270Command(this.name, this.core, this.scriptEngine)
+            }
+            command.instanceName = instanceName
+            this.instances.put(instanceName, command)
+            command._init(waitMode)
+        }
 
-    def call(WaitMode waitMode, Closure closure) {
-        this._init(waitMode)
-        closure.delegate = this
+        closure.delegate = command
         closure.resolveStrategy = Closure.DELEGATE_FIRST
         return closure()
     }
@@ -136,5 +143,6 @@ class TN3270Command extends Command implements AutoCloseable, Constants {
             }
         }
     }
+
 }
 
