@@ -28,10 +28,15 @@ class TN3270Command extends Command implements AutoCloseable, Constants {
     private static final DEFAULT = "default"
     private ConcurrentMap<String, TN3270Command> instances = new ConcurrentHashMap()
     private String instanceName = null
+
     private TN3270j tn3270j = null
 
     TN3270Command(String name, JMacroCore core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
+    }
+
+    TN3270j getTn3270j() {
+        return this.tn3270j
     }
 
     def _init(WaitMode waitMode = WaitMode.Seconds) {

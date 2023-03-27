@@ -70,7 +70,7 @@
         <dependency>
             <groupId>info.picocli</groupId>
             <artifactId>picocli</artifactId>
-            <version>4.6.3</version>
+            <version>4.7.1</version>
         </dependency>
     </dependencies>
 
@@ -396,10 +396,6 @@
                             <executable>gradle.cmd</executable>
                             <workingDirectory>${project.basedir}/../git-modules/knx-launcher</workingDirectory>
                             <useMavenLogger>true</useMavenLogger>
-                            <arguments>
-                                <argument>clean</argument>
-                                <argument>nativeBinaries</argument>
-                            </arguments>
                             <environmentVariables>
                                 <KNX_EXE_NAME>jmacro</KNX_EXE_NAME>
                             </environmentVariables>
@@ -411,6 +407,23 @@
                                 <goals>
                                     <goal>exec</goal>
                                 </goals>
+                                <configuration>
+                                    <arguments>
+                                        <argument>nativeBinaries</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>exe-clean-launcher</id>
+                                <phase>clean</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <arguments>
+                                        <argument>clean</argument>
+                                    </arguments>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
