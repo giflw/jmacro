@@ -17,6 +17,10 @@ public interface Constants {
     String OS_ID = (IS_WINDOWS ? "win" : "unix") + "_" + ARCH;
     String BIN_EXT = IS_WINDOWS ? ".exe" : "";
 
+    int CPUS = Runtime.getRuntime().availableProcessors();
+    long MAXMEM = Runtime.getRuntime().maxMemory();
+
+
     // ARGS
     String ARGS = "args";
     String ARGV = "argv";

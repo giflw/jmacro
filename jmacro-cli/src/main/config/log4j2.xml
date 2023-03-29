@@ -2,7 +2,7 @@
 <Configuration status="WARN">
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="[%-4level] - %msg%n"/>
+            <PatternLayout pattern="[%-4level] (%t) - %msg%n"/>
         </Console>
         <RollingFile
             name="RollingFile"
@@ -10,7 +10,7 @@
             filePattern="${sys:app.home}/logs/jmacro-${sys:app.starttime}-${sys:app.pid}.%d{yyyy-MM-dd}.log.gz"
             ignoreExceptions="false">
             <PatternLayout>
-                <Pattern>%d{yyyy-MM-dd HH:mm:ss} %c %-5p %m%n</Pattern>
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss} %c %-5p (%t) %m%n</Pattern>
             </PatternLayout>
             <Policies>
                 <TimeBasedTriggeringPolicy interval="1"/>

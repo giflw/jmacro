@@ -11,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -270,7 +271,7 @@ public final class EngineImpl implements Engine, Constants {
 
     private void closeCommands(final ScriptEngine engine) {
         for (final int scope : new int[]{ENGINE_SCOPE, GLOBAL_SCOPE}) {
-            engine.getBindings(scope).forEach((key, value) -> {
+            new ConcurrentHashMap<>(engine.getBindings(scope)).forEach((key, value) -> {
                 if ((value instanceof AutoCloseable)) {
                     try {
                         LOGGER.warn("Closing command " + key + " as it is AutoCloseable");

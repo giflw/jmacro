@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 class TimerCommand extends Command implements AutoCloseable {
 
     private AtomicBoolean running = new AtomicBoolean(false)
-    private Map<String, Float> partials = new LinkedHashMap()
+    private Map<String, Long> partials = new LinkedHashMap()
 
     TimerCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
@@ -21,7 +21,7 @@ class TimerCommand extends Command implements AutoCloseable {
             throw new JMacroException(this, 'Timer already started!')
         }
         this.partials = new LinkedHashMap()
-        this.partials.put('Start', (System.currentTimeMillis() / 1000).floatValue())
+        this.partials.put('Start', System.currentTimeMillis())
         return this
     }
 
@@ -29,30 +29,30 @@ class TimerCommand extends Command implements AutoCloseable {
         if (!running.compareAndSet(true, false)) {
             throw new JMacroException(this, 'Timer not started!')
         }
-        this.partials.put('Stop', ((System.currentTimeMillis() / 1000) - this.partials['Start']).floatValue())
+        this.partials.put('Stop', (System.currentTimeMillis() - this.partials['Start']))
         return this
     }
 
     TimerCommand partial(String label = null) {
-        partials.put(label ?: 'Partial ' + (partials.size() + 1), ((System.currentTimeMillis() / 1000) - this.partials['Start']).floatValue())
+        partials.put(label ?: 'Partial ' + (partials.size() + 1), (System.currentTimeMillis() - this.partials['Start']))
         return this
     }
 
-    Float getStart() {
+    Long getStart() {
         return this.partials['Start']
     }
 
-    Float getStop() {
+    Long getStop() {
         return this.partials['Stop']
     }
 
-    Map<String, Float> get() {
-        Map<String, Float> all = new LinkedHashMap()
+    Map<String, Long> get() {
+        Map<String, Long> all = new LinkedHashMap()
         all.putAll(partials)
         return all
     }
 
-    BigDecimal get(String label) {
+    Long get(String label) {
         if (label == 'Start') {
             return this.start
         } else if (label == 'Stop') {
@@ -61,7 +61,7 @@ class TimerCommand extends Command implements AutoCloseable {
         return this.partials[label]
     }
 
-    Map<String, Float> getPartials() {
+    Map<String, Long> getPartials() {
         return this.partials
     }
 

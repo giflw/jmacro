@@ -130,6 +130,10 @@ class TN3270Command extends Command implements AutoCloseable, Constants {
         return read(Reader.Mode.FINAL_POSITION, closure)
     }
 
+    def read(int row, int col, int length) {
+        return this.tn3270j.read(row, col, length)
+    }
+
     def read(Reader.Mode mode, Closure closure) {
         def reader = new Reader(this, mode)
         closure.delegate = reader
