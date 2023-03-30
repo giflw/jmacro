@@ -5,19 +5,23 @@ import com.itquasar.multiverse.jmacro.commands.terminal.commands.tn3270.Writer
 import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.Constants
 import com.itquasar.multiverse.jmacro.core.JMacroCore
+import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import com.itquasar.multiverse.tn3270j.TN3270j
 import com.itquasar.multiverse.tn3270j.TN3270jFactory
 import com.itquasar.multiverse.tn3270j.WaitMode
 import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
 import groovy.util.logging.Log4j2
 import io.vavr.control.Try
 
 import javax.script.ScriptEngine
 import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.ConcurrentMap
 
 @Log4j2
+@CompileStatic
 class TN3270Command extends Command implements AutoCloseable, Constants {
 
     static enum Key {
@@ -25,22 +29,21 @@ class TN3270Command extends Command implements AutoCloseable, Constants {
         enter
     }
 
-    private static final DEFAULT = "default"
-    private ConcurrentMap<String, TN3270Command> instances = new ConcurrentHashMap()
-    private String instanceName = null
-
-    private TN3270j tn3270j = null
+    private static final String DEFAULT = "default"
+    private static Queue<TN3270j> instances = new ConcurrentLinkedQueue<>()
+    private final ThreadLocal<TN3270j> tn3270j = new ThreadLocal<>()
 
     TN3270Command(String name, JMacroCore core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
     }
 
     TN3270j getTn3270j() {
-        return this.tn3270j
+        return this.tn3270j.get()
     }
 
     def _init(WaitMode waitMode = WaitMode.Seconds) {
-        if (this.tn3270j == null) {
+        if (this.tn3270j.get() == null) {
+            getLogger().warn("Initializing ${Thread.currentThread().name}")
             Path toolsDir = core.configuration.folders.tools()
             String path = 's3270'
             if (IS_WINDOWS) {
@@ -54,30 +57,22 @@ class TN3270Command extends Command implements AutoCloseable, Constants {
                     }
                 }
             }
-            this.tn3270j = TN3270jFactory.create("3270/j3270", new ProcessBuilder(path), waitMode)
+            this.tn3270j.set(TN3270jFactory.create("3270/j3270", new ProcessBuilder(path), waitMode))
+            instances.add(this.tn3270j.get())
         }
     }
 
-    def call(String instanceName = DEFAULT, WaitMode waitMode = WaitMode.Seconds, Closure closure) {
-        TN3270Command command = this.instances.get(instanceName)
-        if (command == null) {
-            if (this.instanceName == null && instanceName == DEFAULT) {
-                command = this
-            } else {
-                command = new TN3270Command(this.name, this.core, this.scriptEngine)
-            }
-            command.instanceName = instanceName
-            this.instances.put(instanceName, command)
-            command._init(waitMode)
+    def call(WaitMode waitMode = WaitMode.Seconds, Closure closure) {
+        if (this.tn3270j.get() == null) {
+            this._init(waitMode)
         }
-
-        closure.delegate = command
+        closure.delegate = this
         closure.resolveStrategy = Closure.DELEGATE_FIRST
         return closure()
     }
 
     def methodMissing(String name, def args) {
-        return methodMissingOnOrChainToContext(this, tn3270j, name, args)
+        return methodMissingOnOrChainToContext(this, this.tn3270j.get(), name, args)
     }
 
     @CompileDynamic
@@ -98,7 +93,7 @@ class TN3270Command extends Command implements AutoCloseable, Constants {
         try {
             def key = Key.valueOf(name)
             logger.info("Sending key $key")
-            return tn3270j.send(key.name())
+            return this.tn3270j.get().send(key.name())
         } catch (IllegalArgumentException ex) {
             logger.error("Missing property $name", ex)
         }
@@ -107,7 +102,7 @@ class TN3270Command extends Command implements AutoCloseable, Constants {
     @CompileDynamic
     def propertyMissing(String name, def arg) {
         Try.of { ->
-            tn3270j."$name" = arg
+            this.tn3270j.get()."$name" = arg
         } orElse { ->
             super.propertyMissing(name, arg)
         }
@@ -115,7 +110,7 @@ class TN3270Command extends Command implements AutoCloseable, Constants {
 
     def write(String... args) {
         for (String arg : args) {
-            this.tn3270j.write(arg)
+            this.tn3270j.get().write(arg)
         }
     }
 
@@ -131,7 +126,7 @@ class TN3270Command extends Command implements AutoCloseable, Constants {
     }
 
     def read(int row, int col, int length) {
-        return this.tn3270j.read(row, col, length)
+        return this.tn3270j.get().read(row, col, length)
     }
 
     def read(Reader.Mode mode, Closure closure) {
@@ -142,15 +137,24 @@ class TN3270Command extends Command implements AutoCloseable, Constants {
         return reader
     }
 
+    void fullWait() {
+        this.tn3270j.get().wait(0.5, WaitMode.Seconds)
+        this.tn3270j.get().wait(3, WaitMode.Output)
+        this.tn3270j.get().wait(3, WaitMode.InputField)
+        this.tn3270j.get().wait(3, WaitMode.Unlock)
+        this.tn3270j.get().wait(0.5, WaitMode.Seconds)
+    }
+
     @Override
     void close() {
-        if (tn3270j != null) {
-            try {
-                tn3270j.close()
-            } catch (Throwable ex) {
-                log.error("Error closing tn3270 command", ex)
-            }
-        }
+        instances.removeElement(this.tn3270j)
+        this.tn3270j.get()?.close()
+        this.tn3270j.set(null)
+    }
+
+    // FIXME add shutdown hook to core engine
+    void closeAll() {
+        instances.each { it.close() }
     }
 
 }

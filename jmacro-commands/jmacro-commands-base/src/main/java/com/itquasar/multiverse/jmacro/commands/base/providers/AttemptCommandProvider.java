@@ -54,7 +54,7 @@ public class AttemptCommandProvider implements CommandProvider<AttemptCommandPro
                     this.getLogger().error("Attempt failed: " + ex.getMessage());
                     Throwable cause = ex.getCause();
                     while (cause != null) {
-                        this.getLogger().error("Attempt failed caused by: " + cause.getMessage());
+                        this.getLogger().error("Attempt failed caused by: (" + ex.getClass().getSimpleName() + ")" + cause.getMessage());
                         cause = cause.getCause();
                     }
                 } else {

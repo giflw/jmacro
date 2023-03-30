@@ -9,7 +9,7 @@ public class ParallelThreadFactory implements ThreadFactory {
     private final AtomicInteger threadNumber = new AtomicInteger(1);
     private final String namePrefix;
 
-    ParallelThreadFactory(String namePrefix) {
+    public ParallelThreadFactory(String namePrefix) {
         this.group = new ThreadGroup("parallel-" + poolNumber.getAndIncrement() + "-pool");
         this.namePrefix = namePrefix + "#";
     }
