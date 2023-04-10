@@ -348,9 +348,9 @@
             <id>launcher</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
-<!--                <os>-->
-<!--                    <family>windows</family>-->
-<!--                </os>-->
+                <os>
+                    <family>windows</family>
+                </os>
             </activation>
             <build>
                 <plugins>
@@ -394,7 +394,7 @@
                         <artifactId>exec-maven-plugin</artifactId>
                         <version>3.1.0</version>
                         <configuration>
-                            <executable>gradle.cmd</executable>
+                            <executable>cmd</executable>
                             <workingDirectory>${project.basedir}/../git-modules/knx-launcher</workingDirectory>
                             <useMavenLogger>true</useMavenLogger>
                             <environmentVariables>
@@ -410,6 +410,8 @@
                                 </goals>
                                 <configuration>
                                     <arguments>
+                                        <argument>/C</argument>
+                                        <argument>${project.basedir}/../git-modules/knx-launcher/gradlew.bat</argument>
                                         <argument>nativeBinaries</argument>
                                     </arguments>
                                 </configuration>
@@ -422,6 +424,8 @@
                                 </goals>
                                 <configuration>
                                     <arguments>
+                                        <argument>/C</argument>
+                                        <argument>${project.basedir}/../git-modules/knx-launcher/gradlew.bat</argument>
                                         <argument>clean</argument>
                                     </arguments>
                                 </configuration>
