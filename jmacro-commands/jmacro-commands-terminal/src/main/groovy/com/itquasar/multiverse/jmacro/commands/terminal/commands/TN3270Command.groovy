@@ -5,7 +5,6 @@ import com.itquasar.multiverse.jmacro.commands.terminal.commands.tn3270.Writer
 import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.Constants
 import com.itquasar.multiverse.jmacro.core.JMacroCore
-import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import com.itquasar.multiverse.tn3270j.TN3270j
 import com.itquasar.multiverse.tn3270j.TN3270jFactory
 import com.itquasar.multiverse.tn3270j.WaitMode
@@ -17,8 +16,7 @@ import io.vavr.control.Try
 import javax.script.ScriptEngine
 import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.ConcurrentLinkedQueue
-import java.util.concurrent.ConcurrentMap
+import java.util.concurrent.TimeUnit
 
 @Log4j2
 @CompileStatic
@@ -30,7 +28,7 @@ class TN3270Command extends Command implements AutoCloseable, Constants {
     }
 
     private static final String DEFAULT = "default"
-    private static Queue<TN3270j> instances = new ConcurrentLinkedQueue<>()
+    private static Map<TN3270j, Long> instances = new ConcurrentHashMap<>()
     private final ThreadLocal<TN3270j> tn3270j = new ThreadLocal<>()
 
     TN3270Command(String name, JMacroCore core, ScriptEngine scriptEngine) {
@@ -58,7 +56,7 @@ class TN3270Command extends Command implements AutoCloseable, Constants {
                 }
             }
             this.tn3270j.set(TN3270jFactory.create("3270/j3270", new ProcessBuilder(path), waitMode))
-            instances.add(this.tn3270j.get())
+            instances.put(this.tn3270j.get(), System.currentTimeMillis())
         }
     }
 
@@ -147,14 +145,15 @@ class TN3270Command extends Command implements AutoCloseable, Constants {
 
     @Override
     void close() {
-        instances.removeElement(this.tn3270j)
+        instances.remove(this.tn3270j)
         this.tn3270j.get()?.close()
         this.tn3270j.set(null)
     }
 
     // FIXME add shutdown hook to core engine
-    void closeAll() {
-        instances.each { it.close() }
+    void closeAll(long timeout = 0, TimeUnit timeUnit = TimeUnit.SECONDS) {
+        long maxTime = System.currentTimeMillis() - timeUnit.toMillis(timeout)
+        instances.each { if (it.value < (maxTime)) { it.key.close() } }
     }
 
 }

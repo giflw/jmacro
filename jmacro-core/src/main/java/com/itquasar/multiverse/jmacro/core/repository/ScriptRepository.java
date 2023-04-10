@@ -19,6 +19,14 @@ public interface ScriptRepository {
 
     List<Script> list(boolean reload);
 
+    default List<Script> listMain() {
+        return this.listMain(false);
+    }
+
+    default List<Script> listMain(boolean reload) {
+        return this.list(reload).stream().filter(it -> it.getPath().matches(".*(\\.main)+\\.(?<ext>[a-zA-Z0-9]+)")).toList();
+    }
+
     default URI pathToLocation(String path) {
         URI uri = URI.create(path);
         return uri.getScheme() != null ? uri : URI.create(getUri().toString() + path);

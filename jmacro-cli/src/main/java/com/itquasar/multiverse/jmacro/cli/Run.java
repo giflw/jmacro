@@ -2,15 +2,13 @@ package com.itquasar.multiverse.jmacro.cli;
 
 import com.itquasar.multiverse.jmacro.commands.base.commands.ConfigurationCommand;
 import com.itquasar.multiverse.jmacro.commands.base.commands.CredentialsCommand;
+import com.itquasar.multiverse.jmacro.core.script.Script;
 import com.itquasar.multiverse.jmacro.core.script.ScriptResult;
 import picocli.CommandLine;
 
 import javax.script.Bindings;
 import javax.script.ScriptContext;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Callable;
 
 import static picocli.CommandLine.*;
@@ -35,8 +33,11 @@ public class Run implements Callable<CliResult> {
 
     @ParentCommand
     private Cli cli;
-    @Parameters(arity = "1")
+    @Parameters(arity = "0..1")
     private String path;
+
+    @Option(names = {"--default-path"})
+    public String defaultPath;
 
     @Option(names = {"--config", "--configuration"}, paramLabel = "KEY=VALUE")
     public void setConfiguration(Map<String, String> map) {
@@ -76,9 +77,48 @@ public class Run implements Callable<CliResult> {
             });
         }
 
-        var script = cli.getCore().getConfiguration().getRepository().get(
-            path.matches(".*\\.(?<ext>[a-zA-Z0-9]+)") ? path : path + ".groovy"
-        );
+        Optional<Script> script = null;
+        if (path != null) {
+            script = cli.getCore().getConfiguration().getRepository().get(
+                path.matches(".*(?!\\.main)\\.(?<ext>[a-zA-Z0-9]+)") ? path : path + ".groovy"
+            );
+        } else {
+            List<Script> scripts = cli.getCore().getConfiguration().getRepository().listMain();
+            System.out.println("Listing available scripts:");
+            String padding = "";
+            while (padding.length() < scripts.size()) {
+                padding += " ";
+            }
+            Script defaultScript = null;
+            for (int i = 0; i < scripts.size(); i++) {
+                String idx = padding + (i + 1);
+                idx = idx.substring(idx.length() - padding.length());
+                Script _script = scripts.get(i);
+                if (this.defaultPath != null && _script.getPath().equals(this.defaultPath)) {
+                    defaultScript = _script;
+                }
+
+                String name = _script.getMetadata().getName();
+                String description = _script.getMetadata().getDescription();
+                System.out.println("  " + idx + " ) " + name + (description.isEmpty() ? "" : " -> " + description));
+            }
+
+            String selectMessage = "Select script to run";
+            if (defaultScript != null) {
+                selectMessage += " [default: " + defaultScript.getMetadata().getName() + "]";
+            }
+            System.out.println(selectMessage + ":");
+
+            String scriptIndex = System.console().readLine();
+            if (scriptIndex != null && !scriptIndex.isEmpty()) {
+                script = Optional.of(scripts.get(Integer.valueOf(scriptIndex) - 1));
+            } else {
+                script = Optional.ofNullable(defaultScript);
+            }
+            var metadata = script.get().getMetadata();
+            System.out.println("Selected script: " + metadata.getName() + (metadata.getDescription().isEmpty() ? "" : " -> " + metadata.getDescription()));
+            Thread.sleep(1000);
+        }
 
         if (script.isPresent()) {
             if (args != null && args.size() > 0) {
