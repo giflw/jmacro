@@ -7,9 +7,9 @@ import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
 import org.openqa.selenium.devtools.DevTools
 import org.openqa.selenium.devtools.HasDevTools
-import org.openqa.selenium.devtools.v97.network.Network
-import org.openqa.selenium.devtools.v97.network.model.RequestWillBeSent
-import org.openqa.selenium.devtools.v97.network.model.ResponseReceived
+import org.openqa.selenium.devtools.v85.network.Network
+import org.openqa.selenium.devtools.v85.network.model.RequestWillBeSent
+import org.openqa.selenium.devtools.v85.network.model.ResponseReceived
 
 import javax.script.Bindings
 

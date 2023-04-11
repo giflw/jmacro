@@ -10,6 +10,7 @@ import groovy.transform.CompileDynamic
 import org.apache.commons.io.FileUtils
 import org.openqa.selenium.*
 import org.openqa.selenium.chrome.ChromeOptions
+import org.openqa.selenium.edge.EdgeDriverService
 import org.openqa.selenium.edge.EdgeOptions
 import org.openqa.selenium.firefox.FirefoxOptions
 import org.openqa.selenium.remote.RemoteWebDriver
@@ -104,7 +105,9 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
                     if (config.binary != null) {
                         capabilities.setBinary(config.binary.toString())
                     }
-                    capabilities.setHeadless(!config.visible)
+                    if (config.visible) {
+                        capabilities.addArguments("-headless")
+                    }
                     break
                 case CHROMIUM:
                 case CHROME:
@@ -122,22 +125,28 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
                     if (config.binary != null) {
                         capabilities.setBinary(config.binary.toString())
                     }
-                    capabilities.setHeadless(!config.visible)
+                    if (config.visible) {
+                        capabilities.addArguments("--headless=new")
+                    }
                     break
                 case EDGE:
                     capabilities = new EdgeOptions()
                     if (config.binary != null) {
                         capabilities.setBinary(config.binary.toString())
                     }
-                    capabilities.setHeadless(!config.visible)
+                    if (config.visible) {
+                        capabilities.addArguments("--headless=new")
+                    }
+                    //capabilities.addArguments("--disable-extensions")
                     break
             }
+            //capabilities.addArguments("--ignore-certificate-errors")
 
             logger.warn("Starting browser ${config.vendor.toString().capitalize()}")
             this.config.forEach { key, value ->
                 logger.warn("Browser config ${key}=${value}")
             }
-            def driverManager = new DriverManager(core.configuration.folders.tools().resolve("webdriver"))
+            def driverManager = new DriverManager(core.configuration.folders.cache().resolve("webdriver"))
             def manager = driverManager.getManager(config.vendor.toString())
             if (this.config.binary) {
                 getLogger().warn("Binary path given. Avoiding browser detection and using ${this.config.version} as browser version.")
