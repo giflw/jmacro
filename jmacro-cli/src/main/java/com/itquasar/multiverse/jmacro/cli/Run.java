@@ -103,14 +103,21 @@ public class Run implements Callable<CliResult> {
                 System.out.println("  " + idx + " ) " + name + (description.isEmpty() ? "" : " -> " + description));
             }
 
-            String selectMessage = "Select script to run";
+            System.out.println(padding + "x) Exit");
+            String selectMessage = "Select script to run or exit";
             if (defaultScript != null) {
                 selectMessage += " [default: " + defaultScript.getMetadata().getName() + "]";
+            } else {
+                selectMessage += " [default: exit]";
             }
             System.out.println(selectMessage + ":");
 
             String scriptIndex = System.console().readLine();
-            if (scriptIndex != null && !scriptIndex.isEmpty()) {
+            scriptIndex = scriptIndex == null ? "" : scriptIndex;
+            if ("x".equalsIgnoreCase(scriptIndex) || (scriptIndex.isEmpty() && defaultScript == null)) {
+                System.out.println("Exiting...");
+                return new CliResult(new ScriptResult(null, 0, null, null));
+            } else if (scriptIndex != null && !scriptIndex.isEmpty()) {
                 script = Optional.of(scripts.get(Integer.valueOf(scriptIndex) - 1));
             } else {
                 script = Optional.ofNullable(defaultScript);
