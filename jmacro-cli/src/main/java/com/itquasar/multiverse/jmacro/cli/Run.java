@@ -2,6 +2,7 @@ package com.itquasar.multiverse.jmacro.cli;
 
 import com.itquasar.multiverse.jmacro.commands.base.commands.ConfigurationCommand;
 import com.itquasar.multiverse.jmacro.commands.base.commands.CredentialsCommand;
+import com.itquasar.multiverse.jmacro.core.script.Metadata;
 import com.itquasar.multiverse.jmacro.core.script.Script;
 import com.itquasar.multiverse.jmacro.core.script.ScriptResult;
 import picocli.CommandLine;
@@ -103,7 +104,7 @@ public class Run implements Callable<CliResult> {
                 System.out.println("  " + idx + " ) " + name + (description.isEmpty() ? "" : " -> " + description));
             }
 
-            System.out.println(padding + "x) Exit");
+            System.out.println(" " + padding + "x ) Exit");
             String selectMessage = "Select script to run or exit";
             if (defaultScript != null) {
                 selectMessage += " [default: " + defaultScript.getMetadata().getName() + "]";
@@ -116,7 +117,7 @@ public class Run implements Callable<CliResult> {
             scriptIndex = scriptIndex == null ? "" : scriptIndex;
             if ("x".equalsIgnoreCase(scriptIndex) || (scriptIndex.isEmpty() && defaultScript == null)) {
                 System.out.println("Exiting...");
-                return new CliResult(new ScriptResult(null, 0, null, null));
+                return new CliResult(new ScriptResult(new Script(Metadata.EMPTY, "", "", ""), 0, null, null));
             } else if (scriptIndex != null && !scriptIndex.isEmpty()) {
                 script = Optional.of(scripts.get(Integer.valueOf(scriptIndex) - 1));
             } else {

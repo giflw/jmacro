@@ -49,6 +49,7 @@ class Request implements Constants {
     private String url
     private String proxy
     private boolean ignoreSSL = false
+    private boolean useSystemProxy = false
     private Map<String, String> headers = new LinkedHashMap<>()
     private Body body = null
     private HTTPFluentRequest httpRequest
@@ -86,14 +87,46 @@ class Request implements Constants {
         return response
     }
 
-    void proxy(String proxy) {
-        this.proxy = proxy
+    void proxy(String proxy = null, int port = 0) {
+        this.proxy = port > 0 ? proxy + ":" + port : proxy
     }
 
-    void ignoreSSL() {
+    void noProxy() {
+        this.useSystemProxy(false)
+    }
+
+    void ignoreSSL(boolean ignoreSSL = true) {
         this.ignoreSSL = true
     }
-    
+
+    /**
+     *
+     * @return List of proxies with type http.
+     */
+    List<Proxy> proxies() {
+        return ProxySelector.default.select(new URI(this.url)).findAll { it.type() == Proxy.Type.HTTP }
+    }
+
+    /**
+     * Use system proxy of type HTTP only
+     * @param useSystemProxy
+     * @param index
+     */
+    void useSystemProxy(boolean useSystemProxy = true, int index = 0) {
+        System.setProperty('java.net.useSystemProxies', 'true')
+        if (useSystemProxy) {
+            Proxy proxy = this.proxies().getAt(index)
+            if (proxy != null) {
+                InetSocketAddress address = proxy.address()
+                this.proxy(address.hostName, address.port)
+            } else {
+                Command.log(this.bindings, ERROR, "No system proxy of type HTTP found for ${this.url}")
+            }
+        } else {
+            this.proxy()
+        }
+    }
+
     void doNotParseResponse() {
         this.doNotParseResponse = true
     }
@@ -242,7 +275,7 @@ class Request implements Constants {
             Command.log(bindings, ERROR, "Error requesting $method $url: ${ex?.message}")
             Command.log(bindings, DEBUG, "Error requesting $method $url: ${ex?.message}", ex)
             httpResponse = DefaultHttpResponseFactory.INSTANCE.newHttpResponse(520, "Web Server Returned an Unknown Error")
-            content = new Content(ex.getMessage().getBytes(StandardCharsets.UTF_8),  ContentType.create("text/plain", StandardCharsets.UTF_8))
+            content = new Content(ex.getMessage().getBytes(StandardCharsets.UTF_8), ContentType.create("text/plain", StandardCharsets.UTF_8))
         }
 
         Response response = new Response("$method $url", httpResponse, content, doNotParseResponse)
