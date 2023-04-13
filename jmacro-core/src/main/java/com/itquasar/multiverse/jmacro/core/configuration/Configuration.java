@@ -68,7 +68,7 @@ public final class Configuration {
     }
 
     private Configuration(List<String> repositories, Map<String, String> options) {
-        this(repositories, options, Folders.fromSysProp());
+        this(repositories, options, Folders.detect());
     }
 
     private Configuration(List<String> repositories, Map<String, String> options, Folders folders) {

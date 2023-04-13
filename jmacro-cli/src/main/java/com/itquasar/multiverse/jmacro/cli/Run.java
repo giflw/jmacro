@@ -5,6 +5,9 @@ import com.itquasar.multiverse.jmacro.commands.base.commands.CredentialsCommand;
 import com.itquasar.multiverse.jmacro.core.script.Metadata;
 import com.itquasar.multiverse.jmacro.core.script.Script;
 import com.itquasar.multiverse.jmacro.core.script.ScriptResult;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
 import picocli.CommandLine;
 
 import javax.script.Bindings;
@@ -69,6 +72,12 @@ public class Run implements Callable<CliResult> {
     @Override
     public CliResult call() throws Exception {
         if (cli.isDebug()) {
+            System.out.println("Changing root log level to DEBUG if needed...");
+            Logger rootLogger = LoggerContext.getContext().getRootLogger();
+            if (rootLogger.getLevel().isMoreSpecificThan(Level.DEBUG)) {
+                rootLogger.setLevel(Level.DEBUG);
+            }
+            System.out.println("Root log level is " + rootLogger.getLevel().name());
             System.out.println(cli.getCore().getConfiguration().serialize());
             cli.getCore().getConfiguration().getRepository().getRepositories().forEach((repo) -> {
                 System.out.println(repo.getId() + ":" + repo.getUri());
@@ -78,11 +87,12 @@ public class Run implements Callable<CliResult> {
             });
         }
 
-        Optional<Script> script = null;
+        this.defaultPath = checkMainAndExtension(this.defaultPath);
+        this.path = checkMainAndExtension(this.path);
+
+        Optional<Script> script;
         if (path != null) {
-            script = cli.getCore().getConfiguration().getRepository().get(
-                path.matches(".*(?!\\.main)\\.(?<ext>[a-zA-Z0-9]+)") ? path : path + ".groovy"
-            );
+            script = cli.getCore().getConfiguration().getRepository().get(path);
         } else {
             List<Script> scripts = cli.getCore().getConfiguration().getRepository().listMain();
             System.out.println("Listing available scripts:");
@@ -95,7 +105,7 @@ public class Run implements Callable<CliResult> {
                 String idx = padding + (i + 1);
                 idx = idx.substring(idx.length() - padding.length());
                 Script _script = scripts.get(i);
-                if (this.defaultPath != null && _script.getPath().equals(this.defaultPath)) {
+                if (_script.getPath().equals(this.defaultPath)) {
                     defaultScript = _script;
                 }
 
@@ -147,5 +157,9 @@ public class Run implements Callable<CliResult> {
             return new CliResult(scriptResult);
         }
         throw new Exception("Script " + this.path + " not found on configured repositories!");
+    }
+
+    private String checkMainAndExtension(String path) {
+        return path == null || path.matches(".*(?!\\.main)\\.(?<ext>[a-zA-Z0-9]+)") ? path : path + ".main.groovy";
     }
 }

@@ -1,9 +1,11 @@
 package com.itquasar.multiverse.jmacro.core;
 
+import io.vavr.control.Try;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.File;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,6 +22,13 @@ public class Folders {
 
     public Folders(Path appHome) {
         this.appHome = appHome;
+    }
+
+    public static Folders detect() {
+        return Try.of(Folders::fromSysProp)
+            .getOrElseTry(
+                () -> new Folders(Files.createTempDirectory("jmacro-tmp"))
+            );
     }
 
     public static Folders fromSysProp() {

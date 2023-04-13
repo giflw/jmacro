@@ -117,7 +117,7 @@ class Request implements Constants {
         if (useSystemProxy) {
             Proxy proxy = this.proxies().getAt(index)
             if (proxy != null) {
-                InetSocketAddress address = proxy.address()
+                InetSocketAddress address = (InetSocketAddress) proxy.address()
                 this.proxy(address.hostName, address.port)
             } else {
                 Command.log(this.bindings, ERROR, "No system proxy of type HTTP found for ${this.url}")

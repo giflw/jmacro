@@ -76,7 +76,7 @@ class CredentialsCommand extends Command implements CredentialsProvider, ToMap {
         token = values.token
         apiKey = values.apiKey
     }
-    
+
     CredentialsCommand update(CredentialsCommand credentials) {
         return this.fill(credentials.toMap())
     }
@@ -91,7 +91,7 @@ class CredentialsCommand extends Command implements CredentialsProvider, ToMap {
         apiKey = values.apiKey ?: this.apiKey
         return this
     }
-    
+
     // FIXME extract credentials holder to allow use of multiple instances
     public CredentialsCommand of(String login, String password = null) {
         def cred = new CredentialsCommand("credentials", core, scriptEngine)
@@ -131,7 +131,7 @@ class CredentialsCommand extends Command implements CredentialsProvider, ToMap {
             case 'NTLM':
                 return new NTCredentials(login, password.toCharArray(), hostname, domain)
         }
-        return new UsernamePasswordCredentials(login, password.toCharArray())
+        return new UsernamePasswordCredentials(login, (password != null ? password : '').toCharArray())
     }
 
     @Override
