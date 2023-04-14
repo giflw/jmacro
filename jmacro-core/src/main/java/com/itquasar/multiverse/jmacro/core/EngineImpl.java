@@ -21,6 +21,7 @@ import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import javax.script.SimpleScriptContext;
 
+import com.itquasar.multiverse.jmacro.core.command.AutoCloseableAll;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -272,13 +273,16 @@ public final class EngineImpl implements Engine, Constants {
     private void closeCommands(final ScriptEngine engine) {
         for (final int scope : new int[]{ENGINE_SCOPE, GLOBAL_SCOPE}) {
             new ConcurrentHashMap<>(engine.getBindings(scope)).forEach((key, value) -> {
-                if ((value instanceof AutoCloseable)) {
-                    try {
+                try {
+                    if (value instanceof AutoCloseableAll closeable) {
                         LOGGER.warn("Closing command " + key + " as it is AutoCloseable");
-                        ((AutoCloseable) value).close();
-                    } catch (final Exception exception) {
-                        LOGGER.error("Error closing command " + key, exception);
+                        closeable.closeAll();
+                    } else if (value instanceof AutoCloseable closeable) {
+                        LOGGER.warn("Closing command " + key + " as it is AutoCloseable");
+                        closeable.close();
                     }
+                } catch (final Exception exception) {
+                    LOGGER.error("Error closing command " + key, exception);
                 }
             });
         }

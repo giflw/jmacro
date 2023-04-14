@@ -38,19 +38,17 @@
                         </configuration>
                         <executions>
                             <execution>
-                                <id>wc3270-w32-get</id>
+                                <id>wc3270-w64-get</id>
                                 <phase>initialize</phase>
                                 <goals>
                                     <goal>wget</goal>
                                 </goals>
                                 <configuration>
-                                    <url>
-                                        https://github.com/giflw/hercules-mvs-3.8-turnkey-4-system/blob/master/resources/wc3270-4.1ga10-noinstall-32.zip?raw=true
-                                    </url>
-                                    <outputFileName>wc3270-4.1ga10-noinstall-32.zip</outputFileName>
-                                    <md5>ccc7fd302ac4026191951f13534de29d</md5>
+                                    <url>http://x3270.bgp.nu/download/04.02/wc3270-4.2ga9-noinstall-64.zip</url>
+                                    <outputFileName>wc3270-4.2ga9-noinstall-64.zip</outputFileName>
+                                    <md5>bcbd8b252aa84e46d0d7f00e2b7d35dd</md5>
                                     <unpack>true</unpack>
-                                    <outputDirectory>../tools/x3270/windows/32/</outputDirectory>
+                                    <outputDirectory>../tools/x3270/windows/64/</outputDirectory>
                                 </configuration>
                             </execution>
                             <execution>
@@ -60,40 +58,26 @@
                                     <goal>wget</goal>
                                 </goals>
                                 <configuration>
-                                    <url>https://chromedriver.storage.googleapis.com/81.0.4044.138/chromedriver_win32.zip</url>
-                                    <outputFileName>chromedriver_win32-81.0.4044.138.zip</outputFileName>
-                                    <md5>d19aef5daf9dbaeac152d27066285a7b</md5>
+                                    <url>https://chromedriver.storage.googleapis.com/112.0.5615.49/chromedriver_win32.zip</url>
+                                    <outputFileName>chromedriver_win32-112.0.5615.49.zip</outputFileName>
+                                    <md5>3aa0e2c3dca02a93422152248411c964</md5>
                                     <unpack>true</unpack>
                                     <outputDirectory>../tools/webdriver/chrome/windows/32/</outputDirectory>
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>edgedriver-win64-get</id>
+                                <id>chromium-win64-get</id>
                                 <phase>initialize</phase>
                                 <goals>
                                     <goal>wget</goal>
                                 </goals>
                                 <configuration>
-                                    <url>https://msedgedriver.azureedge.net/95.0.1020.53/edgedriver_win64.zip</url>
-                                    <outputFileName>edgedriver_win64-95.0.1020.53.zip</outputFileName>
-                                    <md5>7f34558f6ea076ce06fa376ec8954f08</md5>
+                                    <!-- https://ungoogled-software.github.io/ungoogled-chromium-binaries/releases/windows/64bit/ -->
+                                    <url>https://github.com/ungoogled-software/ungoogled-chromium-windows/releases/download/112.0.5615.50-1.1/ungoogled-chromium_112.0.5615.50-1.1_windows_x64.zip</url>
+                                    <outputFileName>ungoogled-chromium_112.0.5615.50-1.1_windows_x64.zip</outputFileName>
+                                    <md5>7d8f888924d5ef12ed911098839dc241</md5>
                                     <unpack>true</unpack>
-                                    <outputDirectory>../tools/webdriver/edge/windows/64/</outputDirectory>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>geckodriver-win64-get</id>
-                                <phase>initialize</phase>
-                                <goals>
-                                    <goal>wget</goal>
-                                </goals>
-                                <configuration>
-                                    <url>https://github.com/mozilla/geckodriver/releases/download/v0.30.0/geckodriver-v0.30.0-win64.zip
-                                    </url>
-                                    <outputFileName>geckodriver-v0.30.0-win64.zip</outputFileName>
-                                    <md5>8e7dfe214f8979ba4bc18606d289988e</md5>
-                                    <unpack>true</unpack>
-                                    <outputDirectory>../tools/webdriver/gecko/windows/64/</outputDirectory>
+                                    <outputDirectory>../tools/chromium/</outputDirectory>
                                 </configuration>
                             </execution>
                         </executions>

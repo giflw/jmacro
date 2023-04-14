@@ -32,7 +32,7 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
 
     Map<String, ?> config = [
         mode   : EMBEDDED,
-        vendor : FIREFOX,
+        vendor : CHROMIUM,
         port   : 0, // random
         visible: false, //  true -> visible;  false -> headless
         driver : null, // driver binary path
@@ -110,6 +110,25 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
                     }
                     break
                 case CHROMIUM:
+                    if (config.mode == EMBEDDED) {
+                        Path chromeDir = core.configuration.folders.tools().resolve('chromium')
+                        config.binary = chromeDir.resolve(IS_WINDOWS ? 'chrome.exe' : 'chrome')
+                        // 99.0.4844.51 -> 99
+                        config.version = Files.list(chromeDir).filter {
+                            it.fileName.toString().matches(".*[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+.*")
+                        }.findFirst().get()
+                            .fileName.toString()
+                            .split('_')[1]
+                            .split('[.]').first()
+                    }
+                    capabilities = new ChromeOptions()
+                    if (config.binary != null) {
+                        capabilities.setBinary(config.binary.toString())
+                    }
+                    if (config.visible) {
+                        capabilities.addArguments("--headless=new")
+                    }
+                    break
                 case CHROME:
                     if (config.mode == EMBEDDED) {
                         Path chromeDir = core.configuration.folders.tools().resolve('chrome')

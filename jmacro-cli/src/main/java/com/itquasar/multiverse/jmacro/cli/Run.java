@@ -37,11 +37,11 @@ public class Run implements Callable<CliResult> {
 
     @ParentCommand
     private Cli cli;
-    @Parameters(arity = "0..1")
-    private String path;
+    @Parameters(arity = "0..1", description = "Script path to run")
+    private String scriptPath;
 
-    @Option(names = {"--default-path"})
-    public String defaultPath;
+    @Option(names = {"--default-script", "--ds"}, description = "Default script to run if no selection provided")
+    public String defaultScriptPath;
 
     @Option(names = {"--config", "--configuration"}, paramLabel = "KEY=VALUE")
     public void setConfiguration(Map<String, String> map) {
@@ -87,12 +87,12 @@ public class Run implements Callable<CliResult> {
             });
         }
 
-        this.defaultPath = checkMainAndExtension(this.defaultPath);
-        this.path = checkMainAndExtension(this.path);
+        this.defaultScriptPath = checkMainAndExtension(this.defaultScriptPath);
+        this.scriptPath = checkMainAndExtension(this.scriptPath);
 
         Optional<Script> script;
-        if (path != null) {
-            script = cli.getCore().getConfiguration().getRepository().get(path);
+        if (scriptPath != null) {
+            script = cli.getCore().getConfiguration().getRepository().get(scriptPath);
         } else {
             List<Script> scripts = cli.getCore().getConfiguration().getRepository().listMain();
             System.out.println("Listing available scripts:");
@@ -105,7 +105,7 @@ public class Run implements Callable<CliResult> {
                 String idx = padding + (i + 1);
                 idx = idx.substring(idx.length() - padding.length());
                 Script _script = scripts.get(i);
-                if (_script.getPath().equals(this.defaultPath)) {
+                if (_script.getPath().equals(this.defaultScriptPath)) {
                     defaultScript = _script;
                 }
 
@@ -156,7 +156,7 @@ public class Run implements Callable<CliResult> {
             );
             return new CliResult(scriptResult);
         }
-        throw new Exception("Script " + this.path + " not found on configured repositories!");
+        throw new Exception("Script " + this.scriptPath + " not found on configured repositories!");
     }
 
     private String checkMainAndExtension(String path) {

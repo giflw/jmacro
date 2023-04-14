@@ -5,6 +5,7 @@ import com.itquasar.multiverse.jmacro.commands.terminal.commands.tn3270.Writer
 import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.Constants
 import com.itquasar.multiverse.jmacro.core.JMacroCore
+import com.itquasar.multiverse.jmacro.core.command.AutoCloseableAll
 import com.itquasar.multiverse.tn3270j.TN3270j
 import com.itquasar.multiverse.tn3270j.TN3270jFactory
 import com.itquasar.multiverse.tn3270j.WaitMode
@@ -20,7 +21,7 @@ import java.util.concurrent.TimeUnit
 
 @Log4j2
 @CompileStatic
-class TN3270Command extends Command implements AutoCloseable, Constants {
+class TN3270Command extends Command implements AutoCloseableAll, Constants {
 
     static enum Key {
         F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12,
@@ -150,8 +151,12 @@ class TN3270Command extends Command implements AutoCloseable, Constants {
         this.tn3270j.set(null)
     }
 
-    // FIXME add shutdown hook to core engine
-    void closeAll(long timeout = 0, TimeUnit timeUnit = TimeUnit.SECONDS) {
+    @Override
+    void closeAll() {
+        this.closeAll(0,TimeUnit.SECONDS)
+    }
+
+    void closeAll(long timeout, TimeUnit timeUnit = TimeUnit.SECONDS) {
         long maxTime = System.currentTimeMillis() - timeUnit.toMillis(timeout)
         instances.each { if (it.value < (maxTime)) { it.key.close() } }
     }
