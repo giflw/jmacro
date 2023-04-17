@@ -51,35 +51,6 @@
                                     <outputDirectory>../tools/x3270/windows/64/</outputDirectory>
                                 </configuration>
                             </execution>
-                            <execution>
-                                <id>chromedriver-win-get</id>
-                                <phase>initialize</phase>
-                                <goals>
-                                    <goal>wget</goal>
-                                </goals>
-                                <configuration>
-                                    <url>https://chromedriver.storage.googleapis.com/112.0.5615.49/chromedriver_win32.zip</url>
-                                    <outputFileName>chromedriver_win32-112.0.5615.49.zip</outputFileName>
-                                    <md5>3aa0e2c3dca02a93422152248411c964</md5>
-                                    <unpack>true</unpack>
-                                    <outputDirectory>../tools/webdriver/chrome/windows/32/</outputDirectory>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>chromium-win64-get</id>
-                                <phase>initialize</phase>
-                                <goals>
-                                    <goal>wget</goal>
-                                </goals>
-                                <configuration>
-                                    <!-- https://ungoogled-software.github.io/ungoogled-chromium-binaries/releases/windows/64bit/ -->
-                                    <url>https://github.com/ungoogled-software/ungoogled-chromium-windows/releases/download/112.0.5615.50-1.1/ungoogled-chromium_112.0.5615.50-1.1_windows_x64.zip</url>
-                                    <outputFileName>ungoogled-chromium_112.0.5615.50-1.1_windows_x64.zip</outputFileName>
-                                    <md5>7d8f888924d5ef12ed911098839dc241</md5>
-                                    <unpack>true</unpack>
-                                    <outputDirectory>../tools/chromium/</outputDirectory>
-                                </configuration>
-                            </execution>
                         </executions>
                     </plugin>
                     <plugin>

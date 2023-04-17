@@ -10,7 +10,6 @@ import groovy.transform.CompileDynamic
 import org.apache.commons.io.FileUtils
 import org.openqa.selenium.*
 import org.openqa.selenium.chrome.ChromeOptions
-import org.openqa.selenium.edge.EdgeDriverService
 import org.openqa.selenium.edge.EdgeOptions
 import org.openqa.selenium.firefox.FirefoxOptions
 import org.openqa.selenium.remote.RemoteWebDriver
@@ -21,7 +20,6 @@ import ru.yandex.qatools.ashot.shooting.ShootingStrategies
 import javax.imageio.ImageIO
 import javax.script.ScriptEngine
 import java.io.File as JFile
-import java.nio.file.Files
 import java.nio.file.Path
 
 class BrowserCommand extends CallableCommand implements AutoCloseable, Constants {
@@ -31,7 +29,6 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
     ]
 
     Map<String, ?> config = [
-        mode   : EMBEDDED,
         vendor : CHROMIUM,
         port   : 0, // random
         visible: false, //  true -> visible;  false -> headless
@@ -84,7 +81,6 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
             this.config.version = parts[1]
         }
         this.config.visible = this.config.visible ?: false
-        this.config.vendor = this.config.vendor ?: EMBEDDED
     }
 
     BrowserCommand start() {
@@ -93,68 +89,23 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
             Capabilities capabilities = null
             switch (config.vendor) {
                 case FIREFOX:
-                    if (config.mode == EMBEDDED) {
-                        Path ffDir = core.configuration.folders.tools().resolve('firefox')
-                        config.binary = ffDir.resolve(IS_WINDOWS ? 'firefox.exe' : 'firefox')
-                        // Version=95.0 -> 95
-                        config.version = Files.readAllLines(ffDir.resolve("application.ini"))
-                            .find { it.startsWith('Version=') }
-                            .split('[=.]')[1]
-                    }
                     capabilities = new FirefoxOptions()
+                    if (!config.visible) {
+                        capabilities.addArguments("-headless")
+                    }
                     if (config.binary != null) {
                         capabilities.setBinary(config.binary.toString())
-                    }
-                    if (config.visible) {
-                        capabilities.addArguments("-headless")
                     }
                     break
                 case CHROMIUM:
-                    if (config.mode == EMBEDDED) {
-                        Path chromeDir = core.configuration.folders.tools().resolve('chromium')
-                        config.binary = chromeDir.resolve(IS_WINDOWS ? 'chrome.exe' : 'chrome')
-                        // 99.0.4844.51 -> 99
-                        config.version = Files.list(chromeDir).filter {
-                            it.fileName.toString().matches(".*[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+.*")
-                        }.findFirst().get()
-                            .fileName.toString()
-                            .split('_')[1]
-                            .split('[.]').first()
-                    }
-                    capabilities = new ChromeOptions()
-                    if (config.binary != null) {
-                        capabilities.setBinary(config.binary.toString())
-                    }
-                    if (config.visible) {
-                        capabilities.addArguments("--headless=new")
-                    }
-                    break
                 case CHROME:
-                    if (config.mode == EMBEDDED) {
-                        Path chromeDir = core.configuration.folders.tools().resolve('chrome')
-                        config.binary = chromeDir.resolve(IS_WINDOWS ? 'chrome.exe' : 'chrome')
-                        // 99.0.4844.51 -> 99
-                        config.version = Files.list(chromeDir).filter {
-                            it.fileName.toString().matches("[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+")
-                        }.findFirst().get()
-                            .fileName.toString()
-                            .split('[.]').first()
-                    }
-                    capabilities = new ChromeOptions()
-                    if (config.binary != null) {
-                        capabilities.setBinary(config.binary.toString())
-                    }
-                    if (config.visible) {
-                        capabilities.addArguments("--headless=new")
-                    }
-                    break
                 case EDGE:
-                    capabilities = new EdgeOptions()
+                    capabilities = EDGE == config.vendor ? new EdgeOptions() : new ChromeOptions()
+                    if (!config.visible) {
+                        capabilities.addArguments("--headless=new")
+                    }
                     if (config.binary != null) {
                         capabilities.setBinary(config.binary.toString())
-                    }
-                    if (config.visible) {
-                        capabilities.addArguments("--headless=new")
                     }
                     //capabilities.addArguments("--disable-extensions")
                     break

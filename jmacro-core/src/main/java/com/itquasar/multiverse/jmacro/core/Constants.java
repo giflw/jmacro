@@ -56,8 +56,6 @@ public interface Constants {
     String IE = "IExplorer";
     String OPERA = "Opera";
     String SAFARI = "Safari";
-    String EMBEDDED = "Embedded";
-    String EXTERNAL = "External";
 
     // DEVTOOLS
     String NETWORK = "Network";
