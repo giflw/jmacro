@@ -1,9 +1,9 @@
-${JAVACMD}
-${JAVA_OPTS}
+${env:JAVACMD}
+${env:JAVA_OPTS}
 -classpath
-${BASEDIR}/etc;${REPO}/*
+${env:BASEDIR}/etc;${REPO}/*
 -Dapp.name=${launcher.name}
--Dapp.repo="${REPO}"
--Dapp.home="${BASEDIR}"
+-Dapp.repo="${env:REPO}"
+-Dapp.home="${env:BASEDIR}"
 com.itquasar.multiverse.jmacro.installer.Launcher
 JMACRO_ARGS

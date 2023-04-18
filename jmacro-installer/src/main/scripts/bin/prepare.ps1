@@ -11,13 +11,6 @@ if (Test-Path -Path $distPath) {
 
 Copy-Item -Recurse "${installerPath}/*" "${tmpPath}"
 
-Write-Host "Preparing installer..."
-New-Item -Path "${distPath}/installer/" -Type Directory | Write-Host
-Copy-Item -Recurse "${installerPath}/*" "${distPath}/installer"
-Invoke-Expression -Command @"
-    ${tmpPath}/bin/jmacro-installer.bat prepare "${distPath}/installer/=${repositoryBasePath}/installer"
-"@
-
 Write-Host "Preparing jmacro..."
 New-Item -Path "${distPath}/jmacro/" -Type Directory | Write-Host
 Copy-Item -Recurse "${jmacroPath}/*" "${distPath}/jmacro"
