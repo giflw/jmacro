@@ -17,6 +17,12 @@
         <dependencies>
             <dependency>
                 <groupId>com.itquasar.multiverse.jmacro</groupId>
+                <artifactId>jmacro-launcher</artifactId>
+                <type>pom</type>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.itquasar.multiverse.jmacro</groupId>
                 <artifactId>jmacro-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -53,6 +59,22 @@
             <dependency>
                 <groupId>com.itquasar.multiverse.jmacro.commands</groupId>
                 <artifactId>jmacro-commands-server</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.itquasar.multiverse.jmacro</groupId>
+                <artifactId>jmacro-launcher</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.itquasar.multiverse.jmacro</groupId>
+                <artifactId>jmacro-installer</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.itquasar.multiverse.jmacro</groupId>
+                <artifactId>jmacro-cli</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

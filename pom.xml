@@ -48,14 +48,16 @@
     </properties>
 
     <modules>
-        <module>jmacro-installer</module>
-        <module>jmacro-tools</module>
         <module>jmacro-bom</module>
-        <module>jmacro-docs</module>
-        <module>jmacro-core</module>
-        <module>jmacro-commands</module>
         <module>jmacro-cli</module>
+        <module>jmacro-commands</module>
+        <module>jmacro-core</module>
+        <module>jmacro-dist</module>
+        <module>jmacro-docs</module>
+        <module>jmacro-installer</module>
+        <module>jmacro-launcher</module>
         <module>jmacro-tests</module>
+        <module>jmacro-tools</module>
     </modules>
 
     <distributionManagement>
