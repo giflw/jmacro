@@ -114,7 +114,7 @@
                                     <goal>copy-resources</goal>
                                 </goals>
                                 <configuration>
-                                    <outputDirectory>${project.basedir}/target/appassembler/</outputDirectory>
+                                    <outputDirectory>${project.basedir}/target/</outputDirectory>
                                     <resources>
                                         <resource>
                                             <directory>

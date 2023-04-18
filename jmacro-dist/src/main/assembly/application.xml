@@ -6,8 +6,11 @@
         <format>dir</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
+
     <dependencySets>
         <dependencySet>
+            <useProjectArtifact>false</useProjectArtifact>
+            <useProjectAttachments>false</useProjectAttachments>
             <useTransitiveFiltering>true</useTransitiveFiltering>
             <includes>
                 <include>com.itquasar.multiverse.jmacro:jmacro-cli</include>
@@ -15,6 +18,8 @@
             <outputDirectory>lib</outputDirectory>
         </dependencySet>
         <dependencySet>
+            <useProjectArtifact>false</useProjectArtifact>
+            <useProjectAttachments>false</useProjectAttachments>
             <useTransitiveFiltering>true</useTransitiveFiltering>
             <includes>
                 <include>com.itquasar.multiverse.jmacro:jmacro-installer</include>
@@ -23,4 +28,45 @@
             <outputDirectory>installer/lib</outputDirectory>
         </dependencySet>
     </dependencySets>
+    <fileSets>
+        <fileSet>
+            <useDefaultExcludes>false</useDefaultExcludes>
+            <directory>../jmacro-launcher/target/</directory>
+            <includes>
+                <include>*.exe</include>
+            </includes>
+            <outputDirectory></outputDirectory>
+        </fileSet>
+        <fileSet>
+            <useDefaultExcludes>false</useDefaultExcludes>
+            <directory>../jmacro-cli/src/main/knx-launcher/</directory>
+            <includes>
+                <include>*.knx</include>
+            </includes>
+            <outputDirectory></outputDirectory>
+        </fileSet>
+        <fileSet>
+            <useDefaultExcludes>false</useDefaultExcludes>
+            <directory>../jmacro-installer/src/main/knx-launcher/</directory>
+            <includes>
+                <include>*</include>
+            </includes>
+            <outputDirectory></outputDirectory>
+        </fileSet>
+    </fileSets>
+    <files>
+        <file>
+            <source>../jmacro-launcher/target/jmacro.exe</source>
+            <destName>installer.exe</destName>
+            <outputDirectory></outputDirectory>
+        </file>
+<!--        <file>-->
+<!--            <source>LICENSE.txt</source>-->
+<!--            <outputDirectory></outputDirectory>-->
+<!--        </file>-->
+<!--        <file>-->
+<!--            <source>NOTICE.txt</source>-->
+<!--            <outputDirectory></outputDirectory>-->
+<!--        </file>-->
+    </files>
 </assembly>
