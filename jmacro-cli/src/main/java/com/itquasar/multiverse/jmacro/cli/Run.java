@@ -28,20 +28,18 @@ public class Run implements Callable<CliResult> {
 
     private final Map<String, String> configuration = new LinkedHashMap<>();
     private final Map<String, String> credentials = new LinkedHashMap<>();
-
+    @Option(names = {"--default-script", "--ds"}, description = "Default script to run if no selection provided")
+    public String defaultScriptPath;
+    @Option(names = {"--main-infix", "--mi"}, description = "Main infxi to search for main scripts. Default is main as in script.main.groovy", defaultValue = "main")
+    public String mainInfix;
     @Parameters()
     List<String> args;
-
     @Spec
     private CommandSpec spec; // injected by picocli
-
     @ParentCommand
     private Cli cli;
     @Parameters(arity = "0..1", description = "Script path to run")
     private String scriptPath;
-
-    @Option(names = {"--default-script", "--ds"}, description = "Default script to run if no selection provided")
-    public String defaultScriptPath;
 
     @Option(names = {"--config", "--configuration"}, paramLabel = "KEY=VALUE")
     public void setConfiguration(Map<String, String> map) {
@@ -87,22 +85,22 @@ public class Run implements Callable<CliResult> {
             });
         }
 
-        this.defaultScriptPath = checkMainAndExtension(this.defaultScriptPath);
-        this.scriptPath = checkMainAndExtension(this.scriptPath);
+        this.defaultScriptPath = checkInfixAndExtension(this.defaultScriptPath);
+        this.scriptPath = checkInfixAndExtension(this.scriptPath);
 
         Optional<Script> script;
         if (scriptPath != null) {
             script = cli.getCore().getConfiguration().getRepository().get(scriptPath);
         } else {
-            List<Script> scripts = cli.getCore().getConfiguration().getRepository().listMain();
+            List<Script> scripts = cli.getCore().getConfiguration().getRepository().listMain(mainInfix);
             System.out.println("Listing available scripts:");
-            String padding = "";
+            StringBuilder padding = new StringBuilder();
             while (padding.length() < scripts.size()) {
-                padding += " ";
+                padding.append(" ");
             }
             Script defaultScript = null;
             for (int i = 0; i < scripts.size(); i++) {
-                String idx = padding + (i + 1);
+                String idx = padding.toString() + (i + 1);
                 idx = idx.substring(idx.length() - padding.length());
                 Script _script = scripts.get(i);
                 if (_script.getPath().equals(this.defaultScriptPath)) {
@@ -143,7 +141,7 @@ public class Run implements Callable<CliResult> {
                 args.set(0, script.get().getLocation().toString());
             }
             List<String> args = this.args != null ? Collections.unmodifiableList(this.args) : Collections.emptyList();
-            ScriptResult scriptResult = cli.getCore().getEngine().execute(
+            ScriptResult<?> scriptResult = cli.getCore().getEngine().execute(
                 script.get(),
                 args,
                 scriptEngine -> {
@@ -159,7 +157,7 @@ public class Run implements Callable<CliResult> {
         throw new Exception("Script " + this.scriptPath + " not found on configured repositories!");
     }
 
-    private String checkMainAndExtension(String path) {
-        return path == null || path.matches(".*(?!\\.main)\\.(?<ext>[a-zA-Z0-9]+)") ? path : path + ".main.groovy";
+    private String checkInfixAndExtension(String path) {
+        return path == null || path.matches(".*(?!\\." + mainInfix + ")\\.(?<ext>[a-zA-Z0-9]+)") ? path : path + "." + mainInfix + ".groovy";
     }
 }

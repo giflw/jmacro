@@ -96,6 +96,10 @@ public class ParallelCommand extends Command implements AutoCloseable {
         return call(defaultGroup, minPoolSize, maxPoolSize, this.timeout);
     }
 
+    public ParallelCommand call(String group, int minPoolSize, int maxPoolSize) {
+        return this.call(group, minPoolSize, maxPoolSize, this.timeout);
+    }
+
     public ParallelCommand call(int minPoolSize, int maxPoolSize, int timeout) {
         return call(defaultGroup, minPoolSize, maxPoolSize, timeout);
     }
@@ -117,10 +121,11 @@ public class ParallelCommand extends Command implements AutoCloseable {
         }
     }
 
-    private static ParallelCommand initParallel(Logger logger, ParallelCommand parallel, String group, int minPoolSize, int maxPoolSize, long timeout) {
+    private ParallelCommand initParallel(Logger logger, ParallelCommand parallel, String group, int minPoolSize, int maxPoolSize, long timeout) {
         parallel.minPoolSize = minPoolSize;
         parallel.maxPoolSize = maxPoolSize;
         parallel.timeout = timeout;
+        parallel.tasksMonitor = new TasksMonitor(this);
 
         ThreadPoolExecutor executor = new ThreadPoolExecutor(
             minPoolSize,

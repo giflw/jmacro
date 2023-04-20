@@ -9,6 +9,8 @@ import java.util.UUID;
 
 public interface ScriptRepository {
 
+    String DEFAULT_MAIN_INFIX = "main";
+
     String getId();
 
     URI getUri();
@@ -20,11 +22,20 @@ public interface ScriptRepository {
     List<Script> list(boolean reload);
 
     default List<Script> listMain() {
-        return this.listMain(false);
+        return this.listMain(DEFAULT_MAIN_INFIX, false);
+    }
+
+    default List<Script> listMain(String mainInfix) {
+        return this.listMain(mainInfix, false);
     }
 
     default List<Script> listMain(boolean reload) {
-        return this.list(reload).stream().filter(it -> it.getPath().matches(".*(\\.main)+\\.(?<ext>[a-zA-Z0-9]+)")).toList();
+        return this.listMain(DEFAULT_MAIN_INFIX, false);
+    }
+
+    default List<Script> listMain(String mainInfix, boolean reload) {
+        return this.list(reload).stream()
+            .filter(it -> it.getPath().matches(".*(\\." + mainInfix + ")+\\.(?<ext>[a-zA-Z0-9]+)")).toList();
     }
 
     default URI pathToLocation(String path) {
