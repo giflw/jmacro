@@ -151,15 +151,25 @@ class TN3270Command extends Command implements AutoCloseableAll, Constants {
         this.tn3270j.set(null)
     }
 
-    @Override
-    void closeAll() {
-        this.closeAll(0,TimeUnit.SECONDS)
+    void clear(long timeout = 60, TimeUnit timeUnit = TimeUnit.SECONDS) {
+        closeAll(timeout, timeUnit)
     }
 
-    void closeAll(long timeout, TimeUnit timeUnit = TimeUnit.SECONDS) {
+    @Override
+    void closeAll() {
+        closeAll(0, TimeUnit.SECONDS)
+    }
+
+    static void closeAll(long timeout, TimeUnit timeUnit = TimeUnit.SECONDS) {
         long maxTime = System.currentTimeMillis() - timeUnit.toMillis(timeout)
-        instances.each { if (it.value < (maxTime)) { it.key.close() } }
+        instances.removeAll {
+            if (it.value < maxTime) {
+                it.key.close();
+                true
+            } else {
+                false
+            }
+        }
     }
 
 }
-

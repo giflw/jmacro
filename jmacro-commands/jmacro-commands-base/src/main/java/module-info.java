@@ -16,4 +16,5 @@ module jmacro.commands.base {
     exports com.itquasar.multiverse.jmacro.commands.base.providers;
     exports com.itquasar.multiverse.jmacro.commands.base.commands;
     exports com.itquasar.multiverse.jmacro.commands.base.commands.moment;
+    exports com.itquasar.multiverse.jmacro.commands.base.commands.parallel;
 }
