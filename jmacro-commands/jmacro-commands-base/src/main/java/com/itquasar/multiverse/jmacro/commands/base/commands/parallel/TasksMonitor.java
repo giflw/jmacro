@@ -34,7 +34,7 @@ public class TasksMonitor {
         logger.info("Canceling futures executions");
         for (var cancel : cancels) {
             try {
-                logger.info("Future ${future.hashCode()} -> trying to cancel even if running");
+                logger.info("Future " + cancel.hashCode() + " -> trying to cancel even if running");
                 cancel.cancel(true);
             } catch (Exception exCancel) {
                 logger.error("Error canceling future execution " + exCancel);

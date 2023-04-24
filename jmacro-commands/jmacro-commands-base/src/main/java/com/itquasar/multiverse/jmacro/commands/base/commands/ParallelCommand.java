@@ -28,7 +28,7 @@ public class ParallelCommand extends Command implements AutoCloseable {
     private String groupName;
 
     private ExecutorService executor;
-    private TasksMonitor tasksMonitor;
+    private final TasksMonitor tasksMonitor = new TasksMonitor(this);
 
     private int minPoolSize = Constants.CPUS / 2;
 
@@ -125,7 +125,6 @@ public class ParallelCommand extends Command implements AutoCloseable {
         parallel.minPoolSize = minPoolSize;
         parallel.maxPoolSize = maxPoolSize;
         parallel.timeout = timeout;
-        parallel.tasksMonitor = new TasksMonitor(this);
 
         ThreadPoolExecutor executor = new ThreadPoolExecutor(
             minPoolSize,
