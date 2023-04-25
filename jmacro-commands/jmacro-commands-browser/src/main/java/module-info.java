@@ -12,6 +12,7 @@ module jmacro.commands.browser {
     requires org.seleniumhq.selenium.devtools_v85;
     requires io.github.bonigarcia.webdrivermanager;
     requires org.apache.commons.io;
+    requires org.apache.httpcomponents.client5.httpclient5;
 
     requires java.desktop;
     requires java.scripting;

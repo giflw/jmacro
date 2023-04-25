@@ -24,7 +24,7 @@ class BrowserElements<T> {
     }
 
     private T setField(T element) {
-        browser.elements.put(this.name, element)
+        browser.elements.put(this.name, (Object) element)
         return element
     }
 
@@ -50,7 +50,7 @@ class BrowserElements<T> {
 
     private T _find(By by) {
         this.by = by
-        return this.find(by)
+        return (T) this.find(by)
     }
 
     protected T find(By by) {

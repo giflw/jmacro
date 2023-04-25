@@ -60,7 +60,7 @@ class CredentialsCommand extends Command implements CredentialsProvider, ToMap {
     }
 
     def call(Closure closure) {
-        return Command.callDelegating(this, closure)
+        return callDelegating(this, closure)
     }
 
     void fill(CredentialsCommand credentials) {
@@ -92,10 +92,13 @@ class CredentialsCommand extends Command implements CredentialsProvider, ToMap {
         return this
     }
 
-    // FIXME extract credentials holder to allow use of multiple instances
-    public CredentialsCommand of(String login, String password = null) {
+    CredentialsCommand of(String login, String password = null, String domain = null) {
+        return of(login: login, password: password, domain: domain)
+    }
+
+    CredentialsCommand of(Map<String, ?> values) {
         def cred = new CredentialsCommand("credentials", core, scriptEngine)
-        return cred.update(login: login, password: password)
+        return cred.update(values)
     }
 
     String getPassword() {
@@ -113,7 +116,7 @@ class CredentialsCommand extends Command implements CredentialsProvider, ToMap {
     }
 
     String getFullUser() {
-        return "$domain\\$login"
+        return "${domain ? domain + '\\': ''}$login"
     }
 
     String getImpersonate() {

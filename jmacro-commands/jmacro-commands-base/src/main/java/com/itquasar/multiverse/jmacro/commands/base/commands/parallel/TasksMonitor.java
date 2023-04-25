@@ -55,11 +55,25 @@ public class TasksMonitor {
             this.thread = new Thread(() -> {
                 Logger logger = this.command.getLogger();
                 logger.info("Starting tasks monitor thread");
-                long timeout = command.getTimeout();
-                logger.info("Waiting " + timeout + "s to first run");
-                sleep(timeout);
+                long pauseTime = command.getTimeout() / 10;
+                logger.info("Waiting " + pauseTime + "s to first run");
+                sleep(pauseTime);
 
-                while (status.get() == RUNNING && !futures.isEmpty()) {
+                int pauses = 0;
+                while (status.get() == RUNNING) {
+                    if (futures.stream().allMatch(Future::isDone)) {
+                        if (pauses > 20) {
+                            break;
+                        }
+                        try {
+                            pauses++;
+                            Thread.sleep(pauseTime);
+                        } catch (InterruptedException e) {
+                            logger.error(e);
+                        }
+                    } else {
+                        pauses = 0;
+                    }
                     run(logger);
                 }
 
@@ -89,7 +103,7 @@ public class TasksMonitor {
     private List<Future<?>> getAllAndReturnCancels(Logger logger) {
         var cancels = new ArrayList<Future<?>>();
         logger.info("Getting futures values");
-        for (Future<?> future : futures) {
+        for (Future<?> future : futures.stream().filter(it -> !it.isDone()).toList()) {
             try {
                 logger.info("Future " + future.hashCode() + " -> done : " + future.isDone() + " (get with wait time of " + command.getTimeout() + ")");
                 var value = future.get(command.getTimeout(), ParallelCommand.MILLISECONDS);
@@ -121,7 +135,7 @@ public class TasksMonitor {
             if (this.futures.stream().allMatch(Future::isDone)) {
                 return;
             }
-            Thread.sleep(command.getTimeout());
+            Thread.sleep(command.getTimeout() / 10);
         }
     }
 }

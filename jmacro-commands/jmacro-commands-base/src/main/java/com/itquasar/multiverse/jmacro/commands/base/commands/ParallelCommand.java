@@ -100,8 +100,16 @@ public class ParallelCommand extends Command implements AutoCloseable {
         return this.call(group, minPoolSize, maxPoolSize, this.timeout);
     }
 
-    public ParallelCommand call(int minPoolSize, int maxPoolSize, int timeout) {
+    public ParallelCommand call(int minPoolSize, int maxPoolSize, double timeout) {
+        return call(defaultGroup, minPoolSize, maxPoolSize, Double.valueOf(timeout * 1000).longValue());
+    }
+
+    public ParallelCommand call(int minPoolSize, int maxPoolSize, long timeout) {
         return call(defaultGroup, minPoolSize, maxPoolSize, timeout);
+    }
+
+    public ParallelCommand call(String group, int minPoolSize, int maxPoolSize, double timeout) {
+        return call(group, minPoolSize, maxPoolSize, Double.valueOf(timeout * 1000).longValue());
     }
 
     /**
@@ -181,6 +189,11 @@ public class ParallelCommand extends Command implements AutoCloseable {
 
     public ParallelCommand waitTasks() {
         this.tasksMonitor.waitAll();
+        return this;
+    }
+
+    public ParallelCommand clear() {
+        this.tasksMonitor.clear();
         return this;
     }
 

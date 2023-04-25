@@ -1,5 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.browser.command
 
+import com.itquasar.multiverse.jmacro.commands.base.commands.ConfigurationCommand
+import com.itquasar.multiverse.jmacro.commands.base.commands.CredentialsCommand
 import com.itquasar.multiverse.jmacro.commands.browser.command.browser.*
 import com.itquasar.multiverse.jmacro.core.CallableCommand
 import com.itquasar.multiverse.jmacro.core.Command
@@ -7,6 +9,7 @@ import com.itquasar.multiverse.jmacro.core.Constants
 import com.itquasar.multiverse.jmacro.core.JMacroCore
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
+import io.github.bonigarcia.wdm.WebDriverManager
 import org.apache.commons.io.FileUtils
 import org.openqa.selenium.*
 import org.openqa.selenium.chrome.ChromeOptions
@@ -21,6 +24,7 @@ import javax.imageio.ImageIO
 import javax.script.ScriptEngine
 import java.io.File as JFile
 import java.nio.file.Path
+import java.util.concurrent.ConcurrentLinkedQueue
 
 class BrowserCommand extends CallableCommand implements AutoCloseable, Constants {
 
@@ -28,19 +32,67 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
         by: (Object) By
     ]
 
+    static class LocalHolder {
+        long lastUsed = System.currentTimeMillis()
+        RemoteWebDriver driver = null
+        BrowserDevTools _devTools = null
+        BrowserWait wait = null
+        Map<String, Object> elements = [:]
+
+        void touch() {
+            this.lastUsed = System.currentTimeMillis()
+        }
+
+        @CompileDynamic
+        void clear() {
+            driver = _devTools = wait = elements = null
+        }
+    }
+
+    private final ThreadLocal<LocalHolder> local = ThreadLocal.withInitial { new LocalHolder() }
+
+    private final Queue<LocalHolder> INSTANCES = new ConcurrentLinkedQueue<>()
+
     Map<String, ?> config = [
         vendor : CHROMIUM,
-        port   : 0, // random
         visible: false, //  true -> visible;  false -> headless
         driver : null, // driver binary path
         binary : null, // browser binary path or path#version
-        version: null // browser binary version
+        version: null, // browser binary version
+        debug  : false // driver debug
     ]
 
-    RemoteWebDriver driver = null
-    private BrowserDevTools _devTools = null
-    BrowserWait wait = null
-    Map<String, ?> elements = [:]
+    void touch() {
+        this.local.get().touch()
+    }
+
+    RemoteWebDriver getDriver() {
+        return this.local.get().driver
+    }
+
+    void setDriver(RemoteWebDriver driver) {
+        this.local.get().driver = driver
+    }
+
+    BrowserDevTools get_devTools() {
+        return this.local.get()._devTools
+    }
+
+    void set_devTools(BrowserDevTools _devTools) {
+        this.local.get()._devTools = _devTools
+    }
+
+    BrowserWait getWait() {
+        return this.local.get().wait
+    }
+
+    void setWait(BrowserWait wait) {
+        this.local.get().wait = wait
+    }
+
+    Map<String, Object> getElements() {
+        return this.local.get().elements
+    }
 
     BrowserCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
@@ -61,20 +113,11 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
         if (this._devTools == null) {
             this._devTools = new BrowserDevTools(bindings, this)
         }
-        return _devTools
+        return this._devTools
     }
 
     @CompileDynamic
     private void postConfig() {
-        if (this.config.port == 0) {
-            ServerSocket serverSocket = new ServerSocket(0)
-            int port = serverSocket?.getLocalPort()
-            if (port == -1) {
-                throw new JMacroException(this, "Error allocating free port")
-            }
-            this.logger.debug("WebDriver port: $port")
-            this.config.port = port
-        }
         if (this.config.binary?.contains('#')) {
             Collection parts = this.config.binary.split('#')
             this.config.binary = parts[0]
@@ -84,6 +127,7 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
     }
 
     BrowserCommand start() {
+        touch()
         if (driver == null || driver.sessionId == null) {
             this.postConfig()
             Capabilities capabilities = null
@@ -100,6 +144,9 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
                 case CHROMIUM:
                 case CHROME:
                 case EDGE:
+                    if (config.debug) {
+                        System.setProperty("webdriver.chrome.verboseLogging", "true")
+                    }
                     capabilities = EDGE == config.vendor ? new EdgeOptions() : new ChromeOptions()
                     if (!config.visible) {
                         capabilities.addArguments("--headless=new")
@@ -116,20 +163,8 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
             this.config.forEach { key, value ->
                 logger.warn("Browser config ${key}=${value}")
             }
-            def driverManager = new DriverManager(core.configuration.folders.cache().resolve("webdriver"))
-            def manager = driverManager.getManager(config.vendor.toString())
-            if (this.config.binary) {
-                getLogger().warn("Binary path given. Avoiding browser detection and using ${this.config.version} as browser version.")
-                manager = manager.avoidBrowserDetection().browserVersion((String) this.config.version)
-                if (capabilities) {
-                    manager.capabilities(capabilities)
-                }
-                manager.setup()
-                this.driver = (RemoteWebDriver) manager.create()
-            } else {
-                getLogger().warn("Binary path not given. Trying browser detection with no specific version.")
-                this.driver = driverManager.getDriver(config.vendor.toString(), capabilities)
-            }
+
+            this.driver = (RemoteWebDriver) getWebDriverManager(capabilities).create()
 
             getLogger().warn("Web driver instance ${this.driver} with ${capabilities.asMap()}")
             if (this.driver == null) {
@@ -139,15 +174,85 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
             // driver.manage().window().maximize()
             logger.warn("Browser ${config.vendor.toString().capitalize()} started")
         }
+        return this
+    }
+
+    private WebDriverManager getWebDriverManager(Capabilities capabilities) {
+        touch()
+        getLogger().warn("Initializing web driver manager")
+        def driverManager = new DriverManager(core.configuration.folders.cache().resolve("webdriver"))
+        getLogger().info("Driver manager initialized")
+        def manager = driverManager.getManager(config.vendor.toString())
+        getLogger().info("Web driver manager created. Configuring it...")
+
+        ConfigurationCommand configuration = (ConfigurationCommand) scriptEngine.get('configuration')
+        getLogger().info("Using engine script configuration: ${configuration}")
+
+        Map<String, ?> proxyConfig = [:]
+        if (configuration['proxy'] !== false && configuration['proxy'] instanceof Map<String, ?>) {
+            proxyConfig = (Map<String, ?>) configuration['proxy']
+        }
+
+        getLogger().info("Proxy configuration ${proxyConfig}")
+        getLogger().info("Proxy credentials ${proxyConfig.crendentials}")
+        if (!proxyConfig.isEmpty()) {
+            getLogger().warn("Checking manager proxy configuration")
+            managerProxy(manager, proxyConfig)
+        }
+        if (this.config.binary) {
+            getLogger().warn("Binary path given. Avoiding browser detection and using ${this.config.version} as browser version.")
+            manager.avoidBrowserDetection().browserVersion((String) this.config.version)
+        }
+        if (capabilities) {
+            getLogger().warn("Setting manager capabilities")
+            manager.capabilities(capabilities)
+        }
+        getLogger().warn("Web driver manager initialized")
+        return manager
+    }
+
+    @CompileDynamic
+    private void managerProxy(WebDriverManager manager, Map<String, ?> proxyConfig) {
+        touch()
+        CredentialsCommand credentials = (CredentialsCommand) proxyConfig?.credentials
+        if (credentials) {
+            getLogger().info("Setting up proxy for web driver manager using ${credentials.fullUser}")
+        } else {
+            getLogger().warn("Setting up proxy for web driver manager using anonymous")
+        }
+
+        String proxyAddress = proxyConfig.address
+        if (!proxyAddress) {
+            getLogger().warn("Getting proxy from platform")
+            InetSocketAddress proxy = (InetSocketAddress) ProxySelector.default.select(URI.create('http://google.com.br/'))
+                .each { getLogger().warn("proxy each: $it}") }
+                .find { it.type() == java.net.Proxy.Type.HTTP }
+                .each { getLogger().warn("proxy found: $it}") }
+                ?.address()
+            proxyAddress = proxy ? "${proxy.hostName}:${proxy.port}" : null
+        }
+        getLogger().info("Proxy address: ${proxyAddress}")
+
+        if (proxyAddress != null) {
+            getLogger().warn("Setting manager proxy")
+            manager.proxy(proxyAddress)
+        }
+        if (credentials != null) {
+            getLogger().warn("Setting manager proxy credentials")
+            manager.proxyUser(credentials.fullUser)
+                .proxyPass(credentials.password)
+        }
     }
 
     BrowserCommand configure(Map<String, Object> config) {
+        touch()
         this.config.putAll(config)
         this.postConfig()
         return this
     }
 
     BrowserCommand configure(ConfigObject config) {
+        touch()
         this.config.putAll(config.spread())
         this.postConfig()
         return this
@@ -155,26 +260,32 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
 
     @CompileDynamic
     BrowserCommand configure(def configuration) {
+        touch()
         return configure(configuration.contains('browser') ? configuration.browser : configuration.configs)
     }
 
     def wait(String cssSelector) {
+        touch()
         return this.wait.call(this, cssSelector)
     }
 
     def wait(String cssSelector, BigDecimal timeout) {
+        touch()
         return this.wait.call(this, cssSelector, timeout)
     }
 
     def wait(WebElementWrapper element) {
+        touch()
         return this.wait.call(this, element)
     }
 
     def wait(WebElementWrapper element, BigDecimal timeout) {
+        touch()
         return this.wait.call(this, element, timeout)
     }
 
     BrowserCommand open(String url) {
+        touch()
         try {
             start()
             driver.get(url)
@@ -183,18 +294,34 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
         }
     }
 
-    void close() {
+    void close(RemoteWebDriver driver, BrowserDevTools devTools) {
         if (driver) {
-            this.logger.warn("Closing browser...")
-            if (this._devTools) {
-                this._devTools.close()
+            getLogger().warn("Closing browser...")
+            if (devTools) {
+                devTools.close()
             }
             driver.quit()
-            this.logger.warn("...browser closed.")
+            getLogger().warn("...browser closed.")
+        }
+    }
+
+    void close() {
+        closeAll(0)
+    }
+
+    void closeAll(Number timeout = 60000) {
+        INSTANCES.each { localHolder ->
+            {
+                if (localHolder.lastUsed < (System.currentTimeMillis() - timeout.longValue())) {
+                    close(localHolder.driver, localHolder._devTools)
+                    INSTANCES.remove(localHolder)
+                }
+            }
         }
     }
 
     BrowserCommand elements(Closure closure) {
+        touch()
         BrowserElements fields = new BrowserElements(this)
         closure.delegate = fields
         closure.resolveStrategy = Closure.DELEGATE_ONLY
@@ -203,6 +330,7 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
     }
 
     def el(String name) {
+        touch()
         if (!this.elements.containsKey(name)) {
             By by = By.cssSelector(name)
             def elements = this.driver.findElements(by)
@@ -211,9 +339,13 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
         return this.elements[name]
     }
 
-    def el(element) { return element }
+    def el(element) {
+        touch()
+        return element
+    }
 
     def els(String name) {
+        touch()
         if (!this.elements.containsKey(name)) {
             By by = By.cssSelector(name)
             return this.driver.findElements(by).collect { new WebElementWrapper(by, it) }
@@ -222,11 +354,13 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
     }
 
     def els(elements) {
+        touch()
         return elements
     }
 
     @CompileDynamic
     def check(String element, Closure checkLogic) {
+        touch()
         def elements = this.els(element)?.first()
         if (elements) {
             return checkLogic(elements)
@@ -234,6 +368,7 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
     }
 
     def checks(String element, Closure checkLogic) {
+        touch()
         def elements = this.els(element)
         if (elements) {
             return checkLogic(elements)
@@ -242,6 +377,7 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
 
     @CompileDynamic
     def propertyMissing(String name) {
+        touch()
         if (this.elements.containsKey(name)) {
             return this.elements[name]
         }
@@ -269,14 +405,20 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
 
     @CompileDynamic
     def methodMissing(String name, def args) {
-        return Command.methodMissingOn(context, name, args)
+        touch()
+        if (driver.respondsTo(name, args)) {
+            return driver."${name}"(*args)
+        }
+        return methodMissingOn(context, name, args)
     }
 
     JFile screenshot(Path destinationFile) {
+        touch()
         return screenshot(destinationFile.toString())
     }
 
     JFile screenshot(String destinationFile) {
+        touch()
         JFile scrFile = driver.getScreenshotAs(OutputType.FILE)
         JFile destFile = new JFile(destinationFile)
         this.logger.info("Screenshot: $destFile")
@@ -285,10 +427,12 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
     }
 
     JFile fullpage(Path destinationFile) {
+        touch()
         return fullpage(destinationFile.toString())
     }
 
     JFile fullpage(String destinationFile) {
+        touch()
         Screenshot screenshot = new AShot()
             .shootingStrategy(ShootingStrategies.viewportPasting(1000))
             .takeScreenshot(driver)
@@ -299,12 +443,14 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
     }
 
     Dimension windowSize(int width, int height) {
+        touch()
         Dimension dimension = new Dimension(width, height)
         driver.manage().window().setSize(dimension)
         return dimension
     }
 
     void maximize() {
+        touch()
         driver.manage().window().maximize()
     }
 

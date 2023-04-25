@@ -38,8 +38,8 @@ public class DriverManager {
             .useLocalVersionsPropertiesFirst()
             .useLocalCommandsPropertiesFirst();
         return webDriverManager
-            .cachePath(cacheDir.toString())
-            .resolutionCachePath(cacheDir.toString())
+            .cachePath(cacheDir.resolve("cache").toString())
+            .resolutionCachePath(cacheDir.resolve("resolution-cache").toString())
             .ttl(TTL.intValue())
             .ttlBrowsers(TTL.intValue());
     }
