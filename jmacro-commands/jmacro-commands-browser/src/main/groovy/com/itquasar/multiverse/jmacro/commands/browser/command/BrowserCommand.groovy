@@ -9,6 +9,7 @@ import com.itquasar.multiverse.jmacro.core.Constants
 import com.itquasar.multiverse.jmacro.core.JMacroCore
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
 import io.github.bonigarcia.wdm.WebDriverManager
 import org.apache.commons.io.FileUtils
 import org.openqa.selenium.*
@@ -33,23 +34,26 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
     ]
 
     static class LocalHolder {
-        long lastUsed = System.currentTimeMillis()
-        RemoteWebDriver driver = null
-        BrowserDevTools _devTools = null
-        BrowserWait wait = null
-        Map<String, Object> elements = [:]
+        ThreadLocal<Long> lastUsed = ThreadLocal.withInitial { System.currentTimeMillis() }
+        ThreadLocal<RemoteWebDriver> driver = new ThreadLocal<>()
+        ThreadLocal<BrowserDevTools> _devTools = new ThreadLocal<>()
+        ThreadLocal<BrowserWait> wait = new ThreadLocal<>()
+        ThreadLocal<Map<String, Object>> elements = ThreadLocal.withInitial { [:] as Map<String, Object> }
 
         void touch() {
-            this.lastUsed = System.currentTimeMillis()
+            this.lastUsed.set(System.currentTimeMillis())
         }
 
         @CompileDynamic
         void clear() {
-            driver = _devTools = wait = elements = null
+            driver.remove()
+            _devTools.remove()
+            wait.remove()
+            elements.remove()
         }
     }
 
-    private final ThreadLocal<LocalHolder> local = ThreadLocal.withInitial { new LocalHolder() }
+    private final LocalHolder local = new LocalHolder()
 
     private final Queue<LocalHolder> INSTANCES = new ConcurrentLinkedQueue<>()
 
@@ -63,35 +67,35 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
     ]
 
     void touch() {
-        this.local.get().touch()
+        this.local.touch()
     }
 
     RemoteWebDriver getDriver() {
-        return this.local.get().driver
+        return this.local.driver.get()
     }
 
     void setDriver(RemoteWebDriver driver) {
-        this.local.get().driver = driver
+        this.local.driver.set(driver)
     }
 
     BrowserDevTools get_devTools() {
-        return this.local.get()._devTools
+        return this.local._devTools.get()
     }
 
     void set_devTools(BrowserDevTools _devTools) {
-        this.local.get()._devTools = _devTools
+        this.local._devTools.set(_devTools)
     }
 
     BrowserWait getWait() {
-        return this.local.get().wait
+        return this.local.wait.get()
     }
 
     void setWait(BrowserWait wait) {
-        this.local.get().wait = wait
+        this.local.wait.set(wait)
     }
 
     Map<String, Object> getElements() {
-        return this.local.get().elements
+        return this.local.elements.get()
     }
 
     BrowserCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
@@ -312,8 +316,8 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
     void closeAll(Number timeout = 60000) {
         INSTANCES.each { localHolder ->
             {
-                if (localHolder.lastUsed < (System.currentTimeMillis() - timeout.longValue())) {
-                    close(localHolder.driver, localHolder._devTools)
+                if (localHolder.lastUsed.get() < (System.currentTimeMillis() - timeout.longValue())) {
+                    close(localHolder.driver.get(), localHolder._devTools.get())
                     INSTANCES.remove(localHolder)
                 }
             }
