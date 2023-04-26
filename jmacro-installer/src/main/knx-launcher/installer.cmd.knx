@@ -1,7 +1,7 @@
 ${env:JAVACMD}
 ${env:JAVA_OPTS}
 -classpath
-${env:BASEDIR}/etc;${REPO}/*
+${env:BASEDIR}/etc;${env:REPO}/*
 -Dapp.name=${launcher.name}
 -Dapp.repo="${env:REPO}"
 -Dapp.home="${env:BASEDIR}"
