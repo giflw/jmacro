@@ -7,11 +7,6 @@ param(
 
 Copy-Item -Recurse "${installerPath}/*" "${tmpPath}"
 
-Write-Host "Updating installer..."
-Invoke-Expression -Command @"
-    ${tmpPath}/bin/jmacro-installer.bat update "${repositoryBaseUri}/installer/=${installerPath}"
-"@
-
 Write-Host "Updating jmacro..."
 Invoke-Expression -Command @"
     ${tmpPath}/bin/jmacro-installer.bat update "${repositoryBaseUri}/jmacro/=${jmacroPath}"
