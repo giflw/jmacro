@@ -31,7 +31,7 @@
                         <executions>
                             <execution>
                                 <id>exe-copy-icon</id>
-                                <phase>process-resources</phase>
+                                <phase>generate-sources</phase>
                                 <goals>
                                     <goal>copy-resources</goal>
                                 </goals>
@@ -57,59 +57,9 @@
                                     <overwrite>true</overwrite>
                                 </configuration>
                             </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <version>3.1.0</version>
-                        <configuration>
-                            <executable>cmd</executable>
-                            <workingDirectory>${project.basedir}/../git-modules/knx-launcher</workingDirectory>
-                            <useMavenLogger>true</useMavenLogger>
-                            <environmentVariables>
-                                <KNX_EXE_NAME>jmacro</KNX_EXE_NAME>
-                            </environmentVariables>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>exe-build-launcher</id>
-                                <phase>compile</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <configuration>
-                                    <arguments>
-                                        <argument>/C</argument>
-                                        <argument>${project.basedir}/../git-modules/knx-launcher/gradlew.bat</argument>
-                                        <argument>nativeBinaries</argument>
-                                    </arguments>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>exe-clean-launcher</id>
-                                <phase>clean</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <configuration>
-                                    <arguments>
-                                        <argument>/C</argument>
-                                        <argument>${project.basedir}/../git-modules/knx-launcher/gradlew.bat</argument>
-                                        <argument>clean</argument>
-                                    </arguments>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-resources-plugin</artifactId>
-                        <version>3.3.0</version>
-                        <executions>
                             <execution>
                                 <id>exe-copy-launcher</id>
-                                <phase>prepare-package</phase>
+                                <phase>process-resources</phase>
                                 <goals>
                                     <goal>copy-resources</goal>
                                 </goals>
@@ -143,6 +93,49 @@
                                         </resource>
                                     </resources>
                                     <overwrite>true</overwrite>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <configuration>
+                            <executable>cmd</executable>
+                            <workingDirectory>${project.basedir}/../git-modules/knx-launcher</workingDirectory>
+                            <useMavenLogger>true</useMavenLogger>
+                            <environmentVariables>
+                                <KNX_EXE_NAME>jmacro</KNX_EXE_NAME>
+                            </environmentVariables>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>exe-build-launcher</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <arguments>
+                                        <argument>/C</argument>
+                                        <argument>${project.basedir}/../git-modules/knx-launcher/gradlew.bat</argument>
+                                        <argument>nativeBinaries</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>exe-clean-launcher</id>
+                                <phase>clean</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <arguments>
+                                        <argument>/C</argument>
+                                        <argument>${project.basedir}/../git-modules/knx-launcher/gradlew.bat</argument>
+                                        <argument>clean</argument>
+                                    </arguments>
                                 </configuration>
                             </execution>
                         </executions>
