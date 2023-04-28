@@ -9,6 +9,8 @@ import com.itquasar.multiverse.jmacro.core.exception.ExitException
 import groovy.transform.CompileDynamic
 
 import javax.script.ScriptEngine
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 
 @Doc("Allows reading from java console.")
 class ConsoleCommand extends Command implements Constants {
@@ -54,6 +56,8 @@ class ConsoleCommand extends Command implements Constants {
     @Doc("Prompt prefix constant.")
     private static final String PROMPT = '[INPT] '
 
+    private final static SimpleDateFormat PROMPT_PREFIX = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+
     @Doc("Java system console.")
     private InReader readerAndWriter = new InReader()
 
@@ -83,9 +87,13 @@ class ConsoleCommand extends Command implements Constants {
         return (Result) closure.call()
     }
 
+    private static void showPrompt(String prompt = "\$> ") {
+        System.out.print "${PROMPT_PREFIX.format(new Date())}${PROMPT}${prompt}"
+    }
+
     @Doc("Read line from console.")
     String read() {
-        System.out.print "${PROMPT}\$> "
+        showPrompt()
         return readerAndWriter.readLine()
     }
 
@@ -117,7 +125,7 @@ class ConsoleCommand extends Command implements Constants {
         if (!prompt.trim().isEmpty()) {
             prompt = "${prompt}: "
         }
-        System.out.print "${PROMPT}${prompt}"
+        showPrompt(prompt)
         def value = nonInteractive
             ? System.out.println()
             : (password ? readerAndWriter.readPassword().toString() : readerAndWriter.readLine())?.trim()

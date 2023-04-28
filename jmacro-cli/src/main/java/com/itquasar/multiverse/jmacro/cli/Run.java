@@ -92,6 +92,8 @@ public class Run implements Callable<CliResult> {
         if (scriptPath != null) {
             script = cli.getCore().getConfiguration().getRepository().get(scriptPath);
         } else {
+            System.out.println("=================================================================");
+            System.out.println("=================================================================");
             List<Script> scripts = cli.getCore().getConfiguration().getRepository().listMain(mainInfix);
             System.out.println("Listing available scripts:");
             StringBuilder padding = new StringBuilder();

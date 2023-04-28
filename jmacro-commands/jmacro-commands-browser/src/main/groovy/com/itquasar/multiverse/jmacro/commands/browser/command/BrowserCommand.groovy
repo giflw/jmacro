@@ -9,7 +9,6 @@ import com.itquasar.multiverse.jmacro.core.Constants
 import com.itquasar.multiverse.jmacro.core.JMacroCore
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
-import groovy.transform.CompileStatic
 import io.github.bonigarcia.wdm.WebDriverManager
 import org.apache.commons.io.FileUtils
 import org.openqa.selenium.*
@@ -46,7 +45,7 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
 
         @CompileDynamic
         void clear() {
-            driver.remove()
+            this.driver.remove()
             _devTools.remove()
             wait.remove()
             elements.remove()
@@ -56,6 +55,8 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
     private final LocalHolder local = new LocalHolder()
 
     private final Queue<LocalHolder> INSTANCES = new ConcurrentLinkedQueue<>()
+
+    private WebDriverManager webDriverManager = null
 
     Map<String, ?> config = [
         vendor : CHROMIUM,
@@ -133,44 +134,14 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
     BrowserCommand start() {
         touch()
         if (driver == null || driver.sessionId == null) {
-            this.postConfig()
-            Capabilities capabilities = null
-            switch (config.vendor) {
-                case FIREFOX:
-                    capabilities = new FirefoxOptions()
-                    if (!config.visible) {
-                        capabilities.addArguments("-headless")
-                    }
-                    if (config.binary != null) {
-                        capabilities.setBinary(config.binary.toString())
-                    }
-                    break
-                case CHROMIUM:
-                case CHROME:
-                case EDGE:
-                    if (config.debug) {
-                        System.setProperty("webdriver.chrome.verboseLogging", "true")
-                    }
-                    capabilities = EDGE == config.vendor ? new EdgeOptions() : new ChromeOptions()
-                    if (!config.visible) {
-                        capabilities.addArguments("--headless=new")
-                    }
-                    if (config.binary != null) {
-                        capabilities.setBinary(config.binary.toString())
-                    }
-                    //capabilities.addArguments("--disable-extensions")
-                    break
+            synchronized (this) {
+                if (this.webDriverManager == null) {
+                    this.init()
+                }
             }
-            //capabilities.addArguments("--ignore-certificate-errors")
+            this.driver = this.webDriverManager.create() as RemoteWebDriver
 
-            logger.warn("Starting browser ${config.vendor.toString().capitalize()}")
-            this.config.forEach { key, value ->
-                logger.warn("Browser config ${key}=${value}")
-            }
-
-            this.driver = (RemoteWebDriver) getWebDriverManager(capabilities).create()
-
-            getLogger().warn("Web driver instance ${this.driver} with ${capabilities.asMap()}")
+            getLogger().warn("Web driver instance ${this.driver}")
             if (this.driver == null) {
                 throw new JMacroException("Unsupported browser vendor: ${config.vendor}")
             }
@@ -181,38 +152,88 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
         return this
     }
 
-    private WebDriverManager getWebDriverManager(Capabilities capabilities) {
+    WebDriverManager init() {
+        this.postConfig()
+        Capabilities capabilities = null
+        switch (config.vendor) {
+            case FIREFOX:
+                capabilities = new FirefoxOptions()
+                if (!config.visible) {
+                    capabilities.addArguments("-headless")
+                }
+                if (config.binary != null) {
+                    capabilities.setBinary(config.binary.toString())
+                }
+                break
+            case CHROMIUM:
+            case CHROME:
+            case EDGE:
+                if (config.debug) {
+                    System.setProperty("webdriver.chrome.verboseLogging", "true")
+                }
+                capabilities = EDGE == config.vendor ? new EdgeOptions() : new ChromeOptions()
+                if (!config.visible) {
+                    capabilities.addArguments("--headless=new")
+                }
+                if (config.binary != null) {
+                    capabilities.setBinary(config.binary.toString())
+                }
+                //capabilities.addArguments("--disable-extensions")
+                break
+        }
+        //capabilities.addArguments("--ignore-certificate-errors")
+
+        logger.warn("Starting browser ${config.vendor.toString().capitalize()}")
+        this.config.forEach { key, value ->
+            logger.warn("Browser config ${key}=${value}")
+        }
+
+        getLogger().warn("Web driver manager with ${capabilities.asMap()}")
+
+        return initWebDriverManager(capabilities)
+    }
+
+    private synchronized WebDriverManager initWebDriverManager(Capabilities capabilities) {
         touch()
-        getLogger().warn("Initializing web driver manager")
-        def driverManager = new DriverManager(core.configuration.folders.cache().resolve("webdriver"))
-        getLogger().info("Driver manager initialized")
-        def manager = driverManager.getManager(config.vendor.toString())
-        getLogger().info("Web driver manager created. Configuring it...")
+        if (this.webDriverManager == null) {
+            getLogger().warn("Initializing web driver manager")
+            def driverManager = new DriverManager(core.configuration.folders.cache().resolve("webdriver"))
+            getLogger().info("Driver manager initialized")
+            def manager = driverManager.getManager(config.vendor.toString())
+            getLogger().info("Web driver manager created. Configuring it...")
 
-        ConfigurationCommand configuration = (ConfigurationCommand) scriptEngine.get('configuration')
-        getLogger().info("Using engine script configuration: ${configuration}")
+            ConfigurationCommand configuration = (ConfigurationCommand) scriptEngine.get('configuration')
+            getLogger().info("Using engine script configuration: ${configuration}")
 
-        Map<String, ?> proxyConfig = [:]
-        if (configuration['proxy'] !== false && configuration['proxy'] instanceof Map<String, ?>) {
-            proxyConfig = (Map<String, ?>) configuration['proxy']
-        }
+            Map<String, ?> proxyConfig = [:]
+            if (configuration['proxy'] != false && configuration['proxy'] instanceof Map<String, ?>) {
+                proxyConfig = (Map<String, ?>) configuration['proxy']
+            } else if (configuration['proxy'] == null || configuration['proxy'] != false) {
+                proxyConfig = [
+                    'credentials': scriptEngine.get('credentials')
+                ]
+            }
 
-        getLogger().info("Proxy configuration ${proxyConfig}")
-        getLogger().info("Proxy credentials ${proxyConfig.crendentials}")
-        if (!proxyConfig.isEmpty()) {
-            getLogger().warn("Checking manager proxy configuration")
-            managerProxy(manager, proxyConfig)
+            getLogger().info("Proxy configuration ${proxyConfig}")
+            getLogger().info("Proxy credentials ${proxyConfig.crendentials}")
+            if (!proxyConfig.isEmpty()) {
+                getLogger().warn("Checking manager proxy configuration")
+                managerProxy(manager, proxyConfig)
+            }
+            if (this.config.binary) {
+                getLogger().warn("Binary path given. Avoiding browser detection and using ${this.config.version} as browser version.")
+                manager.avoidBrowserDetection().browserVersion((String) this.config.version)
+            } else if (this.config.version) {
+                manager.avoidBrowserDetection().browserVersion(this.config.version?.toString())
+            }
+            if (capabilities) {
+                getLogger().warn("Setting manager capabilities to ${capabilities}")
+                manager.capabilities(capabilities)
+            }
+            getLogger().warn("Web driver manager initialized")
+            this.webDriverManager = manager
         }
-        if (this.config.binary) {
-            getLogger().warn("Binary path given. Avoiding browser detection and using ${this.config.version} as browser version.")
-            manager.avoidBrowserDetection().browserVersion((String) this.config.version)
-        }
-        if (capabilities) {
-            getLogger().warn("Setting manager capabilities")
-            manager.capabilities(capabilities)
-        }
-        getLogger().warn("Web driver manager initialized")
-        return manager
+        return webDriverManager
     }
 
     @CompileDynamic

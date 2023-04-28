@@ -178,7 +178,7 @@ public class ParallelCommand extends Command implements AutoCloseable {
         do {
             try {
                 future = executor.submit((Callable<?>) callable);
-                tasksMonitor.add(future);
+                //tasksMonitor.add(future);
             } catch (RejectedExecutionException ex) {
                 getLogger().debug("Task execution rejected. Waitinng " + retryWait + " " + timeUnit.name());
                 Thread.sleep(timeUnit.toMillis(retryWait));
@@ -188,12 +188,12 @@ public class ParallelCommand extends Command implements AutoCloseable {
     }
 
     public ParallelCommand waitTasks() {
-        this.tasksMonitor.waitAll();
+        //this.tasksMonitor.waitAll();
         return this;
     }
 
     public ParallelCommand clear() {
-        this.tasksMonitor.clear();
+        //this.tasksMonitor.clear();
         return this;
     }
 
@@ -204,7 +204,7 @@ public class ParallelCommand extends Command implements AutoCloseable {
     public void shutdown(long timeout) {
         getLogger().warn("Awaiting parallel " + groupName);
         try {
-            this.tasksMonitor.shutdown();
+           // this.tasksMonitor.shutdown();
             this.executor.shutdown();
             while (!this.executor.awaitTermination(timeout, TimeUnit.SECONDS)) {
                 getLogger().warn("Parallel " + groupName + "not terminated yet!");
