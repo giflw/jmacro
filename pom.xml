@@ -58,6 +58,7 @@
         <module>jmacro-launcher</module>
         <module>jmacro-tests</module>
         <module>jmacro-tools</module>
+        <module>jmacro-shell</module>
     </modules>
 
     <distributionManagement>
