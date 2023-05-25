@@ -250,9 +250,9 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
         if (!proxyAddress) {
             getLogger().warn("Getting proxy from platform")
             InetSocketAddress proxy = (InetSocketAddress) ProxySelector.default.select(URI.create('http://google.com.br/'))
-                .each { getLogger().warn("proxy each: $it}") }
-                .find { it.type() == java.net.Proxy.Type.HTTP }
-                .each { getLogger().warn("proxy found: $it}") }
+                ?.each { getLogger().warn("proxy each: ${it}") }
+                ?.find { it.type() == java.net.Proxy.Type.HTTP }
+                ?.each { getLogger().warn("proxy found: $it}") }
                 ?.address()
             proxyAddress = proxy ? "${proxy.hostName}:${proxy.port}" : null
         }
