@@ -1,0 +1,10 @@
+<Configuration packages="com.itquasar.multiverse.jmacro.shell" status="WARN">
+    <Appenders>
+        <JLineAppender name="JLineAppender"/>
+    </Appenders>
+    <Loggers>
+        <Root level="DEBUG">
+            <AppenderRef ref="JLineAppender"/>
+        </Root>
+    </Loggers>
+</Configuration>

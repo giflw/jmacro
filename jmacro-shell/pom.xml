@@ -14,6 +14,7 @@
 
         <properties>
             <jline.version>3.23.0</jline.version>
+            <jna.version>5.13.0</jna.version>
         </properties>
 
         <dependencyManagement>
@@ -78,9 +79,9 @@
                 <version>${jline.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-core</artifactId>
-                <version>2.20.0</version>
+                <groupId>net.java.dev.jna</groupId>
+                <artifactId>jna</artifactId>
+                <version>${jna.version}</version>
             </dependency>
         </dependencies>
 

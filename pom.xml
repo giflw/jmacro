@@ -13,6 +13,8 @@
     <description>JMacro parent pom</description>
 
     <properties>
+        <maven.plugin.validation>VERBOSE</maven.plugin.validation>
+
         <os.family>unknown</os.family>
         <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
