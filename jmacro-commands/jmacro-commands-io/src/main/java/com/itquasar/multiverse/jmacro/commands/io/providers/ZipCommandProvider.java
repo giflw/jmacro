@@ -1,7 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.io.providers;
 
 import com.itquasar.multiverse.jmacro.commands.io.commands.ZipCommand;
-import com.itquasar.multiverse.jmacro.core.JMacroCore;
+import com.itquasar.multiverse.jmacro.core.Core;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 
 import javax.script.ScriptEngine;
@@ -19,8 +19,8 @@ public class ZipCommandProvider implements CommandProvider<ZipCommand> {
     }
 
     @Override
-    public ZipCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new ZipCommand(getName(), jMacroCore, scriptEngine);
+    public ZipCommand getCommand(Core core, ScriptEngine scriptEngine) {
+        return new ZipCommand(getName(), core, scriptEngine);
     }
 
 }

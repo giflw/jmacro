@@ -1,7 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.datax.providers;
 
 import com.itquasar.multiverse.jmacro.commands.datax.commands.PDFCommand;
-import com.itquasar.multiverse.jmacro.core.JMacroCore;
+import com.itquasar.multiverse.jmacro.core.Core;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 
 import javax.script.ScriptEngine;
@@ -19,7 +19,7 @@ public class PDFCommandProvider implements CommandProvider<PDFCommand> {
     }
 
     @Override
-    public PDFCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new PDFCommand(getName(), jMacroCore, scriptEngine);
+    public PDFCommand getCommand(Core core, ScriptEngine scriptEngine) {
+        return new PDFCommand(getName(), core, scriptEngine);
     }
 }

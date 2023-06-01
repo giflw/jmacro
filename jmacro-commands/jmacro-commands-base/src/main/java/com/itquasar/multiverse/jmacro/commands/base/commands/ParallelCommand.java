@@ -4,7 +4,7 @@ import com.itquasar.multiverse.jmacro.commands.base.commands.parallel.ParallelTh
 import com.itquasar.multiverse.jmacro.commands.base.commands.parallel.TasksMonitor;
 import com.itquasar.multiverse.jmacro.core.Command;
 import com.itquasar.multiverse.jmacro.core.Constants;
-import com.itquasar.multiverse.jmacro.core.JMacroCore;
+import com.itquasar.multiverse.jmacro.core.Core;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import groovy.lang.Closure;
 import lombok.SneakyThrows;
@@ -71,7 +71,7 @@ public class ParallelCommand extends Command implements AutoCloseable {
         return tasksMonitor;
     }
 
-    public ParallelCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+    public ParallelCommand(String name, Core core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine);
     }
 

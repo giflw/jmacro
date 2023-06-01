@@ -11,7 +11,7 @@ import java.util.List;
 import javax.script.ScriptEngine;
 
 import com.itquasar.multiverse.jmacro.core.Command;
-import com.itquasar.multiverse.jmacro.core.JMacroCore;
+import com.itquasar.multiverse.jmacro.core.Core;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 
 import lombok.Getter;
@@ -35,8 +35,8 @@ public class Base64CommandProvider implements CommandProvider<Base64CommandProvi
     }
 
     @Override
-    public Base64Command getCommand(final JMacroCore jMacroCore, final ScriptEngine scriptEngine) {
-        return new Base64Command(this.getName(), jMacroCore, scriptEngine);
+    public Base64Command getCommand(final Core core, final ScriptEngine scriptEngine) {
+        return new Base64Command(this.getName(), core, scriptEngine);
     }
 
     static public class Base64Command extends Command {
@@ -59,7 +59,7 @@ public class Base64CommandProvider implements CommandProvider<Base64CommandProvi
             }
         }
 
-        public Base64Command(final String name, final JMacroCore core, final ScriptEngine scriptEngine) {
+        public Base64Command(final String name, final Core core, final ScriptEngine scriptEngine) {
             super(name, core, scriptEngine);
         }
 

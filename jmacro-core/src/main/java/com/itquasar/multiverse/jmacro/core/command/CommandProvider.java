@@ -1,7 +1,7 @@
 package com.itquasar.multiverse.jmacro.core.command;
 
 import com.itquasar.multiverse.jmacro.core.Command;
-import com.itquasar.multiverse.jmacro.core.JMacroCore;
+import com.itquasar.multiverse.jmacro.core.Core;
 
 import javax.script.ScriptEngine;
 import java.util.Collections;
@@ -26,9 +26,9 @@ public interface CommandProvider<C extends Command> {
     /**
      * Create command new instance when called.
      *
-     * @param jMacroCore   Core to use in this command.
+     * @param core   Core to use in this command.
      * @param scriptEngine Script engine instance where command will be bound.
      * @return Command new instance.
      */
-    C getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine);
+    C getCommand(Core core, ScriptEngine scriptEngine);
 }

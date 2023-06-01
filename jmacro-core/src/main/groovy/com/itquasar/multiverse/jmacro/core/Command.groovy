@@ -12,7 +12,7 @@ import javax.script.ScriptEngine
 abstract class Command implements Constants {
 
     private final String name
-    private final JMacroCore core
+    private final Core core
     private final ScriptEngine scriptEngine
     private final ScriptContext context
     private final Bindings bindings
@@ -27,7 +27,7 @@ abstract class Command implements Constants {
      * @param core Injected from command provider
      * @param scriptEngine Script engine instance to get context, from which we get logger attribute.
      */
-    Command(String name, final JMacroCore core, final ScriptEngine scriptEngine) {
+    Command(String name, final Core core, final ScriptEngine scriptEngine) {
         if (name == '') {
             name = this.getClass().name
         }
@@ -192,7 +192,7 @@ abstract class Command implements Constants {
         return name
     }
 
-    JMacroCore getCore() {
+    Core getCore() {
         return core
     }
 

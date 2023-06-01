@@ -1,19 +1,19 @@
 package com.itquasar.multiverse.jmacro.core.jmx;
 
-import com.itquasar.multiverse.jmacro.core.JMacroCore;
+import com.itquasar.multiverse.jmacro.core.Core;
 import com.itquasar.multiverse.jmacro.core.exception.FieldAlreadySet;
 
 public abstract class JMXBean implements JMXBeanIFace {
 
-    private JMacroCore jMacroCore;
+    private Core core;
 
-    public JMacroCore getJMacroCore() {
-        return this.jMacroCore;
+    public Core getCore() {
+        return this.core;
     }
 
-    public void setJMacroCore(JMacroCore jMacroCore) {
-        if (this.jMacroCore == null) {
-            this.jMacroCore = jMacroCore;
+    public void setCore(Core core) {
+        if (this.core == null) {
+            this.core = core;
         } else {
             throw new FieldAlreadySet("jMacroCore");
         }

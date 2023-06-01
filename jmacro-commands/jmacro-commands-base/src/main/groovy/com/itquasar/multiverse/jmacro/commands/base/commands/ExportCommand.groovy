@@ -1,7 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands
 
 import com.itquasar.multiverse.jmacro.core.Command
-import com.itquasar.multiverse.jmacro.core.JMacroCore
+import com.itquasar.multiverse.jmacro.core.Core
 import com.itquasar.multiverse.jmacro.core.command.Doc
 import groovy.transform.CompileDynamic
 
@@ -13,7 +13,7 @@ class ExportCommand extends Command {
     @Doc("Global name of exports map.")
     public static final String EXPORTS_KEY = "__EXPORTS__"
 
-    ExportCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+    ExportCommand(String name, Core core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
         def globalScope = this.scriptEngine.getBindings(ScriptContext.GLOBAL_SCOPE)
         if (!globalScope.get(EXPORTS_KEY)) {

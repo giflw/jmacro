@@ -1,6 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands
 
-import com.itquasar.multiverse.jmacro.core.JMacroCore
+
+import com.itquasar.multiverse.jmacro.core.Core
 import com.itquasar.multiverse.jmacro.core.SPILoader
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider
 import com.itquasar.multiverse.jmacro.core.configuration.Configuration
@@ -18,12 +19,12 @@ import spock.lang.Unroll
 @Log4j2
 class CommandSpec extends Specification {
 
-    JMacroCore core
+    Core core
 
     void setup() {
         def configuration = new Configuration()
         configuration.repository = new GlobalScriptRepository(new CommandTestRepository(CommandSpec.class.getResource("/" + CommandSpec.class.packageName.replace(".", "/") + "/scripts/").toURI()))
-        core = new JMacroCore(configuration)
+        core = new Core(configuration)
         core.start()
     }
 

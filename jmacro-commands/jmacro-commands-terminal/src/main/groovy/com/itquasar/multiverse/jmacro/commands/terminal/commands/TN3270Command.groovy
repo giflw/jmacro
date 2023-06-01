@@ -1,10 +1,9 @@
 package com.itquasar.multiverse.jmacro.commands.terminal.commands
 
-import com.itquasar.multiverse.jmacro.commands.terminal.commands.tn3270.Reader
-import com.itquasar.multiverse.jmacro.commands.terminal.commands.tn3270.Writer
+
 import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.Constants
-import com.itquasar.multiverse.jmacro.core.JMacroCore
+import com.itquasar.multiverse.jmacro.core.Core
 import com.itquasar.multiverse.jmacro.core.command.AutoCloseableAll
 import com.itquasar.multiverse.tn3270j.TN3270j
 import com.itquasar.multiverse.tn3270j.TN3270jFactory
@@ -32,7 +31,7 @@ class TN3270Command extends Command implements AutoCloseableAll, Constants {
     private static Map<TN3270j, Long> instances = new ConcurrentHashMap<>()
     private final ThreadLocal<TN3270j> tn3270j = new ThreadLocal<>()
 
-    TN3270Command(String name, JMacroCore core, ScriptEngine scriptEngine) {
+    TN3270Command(String name, Core core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
     }
 

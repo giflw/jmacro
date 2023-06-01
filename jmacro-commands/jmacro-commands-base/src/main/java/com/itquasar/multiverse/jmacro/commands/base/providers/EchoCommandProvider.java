@@ -2,10 +2,10 @@ package com.itquasar.multiverse.jmacro.commands.base.providers;
 
 import javax.script.ScriptEngine;
 
+import com.itquasar.multiverse.jmacro.core.Core;
 import org.apache.logging.log4j.Level;
 
 import com.itquasar.multiverse.jmacro.core.Command;
-import com.itquasar.multiverse.jmacro.core.JMacroCore;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.command.Doc;
 
@@ -27,8 +27,8 @@ public class EchoCommandProvider implements CommandProvider<EchoCommandProvider.
     }
 
     @Override
-    public EchoCommand getCommand(final JMacroCore jMacroCore, final ScriptEngine scriptEngine) {
-        return new EchoCommand(this.getName(), jMacroCore, scriptEngine);
+    public EchoCommand getCommand(final Core core, final ScriptEngine scriptEngine) {
+        return new EchoCommand(this.getName(), core, scriptEngine);
     }
 
 
@@ -36,7 +36,7 @@ public class EchoCommandProvider implements CommandProvider<EchoCommandProvider.
     @Doc("Echoes given argument to script output")
     public static class EchoCommand extends Command {
 
-        public EchoCommand(final String name, final JMacroCore core, final ScriptEngine scriptEngine) {
+        public EchoCommand(final String name, final Core core, final ScriptEngine scriptEngine) {
             super(name, core, scriptEngine);
         }
 

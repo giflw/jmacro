@@ -1,7 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
 import com.itquasar.multiverse.jmacro.commands.base.commands.IncludeCommand;
-import com.itquasar.multiverse.jmacro.core.JMacroCore;
+import com.itquasar.multiverse.jmacro.core.Core;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -20,11 +20,11 @@ public class IncludeCommandProvider implements CommandProvider<IncludeCommand> {
     }
 
     @Override
-    public IncludeCommand getCommand(@NonNull JMacroCore jMacroCore, @NonNull ScriptEngine scriptEngine) {
+    public IncludeCommand getCommand(@NonNull Core core, @NonNull ScriptEngine scriptEngine) {
         return new IncludeCommand(
             getName(),
-            jMacroCore == null ? null : jMacroCore.getConfiguration().getRepository(),
-            jMacroCore,
+            core == null ? null : core.getConfiguration().getRepository(),
+                core,
             scriptEngine
         );
     }

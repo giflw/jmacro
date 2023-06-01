@@ -2,7 +2,7 @@ package com.itquasar.multiverse.jmacro.commands.base.commands;
 
 import com.itquasar.multiverse.jmacro.core.Command;
 import com.itquasar.multiverse.jmacro.core.Constants;
-import com.itquasar.multiverse.jmacro.core.JMacroCore;
+import com.itquasar.multiverse.jmacro.core.Core;
 import com.itquasar.multiverse.jmacro.core.command.Doc;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 
@@ -19,7 +19,7 @@ public class ConstantsCommand extends Command implements Map<String, Object>, Co
 
     private final Map<String, Object> map = new LinkedHashMap<>();
 
-    public ConstantsCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+    public ConstantsCommand(String name, Core core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine);
         this.init();
     }

@@ -3,8 +3,7 @@ package com.itquasar.multiverse.jmacro.commands.datax.commands
 
 import com.itquasar.multiverse.jmacro.commands.datax.commands.com.COMWrapper
 import com.itquasar.multiverse.jmacro.core.Command
-import com.itquasar.multiverse.jmacro.core.JMacroCore
-import com.itquasar.multiverse.jmacro.core.exception.JMacroException
+import com.itquasar.multiverse.jmacro.core.Core
 import com.jacob.activeX.ActiveXComponent
 import com.jacob.com.ComThread
 import com.jacob.com.LibraryLoader
@@ -13,7 +12,6 @@ import groovy.transform.CompileDynamic
 
 import javax.script.ScriptEngine
 import java.util.concurrent.atomic.AtomicBoolean
-import java.util.stream.Collectors
 
 class COMCommand extends Command implements AutoCloseable {
 
@@ -66,7 +64,7 @@ class COMCommand extends Command implements AutoCloseable {
         return wrapper
     }
 
-    COMCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+    COMCommand(String name, Core core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
         if (!System.getProperty("jacob.dll.path")) {
             def dllPath = core.configuration.folders.bin().resolve(LibraryLoader.getPreferredDLLName() + ".dll").toString()

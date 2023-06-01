@@ -6,10 +6,9 @@ import com.itquasar.multiverse.jmacro.commands.browser.command.browser.*
 import com.itquasar.multiverse.jmacro.core.CallableCommand
 import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.Constants
-import com.itquasar.multiverse.jmacro.core.JMacroCore
+import com.itquasar.multiverse.jmacro.core.Core
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
-import groovy.transform.CompileStatic
 import io.github.bonigarcia.wdm.WebDriverManager
 import org.apache.commons.io.FileUtils
 import org.openqa.selenium.*
@@ -98,7 +97,7 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
         return this.local.elements.get()
     }
 
-    BrowserCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+    BrowserCommand(String name, Core core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
         Runtime.getRuntime().addShutdownHook(
             new Thread(

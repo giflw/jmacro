@@ -1,7 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
 import com.itquasar.multiverse.jmacro.core.Command;
-import com.itquasar.multiverse.jmacro.core.JMacroCore;
+import com.itquasar.multiverse.jmacro.core.Core;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.exception.ExitException;
 
@@ -23,13 +23,13 @@ public class ExitCommandProvider implements CommandProvider<ExitCommandProvider.
     }
 
     @Override
-    public ExitCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new ExitCommand(getName(), jMacroCore, scriptEngine);
+    public ExitCommand getCommand(Core core, ScriptEngine scriptEngine) {
+        return new ExitCommand(getName(), core, scriptEngine);
     }
 
     public static class ExitCommand extends Command {
 
-        public ExitCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+        public ExitCommand(String name, Core core, ScriptEngine scriptEngine) {
             super(name, core, scriptEngine);
         }
 

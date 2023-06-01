@@ -1,69 +1,149 @@
 package com.itquasar.multiverse.jmacro.core.jmx;
 
+import com.itquasar.multiverse.jmacro.core.Core;
 import com.itquasar.multiverse.jmacro.core.SPILoader;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.j256.simplejmx.client.JmxClient;
 import com.j256.simplejmx.server.JmxServer;
+import com.j256.simplejmx.web.JmxWebServer;
+import io.vavr.control.Try;
+import lombok.Data;
+import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 
 import javax.management.JMException;
+import java.io.IOException;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.net.ServerSocket;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Log4j2
 public class JMXManagement {
 
-    private final InetAddress jmxAddress;
-    private final int jmxPort;
-    private JmxServer server;
-    private Map<String, JmxClient> clients = new LinkedHashMap<>();
+    @Data
+    public static class ServerConfig {
+        private int port;
+        private String address;
 
-    public JMXManagement(int jmxPort) {
-        this(null, jmxPort);
-    }
+        private volatile Integer actualPort;
+        private volatile InetAddress inetAddress;
 
-    public JMXManagement(InetAddress jmxAddress, int jmxPort) {
-        try {
-            this.jmxAddress = jmxAddress != null ? jmxAddress : InetAddress.getLocalHost();
-        } catch (UnknownHostException e) {
-            throw new JMacroException("Error getting localhos INetAddress", e);
+        public ServerConfig() {
+            this(-1, null);
         }
-        this.jmxPort = jmxPort;
-        this.server = this.initServer();
-        this.loadMBeans();
-    }
 
-    private void loadMBeans() {
-        var loader = new SPILoader<>(JMXBeanIFace.class);
-        var iterator = loader.load();
-        while (iterator.hasNext()) {
-            var jmxBean = iterator.next();
-            LOGGER.info("Loaded JMX Bean: " + jmxBean.getClass().getName());
-            //jmxBean.setJMacroCore(this.jMacroCore);
-            try {
-                this.server.register(jmxBean);
-            } catch (JMException e) {
-                throw new JMacroException("Error registering " + jmxBean.getClass(), e);
+        public ServerConfig(int port, String address) {
+            this.port = port;
+            this.address = address;
+        }
+
+        public InetAddress getInetAddress() {
+            if (this.inetAddress == null) {
+                this.inetAddress = this.address != null
+                    ? Try.of(() -> InetAddress.getByName(this.address)).getOrNull()
+                    : Try.of(InetAddress::getLocalHost)
+                    .recover(ex -> InetAddress.getLoopbackAddress())
+                    .getOrNull();
+            }
+            return this.inetAddress;
+        }
+
+        private static int randomPort(String server) {
+            try (ServerSocket serverSocket = new ServerSocket(0)) {
+                int port = serverSocket.getLocalPort();
+                LOGGER.warn("Using random port " + port + " for " + server + " server.");
+                return port;
+            } catch (IOException exception) {
+                LOGGER.error("Not able to find a free port.", exception);
+                return 0;
             }
         }
+
+        public boolean shouldRun() {
+            return this.port >= 0 && this.getInetAddress() != null;
+        }
+
+        private int getPort(String server) {
+            if (this.actualPort == null) {
+                if (this.port < 0) {
+                    throw new IllegalStateException("Port is less then zero. Server must not run.");
+                }
+                this.actualPort = this.port == 0 ? randomPort(server) : this.port;
+            }
+            return this.actualPort;
+        }
     }
 
-    private JmxServer initServer() {
-        JmxServer jmxServer = new JmxServer(jmxPort);
-        try {
-            jmxServer.start();
-        } catch (JMException e) {
-            throw new JMacroException("Error starting JMXServer", e);
+    @Data
+    public static class JMXConfig {
+        private ServerConfig jmx = new ServerConfig();
+        private ServerConfig web = new ServerConfig();
+    }
+
+    private final AtomicBoolean loaded = new AtomicBoolean(false);
+
+    @Getter
+    private final ServerConfig serverConfig;
+    @Getter
+    private final ServerConfig webServerConfig;
+    @Getter
+    private JmxServer server;
+    @Getter
+    private JmxWebServer webServer;
+
+    private Map<String, JmxClient> clients = new LinkedHashMap<>();
+
+    public JMXManagement(JMXConfig config) {
+        this(config.jmx, config.web);
+    }
+
+    public JMXManagement(ServerConfig jmx, ServerConfig web) {
+        this.serverConfig = jmx;
+        this.webServerConfig = web;
+        if (this.serverConfig.shouldRun()) {
+            this.server = this.startServer(this.serverConfig);
+        }
+        if (this.webServerConfig.shouldRun()) {
+            this.webServer = this.startWebServer(this.webServerConfig);
+        }
+    }
+
+    private JmxServer startServer(ServerConfig config) {
+        JmxServer jmxServer = null;
+        if (config.shouldRun()) {
+            jmxServer = new JmxServer(config.getInetAddress(), config.getPort("JMX"));
+            Try.run(jmxServer::start).getOrElseThrow(ex -> new JMacroException("Error starting JMXServer", ex));
         }
         return jmxServer;
     }
 
-    public JmxServer getServer() {
-        return server;
+    private JmxWebServer startWebServer(ServerConfig config) {
+        JmxWebServer jmxWebServer = null;
+        if (config.shouldRun()) {
+            jmxWebServer = new JmxWebServer(config.getInetAddress(), config.getPort("JMX Web"));
+            Try.run(jmxWebServer::start).getOrElseThrow(ex -> new JMacroException("Error starting JMXWebServer", ex));
+        }
+        return jmxWebServer;
     }
 
+    public void load(Core core) {
+        if (this.server != null && this.loaded.compareAndSet(false, true)) {
+            var loader = new SPILoader<>(JMXBeanIFace.class);
+            var iterator = loader.load();
+            while (iterator.hasNext()) {
+                var jmxBean = iterator.next();
+                LOGGER.info("Loaded JMX Bean: " + jmxBean.getClass().getName());
+                jmxBean.setCore(core);
+                try {
+                    this.server.register(jmxBean);
+                } catch (JMException e) {
+                    throw new JMacroException("Error registering " + jmxBean.getClass(), e);
+                }
+            }
+        }
+    }
 
     public void register(Object mbean) {
         try {
@@ -73,16 +153,9 @@ public class JMXManagement {
         }
     }
 
-
     public JmxClient getClient() {
-        return this.getClient(jmxAddress, this.jmxPort);
+        return this.getClient(this.serverConfig.getInetAddress(), this.serverConfig.port);
     }
-
-
-    public JmxClient getClient(int jmxPort) {
-        return this.getClient(jmxAddress, jmxPort);
-    }
-
 
     public synchronized JmxClient getClient(InetAddress jmxAddress, int jmxPort) {
         String address = jmxAddress.toString() + ":" + jmxPort;

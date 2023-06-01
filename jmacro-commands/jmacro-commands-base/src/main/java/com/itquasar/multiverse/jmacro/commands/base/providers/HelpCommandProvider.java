@@ -1,7 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
 import com.itquasar.multiverse.jmacro.commands.base.commands.HelpCommand;
-import com.itquasar.multiverse.jmacro.core.JMacroCore;
+import com.itquasar.multiverse.jmacro.core.Core;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 
 import javax.script.ScriptEngine;
@@ -20,7 +20,7 @@ public class HelpCommandProvider implements CommandProvider<HelpCommand> {
     }
 
     @Override
-    public HelpCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new HelpCommand(getName(), jMacroCore, scriptEngine);
+    public HelpCommand getCommand(Core core, ScriptEngine scriptEngine) {
+        return new HelpCommand(getName(), core, scriptEngine);
     }
 }

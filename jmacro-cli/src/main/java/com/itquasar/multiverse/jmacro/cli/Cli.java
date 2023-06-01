@@ -1,6 +1,6 @@
 package com.itquasar.multiverse.jmacro.cli;
 
-import com.itquasar.multiverse.jmacro.core.JMacroCore;
+import com.itquasar.multiverse.jmacro.core.Core;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -37,11 +37,11 @@ public class Cli {
     )
     private Path configPath;
 
-    private JMacroCore core;
+    private Core core;
 
-    public JMacroCore getCore() {
+    public Core getCore() {
         if (core == null) {
-            core = new JMacroCore(configPath);
+            core = new Core(configPath);
             core.start();
             Runtime.getRuntime().addShutdownHook(new Thread(() -> core.stop()));
         }

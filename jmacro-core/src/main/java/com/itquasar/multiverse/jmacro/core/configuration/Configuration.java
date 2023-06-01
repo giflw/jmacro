@@ -2,6 +2,7 @@ package com.itquasar.multiverse.jmacro.core.configuration;
 
 import com.itquasar.multiverse.jmacro.core.Constants;
 import com.itquasar.multiverse.jmacro.core.Folders;
+import com.itquasar.multiverse.jmacro.core.jmx.JMXManagement;
 import com.itquasar.multiverse.jmacro.core.repository.GlobalScriptRepository;
 import com.itquasar.multiverse.jmacro.core.repository.ScriptRepositoryFactory;
 import com.itquasar.multiverse.jmacro.core.util.RepresenterNonNull;
@@ -50,6 +51,8 @@ public final class Configuration {
      * URI for repositories.
      */
     private List<String> repositories = new ArrayList<>();
+
+    private JMXManagement.JMXConfig jmxConfig = new JMXManagement.JMXConfig();
     /**
      * Custom options mapping from configuration file.
      */

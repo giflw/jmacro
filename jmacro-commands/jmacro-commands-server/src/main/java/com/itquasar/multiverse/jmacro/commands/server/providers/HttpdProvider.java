@@ -1,6 +1,6 @@
 package com.itquasar.multiverse.jmacro.commands.server.providers;
 
-import com.itquasar.multiverse.jmacro.core.JMacroCore;
+import com.itquasar.multiverse.jmacro.core.Core;
 import com.itquasar.multiverse.jmacro.core.WrappingCommand;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.command.Doc;
@@ -22,13 +22,13 @@ public class HttpdProvider implements CommandProvider<HttpdProvider.HttpdCommand
     }
 
     @Override
-    public HttpdCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new HttpdCommand(getName(), jMacroCore, scriptEngine);
+    public HttpdCommand getCommand(Core core, ScriptEngine scriptEngine) {
+        return new HttpdCommand(getName(), core, scriptEngine);
     }
 
     public static class HttpdCommand extends WrappingCommand<Javalin> implements AutoCloseable {
 
-        public HttpdCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+        public HttpdCommand(String name, Core core, ScriptEngine scriptEngine) {
             super(() -> Javalin.create(), name, core, scriptEngine);
         }
 

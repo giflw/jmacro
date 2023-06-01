@@ -2,7 +2,7 @@ package com.itquasar.multiverse.jmacro.commands.io.commands;
 
 import com.itquasar.multiverse.jmacro.commands.io.commands.zip.ZipFileExtended;
 import com.itquasar.multiverse.jmacro.core.Command;
-import com.itquasar.multiverse.jmacro.core.JMacroCore;
+import com.itquasar.multiverse.jmacro.core.Core;
 
 import javax.script.ScriptEngine;
 import java.io.File;
@@ -10,7 +10,7 @@ import java.nio.file.Path;
 
 public class ZipCommand extends Command {
 
-    public ZipCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+    public ZipCommand(String name, Core core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine);
     }
 

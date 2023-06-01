@@ -5,7 +5,7 @@ import javax.script.ScriptEngine
 
 abstract class CallableCommand extends Command {
 
-    CallableCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+    CallableCommand(String name, Core core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
     }
 

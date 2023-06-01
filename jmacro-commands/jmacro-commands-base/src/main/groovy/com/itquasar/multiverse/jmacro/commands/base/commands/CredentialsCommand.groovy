@@ -1,7 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands
 
 import com.itquasar.multiverse.jmacro.core.Command
-import com.itquasar.multiverse.jmacro.core.JMacroCore
+import com.itquasar.multiverse.jmacro.core.Core
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import com.itquasar.multiverse.jmacro.core.interfaces.ToMap
 import com.kstruct.gethostname4j.Hostname
@@ -26,7 +26,7 @@ class CredentialsCommand extends Command implements CredentialsProvider, ToMap {
     String token
     String apiKey
 
-    CredentialsCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+    CredentialsCommand(String name, Core core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
         this.reset()
     }

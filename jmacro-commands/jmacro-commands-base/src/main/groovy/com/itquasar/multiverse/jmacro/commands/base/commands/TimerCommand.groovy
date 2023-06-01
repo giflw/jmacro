@@ -1,7 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands
 
 import com.itquasar.multiverse.jmacro.core.Command
-import com.itquasar.multiverse.jmacro.core.JMacroCore
+import com.itquasar.multiverse.jmacro.core.Core
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 
 import javax.script.ScriptEngine
@@ -12,7 +12,7 @@ class TimerCommand extends Command implements AutoCloseable {
     private AtomicBoolean running = new AtomicBoolean(false)
     private Map<String, Long> partials = new LinkedHashMap()
 
-    TimerCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+    TimerCommand(String name, Core core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
     }
 

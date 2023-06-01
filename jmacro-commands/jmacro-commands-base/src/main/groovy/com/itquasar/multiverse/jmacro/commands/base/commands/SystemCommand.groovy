@@ -1,7 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands
 
 import com.itquasar.multiverse.jmacro.core.Command
-import com.itquasar.multiverse.jmacro.core.JMacroCore
+import com.itquasar.multiverse.jmacro.core.Core
 import com.itquasar.multiverse.jmacro.core.command.Doc
 import groovy.transform.CompileDynamic
 import lombok.Getter
@@ -14,7 +14,7 @@ class SystemCommand extends Command {
     @Doc("Registered commands with this script engine instance.")
     private Map<String, Object> commands = new LinkedHashMap<>();
 
-    SystemCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+    SystemCommand(String name, Core core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
     }
 

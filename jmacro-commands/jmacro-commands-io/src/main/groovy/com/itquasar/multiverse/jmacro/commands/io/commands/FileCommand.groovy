@@ -1,8 +1,8 @@
 package com.itquasar.multiverse.jmacro.commands.io.commands
 
-import com.itquasar.multiverse.jmacro.commands.io.commands.file.File
+
 import com.itquasar.multiverse.jmacro.core.Command
-import com.itquasar.multiverse.jmacro.core.JMacroCore
+import com.itquasar.multiverse.jmacro.core.Core
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 
 import javax.script.ScriptEngine
@@ -13,7 +13,7 @@ import java.nio.file.Path
 
 class FileCommand extends Command {
 
-    FileCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+    FileCommand(String name, Core core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
     }
 

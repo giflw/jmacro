@@ -1,38 +1,24 @@
 package com.itquasar.multiverse.jmacro.core;
 
-import static javax.script.ScriptContext.ENGINE_SCOPE;
-import static javax.script.ScriptContext.GLOBAL_SCOPE;
-
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
-
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineFactory;
-import javax.script.ScriptEngineManager;
-import javax.script.SimpleScriptContext;
-
 import com.itquasar.multiverse.jmacro.core.command.AutoCloseableAll;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.exception.ExitException;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.itquasar.multiverse.jmacro.core.script.Script;
 import com.itquasar.multiverse.jmacro.core.script.ScriptResult;
 import com.itquasar.multiverse.jmacro.core.script.ValueHolder;
-
 import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.LogManager;
+
+import javax.script.*;
+import java.io.PrintWriter;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
+
+import static javax.script.ScriptContext.ENGINE_SCOPE;
+import static javax.script.ScriptContext.GLOBAL_SCOPE;
 
 @Log4j2
 public final class EngineImpl implements Engine, Constants {
@@ -64,7 +50,7 @@ public final class EngineImpl implements Engine, Constants {
     /**
      * Core instance used by this engine.
      */
-    private final JMacroCore jMacroCore;
+    private final Core core;
 
     /**
      * {@link ScriptEngineFactory} instances available on runtime.
@@ -79,10 +65,10 @@ public final class EngineImpl implements Engine, Constants {
     /**
      * Create engine instance with given core.
      *
-     * @param jMacroCore Core to use with this engine.
+     * @param core Core to use with this engine.
      */
-    public EngineImpl(final JMacroCore jMacroCore) {
-        this.jMacroCore = jMacroCore;
+    public EngineImpl(final Core core) {
+        this.core = core;
         ENGINE_MANAGER.getEngineFactories().forEach(engine -> {
             final var engineInfo = """
                 %s
@@ -169,7 +155,7 @@ public final class EngineImpl implements Engine, Constants {
             if (normalExecution) {
                 scriptLogger.debug("Registering command [" + commandProvider.getName() + "] from " + commandProvider.getClass());
             }
-            final var command = commandProvider.getCommand(this.jMacroCore, engine);
+            final var command = commandProvider.getCommand(this.core, engine);
             if (command == null) {
                 throw new JMacroException(this,
                     "Command provider " + commandProvider.getName() + " returned null command");

@@ -2,7 +2,7 @@ package com.itquasar.multiverse.jmacro.commands.base.providers;
 
 import com.itquasar.multiverse.jmacro.core.Command;
 import com.itquasar.multiverse.jmacro.core.Constants;
-import com.itquasar.multiverse.jmacro.core.JMacroCore;
+import com.itquasar.multiverse.jmacro.core.Core;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import lombok.Getter;
@@ -27,8 +27,8 @@ public class ArgsCommandProvider implements CommandProvider<ArgsCommandProvider.
     }
 
     @Override
-    public ArgsCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new ArgsCommand(getName(), jMacroCore, scriptEngine);
+    public ArgsCommand getCommand(Core core, ScriptEngine scriptEngine) {
+        return new ArgsCommand(getName(), core, scriptEngine);
     }
 
     public static class ArgsCommand extends Command implements Constants {
@@ -38,7 +38,7 @@ public class ArgsCommandProvider implements CommandProvider<ArgsCommandProvider.
         @Getter
         private Map<String, ?> argm = null;
 
-        public ArgsCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+        public ArgsCommand(String name, Core core, ScriptEngine scriptEngine) {
             super(name, core, scriptEngine);
         }
 

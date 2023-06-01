@@ -1,6 +1,6 @@
 package com.itquasar.multiverse.jmacro.core.jmx;
 
-import com.itquasar.multiverse.jmacro.core.JMacroCore;
+import com.itquasar.multiverse.jmacro.core.Core;
 import com.j256.simplejmx.common.JmxAttributeField;
 import com.j256.simplejmx.common.JmxAttributeMethod;
 import com.j256.simplejmx.common.JmxOperation;
@@ -13,8 +13,8 @@ public class JMXManagementJMXBean extends JMXBean {
     private long startTimestamp = System.currentTimeMillis();
 
     @JmxAttributeMethod
-    public JMacroCore getJMacroCore() {
-        return super.getJMacroCore();
+    public Core getCore() {
+        return super.getCore();
     }
 
     @JmxOperation(description = "Call GC")

@@ -2,7 +2,7 @@ package com.itquasar.multiverse.jmacro.commands.base.commands
 
 import com.itquasar.multiverse.jmacro.core.CallableCommand
 import com.itquasar.multiverse.jmacro.core.Env
-import com.itquasar.multiverse.jmacro.core.JMacroCore
+import com.itquasar.multiverse.jmacro.core.Core
 import com.itquasar.multiverse.jmacro.core.command.Doc
 import com.itquasar.multiverse.jmacro.core.interfaces.ToMap
 import groovy.transform.CompileDynamic
@@ -18,7 +18,7 @@ class ConfigurationCommand extends CallableCommand implements ToMap {
     @Doc("List of keys that are held on `credentials` command instead of `configuration`.")
     private excludeKeys = CredentialsCommand.declaredFields.collect { it.name }
 
-    ConfigurationCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+    ConfigurationCommand(String name, Core core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
     }
 

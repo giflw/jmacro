@@ -3,7 +3,7 @@ package com.itquasar.multiverse.jmacro.commands.base.commands
 import com.itquasar.multiverse.jmacro.commands.base.Result
 import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.Constants
-import com.itquasar.multiverse.jmacro.core.JMacroCore
+import com.itquasar.multiverse.jmacro.core.Core
 import com.itquasar.multiverse.jmacro.core.command.Doc
 import com.itquasar.multiverse.jmacro.core.exception.ExitException
 import groovy.transform.CompileDynamic
@@ -57,7 +57,7 @@ class ConsoleCommand extends Command implements Constants {
     @Doc("Java system console.")
     private InReader readerAndWriter = new InReader()
 
-    ConsoleCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+    ConsoleCommand(String name, Core core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
     }
 

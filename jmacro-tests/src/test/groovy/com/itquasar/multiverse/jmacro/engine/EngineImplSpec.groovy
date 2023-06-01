@@ -1,7 +1,7 @@
 package com.itquasar.multiverse.jmacro.engine
 
 import com.itquasar.multiverse.jmacro.core.EngineImpl
-import com.itquasar.multiverse.jmacro.core.JMacroCore
+import com.itquasar.multiverse.jmacro.core.Core
 import com.itquasar.multiverse.jmacro.core.script.Metadata
 import com.itquasar.multiverse.jmacro.core.script.Script
 import com.itquasar.multiverse.jmacro.core.script.ScriptResult
@@ -17,7 +17,7 @@ class EngineImplSpec extends Specification implements Constants {
         def source = getClass()
             .getResource("/scripts/hello-world/hello-world.${extension}")
             .text
-        EngineImpl engine = new EngineImpl(new JMacroCore())
+        EngineImpl engine = new EngineImpl(new Core())
 
         def metadata = Metadata.extractMetadata(source)
         def scriptOrig = new Script(metadata, "hello-world.${extension}", '/scripts/hello-world', source)
@@ -36,7 +36,7 @@ class EngineImplSpec extends Specification implements Constants {
 
     def "check engine thread safe"() {
         given:
-        EngineImpl engine = new EngineImpl(new JMacroCore())
+        EngineImpl engine = new EngineImpl(new Core())
         final ValueHolder first = new ValueHolder()
         final ValueHolder second = new ValueHolder()
         Thread.start {

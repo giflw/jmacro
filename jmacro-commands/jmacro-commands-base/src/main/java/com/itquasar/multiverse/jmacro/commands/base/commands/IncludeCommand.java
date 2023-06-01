@@ -16,7 +16,7 @@ import javax.script.ScriptException;
 import com.itquasar.multiverse.jmacro.commands.base.providers.ExportCommandProvider;
 import com.itquasar.multiverse.jmacro.commands.base.providers.IncludeCommandProvider;
 import com.itquasar.multiverse.jmacro.core.Command;
-import com.itquasar.multiverse.jmacro.core.JMacroCore;
+import com.itquasar.multiverse.jmacro.core.Core;
 import com.itquasar.multiverse.jmacro.core.SPILoader;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.command.Doc;
@@ -35,7 +35,7 @@ public class IncludeCommand extends Command {
     @Doc("File extension of running script.")
     private final String extension;
 
-    public IncludeCommand(final String name, final GlobalScriptRepository repository, final JMacroCore core, final ScriptEngine scriptEngine) {
+    public IncludeCommand(final String name, final GlobalScriptRepository repository, final Core core, final ScriptEngine scriptEngine) {
         super(name, core, scriptEngine);
         this.repository = repository;
         this.extension = scriptEngine.getFactory().getExtensions().get(0);
@@ -68,7 +68,7 @@ public class IncludeCommand extends Command {
         return new Inclusion(this, this.getCore(), this.getScriptEngine(), contextName.names);
     }
 
-    public record Inclusion(IncludeCommand includeCommand, JMacroCore core, ScriptEngine scriptEngine, List contextName) {
+    public record Inclusion(IncludeCommand includeCommand, Core core, ScriptEngine scriptEngine, List contextName) {
 
         @SuppressWarnings("unchecked")
         void from(String includeName) {

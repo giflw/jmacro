@@ -2,7 +2,7 @@ package com.itquasar.multiverse.jmacro.commands.base.commands
 
 import com.itquasar.multiverse.jmacro.commands.base.commands.moment.LocalDateTimeWrapper
 import com.itquasar.multiverse.jmacro.core.Command
-import com.itquasar.multiverse.jmacro.core.JMacroCore
+import com.itquasar.multiverse.jmacro.core.Core
 import com.itquasar.multiverse.jmacro.core.command.Doc
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
@@ -14,7 +14,7 @@ import java.time.LocalDateTime
 @Doc("Date and time command")
 class MomentCommand extends Command {
 
-    MomentCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+    MomentCommand(String name, Core core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
     }
 

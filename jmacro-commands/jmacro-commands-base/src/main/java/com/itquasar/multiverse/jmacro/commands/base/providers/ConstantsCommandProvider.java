@@ -1,7 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
 import com.itquasar.multiverse.jmacro.commands.base.commands.ConstantsCommand;
-import com.itquasar.multiverse.jmacro.core.JMacroCore;
+import com.itquasar.multiverse.jmacro.core.Core;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 
 import javax.script.ScriptEngine;
@@ -26,8 +26,8 @@ public class ConstantsCommandProvider implements CommandProvider<ConstantsComman
 
     @Override
 
-    public ConstantsCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new ConstantsCommand(getName(), jMacroCore, scriptEngine);
+    public ConstantsCommand getCommand(Core core, ScriptEngine scriptEngine) {
+        return new ConstantsCommand(getName(), core, scriptEngine);
     }
 
 }

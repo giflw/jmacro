@@ -1,7 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.io.providers;
 
 import com.itquasar.multiverse.jmacro.commands.io.commands.ParserCommand;
-import com.itquasar.multiverse.jmacro.core.JMacroCore;
+import com.itquasar.multiverse.jmacro.core.Core;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 
 import javax.script.ScriptEngine;
@@ -19,7 +19,7 @@ public class ParserCommandProvider implements CommandProvider<ParserCommand> {
     }
 
     @Override
-    public ParserCommand getCommand(JMacroCore jMacroCore, ScriptEngine scriptEngine) {
-        return new ParserCommand(getName(), jMacroCore, scriptEngine);
+    public ParserCommand getCommand(Core core, ScriptEngine scriptEngine) {
+        return new ParserCommand(getName(), core, scriptEngine);
     }
 }

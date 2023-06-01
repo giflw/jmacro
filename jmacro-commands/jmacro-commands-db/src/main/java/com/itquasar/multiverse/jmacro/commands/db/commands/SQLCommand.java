@@ -7,7 +7,7 @@ import javax.script.ScriptEngine;
 
 import com.itquasar.multiverse.jmacro.commands.db.commands.sql.SQLConnection;
 import com.itquasar.multiverse.jmacro.core.Command;
-import com.itquasar.multiverse.jmacro.core.JMacroCore;
+import com.itquasar.multiverse.jmacro.core.Core;
 
 import groovy.lang.Closure;
 
@@ -15,7 +15,7 @@ public class SQLCommand extends Command implements AutoCloseable {
 
     private static List<SQLConnection> instances = new ArrayList<>(0);
 
-    public SQLCommand(final String name, final JMacroCore core, final ScriptEngine scriptEngine) {
+    public SQLCommand(final String name, final Core core, final ScriptEngine scriptEngine) {
         super(name, core, scriptEngine);
     }
 

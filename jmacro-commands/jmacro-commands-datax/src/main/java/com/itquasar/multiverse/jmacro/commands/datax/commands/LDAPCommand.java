@@ -4,7 +4,7 @@ import com.itquasar.multiverse.jmacro.commands.datax.commands.ldap.LDAPAuthentic
 import com.itquasar.multiverse.jmacro.commands.datax.commands.ldap.LDAPConstants;
 import com.itquasar.multiverse.jmacro.commands.datax.commands.ldap.api.AuthUser;
 import com.itquasar.multiverse.jmacro.core.Command;
-import com.itquasar.multiverse.jmacro.core.JMacroCore;
+import com.itquasar.multiverse.jmacro.core.Core;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.itquasar.multiverse.jmacro.core.interfaces.ToMap;
 import groovy.lang.Closure;
@@ -26,7 +26,7 @@ public class LDAPCommand extends Command implements AutoCloseable, LDAPConstants
     private String login = null;
     private String password = null;
 
-    public LDAPCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+    public LDAPCommand(String name, Core core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine);
     }
 

@@ -1,11 +1,11 @@
 package com.itquasar.multiverse.jmacro.core.jmx;
 
-import com.itquasar.multiverse.jmacro.core.JMacroCore;
+import com.itquasar.multiverse.jmacro.core.Core;
 
 public interface JMXBeanIFace {
 
-    JMacroCore getJMacroCore();
+    Core getCore();
 
-    void setJMacroCore(JMacroCore jMacroCore);
+    void setCore(Core core);
 
 }

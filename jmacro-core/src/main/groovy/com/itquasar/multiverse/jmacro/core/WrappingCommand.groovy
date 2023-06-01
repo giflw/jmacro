@@ -10,18 +10,18 @@ class WrappingCommand<T> extends CallableCommand {
     private T target
     private final boolean redirectMissingToContext
 
-    WrappingCommand(Function<WrappingCommand<T>, T> function, String name, JMacroCore core, ScriptEngine scriptEngine, boolean redirectMissingToContext = true) {
+    WrappingCommand(Function<WrappingCommand<T>, T> function, String name, Core core, ScriptEngine scriptEngine, boolean redirectMissingToContext = true) {
         super(name, core, scriptEngine)
         this.targetSupplier = () -> function.apply(this)
         this.redirectMissingToContext = redirectMissingToContext
     }
 
-    WrappingCommand(T target, String name, JMacroCore core, ScriptEngine scriptEngine) {
+    WrappingCommand(T target, String name, Core core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
         this.targetSupplier = () -> target
     }
 
-    WrappingCommand(Supplier<T> targetSupplier, String name, JMacroCore core, ScriptEngine scriptEngine) {
+    WrappingCommand(Supplier<T> targetSupplier, String name, Core core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
         this.targetSupplier = targetSupplier
     }

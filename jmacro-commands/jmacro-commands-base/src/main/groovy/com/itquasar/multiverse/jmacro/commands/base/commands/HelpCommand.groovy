@@ -1,7 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands
 
 import com.itquasar.multiverse.jmacro.core.Command
-import com.itquasar.multiverse.jmacro.core.JMacroCore
+import com.itquasar.multiverse.jmacro.core.Core
 import com.itquasar.multiverse.jmacro.core.command.Doc
 
 import javax.script.ScriptEngine
@@ -12,7 +12,7 @@ import java.lang.reflect.Parameter
 
 class HelpCommand extends Command {
 
-    HelpCommand(String name, JMacroCore core, ScriptEngine scriptEngine) {
+    HelpCommand(String name, Core core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
     }
 
