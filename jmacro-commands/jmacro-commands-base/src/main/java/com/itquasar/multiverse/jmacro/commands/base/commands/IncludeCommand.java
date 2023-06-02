@@ -91,7 +91,7 @@ public class IncludeCommand extends Command {
                 logger.debug("Including " + includeName);
 
                 try {
-                    this.core.getEngine().executeInclusion(script, (final var engine) -> {
+                    this.core.getEngine().include(script, (final var engine) -> {
                         this.includeCommand.getScriptEngine().getBindings(ScriptContext.ENGINE_SCOPE).forEach((key, value) -> {
                             if (!key.startsWith("__") && !key.equals("export") && !key.equals("include")&& !key.equals(ARGS)) {
                                 logger.debug("Transferring [" + key + "] to new engine");

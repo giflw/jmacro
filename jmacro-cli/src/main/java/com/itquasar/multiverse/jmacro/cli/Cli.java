@@ -4,6 +4,7 @@ import com.itquasar.multiverse.jmacro.core.Core;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.io.PrintStream;
 import java.nio.file.Path;
 
 import static picocli.CommandLine.Command;
@@ -26,6 +27,8 @@ import static picocli.CommandLine.ScopeType.INHERIT;
     }
 )
 public class Cli {
+
+    public static final PrintStream out = System.out;
 
     @Option(names = {"-d", "--debug"}, description = "Debug mode")
     private boolean debug;

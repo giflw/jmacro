@@ -72,11 +72,11 @@ public class Shell implements Callable<CliResult> {
     @Override
     public CliResult call() throws Exception {
         if (cli.isDebug()) {
-            System.out.println(cli.getCore().getConfiguration().serialize());
+            Cli.out.println(cli.getCore().getConfiguration().serialize());
             cli.getCore().getConfiguration().getRepository().getRepositories().forEach((repo) -> {
-                System.out.println(repo.getId() + ":" + repo.getUri());
+                Cli.out.println(repo.getId() + ":" + repo.getUri());
                 repo.list().forEach(script -> {
-                    System.out.println(" - " + repo.pathToLocation(script.getPath()));
+                    Cli.out.println(" - " + repo.pathToLocation(script.getPath()));
                 });
             });
         }

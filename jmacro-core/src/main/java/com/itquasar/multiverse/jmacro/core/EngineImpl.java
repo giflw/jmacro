@@ -9,6 +9,7 @@ import com.itquasar.multiverse.jmacro.core.script.ScriptResult;
 import com.itquasar.multiverse.jmacro.core.script.ValueHolder;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.script.*;
 import java.io.PrintWriter;
@@ -21,13 +22,8 @@ import static javax.script.ScriptContext.ENGINE_SCOPE;
 import static javax.script.ScriptContext.GLOBAL_SCOPE;
 
 @Log4j2
-public final class EngineImpl implements Engine, Constants {
+public final class EngineImpl implements Engine, Constants, TUI {
 
-
-    private static final String DOUBLE_SEPARATOR =
-        "================================================================================";
-    private static final String SINGLE_SEPARATOR =
-        "--------------------------------------------------------------------------------";
 
     /**
      * Script engine id generator to unique identify each {@link javax.script.ScriptEngine} instance.
@@ -102,16 +98,16 @@ public final class EngineImpl implements Engine, Constants {
     }
 
     @Override
-    public ScriptResult execute(final Script script, final List<String> args, final Consumer<ScriptEngine> preExecHook, final Consumer<ScriptEngine> postExecHook) {
+    public ScriptResult<?> execute(final Script script, final List<String> args, final Consumer<ScriptEngine> preExecHook, final Consumer<ScriptEngine> postExecHook) {
         return this.executeInternal(script, args, preExecHook, postExecHook, true);
     }
 
     @Override
-    public ScriptResult executeInclusion(final Script script, final Consumer<ScriptEngine> preExecHook, final Consumer<ScriptEngine> postExecHook) {
+    public ScriptResult<?> include(final Script script, final Consumer<ScriptEngine> preExecHook, final Consumer<ScriptEngine> postExecHook) {
         return this.executeInternal(script, Collections.emptyList(), preExecHook, postExecHook, false);
     }
 
-    private ScriptResult executeInternal(final Script script, final List<String> args, final Consumer<ScriptEngine> preExecHook, final Consumer<ScriptEngine> postExecHook, final boolean normalExecution) {
+    private ScriptResult<?> executeInternal(final Script script, final List<String> args, final Consumer<ScriptEngine> preExecHook, final Consumer<ScriptEngine> postExecHook, final boolean normalExecution) {
         final var extension = script.getPath().substring(script.getPath().lastIndexOf('.') + 1);
         final var engine = this.engines.get(extension).getScriptEngine();
 
@@ -238,22 +234,26 @@ public final class EngineImpl implements Engine, Constants {
                 : " (Script exit code)";
 
             if (normalExecution) {
-                scriptLogger.warn(SINGLE_SEPARATOR);
-                scriptLogger.warn(SINGLE_SEPARATOR);
-                scriptLogger.warn("Script exited with code " + exitCode.get() + scriptExitCodeDescription);
-                scriptLogger.warn(SINGLE_SEPARATOR);
-                scriptLogger.warn("Result for script " + script.getPath());
-                scriptLogger.warn("__RESULT__:");
-                scriptLogger.warn(valueHolder.get());
-                scriptLogger.warn("Evaluation return:");
-                scriptLogger.warn(evalReturn);
-                scriptLogger.warn(DOUBLE_SEPARATOR);
-                scriptLogger.warn(DOUBLE_SEPARATOR);
+                exitBanner(script, scriptLogger, valueHolder, exitCode, evalReturn, scriptExitCodeDescription);
             }
             return evalReturn;
         });
 
-        return new ScriptResult(script, exitCode.get(), valueHolder, evalResult);
+        return new ScriptResult<>(script, exitCode.get(), valueHolder, evalResult);
+    }
+
+    private static void exitBanner(Script script, Logger scriptLogger, ValueHolder.ObjectValueHolder valueHolder, ValueHolder<Integer> exitCode, Object evalReturn, String scriptExitCodeDescription) {
+        scriptLogger.warn(SINGLE_SEPARATOR);
+        scriptLogger.warn(SINGLE_SEPARATOR);
+        scriptLogger.warn("Script exited with code " + exitCode.get() + scriptExitCodeDescription);
+        scriptLogger.warn(SINGLE_SEPARATOR);
+        scriptLogger.warn("Result for script " + script.getPath());
+        scriptLogger.warn("__RESULT__:");
+        scriptLogger.warn(valueHolder.get());
+        scriptLogger.warn("Evaluation return:");
+        scriptLogger.warn(evalReturn);
+        scriptLogger.warn(DOUBLE_SEPARATOR);
+        scriptLogger.warn(DOUBLE_SEPARATOR);
     }
 
     private void closeCommands(final ScriptEngine engine) {

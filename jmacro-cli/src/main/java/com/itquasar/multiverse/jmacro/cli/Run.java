@@ -70,17 +70,17 @@ public class Run implements Callable<CliResult> {
     @Override
     public CliResult call() throws Exception {
         if (cli.isDebug()) {
-            System.out.println("Changing root log level to DEBUG if needed...");
+            Cli.out.println("Changing root log level to DEBUG if needed...");
             Logger rootLogger = LoggerContext.getContext().getRootLogger();
             if (rootLogger.getLevel().isMoreSpecificThan(Level.DEBUG)) {
                 rootLogger.setLevel(Level.DEBUG);
             }
-            System.out.println("Root log level is " + rootLogger.getLevel().name());
-            System.out.println(cli.getCore().getConfiguration().serialize());
+            Cli.out.println("Root log level is " + rootLogger.getLevel().name());
+            Cli.out.println(cli.getCore().getConfiguration().serialize());
             cli.getCore().getConfiguration().getRepository().getRepositories().forEach((repo) -> {
-                System.out.println(repo.getId() + ":" + repo.getUri());
+                Cli.out.println(repo.getId() + ":" + repo.getUri());
                 repo.list().forEach(script -> {
-                    System.out.println(" - " + repo.pathToLocation(script.getPath()));
+                    Cli.out.println(" - " + repo.pathToLocation(script.getPath()));
                 });
             });
         }
@@ -93,7 +93,7 @@ public class Run implements Callable<CliResult> {
             script = cli.getCore().getConfiguration().getRepository().get(scriptPath);
         } else {
             List<Script> scripts = cli.getCore().getConfiguration().getRepository().listMain(mainInfix);
-            System.out.println("Listing available scripts:");
+            Cli.out.println("Listing available scripts:");
             StringBuilder padding = new StringBuilder();
             while (padding.length() < scripts.size()) {
                 padding.append(" ");
@@ -109,22 +109,22 @@ public class Run implements Callable<CliResult> {
 
                 String name = _script.getMetadata().getName();
                 String description = _script.getMetadata().getDescription();
-                System.out.println("  " + idx + " ) " + name + (description.isEmpty() ? "" : " -> " + description));
+                Cli.out.println("  " + idx + " ) " + name + (description.isEmpty() ? "" : " -> " + description));
             }
 
-            System.out.println(" " + padding + "x ) Exit");
+            Cli.out.println(" " + padding + "x ) Exit");
             String selectMessage = "Select script to run or exit";
             if (defaultScript != null) {
                 selectMessage += " [default: " + defaultScript.getMetadata().getName() + "]";
             } else {
                 selectMessage += " [default: exit]";
             }
-            System.out.println(selectMessage + ":");
+            Cli.out.println(selectMessage + ":");
 
             String scriptIndex = System.console().readLine();
             scriptIndex = scriptIndex == null ? "" : scriptIndex;
             if ("x".equalsIgnoreCase(scriptIndex) || (scriptIndex.isEmpty() && defaultScript == null)) {
-                System.out.println("Exiting...");
+                Cli.out.println("Exiting...");
                 return new CliResult(new ScriptResult(new Script(Metadata.EMPTY, "", "", ""), 0, null, null));
             } else if (scriptIndex != null && !scriptIndex.isEmpty()) {
                 script = Optional.of(scripts.get(Integer.valueOf(scriptIndex) - 1));
@@ -132,7 +132,7 @@ public class Run implements Callable<CliResult> {
                 script = Optional.ofNullable(defaultScript);
             }
             var metadata = script.get().getMetadata();
-            System.out.println("Selected script: " + metadata.getName() + (metadata.getDescription().isEmpty() ? "" : " -> " + metadata.getDescription()));
+            Cli.out.println("Selected script: " + metadata.getName() + (metadata.getDescription().isEmpty() ? "" : " -> " + metadata.getDescription()));
             Thread.sleep(1000);
         }
 
@@ -150,6 +150,9 @@ public class Run implements Callable<CliResult> {
                     bindedCredentials.fill(credentials);
                     ConfigurationCommand bindedConfiguration = (ConfigurationCommand) bindings.get("configuration");
                     bindedConfiguration.fill(configuration);
+                },
+                scriptEngine -> {
+                    Cli.out.println(script.get().getMetadata().getName() + " executed.");
                 }
             );
             return new CliResult(scriptResult);
