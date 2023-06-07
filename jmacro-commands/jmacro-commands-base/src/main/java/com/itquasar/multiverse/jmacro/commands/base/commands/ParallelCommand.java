@@ -1,12 +1,13 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands;
 
+import com.itquasar.multiverse.jmacro.commands.base.commands.parallel.LockWaitThreadPoolExecutor;
 import com.itquasar.multiverse.jmacro.commands.base.commands.parallel.ParallelThreadFactory;
-import com.itquasar.multiverse.jmacro.commands.base.commands.parallel.TasksMonitor;
 import com.itquasar.multiverse.jmacro.core.Command;
 import com.itquasar.multiverse.jmacro.core.Constants;
 import com.itquasar.multiverse.jmacro.core.Core;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import groovy.lang.Closure;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import org.apache.logging.log4j.Logger;
 
@@ -22,53 +23,36 @@ public class ParallelCommand extends Command implements AutoCloseable {
 
     private static final ConcurrentMap<String, ParallelCommand> instances = new ConcurrentHashMap<>();
 
-
     private final String defaultGroup = "parallel";
 
     private String groupName;
 
     private ExecutorService executor;
-    private final TasksMonitor tasksMonitor = new TasksMonitor(this);
 
+    @Getter
     private int minPoolSize = Constants.CPUS / 2;
 
+    @Getter
     private int maxPoolSize = Constants.CPUS;
 
+    @Getter
     private boolean fixed = false;
-    private long timeout = 1000; // milliseconds
 
-    public int getMinPoolSize() {
-        return minPoolSize;
-    }
+    @Getter
+    private long timeout = 1000; // milliseconds
 
     public void setMinPoolSize(int minPoolSize) {
         this.minPoolSize = minPoolSize > 0 ? minPoolSize : 1;
-        this.setFixed();
-    }
-
-    public int getMaxPoolSize() {
-        return maxPoolSize;
+        this.computeFixedFlag();
     }
 
     public void setMaxPoolSize(int maxPoolSize) {
         this.maxPoolSize = maxPoolSize == 0 ? minPoolSize : maxPoolSize;
-        this.setFixed();
+        this.computeFixedFlag();
     }
 
-    public boolean isFixed() {
-        return this.minPoolSize == this.maxPoolSize;
-    }
-
-    private void setFixed() {
+    private void computeFixedFlag() {
         this.fixed = minPoolSize == maxPoolSize;
-    }
-
-    public long getTimeout() {
-        return timeout;
-    }
-
-    public TasksMonitor getTasksMonitor() {
-        return tasksMonitor;
     }
 
     public ParallelCommand(String name, Core core, ScriptEngine scriptEngine) {
@@ -85,7 +69,6 @@ public class ParallelCommand extends Command implements AutoCloseable {
 
     public ParallelCommand call(String group) {
         return this.call(group, this.minPoolSize);
-
     }
 
     public ParallelCommand call(String group, int poolSize) {
@@ -124,17 +107,17 @@ public class ParallelCommand extends Command implements AutoCloseable {
             return instances.get(group);
         } else {
             ParallelCommand parallel = new ParallelCommand(this.getName(), this.getCore(), this.getScriptEngine());
-            instances.put(group, initParallel(getLogger(), parallel, group, minPoolSize, maxPoolSize, timeout));
+            instances.put(group, initParallel(parallel, group, minPoolSize, maxPoolSize, timeout));
             return parallel;
         }
     }
 
-    private ParallelCommand initParallel(Logger logger, ParallelCommand parallel, String group, int minPoolSize, int maxPoolSize, long timeout) {
+    private ParallelCommand initParallel(ParallelCommand parallel, String group, int minPoolSize, int maxPoolSize, long timeout) {
         parallel.minPoolSize = minPoolSize;
         parallel.maxPoolSize = maxPoolSize;
         parallel.timeout = timeout;
 
-        ThreadPoolExecutor executor = new ThreadPoolExecutor(
+        LockWaitThreadPoolExecutor executor = new LockWaitThreadPoolExecutor(
             minPoolSize,
             parallel.fixed ? minPoolSize : maxPoolSize,
             parallel.fixed ? 0L : 60L,
@@ -178,23 +161,12 @@ public class ParallelCommand extends Command implements AutoCloseable {
         do {
             try {
                 future = executor.submit((Callable<?>) callable);
-                tasksMonitor.add(future);
             } catch (RejectedExecutionException ex) {
                 getLogger().debug("Task execution rejected. Waitinng " + retryWait + " " + timeUnit.name());
                 Thread.sleep(timeUnit.toMillis(retryWait));
             }
         } while (future == null && !executor.isShutdown());
         return future;
-    }
-
-    public ParallelCommand waitTasks() {
-        this.tasksMonitor.waitAll();
-        return this;
-    }
-
-    public ParallelCommand clear() {
-        this.tasksMonitor.clear();
-        return this;
     }
 
     public void shutdown() {
@@ -204,7 +176,6 @@ public class ParallelCommand extends Command implements AutoCloseable {
     public void shutdown(long timeout) {
         getLogger().warn("Awaiting parallel " + groupName);
         try {
-            this.tasksMonitor.shutdown();
             this.executor.shutdown();
             while (!this.executor.awaitTermination(timeout, TimeUnit.SECONDS)) {
                 getLogger().warn("Parallel " + groupName + "not terminated yet!");
@@ -233,3 +204,4 @@ public class ParallelCommand extends Command implements AutoCloseable {
         });
     }
 }
+

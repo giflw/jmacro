@@ -1,6 +1,7 @@
 module jmacro.commands.base {
     requires static lombok;
 
+    requires io.vavr;
     requires org.apache.groovy;
     requires org.apache.logging.log4j;
     requires org.checkerframework.checker.qual;
