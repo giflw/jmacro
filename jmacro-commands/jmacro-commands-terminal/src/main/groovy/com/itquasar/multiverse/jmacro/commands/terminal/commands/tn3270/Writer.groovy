@@ -5,7 +5,7 @@ import com.itquasar.multiverse.tn3270j.TN3270j
 import com.itquasar.multiverse.tn3270j.WaitMode
 import groovy.transform.CompileDynamic
 
-class Writer {
+public class Writer {
     private final TN3270j tn3270j
     private final def logger;
 

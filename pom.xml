@@ -34,6 +34,7 @@
         <checkstyle.fail>${checks.fail}</checkstyle.fail>
 
         <lombok.version>1.18.20</lombok.version>
+        <vavr.version>0.10.4</vavr.version>
         <checker.version>3.18.0</checker.version>
 
         <groovy.version>4.0.11</groovy.version>

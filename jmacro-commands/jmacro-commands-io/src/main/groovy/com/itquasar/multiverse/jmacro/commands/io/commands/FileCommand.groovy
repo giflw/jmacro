@@ -1,6 +1,6 @@
 package com.itquasar.multiverse.jmacro.commands.io.commands
 
-
+import com.itquasar.multiverse.jmacro.commands.io.commands.file.File
 import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.Core
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException

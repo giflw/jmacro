@@ -1,6 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.terminal.commands
 
-
+import com.itquasar.multiverse.jmacro.commands.terminal.commands.tn3270.Reader
+import com.itquasar.multiverse.jmacro.commands.terminal.commands.tn3270.Writer
 import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.Constants
 import com.itquasar.multiverse.jmacro.core.Core

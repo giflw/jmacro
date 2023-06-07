@@ -4,7 +4,7 @@ import com.itquasar.multiverse.jmacro.commands.terminal.commands.TN3270Command
 import com.itquasar.multiverse.tn3270j.TN3270j
 import groovy.transform.CompileDynamic
 
-class Reader extends LinkedHashMap<String, String> {
+public class Reader extends LinkedHashMap<String, String> {
 
     private final Mode mode
 
