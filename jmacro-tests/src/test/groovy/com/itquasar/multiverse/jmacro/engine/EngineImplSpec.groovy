@@ -2,6 +2,7 @@ package com.itquasar.multiverse.jmacro.engine
 
 import com.itquasar.multiverse.jmacro.core.EngineImpl
 import com.itquasar.multiverse.jmacro.core.Core
+import com.itquasar.multiverse.jmacro.core.configuration.Configuration
 import com.itquasar.multiverse.jmacro.core.script.Metadata
 import com.itquasar.multiverse.jmacro.core.script.Script
 import com.itquasar.multiverse.jmacro.core.script.ScriptResult
@@ -9,7 +10,6 @@ import com.itquasar.multiverse.jmacro.core.script.ValueHolder
 import spock.lang.Ignore
 import spock.lang.Specification
 
-@Ignore
 class EngineImplSpec extends Specification implements Constants {
 
     def "parse metadata"(extension) {
@@ -17,7 +17,7 @@ class EngineImplSpec extends Specification implements Constants {
         def source = getClass()
             .getResource("/scripts/hello-world/hello-world.${extension}")
             .text
-        EngineImpl engine = new EngineImpl(new Core())
+        EngineImpl engine = new EngineImpl(new Core(Configuration.load()))
 
         def metadata = Metadata.extractMetadata(source)
         def scriptOrig = new Script(metadata, "hello-world.${extension}", '/scripts/hello-world', source)
@@ -36,7 +36,7 @@ class EngineImplSpec extends Specification implements Constants {
 
     def "check engine thread safe"() {
         given:
-        EngineImpl engine = new EngineImpl(new Core())
+        EngineImpl engine = new EngineImpl(new Core(Configuration.load()))
         final ValueHolder first = new ValueHolder()
         final ValueHolder second = new ValueHolder()
         Thread.start {
@@ -66,14 +66,14 @@ class EngineImplSpec extends Specification implements Constants {
                     '',
                     """
                             Thread.sleep(1000)
-                            attempt(QUIET) {
+                            attempt(\$QUIET) {
                                 logger.warn(x)
                             }
                             Thread.sleep(1000)
                             def x = 'second'
                             logger.warn(x)
                             __RESULT__(timer.start === null)
-                            attempt(QUIET) {
+                            attempt(\$QUIET) {
                                 timer.stop()
                             }
                             __RESULT__("SECOND failed (\${timer.start === null})")
