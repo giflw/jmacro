@@ -41,7 +41,7 @@ public class AttemptCommandProvider implements CommandProvider<AttemptCommandPro
             return call(VERBOSE, callable);
         }
 
-        Result call(String verbosity, Callable callable) {
+        <T> Result<T> call(String verbosity, Callable<T> callable) {
             if (!ALLOWED_VERBOSITY.contains(verbosity)) {
                 throw new IllegalArgumentException("Verbosity must be in " + ALLOWED_VERBOSITY);
             }

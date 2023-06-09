@@ -2,26 +2,35 @@ package com.itquasar.multiverse.jmacro.commands.base
 
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
+import groovy.util.logging.Log4j2
+import io.vavr.control.Try
 
-class Result {
+import java.lang.reflect.Method
+import java.lang.reflect.Proxy
+import java.lang.reflect.Type
+import java.util.function.Consumer
 
-    private def value
+@Log4j2
+class Result<T> {
+
+    private T value
     private Throwable throwable
+    private boolean captured = false
 
-    static Result error(Throwable throwable) {
+    static <T> Result<T> error(Throwable throwable) {
         return new Result(null, throwable)
     }
 
-    static Result ok(value) {
+    static <T> Result<T> ok(T value) {
         return new Result(value, null)
     }
 
-    Result(value, Throwable throwable) {
+    Result(T value, Throwable throwable) {
         this.value = value
         this.throwable = throwable
     }
 
-    def getValue() {
+    T getValue() {
         if (value != null) {
             return value
         }
@@ -56,21 +65,35 @@ class Result {
         return this."$name"
     }
 
-	// FIXME maybe change to except or use both????
-	// if we use only except we may cause python keyword collision
-    Result capture(Closure closure) {
-        return capture(Throwable.class, closure)
+    @CompileDynamic
+    private Class<? extends Throwable> captureSignatureGroovy(Consumer<? extends Throwable> consumer) {
+        return Proxy.getInvocationHandler(consumer)?.delegate?.parameterTypes?.first()
     }
 
-    Result capture(Class<Throwable> throwableClass, Closure closure) {
-        if (!isValid() && throwableClass.isInstance(this.throwable)) {
-            closure.call(this.throwable)
+    @CompileDynamic
+    private Class<? extends Throwable> captureSignatureJava(Consumer<? extends Throwable> consumer) {
+        Method method = consumer.class.getDeclaredMethods().find { it.name == 'accept' }
+        Type[] types = method.getGenericParameterTypes()
+        return Try.of(() -> Throwable.class.asSubclass(types.first())).getOrElse(Throwable.class)
+    }
+
+    Result<T> capture(Consumer<? extends Throwable> consumer) {
+        Class<? extends Throwable> throwable = captureSignatureGroovy(consumer) ?: captureSignatureJava(consumer)
+        return capture(throwable, consumer)
+    }
+
+    Result<T> capture(Class<? extends Throwable> throwableClass, Consumer<? extends Throwable> consumer) {
+        if (!captured && !isValid() && throwableClass.isInstance(this.throwable)) {
+            captured = true
+            consumer.accept(this.throwable)
         }
         return this
     }
 
-    void lastly(Closure closure) {
-        closure.call()
+    Result<T> lastly(Runnable runnable) {
+        runnable.run()
+        return this
     }
+
 }
 
