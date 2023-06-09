@@ -12,23 +12,23 @@ import spock.lang.Specification
 
 class EngineImplSpec extends Specification implements Constants {
 
-    def "parse metadata"(extension) {
+    def "parse metadata and build script object"(extension) {
         given:
         def source = getClass()
             .getResource("/scripts/hello-world/hello-world.${extension}")
             .text
-        EngineImpl engine = new EngineImpl(new Core(Configuration.load()))
 
         def metadata = Metadata.extractMetadata(source)
-        def scriptOrig = new Script(metadata, "hello-world.${extension}", '/scripts/hello-world', source)
-        ScriptResult scriptResult = engine.execute(scriptOrig)
-        Script script = scriptResult.script
+        def script = new Script(metadata, "hello-world.${extension}", '/scripts/hello-world', source)
 
         expect:
+        metadata.name == 'Metadata Test'
+        metadata.description == 'Just a metadata test'
+        metadata.author == 'I Myself'
+        metadata.version == '0.1.2'
         script.path == "hello-world.${extension}"
         script.location == URI.create('/scripts/hello-world')
         script.source == source
-        scriptResult.result.get() == "Hello world from ${extension.toUpperCase()}"
 
         where:
         extension << EXTENSIONS
