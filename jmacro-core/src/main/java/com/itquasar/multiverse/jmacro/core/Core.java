@@ -43,8 +43,8 @@ public final class Core {
 
     public void stop() {
         if (this.jmxManagement != null) {
-            try {
-                this.jmxManagement.getServer().close();
+           try {
+                this.jmxManagement.close();
             } catch (IOException e) {
                 throw new JMacroException("Error closing core", e);
             }

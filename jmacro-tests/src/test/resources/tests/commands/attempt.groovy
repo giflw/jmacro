@@ -10,7 +10,7 @@ def number = attempt {
     Integer.valueOf("123")
 }.value
 
-def attemptResult = attempt(QUIET) {
+def attemptResult = attempt($QUIET) {
     raise("Should be catch by attempt")
 }
 

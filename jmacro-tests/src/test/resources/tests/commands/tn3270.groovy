@@ -14,7 +14,7 @@ def url = System.getProperty("tn3270j.url")
 tn3270 {
     open url
     logger.warn screenshot()
-    attempt(QUIET) {
+    attempt($QUIET) {
         wait 30, WaitMode.InputField
     }
     logger.warn screenshot()
@@ -49,7 +49,7 @@ tn3270 {
 
     __RESULT__(read(3, 1, 20))
 
-    attempt(QUIET) {
+    attempt($QUIET) {
         close()
     }
 }

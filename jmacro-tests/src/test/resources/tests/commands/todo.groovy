@@ -7,7 +7,7 @@ END METADATA
  */
 
 __RESULT__(
-    attempt(QUIET) { todo("TEST") }.throwable.message
+    attempt($QUIET) { todo("TEST") }.throwable.message
 )
 
 

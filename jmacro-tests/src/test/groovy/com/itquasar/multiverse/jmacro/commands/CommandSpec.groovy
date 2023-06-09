@@ -15,7 +15,6 @@ import spock.lang.Ignore
 import spock.lang.Specification
 import spock.lang.Unroll
 
-@Ignore
 @Log4j2
 class CommandSpec extends Specification {
 
@@ -23,7 +22,10 @@ class CommandSpec extends Specification {
 
     void setup() {
         def configuration = new Configuration()
-        configuration.repository = new GlobalScriptRepository(new CommandTestRepository(CommandSpec.class.getResource("/" + CommandSpec.class.packageName.replace(".", "/") + "/scripts/").toURI()))
+        def uri = CommandSpec.class.getResource("/tests/commands/").toURI()
+        println "URI: $uri"
+        configuration.repository = new GlobalScriptRepository(new CommandTestRepository(uri))
+        println "Configuration: $configuration"
         core = new Core(configuration)
         core.start()
     }
@@ -52,7 +54,7 @@ class CommandSpec extends Specification {
         result.exitCode == (script.metadata.infos.exitCode ?: 0)
         script.metadata.infos['expectedResult'] == result.result.get()
 
-        where: "Command providers loaded throw Java SPI"
+        where: "Command providers loaded through Java SPI"
         provider << SPILoader.load(CommandProvider.class).toList().findAll {
             (it.name == 'tn3270' && System.getProperty('tn3270j.url') != null) || it.name != 'tn3270'
         }
@@ -60,7 +62,7 @@ class CommandSpec extends Specification {
 
     static Script loadScript(String basename) {
         String filename = basename + ".groovy"
-        URL location = CommandSpec.class.getResource("/" + CommandSpec.class.packageName.replace(".", "/") + "/scripts/" + filename)
+        URL location = CommandSpec.class.getResource("/tests/commands/" + filename)
         if (location == null) {
             throw new IllegalArgumentException("Could not find $filename")
         }

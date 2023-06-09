@@ -13,13 +13,13 @@ include "IncludeAux1", "IncludeAux2" from "library"
 echo "After library"
 
 // FIXME throw exception if succeds
-attempt(QUIET) {
+attempt($QUIET) {
     println "Trying SCRIPT_CONTEXT"
     println SCRIPT_CONTEXT
 }
 
 // FIXME throw exception if succeds
-attempt(QUIET) {
+attempt($QUIET) {
     println "Trying included_func(INCLUDED_PROP)"
     included_func(INCLUDED_PROP)
 }

@@ -7,7 +7,7 @@ END METADATA
  */
 __RESULT__(
     // can be used anywhere to raise an exception
-    attempt(QUIET) {
+    attempt($QUIET) {
         raise("Should raise exception")
     }.throwable.message
 )

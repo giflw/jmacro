@@ -7,7 +7,7 @@ END METADATA
  */
 
 __RESULT__(
-    attempt(QUIET) { fixme("TEST") }.throwable.message
+    attempt($QUIET) { fixme("TEST") }.throwable.message
 )
 
 

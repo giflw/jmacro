@@ -20,70 +20,9 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Log4j2
-public class JMXManagement {
-
-    @Data
-    public static class ServerConfig {
-        private int port;
-        private String address;
-
-        private volatile Integer actualPort;
-        private volatile InetAddress inetAddress;
-
-        public ServerConfig() {
-            this(-1, null);
-        }
-
-        public ServerConfig(int port, String address) {
-            this.port = port;
-            this.address = address;
-        }
-
-        public InetAddress getInetAddress() {
-            if (this.inetAddress == null) {
-                this.inetAddress = this.address != null
-                    ? Try.of(() -> InetAddress.getByName(this.address)).getOrNull()
-                    : Try.of(InetAddress::getLocalHost)
-                    .recover(ex -> InetAddress.getLoopbackAddress())
-                    .getOrNull();
-            }
-            return this.inetAddress;
-        }
-
-        private static int randomPort(String server) {
-            try (ServerSocket serverSocket = new ServerSocket(0)) {
-                int port = serverSocket.getLocalPort();
-                LOGGER.warn("Using random port " + port + " for " + server + " server.");
-                return port;
-            } catch (IOException exception) {
-                LOGGER.error("Not able to find a free port.", exception);
-                return 0;
-            }
-        }
-
-        public boolean shouldRun() {
-            return this.port >= 0 && this.getInetAddress() != null;
-        }
-
-        private int getPort(String server) {
-            if (this.actualPort == null) {
-                if (this.port < 0) {
-                    throw new IllegalStateException("Port is less then zero. Server must not run.");
-                }
-                this.actualPort = this.port == 0 ? randomPort(server) : this.port;
-            }
-            return this.actualPort;
-        }
-    }
-
-    @Data
-    public static class JMXConfig {
-        private ServerConfig jmx = new ServerConfig();
-        private ServerConfig web = new ServerConfig();
-    }
+public class JMXManagement implements AutoCloseable {
 
     private final AtomicBoolean loaded = new AtomicBoolean(false);
-
     @Getter
     private final ServerConfig serverConfig;
     @Getter
@@ -92,9 +31,7 @@ public class JMXManagement {
     private JmxServer server;
     @Getter
     private JmxWebServer webServer;
-
     private Map<String, JmxClient> clients = new LinkedHashMap<>();
-
     public JMXManagement(JMXConfig config) {
         this(config.jmx, config.web);
     }
@@ -153,6 +90,15 @@ public class JMXManagement {
         }
     }
 
+    public void close() throws IOException {
+        if (this.serverConfig.shouldRun()) {
+            this.server.close();
+        }
+        if (this.webServerConfig.shouldRun()) {
+            this.webServer.close();
+        }
+    }
+
     public JmxClient getClient() {
         return this.getClient(this.serverConfig.getInetAddress(), this.serverConfig.port);
     }
@@ -169,5 +115,65 @@ public class JMXManagement {
             this.clients.put(address, jmxClient);
         }
         return jmxClient;
+    }
+
+    @Data
+    public static class ServerConfig {
+        private int port;
+        private String address;
+
+        private volatile Integer actualPort;
+        private volatile InetAddress inetAddress;
+
+        public ServerConfig() {
+            this(-1, null);
+        }
+
+        public ServerConfig(int port, String address) {
+            this.port = port;
+            this.address = address;
+        }
+
+        private static int randomPort(String server) {
+            try (ServerSocket serverSocket = new ServerSocket(0)) {
+                int port = serverSocket.getLocalPort();
+                LOGGER.warn("Using random port " + port + " for " + server + " server.");
+                return port;
+            } catch (IOException exception) {
+                LOGGER.error("Not able to find a free port.", exception);
+                return 0;
+            }
+        }
+
+        public InetAddress getInetAddress() {
+            if (this.inetAddress == null) {
+                this.inetAddress = this.address != null
+                    ? Try.of(() -> InetAddress.getByName(this.address)).getOrNull()
+                    : Try.of(InetAddress::getLocalHost)
+                    .recover(ex -> InetAddress.getLoopbackAddress())
+                    .getOrNull();
+            }
+            return this.inetAddress;
+        }
+
+        public boolean shouldRun() {
+            return this.port >= 0 && this.getInetAddress() != null;
+        }
+
+        private int getPort(String server) {
+            if (this.actualPort == null) {
+                if (this.port < 0) {
+                    throw new IllegalStateException("Port is less then zero. Server must not run.");
+                }
+                this.actualPort = this.port == 0 ? randomPort(server) : this.port;
+            }
+            return this.actualPort;
+        }
+    }
+
+    @Data
+    public static class JMXConfig {
+        private ServerConfig jmx = new ServerConfig();
+        private ServerConfig web = new ServerConfig();
     }
 }
