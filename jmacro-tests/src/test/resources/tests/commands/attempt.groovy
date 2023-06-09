@@ -1,4 +1,3 @@
-package com.itquasar.multiverse.jmacro.commands
 /*
 START METADATA
 name: ATTEMPT

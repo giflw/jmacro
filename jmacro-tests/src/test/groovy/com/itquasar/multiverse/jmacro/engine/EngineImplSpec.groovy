@@ -15,7 +15,7 @@ class EngineImplSpec extends Specification implements Constants {
     def "parse metadata and build script object"(extension) {
         given:
         def source = getClass()
-            .getResource("/scripts/hello-world/hello-world.${extension}")
+            .getResource("/tests/hello-world/hello-world.${extension}")
             .text
 
         def metadata = Metadata.extractMetadata(source)
