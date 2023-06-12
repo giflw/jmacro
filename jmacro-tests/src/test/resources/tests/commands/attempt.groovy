@@ -41,4 +41,4 @@ if (attemptResult.throwable.message != attemptResult2.throwable.message) {
     raise 'Houston, we have a problem!'
 }
 
-__RESULT__("${attemptResult.throwable.message} && ${number} && ${exceptionType}")
+result("${attemptResult.throwable.message} && ${number} && ${exceptionType}")

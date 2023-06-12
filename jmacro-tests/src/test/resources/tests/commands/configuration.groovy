@@ -11,7 +11,7 @@ configuration {
     bool = true
     interger = 5
 }
-__RESULT__(configuration.configs.toString())
+result.ok(configuration.toString())
 
 
 

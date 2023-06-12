@@ -13,4 +13,4 @@ END METADATA
 msg = "Hello world from PY"
 logger.info(msg)
 logger.info(__METADATA__)
-__RESULT__.set(msg)
+result.set(msg)

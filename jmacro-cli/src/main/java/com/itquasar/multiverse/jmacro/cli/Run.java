@@ -2,6 +2,7 @@ package com.itquasar.multiverse.jmacro.cli;
 
 import com.itquasar.multiverse.jmacro.commands.base.commands.ConfigurationCommand;
 import com.itquasar.multiverse.jmacro.commands.base.commands.CredentialsCommand;
+import com.itquasar.multiverse.jmacro.core.EngineResult;
 import com.itquasar.multiverse.jmacro.core.script.Metadata;
 import com.itquasar.multiverse.jmacro.core.script.Script;
 import com.itquasar.multiverse.jmacro.core.script.ScriptResult;
@@ -125,7 +126,7 @@ public class Run implements Callable<CliResult> {
             scriptIndex = scriptIndex == null ? "" : scriptIndex;
             if ("x".equalsIgnoreCase(scriptIndex) || (scriptIndex.isEmpty() && defaultScript == null)) {
                 Cli.out.println("Exiting...");
-                return new CliResult(new ScriptResult(new Script(Metadata.EMPTY, "", "", ""), 0, null, null));
+                return new CliResult(new ScriptResult(new Script(Metadata.EMPTY, "", "", ""), EngineResult.OK));
             } else if (scriptIndex != null && !scriptIndex.isEmpty()) {
                 script = Optional.of(scripts.get(Integer.valueOf(scriptIndex) - 1));
             } else {
@@ -141,7 +142,7 @@ public class Run implements Callable<CliResult> {
                 args.set(0, script.get().getLocation().toString());
             }
             List<String> args = this.args != null ? Collections.unmodifiableList(this.args) : Collections.emptyList();
-            ScriptResult<?> scriptResult = cli.getCore().getEngine().execute(
+            ScriptResult<?, ?> scriptResult = cli.getCore().getEngine().execute(
                 script.get(),
                 args,
                 scriptEngine -> {

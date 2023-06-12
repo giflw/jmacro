@@ -13,4 +13,4 @@ END METADATA
 var msg = "Hello world from JSHELL"
 logger.info(msg)
 logger.info(__METADATA__)
-__RESULT__.set(msg)
+result.set(msg)

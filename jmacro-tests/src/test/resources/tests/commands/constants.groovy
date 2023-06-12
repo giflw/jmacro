@@ -5,7 +5,7 @@ infos:
     expectedResult: QUIET/VERBOSE
 END METADATA
  */
-__RESULT__("${$QUIET}/${constants.VERBOSE}")
+result("${$QUIET}/${constants.VERBOSE}")
 
 
 

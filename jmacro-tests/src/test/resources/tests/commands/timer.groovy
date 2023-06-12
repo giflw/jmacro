@@ -13,4 +13,4 @@ timer.partial("FOO")
 timer.stop()
 timer.log()
 
-__RESULT__(timer.start > timer.stop)
+result(timer.start > timer.stop)

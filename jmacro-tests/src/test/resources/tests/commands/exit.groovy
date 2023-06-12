@@ -21,7 +21,7 @@ try {
     exitCode2 = exception.getExitCode()
 }
 
-__RESULT__("Should raise exception with exit codes $exitCode1 and $exitCode2")
+result("Should raise exception with exit codes $exitCode1 and $exitCode2")
 
 exit(127)
 

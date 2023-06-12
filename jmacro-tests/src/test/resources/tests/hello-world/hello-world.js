@@ -14,4 +14,4 @@ END METADATA
 var msg = "Hello world from JS"
 logger.info(msg)
 logger.info(__METADATA__)
-__RESULT__.set(msg)
+result.set(msg)

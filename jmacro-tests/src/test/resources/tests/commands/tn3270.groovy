@@ -47,7 +47,7 @@ tn3270 {
     wait WaitMode.InputField
     logger.warn screenshot()*/
 
-    __RESULT__(read(3, 1, 20))
+    result(read(3, 1, 20))
 
     attempt($QUIET) {
         close()

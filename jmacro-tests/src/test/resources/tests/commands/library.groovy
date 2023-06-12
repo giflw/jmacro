@@ -45,4 +45,4 @@ def includeAux2 = new IncludeAux2(this)
 library("IncludeAux1", includeAux1)
 library("IncludeAux2", includeAux2)
 
-__RESULT__(includeAux2.included_func(includeAux2.INCLUDED_PROP))
+result(includeAux2.included_func(includeAux2.INCLUDED_PROP))

@@ -8,7 +8,7 @@ END METADATA
 
 error "ERROR FROM error.groovy TEST SCRIPT"
 
-__RESULT__(true)
+result(true)
 
 
 

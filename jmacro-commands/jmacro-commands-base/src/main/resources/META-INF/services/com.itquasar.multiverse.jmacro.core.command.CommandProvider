@@ -16,6 +16,7 @@ com.itquasar.multiverse.jmacro.commands.base.providers.MomentCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.PauseCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.RaiseCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.RequireCommandProvider
+com.itquasar.multiverse.jmacro.commands.base.providers.ResultCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.SystemCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.ConsoleCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.TimerCommandProvider

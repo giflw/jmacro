@@ -98,16 +98,16 @@ public final class EngineImpl implements Engine, Constants, TUI {
     }
 
     @Override
-    public ScriptResult<?> execute(final Script script, final List<String> args, final Consumer<ScriptEngine> preExecHook, final Consumer<ScriptEngine> postExecHook) {
+    public ScriptResult<?, ? extends Throwable> execute(final Script script, final List<String> args, final Consumer<ScriptEngine> preExecHook, final Consumer<ScriptEngine> postExecHook) {
         return this.executeInternal(script, args, preExecHook, postExecHook, true);
     }
 
     @Override
-    public ScriptResult<?> include(final Script script, final Consumer<ScriptEngine> preExecHook, final Consumer<ScriptEngine> postExecHook) {
+    public ScriptResult<?, ? extends Throwable> include(final Script script, final Consumer<ScriptEngine> preExecHook, final Consumer<ScriptEngine> postExecHook) {
         return this.executeInternal(script, Collections.emptyList(), preExecHook, postExecHook, false);
     }
 
-    private ScriptResult<?> executeInternal(final Script script, final List<String> args, final Consumer<ScriptEngine> preExecHook, final Consumer<ScriptEngine> postExecHook, final boolean normalExecution) {
+    private ScriptResult<?, ? extends Throwable> executeInternal(final Script script, final List<String> args, final Consumer<ScriptEngine> preExecHook, final Consumer<ScriptEngine> postExecHook, final boolean normalExecution) {
         final var extension = script.getPath().substring(script.getPath().lastIndexOf('.') + 1);
         final var engine = this.engines.get(extension).getScriptEngine();
 
@@ -183,10 +183,9 @@ public final class EngineImpl implements Engine, Constants, TUI {
         engineScope.put("__SCRIPT__", script);
         engineScope.put("__METADATA__", script.getMetadata());
         engineScope.put("__CONTEXT__", engineScope);
-        final var valueHolder = new ValueHolder.ObjectValueHolder();
-        engineScope.put("__RESULT__", valueHolder);
 
         commands.forEach(Command::allCommandsRegistered);
+        EngineResult<?, ? extends Throwable> result = (EngineResult) engineScope.get("result");
 
 
         if (this.languageAdaptors.containsKey(extension)) {
@@ -194,8 +193,7 @@ public final class EngineImpl implements Engine, Constants, TUI {
             this.languageAdaptors.get(extension).adapt(engine);
         }
 
-        final var exitCode = new ValueHolder<>(0);
-        final var evalResult = script.run(() -> {
+        script.run(() -> {
             if (normalExecution) {
                 scriptLogger.warn(DOUBLE_SEPARATOR);
                 scriptLogger.warn(DOUBLE_SEPARATOR);
@@ -212,15 +210,15 @@ public final class EngineImpl implements Engine, Constants, TUI {
                 if (!normalExecution) {
                     throw new ExitException(ExitException.SCRIPT_ENGINE_ERROR, exception);
                 }
-                exitCode.set(ExitException.SCRIPT_ENGINE_ERROR);
+                result.exitCode(ExitException.SCRIPT_ENGINE_ERROR);
                 var cause = exception;
                 while ((cause = cause.getCause()) != null) {
                     if ((cause instanceof ExitException)) {
-                        exitCode.set(((ExitException) cause).getExitCode());
+                        result.exitCode(((ExitException) cause).getExitCode());
                         break;
                     }
                 }
-                if (exitCode.get() == ExitException.SCRIPT_ENGINE_ERROR) {
+                if (result.exitCode() == ExitException.SCRIPT_ENGINE_ERROR) {
                     LOGGER.error("Error during script execution", exception);
                 }
             } finally {
@@ -228,30 +226,26 @@ public final class EngineImpl implements Engine, Constants, TUI {
                     this.closeCommands(engine);
                 }
             }
-
-            final var scriptExitCodeDescription = (exitCode.get() == ExitException.SCRIPT_ENGINE_ERROR)
-                ? " (Script engine error)"
-                : " (Script exit code)";
-
             if (normalExecution) {
-                exitBanner(script, scriptLogger, valueHolder, exitCode, evalReturn, scriptExitCodeDescription);
+                exitBanner(script, scriptLogger, result);
             }
             return evalReturn;
         });
 
-        return new ScriptResult<>(script, exitCode.get(), valueHolder, evalResult);
+        return new ScriptResult<>(script, result);
     }
 
-    private static void exitBanner(Script script, Logger scriptLogger, ValueHolder.ObjectValueHolder valueHolder, ValueHolder<Integer> exitCode, Object evalReturn, String scriptExitCodeDescription) {
+    private static void exitBanner(Script script, Logger scriptLogger, EngineResult<?, ?> engineResult) {
         scriptLogger.warn(SINGLE_SEPARATOR);
         scriptLogger.warn(SINGLE_SEPARATOR);
-        scriptLogger.warn("Script exited with code " + exitCode.get() + scriptExitCodeDescription);
+        final var scriptExitCodeDescription = (engineResult.exitCode() == ExitException.SCRIPT_ENGINE_ERROR)
+            ? " (Script engine error)"
+            : " (Script exit code)";
+        scriptLogger.warn("Script exited with code " + engineResult.exitCode() + scriptExitCodeDescription);
         scriptLogger.warn(SINGLE_SEPARATOR);
         scriptLogger.warn("Result for script " + script.getPath());
-        scriptLogger.warn("__RESULT__:");
-        scriptLogger.warn(valueHolder.get());
-        scriptLogger.warn("Evaluation return:");
-        scriptLogger.warn(evalReturn);
+        scriptLogger.warn("result:");
+        scriptLogger.warn(engineResult.value());
         scriptLogger.warn(DOUBLE_SEPARATOR);
         scriptLogger.warn(DOUBLE_SEPARATOR);
     }

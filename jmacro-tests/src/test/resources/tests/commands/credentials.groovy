@@ -12,7 +12,7 @@ credentials {
     domain = "DOMAIN NAME"
 }
 echo credentials
-__RESULT__("${credentials.domain} | ${credentials.token} | ${credentials.login}")
+result("${credentials.domain} | ${credentials.token} | ${credentials.login}")
 
 
 

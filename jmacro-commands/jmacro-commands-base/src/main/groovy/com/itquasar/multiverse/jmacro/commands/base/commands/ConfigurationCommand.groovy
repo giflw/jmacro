@@ -73,6 +73,6 @@ class ConfigurationCommand extends CallableCommand implements ToMap {
 
     @Override
     String toString() {
-        return "Configuration{configs=${configs}}"
+        return configs.toString()
     }
 }

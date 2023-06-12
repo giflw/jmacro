@@ -8,7 +8,7 @@ END METADATA
 
 echo "ECHO FROM echo.groovy TEST SCRIPT"
 
-__RESULT__(true)
+result(true)
 
 
 

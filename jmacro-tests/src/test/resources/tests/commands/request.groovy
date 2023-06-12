@@ -13,4 +13,4 @@ def req = request {
     form user: "usr1", senha: "senha11"
 }
 
-__RESULT__(req.response.data.title())
+result(req.response.data.title())

@@ -10,4 +10,4 @@ def pom = file(basedir + "/pom.xml")
 
 def project = pom.data
 
-__RESULT__(project.artifactId.text())
+result(project.artifactId.text())

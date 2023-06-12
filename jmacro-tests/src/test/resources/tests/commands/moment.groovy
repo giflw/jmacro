@@ -7,7 +7,7 @@ infos:
     expectedResult: true && true
 END METADATA
  */
-__RESULT__(
+result(
     "${moment.today.date().toString() == LocalDate.now().toString()} && ${moment.today.date() == moment.today.date}"
 )
 

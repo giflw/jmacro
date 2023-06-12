@@ -14,4 +14,4 @@ END METADATA
 def msg = "Hello world from GROOVY"
 logger.info(msg)
 logger.info(__METADATA__)
-__RESULT__(msg)
+result(msg)

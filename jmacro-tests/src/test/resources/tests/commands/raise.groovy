@@ -5,7 +5,7 @@ infos:
     expectedResult: Should raise exception
 END METADATA
  */
-__RESULT__(
+result(
     // can be used anywhere to raise an exception
     attempt($QUIET) {
         raise("Should raise exception")

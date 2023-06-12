@@ -6,7 +6,7 @@ infos:
 END METADATA
  */
 
-__RESULT__(
+result(
     attempt($QUIET) { todo("TEST") }.throwable.message
 )
 

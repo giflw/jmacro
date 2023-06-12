@@ -52,7 +52,8 @@ class CommandSpec extends Specification {
         and: "Check result"
         script == result.script
         result.exitCode == (script.metadata.infos.exitCode ?: 0)
-        script.metadata.infos['expectedResult'] == result.result.get()
+        script.metadata.infos['expectedResult'] == result.result
+        script.metadata.infos['exception'] == null || script.metadata.infos['expectedResult'] == result.exception.class.simpleName
 
         where: "Command providers loaded through Java SPI"
         provider << SPILoader.load(CommandProvider.class).toList().findAll {

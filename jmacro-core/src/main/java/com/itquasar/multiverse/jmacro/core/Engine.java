@@ -20,7 +20,7 @@ public interface Engine {
      * @return {@link ScriptResult} wrapped result.
      * @throws ScriptException if some error occurs.
      */
-    ScriptResult<?> execute(Script script, List<String> args, Consumer<ScriptEngine> preExecHook, Consumer<ScriptEngine> postExecHook) throws ScriptException;
+    ScriptResult<?, ?> execute(Script script, List<String> args, Consumer<ScriptEngine> preExecHook, Consumer<ScriptEngine> postExecHook) throws ScriptException;
 
     /**
      * Execute given {@link Script} and return its execution result wrapped on {@link ScriptResult}.
@@ -31,7 +31,7 @@ public interface Engine {
      * @return {@link ScriptResult} wrapped result.
      * @throws ScriptException if some error occurs.
      */
-    default ScriptResult<?> include(Script script, Consumer<ScriptEngine> preExecHook, Consumer<ScriptEngine> postExecHook) throws ScriptException {
+    default ScriptResult<?, ?> include(Script script, Consumer<ScriptEngine> preExecHook, Consumer<ScriptEngine> postExecHook) throws ScriptException {
         return this.execute(script, Collections.emptyList(), preExecHook, postExecHook);
     }
 
@@ -44,7 +44,7 @@ public interface Engine {
      * @return {@link ScriptResult} wrapped result.
      * @throws ScriptException if some error occurs.
      */
-    default ScriptResult<?> execute(Script script, List<String> args) throws ScriptException {
+    default ScriptResult<?, ?> execute(Script script, List<String> args) throws ScriptException {
         return this.execute(script, Collections.emptyList(), (scriptEngine) -> { /* NO-OP */ },  (scriptEngine) -> { /* NO-OP */ });
     }
 
@@ -55,7 +55,7 @@ public interface Engine {
      * @return {@link ScriptResult} wrapped result.
      * @throws ScriptException if some error occurs.
      */
-    default ScriptResult<?> execute(Script script) throws ScriptException {
+    default ScriptResult<?, ?> execute(Script script) throws ScriptException {
         return this.execute(script, Collections.emptyList());
     }
 

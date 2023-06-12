@@ -53,7 +53,7 @@ class EngineImplSpec extends Specification implements Constants {
                         Thread.sleep(4000)
                         timer.partial()
                         timer.log()
-                        __RESULT__("FIRST \${timer.stop == null && x == 'first'}")
+                        result("FIRST \${timer.stop == null && x == 'first'}")
                         """
                 )).result.get()
             )
@@ -72,11 +72,11 @@ class EngineImplSpec extends Specification implements Constants {
                             Thread.sleep(1000)
                             def x = 'second'
                             logger.warn(x)
-                            __RESULT__(timer.start === null)
+                            result(timer.start === null)
                             attempt(\$QUIET) {
                                 timer.stop()
                             }
-                            __RESULT__("SECOND failed (\${timer.start === null})")
+                            result("SECOND failed (\${timer.start === null})")
                             timer.log()
                             Thread.sleep(2000)
                         """

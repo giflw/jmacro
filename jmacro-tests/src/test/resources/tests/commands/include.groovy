@@ -31,7 +31,7 @@ IncludeAux2.with {
 }
 
 
-__RESULT__(IncludeAux1.included_func(IncludeAux1.INCLUDED_PROP))
+result(IncludeAux1.included_func(IncludeAux1.INCLUDED_PROP))
 
 
 
