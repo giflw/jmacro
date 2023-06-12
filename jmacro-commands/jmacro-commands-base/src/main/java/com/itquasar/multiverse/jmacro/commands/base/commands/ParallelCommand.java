@@ -137,18 +137,6 @@ public class ParallelCommand extends Command implements AutoCloseable {
 
     @SneakyThrows
     public Future<?> submit(Callable<?> callable) {
-        return submit(this.timeout / 1000.0, callable);
-    }
-
-    public Future<?> submit(double retryWait, Callable<?> callable) throws Exception {
-        return submit((int) (retryWait * 1000), TimeUnit.MILLISECONDS, callable);
-    }
-
-    public Future<?> submit(long retryWait, Callable<?> callable) throws Exception {
-        return this.submit(retryWait, TimeUnit.SECONDS, callable);
-    }
-
-    public Future<?> submit(long retryWait, TimeUnit timeUnit, Callable<?> callable) throws Exception {
         if (this.executor == null) {
             this.call();
         }
@@ -157,16 +145,7 @@ public class ParallelCommand extends Command implements AutoCloseable {
             closure.setDelegate(this);
             closure.setResolveStrategy(Closure.DELEGATE_FIRST);
         }
-        Future<?> future = null;
-        do {
-            try {
-                future = executor.submit((Callable<?>) callable);
-            } catch (RejectedExecutionException ex) {
-                getLogger().debug("Task execution rejected. Waitinng " + retryWait + " " + timeUnit.name());
-                Thread.sleep(timeUnit.toMillis(retryWait));
-            }
-        } while (future == null && !executor.isShutdown());
-        return future;
+        return executor.submit((Callable<?>) callable);
     }
 
     public void shutdown() {

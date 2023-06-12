@@ -1,6 +1,5 @@
 package com.itquasar.multiverse.jmacro.commands
 
-
 import com.itquasar.multiverse.jmacro.core.Core
 import com.itquasar.multiverse.jmacro.core.SPILoader
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider
@@ -11,12 +10,13 @@ import com.itquasar.multiverse.jmacro.core.script.Metadata
 import com.itquasar.multiverse.jmacro.core.script.Script
 import com.itquasar.multiverse.jmacro.core.script.ScriptResult
 import groovy.util.logging.Log4j2
-import spock.lang.Ignore
 import spock.lang.Specification
 import spock.lang.Unroll
 
 @Log4j2
 class CommandSpec extends Specification {
+
+    private static final String singleCommanndTest = null
 
     Core core
 
@@ -57,7 +57,9 @@ class CommandSpec extends Specification {
 
         where: "Command providers loaded through Java SPI"
         provider << SPILoader.load(CommandProvider.class).toList().findAll {
-            (it.name == 'tn3270' && System.getProperty('tn3270j.url') != null) || it.name != 'tn3270'
+            (singleCommanndTest != null && singleCommanndTest == it.name)
+                ||
+                (singleCommanndTest == null && ((it.name == 'tn3270' && System.getProperty('tn3270j.url') != null) || it.name != 'tn3270'))
         }
     }
 
