@@ -1,10 +1,12 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
+import com.itquasar.multiverse.jmacro.commands.base.commands.ResultCommand;
 import com.itquasar.multiverse.jmacro.core.Command;
 import com.itquasar.multiverse.jmacro.core.Core;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.exception.ExitException;
 
+import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 
 /**
@@ -37,11 +39,27 @@ public class ExitCommandProvider implements CommandProvider<ExitCommandProvider.
             call(0);
         }
 
+        void apply() {
+            call(0);
+        }
+
+        void invoke() {
+            call(0);
+        }
+
         void call(int code) {
+            ResultCommand<?, ?> result = (ResultCommand<?, ?>) getContext().getBindings(ScriptContext.ENGINE_SCOPE).get("result");
+            result.exitCode(code);
             throw new ExitException(code);
         }
 
+        void apply(int code) {
+            call(code);
+        }
+
+        void invoke(int code) {
+            call(code);
+        }
+
     }
-
-
 }

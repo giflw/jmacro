@@ -6,7 +6,6 @@ import com.itquasar.multiverse.jmacro.core.exception.ExitException;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.itquasar.multiverse.jmacro.core.script.Script;
 import com.itquasar.multiverse.jmacro.core.script.ScriptResult;
-import com.itquasar.multiverse.jmacro.core.script.ValueHolder;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -210,15 +209,8 @@ public final class EngineImpl implements Engine, Constants, TUI {
                 if (!normalExecution) {
                     throw new ExitException(ExitException.SCRIPT_ENGINE_ERROR, exception);
                 }
-                result.exitCode(ExitException.SCRIPT_ENGINE_ERROR);
-                var cause = exception;
-                while ((cause = cause.getCause()) != null) {
-                    if ((cause instanceof ExitException)) {
-                        result.exitCode(((ExitException) cause).getExitCode());
-                        break;
-                    }
-                }
-                if (result.exitCode() == ExitException.SCRIPT_ENGINE_ERROR) {
+                if(result.exitCode() == ExitException.OK) {
+                    result.exitCode(ExitException.SCRIPT_ENGINE_ERROR);
                     LOGGER.error("Error during script execution", exception);
                 }
             } finally {
