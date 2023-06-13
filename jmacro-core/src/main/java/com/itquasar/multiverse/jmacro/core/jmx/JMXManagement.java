@@ -1,6 +1,7 @@
 package com.itquasar.multiverse.jmacro.core.jmx;
 
 import com.itquasar.multiverse.jmacro.core.Core;
+import com.itquasar.multiverse.jmacro.core.NetUtils;
 import com.itquasar.multiverse.jmacro.core.SPILoader;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.j256.simplejmx.client.JmxClient;
@@ -14,7 +15,6 @@ import lombok.extern.log4j.Log4j2;
 import javax.management.JMException;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.ServerSocket;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -134,16 +134,6 @@ public class JMXManagement implements AutoCloseable {
             this.address = address;
         }
 
-        private static int randomPort(String server) {
-            try (ServerSocket serverSocket = new ServerSocket(0)) {
-                int port = serverSocket.getLocalPort();
-                LOGGER.warn("Using random port " + port + " for " + server + " server.");
-                return port;
-            } catch (IOException exception) {
-                LOGGER.error("Not able to find a free port.", exception);
-                return 0;
-            }
-        }
 
         public InetAddress getInetAddress() {
             if (this.inetAddress == null) {
@@ -165,7 +155,7 @@ public class JMXManagement implements AutoCloseable {
                 if (this.port < 0) {
                     throw new IllegalStateException("Port is less then zero. Server must not run.");
                 }
-                this.actualPort = this.port == 0 ? randomPort(server) : this.port;
+                this.actualPort = this.port == 0 ? NetUtils.randomPort(server) : this.port;
             }
             return this.actualPort;
         }
