@@ -12,11 +12,6 @@
     <artifactId>jmacro-core</artifactId>
     <name>JMacro::Core</name>
 
-    <properties>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
-    </properties>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -41,7 +36,6 @@
         <dependency>
             <groupId>io.vavr</groupId>
             <artifactId>vavr</artifactId>
-            <version>0.10.4</version>
         </dependency>
 
 
@@ -77,12 +71,10 @@
         <dependency>
             <groupId>com.j256.simplejmx</groupId>
             <artifactId>simplejmx</artifactId>
-            <version>2.2</version>
         </dependency>
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-            <version>1.29</version>
         </dependency>
 
     </dependencies>

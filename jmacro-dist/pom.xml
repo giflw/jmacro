@@ -74,7 +74,6 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>appassembler-maven-plugin</artifactId>
-                        <version>2.1.0</version>
                         <executions>
                             <execution>
                                 <id>appassembler-application</id>
@@ -109,7 +108,6 @@
                     </plugin>
                     <plugin>
                         <artifactId>maven-assembly-plugin</artifactId>
-                        <version>3.5.0</version>
                         <executions>
                             <execution>
                                 <id>assembly-application</id>
@@ -128,7 +126,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-dependency-plugin</artifactId>
-                        <version>3.2.0</version>
                         <executions>
                             <execution>
                                 <id>copy-application</id>
@@ -141,14 +138,12 @@
                                         <artifactItem>
                                             <groupId>xyz.cofe</groupId>
                                             <artifactId>jacob</artifactId>
-                                            <version>1.20</version>
                                             <classifier>x86</classifier>
                                             <type>dll</type>
                                         </artifactItem>
                                         <artifactItem>
                                             <groupId>xyz.cofe</groupId>
                                             <artifactId>jacob</artifactId>
-                                            <version>1.20</version>
                                             <classifier>x64</classifier>
                                             <type>dll</type>
                                         </artifactItem>
@@ -162,7 +157,6 @@
                     </plugin>
                     <plugin>
                         <artifactId>maven-resources-plugin</artifactId>
-                        <version>3.2.0</version>
                         <executions>
                             <execution>
                                 <id>copy-scripts-bin-application</id>
@@ -198,7 +192,6 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>appassembler-maven-plugin</artifactId>
-                        <version>2.1.0</version>
                         <executions>
                             <execution>
                                 <id>appassembler-installer</id>
@@ -231,7 +224,6 @@
                     </plugin>
                     <plugin>
                         <artifactId>maven-resources-plugin</artifactId>
-                        <version>3.2.0</version>
                         <executions>
                             <execution>
                                 <id>copy-scripts-bin-installer</id>
@@ -266,7 +258,6 @@
                     <plugin>
                         <groupId>com.igormaznitsa</groupId>
                         <artifactId>mvn-jlink-wrapper</artifactId>
-                        <version>1.1.0</version>
                         <executions>
                             <execution>
                                 <id>jlink-jre</id>
@@ -305,7 +296,6 @@
                     <plugin>
                         <groupId>com.igormaznitsa</groupId>
                         <artifactId>mvn-jlink-wrapper</artifactId>
-                        <version>1.1.0</version>
                         <executions>
                             <execution>
                                 <id>jlink-jdk</id>
@@ -349,7 +339,6 @@
                 <plugins>
                     <plugin>
                         <artifactId>maven-resources-plugin</artifactId>
-                        <version>3.2.0</version>
                         <executions>
                             <execution>
                                 <!-- Copy data dir with data files for tools or commands -->
@@ -383,7 +372,6 @@
                 <plugins>
                     <plugin>
                         <artifactId>maven-resources-plugin</artifactId>
-                        <version>3.2.0</version>
                         <executions>
                             <execution>
                                 <!-- Copy tools dir with binaries -->
@@ -417,7 +405,6 @@
                 <plugins>
                     <plugin>
                         <artifactId>maven-resources-plugin</artifactId>
-                        <version>3.2.0</version>
                         <executions>
                             <execution>
                                 <!-- Copy tools dir with binaries -->

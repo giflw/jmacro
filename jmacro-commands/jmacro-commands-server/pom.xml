@@ -13,12 +13,6 @@
     <artifactId>jmacro-commands-server</artifactId>
     <name>JMacro::Commands::Server</name>
 
-    <properties>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
-    </properties>
-
-
     <dependencyManagement>
         <dependencies>
             <dependency>

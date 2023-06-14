@@ -12,11 +12,6 @@
     <artifactId>jmacro-tests</artifactId>
     <name>JMacro::Tests</name>
 
-    <properties>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
-    </properties>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -28,6 +23,11 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <properties>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+    </properties>
 
     <dependencies>
         <dependency>

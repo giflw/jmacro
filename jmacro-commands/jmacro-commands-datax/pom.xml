@@ -14,11 +14,6 @@
     <name>JMacro::Commands::DataX</name>
     <description>Commands for data extraction</description>
 
-    <properties>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
-    </properties>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -44,36 +39,28 @@
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
-            <version>2.0.24</version>
-            <!-- verify tess4j dependency version -->
         </dependency>
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>jbig2-imageio</artifactId>
-            <version>3.0.3</version>
-            <!-- verify tess4j dependency version -->
         </dependency>
         <dependency>
             <groupId>net.sourceforge.tess4j</groupId>
             <artifactId>tess4j</artifactId>
-            <version>4.5.5</version>
         </dependency>
         <dependency>
             <groupId>xyz.cofe</groupId>
             <artifactId>jacob</artifactId>
-            <version>1.20</version>
         </dependency>
         <dependency>
             <groupId>xyz.cofe</groupId>
             <artifactId>jacob</artifactId>
-            <version>1.20</version>
             <classifier>x86</classifier>
             <type>dll</type>
         </dependency>
         <dependency>
             <groupId>xyz.cofe</groupId>
             <artifactId>jacob</artifactId>
-            <version>1.20</version>
             <classifier>x64</classifier>
             <type>dll</type>
         </dependency>
@@ -121,12 +108,10 @@
                             <dependency>
                                 <groupId>org.apache.groovy</groupId>
                                 <artifactId>groovy-json</artifactId>
-                                <version>${groovy.version}</version>
                             </dependency>
                             <dependency>
                                 <groupId>org.jsoup</groupId>
                                 <artifactId>jsoup</artifactId>
-                                <version>1.14.3</version>
                             </dependency>
                         </dependencies>
                         <executions>
@@ -210,7 +195,7 @@
                                                             import com.jacob.com.Variant;
 
                                                             /**@
-                                                              ${description}
+                                                              $description
 
                                                               {@see <a href="${enumUrl}">${enumUrl}</a>}
                                                             */

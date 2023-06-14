@@ -13,6 +13,18 @@
     <packaging>pom</packaging>
     <description>JMacro Launcher</description>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.itquasar.multiverse.jmacro</groupId>
+                <artifactId>jmacro-bom</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <profiles>
         <profile>
             <id>launcher</id>
@@ -27,7 +39,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-resources-plugin</artifactId>
-                        <version>3.3.0</version>
                         <executions>
                             <execution>
                                 <id>exe-copy-icon</id>
@@ -100,7 +111,6 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
-                        <version>3.1.0</version>
                         <configuration>
                             <executable>cmd</executable>
                             <workingDirectory>${project.basedir}/../git-modules/knx-launcher</workingDirectory>

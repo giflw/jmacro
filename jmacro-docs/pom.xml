@@ -11,23 +11,26 @@
     <name>JMacro::Docs</name>
     <description>JMacro documentation</description>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.itquasar.multiverse.jmacro</groupId>
+                <artifactId>jmacro-bom</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
-        <dependency>
-            <groupId>com.itquasar.multiverse.jmacro</groupId>
-            <artifactId>jmacro-bom</artifactId>
-            <version>${project.version}</version>
-            <type>pom</type>
-            <scope>import</scope>
-        </dependency>
         <dependency>
             <groupId>org.apache.groovy</groupId>
             <artifactId>groovy</artifactId>
-            <version>${groovy.version}</version>
         </dependency>
         <dependency>
             <groupId>net.sourceforge.plantuml</groupId>
             <artifactId>plantuml</artifactId>
-            <version>1.2022.6</version>
         </dependency>
     </dependencies>
 
@@ -36,7 +39,6 @@
             <plugin>
                 <groupId>org.codehaus.gmavenplus</groupId>
                 <artifactId>gmavenplus-plugin</artifactId>
-                <version>${gmavenplus.version}</version>
                 <inherited>true</inherited>
                 <executions>
                     <execution>

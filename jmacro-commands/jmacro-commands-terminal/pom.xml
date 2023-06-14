@@ -13,11 +13,6 @@
     <artifactId>jmacro-commands-terminal</artifactId>
     <name>JMacro::Commands::Terminal</name>
 
-    <properties>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
-    </properties>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -52,7 +47,6 @@
         <dependency>
             <groupId>com.itquasar.multiverse.tn3270j</groupId>
             <artifactId>tn3270j</artifactId>
-            <version>0.4.2</version>
         </dependency>
     </dependencies>
 

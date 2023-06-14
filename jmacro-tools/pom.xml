@@ -14,6 +14,18 @@
     <name>JMacro::Tools</name>
     <description>Prepare JMacro tools</description>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.itquasar.multiverse.jmacro</groupId>
+                <artifactId>jmacro-bom</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <profiles>
         <profile>
             <id>tools</id>
@@ -28,7 +40,6 @@
                     <plugin>
                         <groupId>com.googlecode.maven-download-plugin</groupId>
                         <artifactId>download-maven-plugin</artifactId>
-                        <version>1.6.7</version>
                         <configuration>
                             <outputDirectory>${project.parent.basedir}/tools/</outputDirectory>
                             <alwaysVerifyChecksum>true</alwaysVerifyChecksum>

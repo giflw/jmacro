@@ -13,11 +13,6 @@
     <packaging>pom</packaging>
     <name>JMacro::Commands</name>
 
-    <properties>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
-    </properties>
-
     <modules>
         <module>../git-modules/tn3270j</module>
         <module>jmacro-commands-base</module>
