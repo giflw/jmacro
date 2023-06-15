@@ -1,7 +1,6 @@
 module jmacro.commands.datax {
     requires static lombok;
 
-
     requires org.apache.groovy;
     requires org.apache.logging.log4j;
     requires org.checkerframework.checker.qual;

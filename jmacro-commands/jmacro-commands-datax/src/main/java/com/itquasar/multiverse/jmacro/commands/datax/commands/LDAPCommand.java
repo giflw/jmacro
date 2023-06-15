@@ -17,7 +17,7 @@ import java.util.Map;
 public class LDAPCommand extends Command implements AutoCloseable, LDAPConstants {
 
     private LDAPAuthenticator authenticator = null;
-    private Map<String, String> config = new LinkedHashMap<>() {{
+    private final Map<String, String> config = new LinkedHashMap<>() {{
         put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
         put(Context.URL_PKG_PREFIXES, "com.sun.jndi.url");
         put(Context.SECURITY_AUTHENTICATION, "simple");
@@ -52,7 +52,7 @@ public class LDAPCommand extends Command implements AutoCloseable, LDAPConstants
         this.authenticator.configure(this.config);
         if (this.login == null || this.password == null) {
             Object credentials = this.getBindings().get("credentials");
-            if (credentials != null && ToMap.class.isInstance(credentials)) {
+            if (ToMap.class.isInstance(credentials)) {
                 var map = ((ToMap) credentials).<String, Object>toMap();
                 this.login = this.login != null ? this.login : (String) map.get("login");
                 this.password = this.password != null ? this.password : (String) map.get("password");

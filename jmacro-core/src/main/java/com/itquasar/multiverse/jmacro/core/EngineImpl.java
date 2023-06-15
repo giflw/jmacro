@@ -147,6 +147,7 @@ public final class EngineImpl extends Engine implements Constants, TUI {
         globalScope.put("logger", scriptLogger);
         globalScope.put("#jsr223.groovy.engine.keep.globals", "weak");
 
+        final var commandTypes = new ArrayList<Class>();
         final var commandProviderLoader = new SPILoader<>(CommandProvider.class);
         final var commandProviders = commandProviderLoader.load();
 
@@ -180,6 +181,8 @@ public final class EngineImpl extends Engine implements Constants, TUI {
                     scope.put(name, command);
                 }
             });
+
+            commandTypes.add(command.getClass());
         }
 
         commands.forEach(Command::allCommandsLoaded);
@@ -193,6 +196,7 @@ public final class EngineImpl extends Engine implements Constants, TUI {
 
         commands.forEach(Command::allCommandsRegistered);
         EngineResult<?, ? extends Throwable> result = (EngineResult) engineScope.get("result");
+
 
         if (this.languageAdaptors.containsKey(extension)) {
             LOGGER.warn("Running adaptor for " + extension);
@@ -214,7 +218,6 @@ public final class EngineImpl extends Engine implements Constants, TUI {
                 postExecHook.accept(engine);
             } catch (final Throwable exception) {
                 if (!normalExecution) {
-                    LOGGER.warn("IS IT HERE?");
                     throw new ExitException(ExitException.SCRIPT_ENGINE_ERROR, exception);
                 }
 

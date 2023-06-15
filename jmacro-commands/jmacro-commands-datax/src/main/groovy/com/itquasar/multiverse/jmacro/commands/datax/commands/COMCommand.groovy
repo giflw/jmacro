@@ -41,7 +41,8 @@ class COMCommand extends Command implements AutoCloseable {
     @Override
     void allCommandsLoaded() {
         Application.values().each {
-            bindings.constants.put(it.name(), it)
+            // FIXME NPE on constants
+            bindings.constants?.put(it.name(), it)
         }
     }
 
@@ -75,10 +76,10 @@ class COMCommand extends Command implements AutoCloseable {
 
     @Override
     void close() throws Exception {
-        if (ComThread.haveSTA) {
-            ComThread.Release()
-        }
         if (started.compareAndSet(true, false)) {
+            if (ComThread.haveSTA) {
+                ComThread.Release()
+            }
             ComThread.quitMainSTA()
         }
     }

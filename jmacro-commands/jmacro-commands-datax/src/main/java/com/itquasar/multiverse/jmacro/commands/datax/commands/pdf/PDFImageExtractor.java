@@ -52,12 +52,10 @@ public class PDFImageExtractor {
             if ("Do".equals(operation)) {
                 COSName objectName = (COSName) operands.get(0);
                 PDXObject pdxObject = getResources().getXObject(objectName);
-                if (pdxObject instanceof PDImageXObject) {
-                    PDImageXObject image = (PDImageXObject) pdxObject;
+                if (pdxObject instanceof PDImageXObject image) {
                     BufferedImage bImage = image.getImage();
                     images.add(bImage);
-                } else if (pdxObject instanceof PDFormXObject) {
-                    PDFormXObject form = (PDFormXObject) pdxObject;
+                } else if (pdxObject instanceof PDFormXObject form) {
                     showForm(form);
                 }
             } else {

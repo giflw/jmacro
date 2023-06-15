@@ -71,7 +71,7 @@ class CommandSpec extends Specification {
         }
         String source = location.text
         Metadata metadata = Metadata.extractMetadata(source)
-        return new Script(metadata, filename, location.toString(), source)
+        return new Script(metadata, "command-spec", filename, location.toString(), source)
     }
 
     static class CommandTestRepository implements ScriptRepository {

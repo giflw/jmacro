@@ -111,6 +111,7 @@ public class Run implements Callable<CliResult> {
                 String name = _script.getMetadata().getName();
                 String description = _script.getMetadata().getDescription();
                 Cli.out.println("  " + idx + " ) " + name + (description.isEmpty() ? "" : " -> " + description));
+                Cli.out.println("            [" + _script.getRepository() + "] " + _script.getLocation());
             }
 
             Cli.out.println(" " + padding + "x ) Exit");
@@ -127,7 +128,7 @@ public class Run implements Callable<CliResult> {
             scriptIndex = scriptIndex == null ? "" : scriptIndex;
             if ("x".equalsIgnoreCase(scriptIndex) || (scriptIndex.isEmpty() && defaultScript == null)) {
                 Cli.out.println("Exiting...");
-                return new CliResult(new ScriptResult(new Script(Metadata.EMPTY, "", "", ""), EngineResult.OK));
+                return new CliResult(new ScriptResult(new Script(Metadata.EMPTY, "", "", "", ""), EngineResult.OK));
             } else if (scriptIndex != null && !scriptIndex.isEmpty()) {
                 script = Optional.of(scripts.get(Integer.valueOf(scriptIndex) - 1));
             } else {

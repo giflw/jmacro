@@ -84,11 +84,10 @@ public class ImageGraphicsEngine extends PDFGraphicsStreamEngine {
 
     @Override
     public void drawImage(PDImage pdImage) throws IOException {
-        if (pdImage instanceof PDImageXObject) {
+        if (pdImage instanceof PDImageXObject xobject) {
             if (pdImage.isStencil()) {
                 processColor(getGraphicsState().getNonStrokingColor());
             }
-            PDImageXObject xobject = (PDImageXObject) pdImage;
             if (seen.contains(xobject.getCOSObject())) {
                 // skip duplicate image
                 return;

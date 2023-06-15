@@ -42,7 +42,7 @@ public class FileScriptRepository extends ScriptRepositoryAbstract {
                                     URI location = URI.create(
                                         "file://" + file.getAbsolutePath().replace("\\", "/").replaceAll(" ","%20")
                                     );
-                                    return new Script(metadata, path, location, source);
+                                    return new Script(metadata, this.getId(), path, location, source);
                                 } catch (IOException e) {
                                     LOGGER.error("Error reading file " + file, e);
                                     return null;

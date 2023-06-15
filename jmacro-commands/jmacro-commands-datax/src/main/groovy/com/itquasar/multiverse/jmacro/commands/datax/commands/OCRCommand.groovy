@@ -37,7 +37,7 @@ class OCRCommand extends Command {
     }
 
     void language(String language) {
-        this.init();
+        this.init()
         this.tesseract.setLanguage(language)
     }
 

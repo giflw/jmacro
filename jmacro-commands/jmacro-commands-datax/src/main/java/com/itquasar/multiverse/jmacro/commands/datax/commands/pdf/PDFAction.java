@@ -18,7 +18,7 @@ import java.util.List;
 
 public class PDFAction {
 
-    private File file;
+    private final File file;
 
     public PDFAction() {
         this((File) null);

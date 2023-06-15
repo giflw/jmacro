@@ -18,6 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Script {
 
     private final Metadata metadata;
+    private final String repository;
     private final String path;
     private final String extension;
     private final URI location;
@@ -27,12 +28,13 @@ public class Script {
     @Setter(AccessLevel.NONE)
     private AtomicBoolean running = new AtomicBoolean(false);
 
-    public Script(Metadata metadata, String path, String location, String source) {
-        this(metadata, path, URI.create(location != null ? location : "memory://"), source);
+    public Script(Metadata metadata, String repository, String path, String location, String source) {
+        this(metadata, repository, path, URI.create(location != null ? location : "memory://"), source);
     }
 
-    public Script(Metadata metadata, String path, URI location, String source) {
+    public Script(Metadata metadata, String repository, String path, URI location, String source) {
         this.metadata = metadata;
+        this.repository = repository;
         this.path = path;
         this.extension = this.path.substring(this.path.lastIndexOf(".") + 1);
         this.location = location;
