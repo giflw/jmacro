@@ -70,4 +70,73 @@ public class DriverManager {
         return (RemoteWebDriver) webDriver;
     }
 
+
+    public static WebDriverManager getWebDriverManager(Capabilities capabilities) {
+        getLogger().warn("Initializing web driver manager")
+        def driverManager = new DriverManager(core.configuration.folders.cache().resolve("webdriver"))
+        getLogger().info("Driver manager initialized")
+        def manager = driverManager.getManager(config.vendor.toString())
+        getLogger().info("Web driver manager created. Configuring it...")
+
+        ConfigurationCommand configuration = (ConfigurationCommand) scriptEngine.get('configuration')
+        getLogger().info("Using engine script configuration: ${configuration}")
+
+        Map<String, ?> proxyConfig = [:]
+        if (configuration['proxy'] !== false && configuration['proxy'] instanceof Map<String, ?>) {
+            proxyConfig = (Map<String, ?>) configuration['proxy']
+        }
+
+        getLogger().info("Proxy configuration ${proxyConfig}")
+        getLogger().info("Proxy credentials ${proxyConfig.crendentials}")
+        if (!proxyConfig.isEmpty()) {
+            getLogger().warn("Checking manager proxy configuration")
+            managerProxy(manager, proxyConfig)
+        }
+        if (this.config.binary) {
+            getLogger().warn("Binary path given. Avoiding browser detection and using ${this.config.version} as browser version.")
+            manager.avoidBrowserDetection().browserVersion((String) this.config.version)
+        }
+        if (capabilities) {
+            getLogger().warn("Setting manager capabilities")
+            manager.capabilities(capabilities)
+        }
+        getLogger().warn("Web driver manager initialized")
+        return manager
+    }
+
+
+    //@CompileDynamic
+    public static void managerProxy(WebDriverManager manager, Map<String, ?> proxyConfig) {
+        touch()
+        CredentialsCommand credentials = (CredentialsCommand) proxyConfig?.credentials
+        if (credentials) {
+            getLogger().info("Setting up proxy for web driver manager using ${credentials.fullUser}")
+        } else {
+            getLogger().warn("Setting up proxy for web driver manager using anonymous")
+        }
+
+        String proxyAddress = proxyConfig.address
+        if (!proxyAddress) {
+            getLogger().warn("Getting proxy from platform")
+            InetSocketAddress proxy = (InetSocketAddress) ProxySelector.default.select(URI.create('http://google.com.br/'))
+                .each { getLogger().warn("proxy each: $it}") }
+                .find { it.type() == java.net.Proxy.Type.HTTP }
+                .each { getLogger().warn("proxy found: $it}") }
+                ?.address()
+            proxyAddress = proxy ? "${proxy.hostName}:${proxy.port}" : null
+        }
+        getLogger().info("Proxy address: ${proxyAddress}")
+
+        if (proxyAddress != null) {
+            getLogger().warn("Setting manager proxy")
+            manager.proxy(proxyAddress)
+        }
+        if (credentials != null) {
+            getLogger().warn("Setting manager proxy credentials")
+            manager.proxyUser(credentials.fullUser)
+                .proxyPass(credentials.password)
+        }
+    }
+
+
 }
