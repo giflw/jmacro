@@ -24,7 +24,7 @@ class CredentialsCommand extends Command implements CredentialsProvider, ToMap {
     String domain
     String impersonate
     String token
-    String apiKey
+    String key
 
     CredentialsCommand(String name, Core core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
@@ -39,7 +39,7 @@ class CredentialsCommand extends Command implements CredentialsProvider, ToMap {
     }
 
     boolean exists() {
-        return (login && password) || token || (login && apiKey)
+        return (login && password) || token || (login && key)
     }
 
     CredentialsCommand clear() {
@@ -49,7 +49,7 @@ class CredentialsCommand extends Command implements CredentialsProvider, ToMap {
         domain = null
         impersonate = null
         token = null
-        apiKey = null
+        key = null
         return this
     }
 
@@ -74,7 +74,7 @@ class CredentialsCommand extends Command implements CredentialsProvider, ToMap {
         domain = values.domain
         impersonate = values.impersonate
         token = values.token
-        apiKey = values.apiKey
+        key = values.key
     }
 
     CredentialsCommand update(CredentialsCommand credentials) {
@@ -88,21 +88,25 @@ class CredentialsCommand extends Command implements CredentialsProvider, ToMap {
         domain = values.domain ?: this.domain
         impersonate = values.impersonate ?: this.impersonate
         token = values.token ?: this.token
-        apiKey = values.apiKey ?: this.apiKey
+        key = values.key ?: this.key
         return this
     }
 
-    CredentialsCommand of(String login, String password = null, String domain = null) {
+    CredentialsCommand of(String token) {
+        return of(token: token)
+    }
+
+    CredentialsCommand of(String login, String password, String domain = null) {
+        if (login.contains('\\')) {
+            domain = login.substring(0, login.indexOf('\\'))
+            login = login.substring(login.indexOf('\\') + 1)
+        }
         return of(login: login, password: password, domain: domain)
     }
 
     CredentialsCommand of(Map<String, ?> values) {
         def cred = new CredentialsCommand("credentials", core, scriptEngine)
         return cred.update(values)
-    }
-
-    String getPassword() {
-        return password
     }
 
     CredentialsCommand setPassword(char[] password) {
