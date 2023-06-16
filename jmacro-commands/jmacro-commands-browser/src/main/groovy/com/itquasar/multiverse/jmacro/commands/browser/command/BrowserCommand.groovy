@@ -7,6 +7,7 @@ import com.itquasar.multiverse.jmacro.core.CallableCommand
 import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.Constants
 import com.itquasar.multiverse.jmacro.core.Core
+import com.itquasar.multiverse.jmacro.core.command.OnShutdown;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
 import io.github.bonigarcia.wdm.WebDriverManager
@@ -26,7 +27,7 @@ import java.io.File as JFile
 import java.nio.file.Path
 import java.util.concurrent.ConcurrentLinkedQueue
 
-class BrowserCommand extends CallableCommand implements AutoCloseable, Constants {
+class BrowserCommand extends CallableCommand implements AutoCloseable, Constants, OnShutdown {
 
     static final Map<String, ?> UTILS = [
         by: (Object) By
@@ -99,17 +100,12 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
 
     BrowserCommand(String name, Core core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
-        Runtime.getRuntime().addShutdownHook(
-            new Thread(
-                new Runnable() {
-                    @Override
-                    void run() {
-                        close()
-                    }
-                }
-            )
-        )
         this.postConfig()
+    }
+
+    @Override
+    void onShutdown() {
+        close()
     }
 
     BrowserDevTools getDevTools() {

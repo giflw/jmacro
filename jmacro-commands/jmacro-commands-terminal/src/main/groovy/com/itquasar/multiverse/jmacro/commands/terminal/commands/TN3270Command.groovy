@@ -6,6 +6,7 @@ import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.Constants
 import com.itquasar.multiverse.jmacro.core.Core
 import com.itquasar.multiverse.jmacro.core.command.AutoCloseableAll
+import com.itquasar.multiverse.jmacro.core.command.OnShutdown;
 import com.itquasar.multiverse.tn3270j.TN3270j
 import com.itquasar.multiverse.tn3270j.TN3270jFactory
 import com.itquasar.multiverse.tn3270j.WaitMode
@@ -21,7 +22,7 @@ import java.util.concurrent.TimeUnit
 
 @Log4j2
 @CompileStatic
-class TN3270Command extends Command implements AutoCloseableAll, Constants {
+class TN3270Command extends Command implements AutoCloseableAll, Constants, OnShutdown {
 
     static enum Key {
         F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12,
@@ -153,6 +154,11 @@ class TN3270Command extends Command implements AutoCloseableAll, Constants {
 
     void clear(long timeout = 60, TimeUnit timeUnit = TimeUnit.SECONDS) {
         closeAll(timeout, timeUnit)
+    }
+
+    @Override
+    void onShutdown() {
+        this.closeAll();
     }
 
     @Override

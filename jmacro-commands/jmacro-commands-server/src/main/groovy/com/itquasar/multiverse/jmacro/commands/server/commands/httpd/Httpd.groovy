@@ -47,6 +47,7 @@ class Httpd implements AutoCloseable {
         }
     }
 
+    @CompileDynamic
     def propertyMissing(String name) {
         if (this.config.hasProperty(name)) {
             return this.config."${name}"

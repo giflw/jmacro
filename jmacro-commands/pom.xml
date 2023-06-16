@@ -19,6 +19,7 @@
     </properties>
 
     <modules>
+        <module>../git-modules/tn3270j</module>
         <module>jmacro-commands-base</module>
         <module>jmacro-commands-browser</module>
         <module>jmacro-commands-datax</module>

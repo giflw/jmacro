@@ -2,6 +2,7 @@ package com.itquasar.multiverse.jmacro.core;
 
 import com.itquasar.multiverse.jmacro.core.command.AutoCloseableAll;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
+import com.itquasar.multiverse.jmacro.core.command.OnShutdown;
 import com.itquasar.multiverse.jmacro.core.exception.ExitException;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.itquasar.multiverse.jmacro.core.script.Script;
@@ -56,6 +57,8 @@ public final class EngineImpl implements Engine, Constants, TUI {
      * {@link LanguageAdaptor}s found in runtime using SPI.
      */
     private final Map<String, LanguageAdaptor> languageAdaptors = new LinkedHashMap<>();
+
+    private static final List<OnShutdown> ON_SHUTDOWN = new ArrayList<>(0);
 
     /**
      * Create engine instance with given core.
@@ -161,6 +164,9 @@ public final class EngineImpl implements Engine, Constants, TUI {
             }
             engineScope.put(name, command);
             commands.add(command);
+            if (command instanceOf OnShutdown onShutdown) {
+                ON_SHUTDOWN.add(onShutdown);
+            }
 
             final var scope = engineScope;
             commandProvider.getAliases().forEach(alias -> {
@@ -240,6 +246,10 @@ public final class EngineImpl implements Engine, Constants, TUI {
         scriptLogger.warn(engineResult.value());
         scriptLogger.warn(DOUBLE_SEPARATOR);
         scriptLogger.warn(DOUBLE_SEPARATOR);
+    }
+
+    public void onShutdown(){
+        ON_SHUTDOWN.forEach(OnShutdown::onShutdown)
     }
 
     private void closeCommands(final ScriptEngine engine) {

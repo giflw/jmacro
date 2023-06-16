@@ -59,4 +59,12 @@ public interface Engine {
         return this.execute(script, Collections.emptyList());
     }
 
+    vois registerShutdownHook() {
+        Runtime.getRuntime().addShutdownHook(
+            new Thread(this::onShutdown);
+        );
+    }
+
+    void onShutdown();
+
 }
