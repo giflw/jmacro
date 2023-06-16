@@ -14,6 +14,10 @@
     <name>JMacro::Distribution</name>
     <description>JMacro Distribution</description>
 
+    <properties>
+        <jlink.modules.os-dependent></jlink.modules.os-dependent>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -47,6 +51,17 @@
         <finalName>appassembler</finalName>
     </build>
     <profiles>
+        <profile>
+            <id>extra-jlink-modules</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <properties>
+                <jlink.modules.os-dependent>jdk.crypto.mscapi,</jlink.modules.os-dependent>
+            </properties>
+        </profile>
         <profile>
             <id>application</id>
             <activation>
@@ -104,7 +119,7 @@
                                 </goals>
                                 <configuration>
                                     <descriptors>
-                                        <descriptor>src/main/assembly/application.xml</descriptor>
+                                        <descriptor>src/main/assembly/application-${os.family}.xml</descriptor>
                                     </descriptors>
                                 </configuration>
                             </execution>
@@ -307,7 +322,7 @@
                                     <options>
                                         <option>--add-modules</option>
                                         <option>
-                                            java.base,java.se,jdk.attach,jdk.charsets,jdk.crypto.cryptoki,jdk.crypto.ec,jdk.crypto.mscapi,jdk.jdi,jdk.jdwp.agent,jdk.jsobject,jdk.localedata,jdk.management.agent,jdk.management.jfr,jdk.management,jdk.naming.dns,jdk.net,jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported,jdk.xml.dom,jdk.zipfs
+                                            ${jlink.modules.os-dependent}java.base,java.se,jdk.attach,jdk.charsets,jdk.crypto.cryptoki,jdk.crypto.ec,jdk.jdi,jdk.jdwp.agent,jdk.jsobject,jdk.localedata,jdk.management.agent,jdk.management.jfr,jdk.management,jdk.naming.dns,jdk.net,jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported,jdk.xml.dom,jdk.zipfs
                                         </option>
                                         <option>--compress=2</option>
                                         <option>--no-header-files</option>

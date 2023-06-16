@@ -1,6 +1,6 @@
 package com.itquasar.multiverse.jmacro.commands.browser.command.browser
 
-import com.itquasar.multiverse.jmacro.commands.browser.command.BrowserCommand
+
 import groovy.transform.CompileDynamic
 import groovy.transform.ToString
 import org.openqa.selenium.By
@@ -9,16 +9,16 @@ import org.openqa.selenium.support.ui.Select
 @ToString(includeNames = true, includeFields = true, includePackage = false, includes = ['name'])
 class BrowserElements<T> {
 
-    BrowserCommand browser
+    Browser browser
 
     String name = null
     By by = null
 
-    BrowserElements(BrowserCommand browser) {
+    BrowserElements(Browser browser) {
         this.browser = browser
     }
 
-    BrowserElements(BrowserCommand browser, String name) {
+    BrowserElements(Browser browser, String name) {
         this(browser)
         this.name = name
     }

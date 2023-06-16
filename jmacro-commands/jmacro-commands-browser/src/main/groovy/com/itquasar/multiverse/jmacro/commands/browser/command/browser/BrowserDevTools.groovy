@@ -1,6 +1,6 @@
 package com.itquasar.multiverse.jmacro.commands.browser.command.browser
 
-import com.itquasar.multiverse.jmacro.commands.browser.command.BrowserCommand
+
 import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.Constants
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
@@ -16,10 +16,10 @@ import javax.script.Bindings
 class BrowserDevTools implements Constants, AutoCloseable {
 
     private final Bindings bindings
-    private final BrowserCommand browser
+    private final Browser browser
     private DevTools devTools
 
-    BrowserDevTools(Bindings bindings, BrowserCommand browser) {
+    BrowserDevTools(Bindings bindings, Browser browser) {
         this.bindings = bindings
         if (HasDevTools.class.isInstance(browser.driver)) {
             this.browser = browser

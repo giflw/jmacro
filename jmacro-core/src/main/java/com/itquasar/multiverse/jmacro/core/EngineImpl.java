@@ -66,6 +66,7 @@ public final class EngineImpl implements Engine, Constants, TUI {
      * @param core Core to use with this engine.
      */
     public EngineImpl(final Core core) {
+        this.registerShutdownHook();
         this.core = core;
         ENGINE_MANAGER.getEngineFactories().forEach(engine -> {
             final var engineInfo = """
@@ -164,7 +165,7 @@ public final class EngineImpl implements Engine, Constants, TUI {
             }
             engineScope.put(name, command);
             commands.add(command);
-            if (command instanceOf OnShutdown onShutdown) {
+            if (command instanceof OnShutdown onShutdown) {
                 ON_SHUTDOWN.add(onShutdown);
             }
 
@@ -249,7 +250,7 @@ public final class EngineImpl implements Engine, Constants, TUI {
     }
 
     public void onShutdown(){
-        ON_SHUTDOWN.forEach(OnShutdown::onShutdown)
+        ON_SHUTDOWN.forEach(OnShutdown::onShutdown);
     }
 
     private void closeCommands(final ScriptEngine engine) {

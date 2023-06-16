@@ -1,10 +1,44 @@
 package com.itquasar.multiverse.jmacro.commands.browser.command.browser
 
-class Browser {
+import com.itquasar.multiverse.jmacro.commands.base.commands.ConfigurationCommand
+import com.itquasar.multiverse.jmacro.commands.base.commands.CredentialsCommand
+import com.itquasar.multiverse.jmacro.core.Constants
+import com.itquasar.multiverse.jmacro.core.Core
+import com.itquasar.multiverse.jmacro.core.exception.JMacroException
+import groovy.transform.CompileDynamic
+import groovy.util.logging.Log4j2
+import io.github.bonigarcia.wdm.WebDriverManager
+import org.apache.commons.io.FileUtils
+import org.apache.logging.log4j.Logger
+import org.openqa.selenium.By
+import org.openqa.selenium.Capabilities
+import org.openqa.selenium.Dimension
+import org.openqa.selenium.OutputType
+import org.openqa.selenium.chrome.ChromeOptions
+import org.openqa.selenium.edge.EdgeOptions
+import org.openqa.selenium.firefox.FirefoxOptions
+import org.openqa.selenium.remote.RemoteWebDriver
+import ru.yandex.qatools.ashot.AShot
+import ru.yandex.qatools.ashot.Screenshot
+import ru.yandex.qatools.ashot.shooting.ShootingStrategies
+
+import javax.imageio.ImageIO
+import javax.script.Bindings
+import javax.script.ScriptEngine
+import java.io.File as JFile
+import java.nio.file.Path
+
+@Log4j2
+class Browser implements Constants {
 
     static final Map<String, ?> UTILS = [
         by: (Object) By
     ]
+
+    Core core
+    ScriptEngine scriptEngine
+    Bindings bindings
+    Logger logger
 
     RemoteWebDriver driver
     BrowserDevTools _devTools
@@ -20,6 +54,13 @@ class Browser {
         debug  : false // driver debug
     ]
 
+    Browser(Core core, ScriptEngine scriptEngine, Bindings bindings, Logger logger) {
+        this.core = core
+        this.scriptEngine = scriptEngine
+        this.bindings = bindings
+        this.logger = logger
+    }
+
     BrowserDevTools getDevtools() {
         if (this._devTools == null) {
             this._devTools = new BrowserDevTools(bindings, this)
@@ -28,13 +69,13 @@ class Browser {
     }
 
     BrowserDevTools devtools() {
-        return this.getDevTools()
+        return this.getDevtools()
     }
 
 
     @CompileDynamic
     private void postConfig() {
-        if (this.config.binary?.contains('#')) {
+        if (((String) this.config.binary)?.contains('#')) {
             Collection parts = this.config.binary.split('#')
             this.config.binary = parts[0]
             this.config.version = parts[1]
@@ -81,7 +122,7 @@ class Browser {
 
             this.driver = (RemoteWebDriver) getWebDriverManager(capabilities).create()
 
-            getLogger().warn("Web driver instance ${this.driver} with ${capabilities.asMap()}")
+            logger.warn("Web driver instance ${this.driver} with ${capabilities.asMap()}")
             if (this.driver == null) {
                 throw new JMacroException("Unsupported browser vendor: ${config.vendor}")
             }
@@ -135,8 +176,7 @@ class Browser {
     }
 
 
-    BrowserCommand elements(Closure closure) {
-        touch()
+    Browser elements(Closure closure) {
         BrowserElements fields = new BrowserElements(this)
         closure.delegate = fields
         closure.resolveStrategy = Closure.DELEGATE_ONLY
@@ -145,7 +185,6 @@ class Browser {
     }
 
     def el(String name) {
-        touch()
         if (!this.elements.containsKey(name)) {
             By by = By.cssSelector(name)
             def elements = this.driver.findElements(by)
@@ -155,12 +194,10 @@ class Browser {
     }
 
     def el(element) {
-        touch()
         return element
     }
 
     def els(String name) {
-        touch()
         if (!this.elements.containsKey(name)) {
             By by = By.cssSelector(name)
             return this.driver.findElements(by).collect { new WebElementWrapper(by, it) }
@@ -169,13 +206,11 @@ class Browser {
     }
 
     def els(elements) {
-        touch()
         return elements
     }
 
     @CompileDynamic
     def check(String element, Closure checkLogic) {
-        touch()
         def elements = this.els(element)?.first()
         if (elements) {
             return checkLogic(elements)
@@ -183,7 +218,6 @@ class Browser {
     }
 
     def checks(String element, Closure checkLogic) {
-        touch()
         def elements = this.els(element)
         if (elements) {
             return checkLogic(elements)
@@ -193,7 +227,6 @@ class Browser {
 
     @CompileDynamic
     def propertyMissing(String name) {
-        touch()
         if (this.elements.containsKey(name)) {
             return this.elements[name]
         }
@@ -222,7 +255,6 @@ class Browser {
 
     @CompileDynamic
     def methodMissing(String name, def args) {
-        touch()
         if (driver.respondsTo(name, args)) {
             return driver."${name}"(*args)
         }
@@ -230,12 +262,10 @@ class Browser {
     }
 
     JFile screenshot(Path destinationFile) {
-        touch()
         return screenshot(destinationFile.toString())
     }
 
     JFile screenshot(String destinationFile) {
-        touch()
         JFile scrFile = driver.getScreenshotAs(OutputType.FILE)
         JFile destFile = new JFile(destinationFile)
         this.logger.info("Screenshot: $destFile")
@@ -244,12 +274,10 @@ class Browser {
     }
 
     JFile fullpage(Path destinationFile) {
-        touch()
         return fullpage(destinationFile.toString())
     }
 
     JFile fullpage(String destinationFile) {
-        touch()
         Screenshot screenshot = new AShot()
             .shootingStrategy(ShootingStrategies.viewportPasting(1000))
             .takeScreenshot(driver)
@@ -260,26 +288,90 @@ class Browser {
     }
 
     Dimension windowSize(int width, int height) {
-        touch()
         Dimension dimension = new Dimension(width, height)
         driver.manage().window().setSize(dimension)
         return dimension
     }
 
     void maximize() {
-        touch()
         driver.manage().window().maximize()
     }
 
 
+    WebDriverManager getWebDriverManager(Capabilities capabilities) {
+        logger.warn("Initializing web driver manager")
+        def driverManager = new DriverManager(core.configuration.folders.cache().resolve("webdriver"))
+        logger.info("Driver manager initialized")
+        def manager = driverManager.getManager(config.vendor.toString())
+        logger.info("Web driver manager created. Configuring it...")
+
+        ConfigurationCommand configuration = (ConfigurationCommand) scriptEngine.get('configuration')
+        logger.info("Using engine script configuration: ${configuration}")
+
+        Map<String, ?> proxyConfig = [:]
+        if (configuration['proxy'] !== false && configuration['proxy'] instanceof Map<String, ?>) {
+            proxyConfig = (Map<String, ?>) configuration['proxy']
+        }
+
+        logger.info("Proxy configuration ${proxyConfig}")
+        logger.info("Proxy credentials ${proxyConfig.crendentials}")
+        if (!proxyConfig.isEmpty()) {
+            logger.warn("Checking manager proxy configuration")
+            managerProxy(manager, proxyConfig)
+        }
+        if (this.config.binary) {
+            logger.warn("Binary path given. Avoiding browser detection and using ${this.config.version} as browser version.")
+            manager.avoidBrowserDetection().browserVersion((String) this.config.version)
+        }
+        if (capabilities) {
+            logger.warn("Setting manager capabilities")
+            manager.capabilities(capabilities)
+        }
+        logger.warn("Web driver manager initialized")
+        return manager
+    }
+
+
+    //@CompileDynamic
+    void managerProxy(WebDriverManager manager, Map<String, ?> proxyConfig) {
+        CredentialsCommand credentials = (CredentialsCommand) proxyConfig?.credentials
+        if (credentials) {
+            logger.info("Setting up proxy for web driver manager using ${credentials.fullUser}")
+        } else {
+            logger.warn("Setting up proxy for web driver manager using anonymous")
+        }
+
+        String proxyAddress = proxyConfig.address
+        if (!proxyAddress) {
+            logger.warn("Getting proxy from platform")
+            InetSocketAddress proxy = (InetSocketAddress) ProxySelector.default.select(URI.create('http://google.com.br/'))
+                .each { logger.warn("proxy each: $it}") }
+                .find { it.type() == java.net.Proxy.Type.HTTP }
+                .each { logger.warn("proxy found: $it}") }
+                ?.address()
+            proxyAddress = proxy ? "${proxy.hostName}:${proxy.port}" : null
+        }
+        logger.info("Proxy address: ${proxyAddress}")
+
+        if (proxyAddress != null) {
+            logger.warn("Setting manager proxy")
+            manager.proxy(proxyAddress)
+        }
+        if (credentials != null) {
+            logger.warn("Setting manager proxy credentials")
+            manager.proxyUser(credentials.fullUser)
+                .proxyPass(credentials.password)
+        }
+    }
+
     void close() {
         if (driver) {
-            getLogger().warn("Closing browser...")
-            if (devTools) {
-                devTools.close()
+            logger.warn("Closing browser...")
+            if (_devTools) {
+                _devTools.close()
             }
             driver.quit()
-            getLogger().warn("...browser closed.")
+            logger.warn("...browser closed.")
         }
     }
 

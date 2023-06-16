@@ -13,6 +13,7 @@ module jmacro.commands.browser {
     requires io.github.bonigarcia.webdrivermanager;
     requires org.apache.commons.io;
     requires org.apache.httpcomponents.client5.httpclient5;
+    requires ashot;
 
     requires java.desktop;
     requires java.scripting;
