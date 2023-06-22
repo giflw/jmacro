@@ -34,13 +34,6 @@ class BrowserDevTools implements Constants, AutoCloseable {
         return devTools
     }
 
-    def call(Closure closure) {
-        closure.delegate = this
-        closure.resolveStrategy = Closure.DELEGATE_FIRST
-        return closure.call()
-    }
-
-
     @CompileDynamic
     void enable(String... features) {
         for (String feature : features) {

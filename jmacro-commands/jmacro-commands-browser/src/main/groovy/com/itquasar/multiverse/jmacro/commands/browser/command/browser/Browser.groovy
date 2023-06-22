@@ -2,6 +2,8 @@ package com.itquasar.multiverse.jmacro.commands.browser.command.browser
 
 import com.itquasar.multiverse.jmacro.commands.base.commands.ConfigurationCommand
 import com.itquasar.multiverse.jmacro.commands.base.commands.CredentialsCommand
+import com.itquasar.multiverse.jmacro.commands.browser.command.BrowserCommand
+import com.itquasar.multiverse.jmacro.core.Command
 import com.itquasar.multiverse.jmacro.core.Constants
 import com.itquasar.multiverse.jmacro.core.Core
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
@@ -10,15 +12,13 @@ import groovy.util.logging.Log4j2
 import io.github.bonigarcia.wdm.WebDriverManager
 import org.apache.commons.io.FileUtils
 import org.apache.logging.log4j.Logger
-import org.apache.logging.log4j.spi.AbstractLogger
-import org.openqa.selenium.By
-import org.openqa.selenium.Capabilities
-import org.openqa.selenium.Dimension
-import org.openqa.selenium.OutputType
+import org.openqa.selenium.*
 import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.edge.EdgeOptions
 import org.openqa.selenium.firefox.FirefoxOptions
+import org.openqa.selenium.remote.CapabilityType
 import org.openqa.selenium.remote.RemoteWebDriver
+import org.openqa.selenium.safari.SafariOptions
 import ru.yandex.qatools.ashot.AShot
 import ru.yandex.qatools.ashot.Screenshot
 import ru.yandex.qatools.ashot.shooting.ShootingStrategies
@@ -28,6 +28,7 @@ import javax.script.Bindings
 import javax.script.ScriptEngine
 import java.io.File as JFile
 import java.nio.file.Path
+import java.util.function.Consumer
 
 @Log4j2
 class Browser implements Constants {
@@ -48,13 +49,29 @@ class Browser implements Constants {
     BrowserWait wait
     Map<String, Object> elements = [:] as Map<String, Object>
 
+
+    public static final VENDORS_MAC = List.of(CHROMIUM, CHROME, FIREFOX, SAFARI)
+    public static final VENDORS_UNIX = List.of(CHROMIUM, CHROME, FIREFOX)
+    public static final VENDORS_WINDOWS = List.of(CHROMIUM, CHROME, FIREFOX, EDGE)
+
+    public static final VENDORS = switch (System.getProperty("os.name").toUpperCase().substring(0, 3)) {
+        case 'MAC':
+            yield VENDORS_MAC
+        case 'WIN':
+            yield VENDORS_WINDOWS
+        default:
+            yield VENDORS_UNIX
+    }
+
     Map<String, ?> config = [
-        vendor : CHROMIUM,
-        visible: false, //  true -> visible;  false -> headless
-        driver : null, // driver binary path
-        binary : null, // browser binary path or path#version
-        version: null, // browser binary version
-        debug  : false // driver debug
+        vendor      : AUTO,
+        visible     : false, //  true -> visible;  false -> headless
+        driver      : null, // driver binary path
+        binary      : null, // browser binary path or path#version
+        version     : null, // browser binary version
+        debug       : false, // driver debug
+        ignoreSSL   : false, // ignore SSL errors
+        capabilities: []
     ]
 
     Browser(String instanceName, Core core, ScriptEngine scriptEngine, Bindings bindings, Logger scriptLogger) {
@@ -63,24 +80,27 @@ class Browser implements Constants {
         this.scriptEngine = scriptEngine
         this.bindings = bindings
         this.scriptLogger = scriptLogger
+
+        autoConfigFromContext()
     }
 
-    BrowserDevTools getDevtools() {
+    BrowserDevTools getDevTools() {
         if (this._devTools == null) {
             this._devTools = new BrowserDevTools(bindings, this)
         }
         return this._devTools
     }
 
-    BrowserDevTools devtools() {
-        return this.getDevtools()
+    BrowserDevTools devTools(Consumer<BrowserDevTools> consumer) {
+        def tools = getDevTools()
+        consumer.accept(tools)
+        return tools
     }
-
 
     @CompileDynamic
     private void postConfig() {
         if (((String) this.config.binary)?.contains('#')) {
-            Collection parts = this.config.binary.split('#')
+            Collection parts = ((String) this.config.binary).split('#')
             this.config.binary = parts[0]
             this.config.version = parts[1]
         }
@@ -90,68 +110,48 @@ class Browser implements Constants {
     Browser start() {
         if (driver == null || driver.sessionId == null) {
             this.postConfig()
-            Capabilities capabilities = null
-            switch (config.vendor) {
-                case FIREFOX:
-                    capabilities = new FirefoxOptions()
-                    if (!config.visible) {
-                        capabilities.addArguments("-headless")
-                    }
-                    if (config.binary != null) {
-                        capabilities.setBinary(config.binary.toString())
-                    }
-                    break
-                case CHROMIUM:
-                case CHROME:
-                case EDGE:
-                    if (config.debug) {
-                        System.setProperty("webdriver.chrome.verboseLogging", "true")
-                    }
-                    capabilities = EDGE == config.vendor ? new EdgeOptions() : new ChromeOptions()
-                    if (!config.visible) {
-                        capabilities.addArguments("--headless=new")
-                    }
-                    if (config.binary != null) {
-                        capabilities.setBinary(config.binary.toString())
-                    }
-                    //capabilities.addArguments("--disable-extensions")
-                    break
-            }
-            //capabilities.addArguments("--ignore-certificate-errors")
-
-            scriptLogger.warn("Starting browser ${config.vendor.toString().capitalize()}")
             this.config.forEach { key, value ->
                 scriptLogger.warn("Browser config ${key}=${value}")
             }
 
-            this.driver = (RemoteWebDriver) getWebDriverManager(capabilities).create()
+            def vendors = this.config.vendor == AUTO ? VENDORS : [this.config.vendor]
+            MutableCapabilities capabilities = null
+            String vendor = null
+            WebDriverManager driverManager = (WebDriverManager) vendors.findResult { it ->
+                vendor = it
+                scriptLogger.warn("Trying to start browser ${vendor}")
+                capabilities = getCapabilities(vendor)
+                def manager = getWebDriverManager(vendor, capabilities)
+                return manager.orElse(null)
+            }
+            if (driverManager == null) {
+                throw new JMacroException("No browser found from given vendors: ${vendors} (config.vendor=${this.config.vendor})")
+            }
+            this.driver = (RemoteWebDriver) driverManager.create()
 
             scriptLogger.warn("Web driver instance ${this.driver} with ${capabilities.asMap()}")
             if (this.driver == null) {
-                throw new JMacroException("Unsupported browser vendor: ${config.vendor}")
+                throw new JMacroException("Unsupported browser vendor: ${vendor}")
             }
             this.wait = new BrowserWait(this)
-            // driver.manage().window().maximize()
-            scriptLogger.warn("Browser ${config.vendor.toString().capitalize()} started")
+            scriptLogger.warn("Browser ${vendor} started")
         }
         return this
     }
 
-    Browser configure(Map<String, Object> config) {
-        this.config.putAll(config)
-        this.postConfig()
-        return this
-    }
-
-    Browser configure(ConfigObject config) {
-        this.config.putAll(config.spread())
-        this.postConfig()
-        return this
-    }
-
     @CompileDynamic
-    Browser configure(def configuration) {
-        return configure(configuration.contains('browser') ? configuration.browser : configuration.configs)
+    void autoConfigFromContext() {
+        def configuration = getBindings().get("configuration")
+        configure((configuration.browser ?: Collections.emptyMap()) as Map)
+    }
+
+    void configure(Map<String, Object> config) {
+        scriptLogger.warn("Configuring browser with ${config}")
+        this.config.putAll(config)
+    }
+
+    void configure(ConfigObject config) {
+        configure(config.spread())
     }
 
     def wait(String cssSelector) {
@@ -170,7 +170,7 @@ class Browser implements Constants {
         return this.wait.call(this, element, timeout)
     }
 
-    Browser open(String url) {
+    void open(String url) {
         try {
             start()
             driver.get(url)
@@ -246,12 +246,11 @@ class Browser implements Constants {
         try {
             return Keys."$name"
         } catch (Exception ex) {
-            // FIXME ADD debug logger
+            scriptLogger.warn("$name not found on Browser. Trying context.")
             try {
-                Command.propertyMissingOn(context, name)
+                Command.propertyMissingOn(getBindings(), name)
             } catch (Exception ex2) {
-                // FIXME ADD debug logger
-                return name
+                throw new JMacroException("$name not found on Browser nor context", ex2)
             }
         }
     }
@@ -262,7 +261,7 @@ class Browser implements Constants {
         if (driver.respondsTo(name, args)) {
             return driver."${name}"(*args)
         }
-        return methodMissingOn(context, name, args)
+        return Command.methodMissingOn(getBindings(), name, args)
     }
 
     JFile screenshot(Path destinationFile) {
@@ -301,27 +300,71 @@ class Browser implements Constants {
         driver.manage().window().maximize()
     }
 
+    private MutableCapabilities getCapabilities(String vendor) {
+        MutableCapabilities capabilities = null
+        //noinspection GroovyFallthrough
+        switch (vendor) {
+            case FIREFOX:
+                capabilities = new FirefoxOptions()
+                if (!config.visible) {
+                    capabilities.addArguments("-headless")
+                }
+                if (config.binary != null) {
+                    capabilities.setBinary(config.binary.toString())
+                }
+                break
+            case SAFARI:
+                capabilities = new SafariOptions()
+                break
+            case CHROMIUM:
+            case CHROME:
+            case EDGE:
+                if (config.debug) {
+                    System.setProperty("webdriver.chrome.verboseLogging", "true")
+                }
+                capabilities = EDGE == vendor ? new EdgeOptions() : new ChromeOptions()
+                if (!config.visible) {
+                    capabilities.addArguments("--headless=new")
+                }
+                if (config.binary != null) {
+                    capabilities.setBinary(config.binary.toString())
+                }
+                break
+        }
+        capabilities?.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, config.ignoreSSL)
+        return capabilities
+    }
 
-    WebDriverManager getWebDriverManager(Capabilities capabilities) {
+    private Optional<WebDriverManager> getWebDriverManager(String vendor, Capabilities capabilities) {
         scriptLogger.warn("Initializing web driver manager")
         def driverManager = new DriverManager(core.configuration.folders.cache().resolve("webdriver"))
-        scriptLogger.info("Driver manager initialized")
-        def manager = driverManager.getManager(config.vendor.toString())
-        scriptLogger.info("Web driver manager created. Configuring it...")
+        scriptLogger.info("Driver manager initialized (vendor=${vendor}).")
+        def manager = driverManager.getManager(vendor)
+        scriptLogger.info("Web driver manager created for vendor ${vendor}. Configuring it...")
+
+
+        def browserPath = manager.getBrowserPath()
+        if (browserPath.isEmpty()) {
+            return Optional.empty()
+        }
+
+        scriptLogger.info("Browser ${vendor} found at ${browserPath}")
 
         ConfigurationCommand configuration = (ConfigurationCommand) scriptEngine.get('configuration')
         scriptLogger.info("Using engine script configuration: ${configuration}")
 
         Map<String, ?> proxyConfig = [:]
-        if (configuration['proxy'] !== false && configuration['proxy'] instanceof Map<String, ?>) {
+        if (configuration['proxy'] == true) {
+            proxyConfig['credentials'] = (CredentialsCommand) scriptEngine.get('credentials')
+        } else if (configuration['proxy'] != false && configuration['proxy'] instanceof Map<String, ?>) {
             proxyConfig = (Map<String, ?>) configuration['proxy']
         }
 
         scriptLogger.info("Proxy configuration ${proxyConfig}")
-        scriptLogger.info("Proxy credentials ${proxyConfig.crendentials}")
+        scriptLogger.info("Proxy credentials ${proxyConfig.credentials}")
         if (!proxyConfig.isEmpty()) {
             scriptLogger.warn("Checking manager proxy configuration")
-            managerProxy(manager, proxyConfig)
+            managerProxy(manager, proxyConfig, vendor)
         }
         if (this.config.binary) {
             scriptLogger.warn("Binary path given. Avoiding browser detection and using ${this.config.version} as browser version.")
@@ -331,13 +374,14 @@ class Browser implements Constants {
             scriptLogger.warn("Setting manager capabilities")
             manager.capabilities(capabilities)
         }
-        scriptLogger.warn("Web driver manager initialized")
-        return manager
+
+        scriptLogger.warn("Web driver manager initialized for ${vendor} (${manager})")
+
+        return Optional.of(manager)
     }
 
-
-    //@CompileDynamic
-    void managerProxy(WebDriverManager manager, Map<String, ?> proxyConfig) {
+    @CompileDynamic
+    private void managerProxy(WebDriverManager manager, Map<String, ?> proxyConfig, String vendor) {
         CredentialsCommand credentials = (CredentialsCommand) proxyConfig?.credentials
         if (credentials) {
             scriptLogger.info("Setting up proxy for web driver manager using ${credentials.fullUser}")
@@ -348,12 +392,19 @@ class Browser implements Constants {
         String proxyAddress = proxyConfig.address
         if (!proxyAddress) {
             scriptLogger.warn("Getting proxy from platform")
-            InetSocketAddress proxy = (InetSocketAddress) ProxySelector.default.select(URI.create('http://google.com.br/'))
+            String driverUrl = manager.config()."get${vendor}DriverUrl"()
+            scriptLogger.warn("Searching proxy configuration using ${driverUrl} as driver url")
+            def proxy = ProxySelector.default.select(URI.create(driverUrl))
                 .each { scriptLogger.debug("Browser driver manager proxy available: ${it}") }
                 .find { it.type() == java.net.Proxy.Type.HTTP }
                 .each { scriptLogger.debug("Browser driver manager proxy found: ${it}") }
-                ?.address()
-            proxyAddress = proxy ? "${proxy.hostName}:${proxy.port}" : null
+            if (proxy != null && proxy.address() != null && proxy.address() instanceof InetSocketAddress) {
+                InetSocketAddress address = (InetSocketAddress) proxy.address()
+                proxyAddress = "${address.hostName}:${address.port}"
+                scriptLogger.warn("Using proxy address ${proxyAddress}")
+            } else {
+                proxyAddress = null
+            }
         }
         scriptLogger.info("Proxy address: ${proxyAddress}")
 
@@ -369,6 +420,7 @@ class Browser implements Constants {
     }
 
     void close() {
+        BrowserCommand.INSTANCES.remove(instanceName)
         if (driver) {
             scriptLogger.warn("Closing browser...")
             if (_devTools) {

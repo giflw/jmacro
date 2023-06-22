@@ -12,7 +12,7 @@ import java.util.function.Consumer
 
 class BrowserCommand extends CallableCommand<Browser> implements AutoCloseable, Constants, OnShutdown {
 
-    private final Set<Browser> INSTANCES = ConcurrentHashMap.newKeySet()
+    public static final Map<String, Browser> INSTANCES = new ConcurrentHashMap<>()
 
     BrowserCommand(String name, Core core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
@@ -28,11 +28,11 @@ class BrowserCommand extends CallableCommand<Browser> implements AutoCloseable, 
     }
 
     Browser call(String instanceName, Consumer<Browser> consumer) {
-        Browser browser = INSTANCES.stream()
-            .filter { it.instanceName == instanceName }
-            .findFirst()
-            .orElseGet { new Browser(instanceName, this.core, this.scriptEngine, this.bindings, this.getScriptLogger()) }
-
+        scriptLogger.warn("Searching or creating browser instance '${instanceName}'")
+        Browser browser = INSTANCES.computeIfAbsent(
+            instanceName,
+            name -> new Browser(name, this.core, this.scriptEngine, this.bindings, this.getScriptLogger())
+        )
         if (consumer != null) {
             consumer.accept(browser)
         }
@@ -48,12 +48,13 @@ class BrowserCommand extends CallableCommand<Browser> implements AutoCloseable, 
         closeAll()
     }
 
+    void close(String instanceName) {
+        INSTANCES.remove(instanceName)?.close()
+    }
+
     void closeAll() {
-        INSTANCES.each { browser ->
-            {
-                browser.close()
-                INSTANCES.remove(browser)
-            }
+        INSTANCES.forEach { instanceName, browser ->
+            INSTANCES.remove(instanceName).close()
         }
     }
 
