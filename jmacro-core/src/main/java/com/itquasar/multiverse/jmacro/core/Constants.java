@@ -49,6 +49,8 @@ public interface Constants {
     String RECEIVED = "RECEIVED";
 
     // BROWSERS
+
+    String AUTO = "AUTO";
     String CHROME = "Chrome";
     String CHROMIUM = "Chromium";
     String EDGE = "Edge";

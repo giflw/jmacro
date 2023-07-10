@@ -120,9 +120,10 @@ public class Run implements Callable<CliResult> {
             } else {
                 selectMessage += " [default: exit]";
             }
-            Cli.out.println(selectMessage + ":");
+            Cli.out.print(selectMessage + ": ");
 
             String scriptIndex = System.console().readLine();
+
             scriptIndex = scriptIndex == null ? "" : scriptIndex;
             if ("x".equalsIgnoreCase(scriptIndex) || (scriptIndex.isEmpty() && defaultScript == null)) {
                 Cli.out.println("Exiting...");
@@ -153,7 +154,7 @@ public class Run implements Callable<CliResult> {
                     bindedConfiguration.fill(configuration);
                 },
                 scriptEngine -> {
-                    Cli.out.println(script.get().getMetadata().getName() + " executed.");
+                    Cli.out.println(script.get().getRepository() + ":" + script.get().getLocation() + " executed.");
                 }
             );
             return new CliResult(scriptResult);

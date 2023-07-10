@@ -1,4 +1,10 @@
 #!/bin/bash
+set -e
+
+if [ "$1" == "" ]; then
+    echo "usage: jmacro-cli.sh [--clean] [--skip-build] [:project] path/to/config.yaml"
+    exit 1
+fi
 
 CLEAN=""
 BUILD=true
@@ -12,9 +18,9 @@ for arg in $@; do
 done
 
 if [ "$BUILD" == "true" ]; then
-    mvn $CLEAN install -DskipTests=true -P !application,!data,!installer,!jdk-embedded,!jre-embedded,!launcher,!scripts,!tools
+    mvn $CLEAN install -amd -pl :jmacro-commands-browser -DskipTests=true -P !application,!data,!installer,!jdk-embedded,!jre-embedded,!launcher,!scripts,!tools
 else
-    echo "Skipping build"
+    echo '!!!! Skipping build !!!!'
 fi
 
 
