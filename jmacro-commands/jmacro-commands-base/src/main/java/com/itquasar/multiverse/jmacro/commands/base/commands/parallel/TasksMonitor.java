@@ -53,7 +53,7 @@ public class TasksMonitor {
     private void start() {
         if (this.status.compareAndSet(STOPPED, RUNNING)) {
             this.thread = new Thread(() -> {
-                Logger logger = this.command.getLogger();
+                Logger logger = this.command.getScriptLogger();
                 logger.info("Starting tasks monitor thread");
                 long pauseTime = command.getTimeout() / 10;
                 logger.info("Waiting " + pauseTime + "s to first run");

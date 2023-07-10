@@ -133,7 +133,7 @@ class CredentialsCommand extends Command implements CredentialsProvider, ToMap {
 
     @Override
     HttpCredentials getCredentials(AuthScope authScope, HttpContext context) {
-        logger.debug("Auth scope: $authScope")
+        scriptLogger.debug("Auth scope: $authScope")
         switch (authScope.schemeName) {
             case 'NTLM':
                 return new NTCredentials(login, password.toCharArray(), hostname, domain)

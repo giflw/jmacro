@@ -70,7 +70,7 @@ public class RequireCommandProvider implements CommandProvider<RequireCommandPro
             if (!matched) {
                 throw new JMacroException("Required API version " + version + " not supported. Actual version is " + API_VERSION + ".");
             }
-            getLogger().warn("Required API version matched: " + API_VERSION + " >= " + version + " (matching == major)");
+            getScriptLogger().warn("Required API version matched: " + API_VERSION + " >= " + version + " (matching == major)");
         }
 
         void call(String commandName) {
@@ -78,7 +78,7 @@ public class RequireCommandProvider implements CommandProvider<RequireCommandPro
             if (command == null) {
                 throw new JMacroException("Required command " + commandName + " not available.");
             }
-            getLogger().warn("Required command found: " + commandName + " = " + command);
+            getScriptLogger().warn("Required command found: " + commandName + " = " + command);
         }
 
         @Override

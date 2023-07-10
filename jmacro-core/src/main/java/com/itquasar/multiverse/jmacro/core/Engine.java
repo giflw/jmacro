@@ -2,6 +2,8 @@ package com.itquasar.multiverse.jmacro.core;
 
 import com.itquasar.multiverse.jmacro.core.script.Script;
 import com.itquasar.multiverse.jmacro.core.script.ScriptResult;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
@@ -9,7 +11,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
-public interface Engine {
+
+public abstract class Engine {
+
+    static {
+        Logger logger = LogManager.getLogger(Engine.class);
+        logger.warn("Loading static initializations");
+        SPILoader.load(InitializationProvider.class).forEachRemaining(init -> {
+            logger.warn("Static initializing " + init.getClass());
+        });
+        logger.warn("Static initialization done");
+    }
 
     /**
      * Execute given {@link Script} and return its execution result wrapped on {@link ScriptResult}.
@@ -20,7 +32,7 @@ public interface Engine {
      * @return {@link ScriptResult} wrapped result.
      * @throws ScriptException if some error occurs.
      */
-    ScriptResult<?, ?> execute(Script script, List<String> args, Consumer<ScriptEngine> preExecHook, Consumer<ScriptEngine> postExecHook) throws ScriptException;
+    public abstract ScriptResult<?, ?> execute(Script script, List<String> args, Consumer<ScriptEngine> preExecHook, Consumer<ScriptEngine> postExecHook) throws ScriptException;
 
     /**
      * Execute given {@link Script} and return its execution result wrapped on {@link ScriptResult}.
@@ -31,7 +43,7 @@ public interface Engine {
      * @return {@link ScriptResult} wrapped result.
      * @throws ScriptException if some error occurs.
      */
-    default ScriptResult<?, ?> include(Script script, Consumer<ScriptEngine> preExecHook, Consumer<ScriptEngine> postExecHook) throws ScriptException {
+    public ScriptResult<?, ?> include(Script script, Consumer<ScriptEngine> preExecHook, Consumer<ScriptEngine> postExecHook) throws ScriptException {
         return this.execute(script, Collections.emptyList(), preExecHook, postExecHook);
     }
 
@@ -44,7 +56,7 @@ public interface Engine {
      * @return {@link ScriptResult} wrapped result.
      * @throws ScriptException if some error occurs.
      */
-    default ScriptResult<?, ?> execute(Script script, List<String> args) throws ScriptException {
+    public ScriptResult<?, ?> execute(Script script, List<String> args) throws ScriptException {
         return this.execute(script, Collections.emptyList(), (scriptEngine) -> { /* NO-OP */ },  (scriptEngine) -> { /* NO-OP */ });
     }
 
@@ -55,7 +67,7 @@ public interface Engine {
      * @return {@link ScriptResult} wrapped result.
      * @throws ScriptException if some error occurs.
      */
-    default ScriptResult<?, ?> execute(Script script) throws ScriptException {
+    public ScriptResult<?, ?> execute(Script script) throws ScriptException {
         return this.execute(script, Collections.emptyList());
     }
 

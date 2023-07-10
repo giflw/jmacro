@@ -67,16 +67,16 @@ class TimerCommand extends Command implements AutoCloseable {
 
     void log() {
         this.toString().split("\n").each {
-            this.logger.warn(it)
+            this.scriptLogger.warn(it)
         }
     }
 
     @Override
     void close() throws Exception {
         if (this.running.get()) {
-            this.logger.debug('Closing timer...')
+            this.scriptLogger.debug('Closing timer...')
             this.stop()
-            this.logger.debug('...timer closed!')
+            this.scriptLogger.debug('...timer closed!')
         }
     }
 

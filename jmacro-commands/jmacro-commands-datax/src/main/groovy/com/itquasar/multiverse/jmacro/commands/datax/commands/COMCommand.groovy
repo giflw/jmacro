@@ -68,9 +68,9 @@ class COMCommand extends Command implements AutoCloseable {
         super(name, core, scriptEngine)
         if (!System.getProperty("jacob.dll.path")) {
             def dllPath = core.configuration.folders.bin().resolve(LibraryLoader.getPreferredDLLName() + ".dll").toString()
-            System.setProperty("jacob.dll.path", dllPath);
+            System.setProperty("jacob.dll.path", dllPath)
         }
-        getLogger().warn("JACOB dll: " + System.getProperty("jacob.dll.path"));
+        getScriptLogger().warn("JACOB dll: " + System.getProperty("jacob.dll.path"))
     }
 
     @Override

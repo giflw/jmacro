@@ -135,7 +135,7 @@ class BrowserDevTools implements Constants, AutoCloseable {
         try {
             return this.devTools.send(Network.getRequestPostData(requestWillBeSent.requestId))
         } catch (Exception e) {
-            browser.getLogger().debug("No post data sent/found with request ${requestWillBeSent.requestId}")
+            browser.getScriptLogger().debug("No post data sent/found with request ${requestWillBeSent.requestId}")
             return null
         }
     }
@@ -144,7 +144,7 @@ class BrowserDevTools implements Constants, AutoCloseable {
         try {
             return this.devTools.send(Network.getResponseBody(responseReceieved.requestId))
         } catch (Exception e) {
-            browser.getLogger().debug("No body received/found in request ${responseReceieved.requestId}")
+            browser.getScriptLogger().debug("No body received/found in request ${responseReceieved.requestId}")
             return null
         }
     }

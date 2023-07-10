@@ -20,7 +20,7 @@ abstract class Command implements Constants {
     /**
      * Logger instance to use. This is got from script engine context attribute, or explicitly given.
      */
-    private final Logger logger
+    private final Logger scriptLogger
 
     /**
      * @param name Injected from command provider
@@ -44,8 +44,8 @@ abstract class Command implements Constants {
         this.bindings = this.context.getBindings(ScriptContext.ENGINE_SCOPE)
         Objects.requireNonNull(this.bindings, "Bindings must be not null")
 
-        this.logger = (Logger) this.context.getBindings(ScriptContext.GLOBAL_SCOPE).get("logger")
-        Objects.requireNonNull(this.logger, "Logger must be not null")
+        this.scriptLogger = (Logger) this.context.getBindings(ScriptContext.GLOBAL_SCOPE).get("logger")
+        Objects.requireNonNull(this.scriptLogger, "Logger must be not null")
     }
 
     // FIXME find better name
@@ -208,7 +208,7 @@ abstract class Command implements Constants {
         return bindings
     }
 
-    Logger getLogger() {
-        return logger
+    Logger getScriptLogger() {
+        return scriptLogger
     }
 }

@@ -43,7 +43,7 @@ class TN3270Command extends Command implements AutoCloseableAll, Constants, OnSh
 
     def _init(WaitMode waitMode = WaitMode.Seconds) {
         if (this.tn3270j.get() == null) {
-            getLogger().warn("Initializing ${Thread.currentThread().name}")
+            getScriptLogger().warn("Initializing ${Thread.currentThread().name}")
             Path toolsDir = core.configuration.folders.tools()
             String path = 's3270'
             if (IS_WINDOWS) {
@@ -80,22 +80,22 @@ class TN3270Command extends Command implements AutoCloseableAll, Constants, OnSh
         try {
             return WaitMode.valueOf(name)
         } catch (IllegalArgumentException ex) {
-            logger.debug(ex.getMessage())
+            scriptLogger.debug(ex.getMessage())
         }
         try {
             return Reader.Mode.valueOf(name)
         } catch (IllegalArgumentException ex) {
-            logger.debug(ex.getMessage())
+            scriptLogger.debug(ex.getMessage())
         }
         if (bindings.containsKey(name)) {
             return bindings."$name"
         }
         try {
             def key = Key.valueOf(name)
-            logger.info("Sending key $key")
+            scriptLogger.info("Sending key $key")
             return this.tn3270j.get().send(key.name())
         } catch (IllegalArgumentException ex) {
-            logger.error("Missing property $name", ex)
+            scriptLogger.error("Missing property $name", ex)
         }
     }
 

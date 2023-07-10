@@ -42,7 +42,7 @@ public class EchoCommandProvider implements CommandProvider<EchoCommandProvider.
 
         @Doc("Make this object behaves as function on groovy environment.")
         void call(@Doc("Object to print to script output") final Object arg) {
-            this.getLogger().log(ECHO, arg);
+            this.getScriptLogger().log(ECHO, arg);
         }
 
     }

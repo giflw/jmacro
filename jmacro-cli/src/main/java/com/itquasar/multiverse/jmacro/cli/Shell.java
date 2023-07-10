@@ -98,7 +98,7 @@ public class Shell implements Callable<CliResult> {
             scriptEngine -> {
                 boolean run = true;
                 ConsoleCommand console = (ConsoleCommand) scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE).get("console");
-                Logger logger = ((WrappingCommand) scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE).get("logger")).getLogger();
+                Logger logger = ((WrappingCommand) scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE).get("logger")).getScriptLogger();
 
                 StringBuilder block = new StringBuilder();
                 int opens = 0;

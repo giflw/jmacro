@@ -72,7 +72,7 @@ public class IncludeCommand extends Command {
 
         @SuppressWarnings("unchecked")
         void from(String includeName) {
-            final var logger = this.includeCommand.getLogger();
+            final var logger = this.includeCommand.getScriptLogger();
 
             final var extension = this.includeCommand.extension;
             includeName = includeName.endsWith(extension) ? includeName : includeName + '.' + extension;

@@ -30,11 +30,11 @@ public class ErrorCommandProvider implements CommandProvider<ErrorCommandProvide
         }
 
         void call(Object arg) {
-            this.getLogger().error(arg);
+            this.getScriptLogger().error(arg);
         }
 
         void call(Object arg, Throwable ex) {
-            this.getLogger().error(arg, ex);
+            this.getScriptLogger().error(arg, ex);
         }
 
     }

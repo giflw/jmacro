@@ -22,7 +22,7 @@ import static javax.script.ScriptContext.ENGINE_SCOPE;
 import static javax.script.ScriptContext.GLOBAL_SCOPE;
 
 @Log4j2
-public final class EngineImpl implements Engine, Constants, TUI {
+public final class EngineImpl extends Engine implements Constants, TUI {
 
 
     /**
@@ -111,7 +111,8 @@ public final class EngineImpl implements Engine, Constants, TUI {
     }
 
     private ScriptResult<?, ? extends Throwable> executeInternal(final Script script, final List<String> args, final Consumer<ScriptEngine> preExecHook, final Consumer<ScriptEngine> postExecHook, final boolean normalExecution) {
-        final var extension = script.getPath().substring(script.getPath().lastIndexOf('.') + 1);
+        String scriptPath = script.getPath();
+        final var extension = scriptPath.substring(scriptPath.lastIndexOf('.') + 1);
         final var engine = this.engines.get(extension).getScriptEngine();
 
         var context = engine.getContext();
@@ -135,7 +136,10 @@ public final class EngineImpl implements Engine, Constants, TUI {
         }
 
         final var id = ID_GENERATOR.addAndGet(1);
-        final var scriptLogger = LogManager.getLogger("ScriptEngine#" + id + "+" + script.getPath());
+        final var loggerName = "#" + id + "#" +
+            scriptPath.substring(scriptPath.lastIndexOf('/') + 1, scriptPath.lastIndexOf('.')) +
+            "@" + scriptPath.substring(scriptPath.lastIndexOf('.') + 1);
+        final var scriptLogger = LogManager.getLogger(loggerName);
 
         globalScope.put("__MAIN__", normalExecution);
         globalScope.put("id", id);
@@ -143,7 +147,6 @@ public final class EngineImpl implements Engine, Constants, TUI {
         globalScope.put("logger", scriptLogger);
         globalScope.put("#jsr223.groovy.engine.keep.globals", "weak");
 
-        final var commandTypes = new ArrayList<Class>();
         final var commandProviderLoader = new SPILoader<>(CommandProvider.class);
         final var commandProviders = commandProviderLoader.load();
 
@@ -177,8 +180,6 @@ public final class EngineImpl implements Engine, Constants, TUI {
                     scope.put(name, command);
                 }
             });
-
-            commandTypes.add(command.getClass());
         }
 
         commands.forEach(Command::allCommandsLoaded);

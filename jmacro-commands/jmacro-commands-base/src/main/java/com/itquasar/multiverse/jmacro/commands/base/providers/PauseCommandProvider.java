@@ -37,7 +37,7 @@ public class PauseCommandProvider implements CommandProvider<PauseCommandProvide
 
         void call(Number seconds, String message) {
             if (message != null) {
-                this.getLogger().warn(message);
+                this.getScriptLogger().warn(message);
             }
             Number milis = seconds.longValue() * 1000;
             try {

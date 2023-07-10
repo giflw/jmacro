@@ -29,6 +29,6 @@ fi
 
 
 echo "Using config file: ${CONFIG_FILE}"
-CMD="mvn exec:java -pl :jmacro-cli -Djmacro.cli.config.path=${CONFIG_FILE}"
+CMD="mvn exec:java -pl :jmacro-cli -Djmacro.cli.config.path=${CONFIG_FILE} -Djava.net.useSystemProxies=true"
 echo "Command: ${CMD}"
 $CMD

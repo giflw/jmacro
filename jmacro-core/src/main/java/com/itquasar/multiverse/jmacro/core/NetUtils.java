@@ -8,8 +8,21 @@ import java.net.*;
 import java.util.Optional;
 
 @Log4j2
-@UtilityClass
-public class NetUtils {
+public class NetUtils implements InitializationProvider {
+
+    /*
+     * Need to run as soon as possible to avoid initialization of proxy without this property set.
+     * Called by {@link Engine} static initialization.
+     */
+    public Runnable initializator(Engine engine) {
+        return () -> {
+            // FIXME use configuration on jmacro.yaml to set this to false if needed
+            String useSystemProxiesKey = "java.net.useSystemProxies";
+            if (System.getProperty(useSystemProxiesKey) == null) {
+                System.setProperty(useSystemProxiesKey, "true");
+            }
+        };
+    }
 
     public static int randomPort() {
         return randomPort(null);
@@ -28,6 +41,10 @@ public class NetUtils {
         }
     }
 
+    public static Optional<Proxy> proxyFor(String uri) {
+        return proxyFor(URI.create(uri));
+    }
+
     public static Optional<Proxy> proxyFor(URI uri) {
         LOGGER.warn("Searching proxy configuration using " + uri);
         return ProxySelector.getDefault().select(uri).stream()
@@ -38,12 +55,6 @@ public class NetUtils {
     }
 
     public static String proxyAddressFor(URI uri) {
-        // FIXME use configuration on jmacro.yaml to set this to false if needed
-        String useSystemProxiesKey = "java.net.useSystemProxies";
-        if (System.getProperty(useSystemProxiesKey) == null) {
-            System.setProperty(useSystemProxiesKey, "true");
-        }
-
         String proxyAddress = null;
         Optional<Proxy> proxy = proxyFor(uri);
         if (proxy.isPresent() && proxy.get().address() instanceof InetSocketAddress address) {

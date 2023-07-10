@@ -1,5 +1,6 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
+import com.itquasar.multiverse.jmacro.core.Command;
 import com.itquasar.multiverse.jmacro.core.Core;
 import com.itquasar.multiverse.jmacro.core.WrappingCommand;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
@@ -21,7 +22,7 @@ public class LoggerCommandProvider implements CommandProvider<WrappingCommand> {
 
     @Override
     public WrappingCommand<Logger> getCommand(Core core, ScriptEngine scriptEngine) {
-        return new WrappingCommand<>(it -> it.getLogger(), getName(), core, scriptEngine, false);
+        return new WrappingCommand<>(Command::getScriptLogger, getName(), core, scriptEngine, false);
     }
 
 }

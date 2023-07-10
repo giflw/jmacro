@@ -9,7 +9,6 @@ import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import groovy.lang.Closure;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import org.apache.logging.log4j.Logger;
 
 import javax.script.ScriptEngine;
 import java.util.concurrent.*;
@@ -140,7 +139,7 @@ public class ParallelCommand extends Command implements AutoCloseable {
         if (this.executor == null) {
             this.call();
         }
-        getLogger().info("Executing " + callable + " on parallel group " + this.groupName);
+        getScriptLogger().info("Executing " + callable + " on parallel group " + this.groupName);
         if (callable instanceof Closure<?> closure) {
             closure.setDelegate(this);
             closure.setResolveStrategy(Closure.DELEGATE_FIRST);
@@ -153,11 +152,11 @@ public class ParallelCommand extends Command implements AutoCloseable {
     }
 
     public void shutdown(long timeout) {
-        getLogger().warn("Awaiting parallel " + groupName);
+        getScriptLogger().warn("Awaiting parallel " + groupName);
         try {
             this.executor.shutdown();
             while (!this.executor.awaitTermination(timeout, TimeUnit.SECONDS)) {
-                getLogger().warn("Parallel " + groupName + "not terminated yet!");
+                getScriptLogger().warn("Parallel " + groupName + "not terminated yet!");
             }
             instances.remove(this.groupName);
             this.groupName = null;
@@ -178,7 +177,7 @@ public class ParallelCommand extends Command implements AutoCloseable {
 
     public void closeAll() {
         instances.values().forEach((ParallelCommand command) -> {
-            getLogger().warn("Waiting for task to finish...");
+            getScriptLogger().warn("Waiting for task to finish...");
             command.close();
         });
     }

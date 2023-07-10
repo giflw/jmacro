@@ -11,7 +11,7 @@ public class Writer {
 
     Writer(TN3270Command tn3270) {
         this.tn3270j = tn3270.tn3270j
-        this.logger = tn3270.getLogger()
+        this.logger = tn3270.getScriptLogger()
     }
 
     @CompileDynamic

@@ -42,11 +42,11 @@ public class ConstantsCommand extends Command implements Map<String, Object>, Co
             if (!key.startsWith("_")) {
                 key = "$" + key;
                 if (bindings.containsKey(key)) {
-                    getLogger().error(key + " constant cannot be registered in context. Command " + bindings.get(key).getClass() + " registered with " + key + " name");
+                    getScriptLogger().error(key + " constant cannot be registered in context. Command " + bindings.get(key).getClass() + " registered with " + key + " name");
                 } else {
                     Object value = entry.getValue();
                     if ((boolean) getContext().getAttribute("__MAIN__")) {
-                        getLogger().debug("Registering constant " + key + " = " + value);
+                        getScriptLogger().debug("Registering constant " + key + " = " + value);
                     }
                     bindings.put(key, value);
                 }
