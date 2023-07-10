@@ -193,7 +193,6 @@ public final class EngineImpl implements Engine, Constants, TUI {
         commands.forEach(Command::allCommandsRegistered);
         EngineResult<?, ? extends Throwable> result = (EngineResult) engineScope.get("result");
 
-
         if (this.languageAdaptors.containsKey(extension)) {
             LOGGER.warn("Running adaptor for " + extension);
             this.languageAdaptors.get(extension).adapt(engine);
@@ -214,11 +213,19 @@ public final class EngineImpl implements Engine, Constants, TUI {
                 postExecHook.accept(engine);
             } catch (final Throwable exception) {
                 if (!normalExecution) {
+                    LOGGER.warn("IS IT HERE?");
                     throw new ExitException(ExitException.SCRIPT_ENGINE_ERROR, exception);
                 }
-                if(result.exitCode() == ExitException.OK) {
+
+                ExitException exitException = getExitException(exception);
+                if (exitException == null && result.exitCode() == ExitException.OK) {
                     result.exitCode(ExitException.SCRIPT_ENGINE_ERROR);
-                    LOGGER.error("Error during script execution", exception);
+                }
+                LOGGER.warn("Exit code: " + result.exitCode());
+                if (exitException != null) {
+                    LOGGER.warn("Exit cause: exit(" + exitException.getExitCode() + ")");
+                } else {
+                    LOGGER.error("Exit cause: " + exception.getMessage(), exception);
                 }
             } finally {
                 if (normalExecution) {
@@ -249,8 +256,21 @@ public final class EngineImpl implements Engine, Constants, TUI {
         scriptLogger.warn(DOUBLE_SEPARATOR);
     }
 
-    public void onShutdown(){
+    public void onShutdown() {
         ON_SHUTDOWN.forEach(OnShutdown::onShutdown);
+    }
+
+    private static ExitException getExitException(Throwable exception) {
+        ExitException exitException = null;
+        Throwable cause = exception.getCause();
+        while (exitException == null && cause != null) {
+            if (cause instanceof ExitException ex) {
+                exitException = ex;
+            } else {
+                cause = cause.getCause();
+            }
+        }
+        return exitException;
     }
 
     private void closeCommands(final ScriptEngine engine) {

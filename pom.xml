@@ -308,7 +308,9 @@
                 <artifactId>license-maven-plugin</artifactId>
                 <configuration>
                     <licenseMerges>
-                        <licenseMerge>Apache 2.0|The Apache License, Version 2.0|The Apache Software License, Version 2.0|The Apache Software License, version 2.0|Apache License, Version 2.0|Apache Public License 2.0</licenseMerge>
+                        <licenseMerge>Apache 2.0|The Apache License, Version 2.0|The Apache Software License, Version 2.0|The Apache
+                            Software License, version 2.0|Apache License, Version 2.0|Apache Public License 2.0
+                        </licenseMerge>
                     </licenseMerges>
                 </configuration>
                 <executions>
@@ -326,7 +328,7 @@
                 <artifactId>directory-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                    <?m2e ignore?>
+                        <?m2e ignore?>
                         <id>directories</id>
                         <goals>
                             <goal>highest-basedir</goal>
@@ -406,7 +408,7 @@
                 </configuration>
                 <executions>
                     <execution>
-                    <?m2e ignore?>
+                        <?m2e ignore?>
                         <phase>validate</phase>
                         <goals>
                             <goal>toolchain</goal>

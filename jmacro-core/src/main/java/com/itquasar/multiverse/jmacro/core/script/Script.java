@@ -1,5 +1,7 @@
 package com.itquasar.multiverse.jmacro.core.script;
 
+import com.itquasar.multiverse.jmacro.core.exception.ExitException;
+import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import lombok.*;
 import lombok.extern.log4j.Log4j2;
 
@@ -56,8 +58,10 @@ public class Script {
                 LOGGER.warn("Starting " + this.path);
                 T call = callable.call();
                 return call;
+            } catch (ExitException exception) {
+                // just ignore and go to finally block
             } catch (Exception exception) {
-                LOGGER.error("Error while running script " + getLocation(), exception);
+                throw new JMacroException("Error while running script " + getLocation(), exception);
             } finally {
                 this.running.set(false);
                 LOGGER.warn(this.path + " finished");

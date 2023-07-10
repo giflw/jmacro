@@ -12,6 +12,13 @@
     <name>JMacro::CLI</name>
     <description>JMacro CLI</description>
 
+    <properties>
+        <jmacro.cli.config.path>./jmacro-cli/main/resources/config/jmacro.yaml</jmacro.cli.config.path>
+        <jmacro.cli.mainClass>com.itquasar.multiverse.jmacro.cli.Launcher</jmacro.cli.mainClass>
+        <exec.mainClass>${jmacro.cli.mainClass}</exec.mainClass>
+        <exec.args>--config-path=${jmacro.cli.config.path} run</exec.args>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -87,23 +94,23 @@
                         <goals>
                             <goal>java</goal>
                         </goals>
+                        <configuration>
+                            <executableDependency>
+                                <groupId>com.itquasar.multiverse.jmacro</groupId>
+                                <artifactId>jmacro-cli</artifactId>
+                            </executableDependency>
+                            <!--<systemProperties>-->
+                            <!--    <systemProperty>-->
+                            <!--        <key>basedir</key>-->
+                            <!--        <value>-->
+                            <!--            ${project.basedir}/../jmacro-tests/src/test/resources/com/itquasar/multiverse/jmacro/commands-->
+                            <!--        </value>-->
+                            <!--    </systemProperty>-->
+                            <!--</systemProperties>-->
+                        </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <mainClass>com.itquasar.multiverse.jmacro.cli.Launcher</mainClass>
-                    <arguments>
-                        <argument>run</argument>
-                        <argument>example.groovy</argument>
-                    </arguments>
-                    <systemProperties>
-                        <systemProperty>
-                            <key>basedir</key>
-                            <value>${project.basedir}/../jmacro-tests/src/test/resources/com/itquasar/multiverse/jmacro/commands</value>
-                        </systemProperty>
-                    </systemProperties>
-                </configuration>
             </plugin>
-
         </plugins>
     </build>
 </project>
