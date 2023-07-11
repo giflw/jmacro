@@ -71,12 +71,12 @@ public abstract class Engine {
         return this.execute(script, Collections.emptyList());
     }
 
-    default void registerShutdownHook() {
+    public void registerShutdownHook() {
         Runtime.getRuntime().addShutdownHook(
             new Thread(this::onShutdown)
         );
     }
 
-    void onShutdown();
+    public abstract void onShutdown();
 
 }

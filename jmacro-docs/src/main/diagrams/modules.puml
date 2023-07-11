@@ -7,6 +7,7 @@ package jmacro{
         [browser]
         [datax]
         [io]
+        [server]
         [terminal]
     }
     [core]
