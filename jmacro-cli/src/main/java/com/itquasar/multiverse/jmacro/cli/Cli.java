@@ -13,7 +13,6 @@ import static picocli.CommandLine.ScopeType.INHERIT;
 
 
 @Getter
-@ToString
 @Command(
     name = "jmacro-cli",
     description = "JMacro command line client",

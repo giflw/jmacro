@@ -11,10 +11,12 @@ fi
 PROJECT=:jmacro
 CLEAN=""
 BUILD=true
+DAEMON=false
 for arg in $@; do
     case "$arg" in
         "--clean" ) CLEAN=clean;;
         "--skip-build" ) BUILD=false ;;
+        "--daemon" ) DAEMON=true ;;
         :* ) PROJECT="${arg}" ;;
         * ) CONFIG_FILE=${arg:=$CONFIG_FILE};;
     esac
@@ -22,6 +24,11 @@ done
 
 if [ "$BUILD" == "true" ]; then
     echo "Building ${PROJECT}"
+    maven=mvn
+    if [ "$DAEMON" == "true" ]; then
+        maven=$(which mvnd 2>/dev/null || which mvn 2>/dev/null || echo mvn)
+        echo "Using maven at '$maven'"
+    fi
     mvn $CLEAN install -amd -pl "${PROJECT}" -DskipTests=true -P "!application,!data,!installer,!jdk-embedded,!jre-embedded,!launcher,!scripts,!tools"
 else
     echo '!!!! Skipping build !!!!'
