@@ -38,7 +38,7 @@ class Browser implements Constants {
     Core core
     ScriptEngine scriptEngine
     Bindings bindings
-    Logger logger
+    Logger scriptLogger
 
     RemoteWebDriver driver
     BrowserDevTools _devTools
@@ -54,11 +54,11 @@ class Browser implements Constants {
         debug  : false // driver debug
     ]
 
-    Browser(Core core, ScriptEngine scriptEngine, Bindings bindings, Logger logger) {
+    Browser(Core core, ScriptEngine scriptEngine, Bindings bindings, Logger scriptLogger) {
         this.core = core
         this.scriptEngine = scriptEngine
         this.bindings = bindings
-        this.logger = logger
+        this.scriptLogger = scriptLogger
     }
 
     BrowserDevTools getDevtools() {
@@ -115,20 +115,20 @@ class Browser implements Constants {
             }
             //capabilities.addArguments("--ignore-certificate-errors")
 
-            logger.warn("Starting browser ${config.vendor.toString().capitalize()}")
+            scriptLogger.warn("Starting browser ${config.vendor.toString().capitalize()}")
             this.config.forEach { key, value ->
-                logger.warn("Browser config ${key}=${value}")
+                scriptLogger.warn("Browser config ${key}=${value}")
             }
 
             this.driver = (RemoteWebDriver) getWebDriverManager(capabilities).create()
 
-            logger.warn("Web driver instance ${this.driver} with ${capabilities.asMap()}")
+            scriptLogger.warn("Web driver instance ${this.driver} with ${capabilities.asMap()}")
             if (this.driver == null) {
                 throw new JMacroException("Unsupported browser vendor: ${config.vendor}")
             }
             this.wait = new BrowserWait(this)
             // driver.manage().window().maximize()
-            logger.warn("Browser ${config.vendor.toString().capitalize()} started")
+            scriptLogger.warn("Browser ${config.vendor.toString().capitalize()} started")
         }
         return this
     }
@@ -268,7 +268,7 @@ class Browser implements Constants {
     JFile screenshot(String destinationFile) {
         JFile scrFile = driver.getScreenshotAs(OutputType.FILE)
         JFile destFile = new JFile(destinationFile)
-        this.logger.info("Screenshot: $destFile")
+        this.scriptLogger.info("Screenshot: $destFile")
         FileUtils.copyFile(scrFile, destFile)
         return destFile
     }
@@ -282,7 +282,7 @@ class Browser implements Constants {
             .shootingStrategy(ShootingStrategies.viewportPasting(1000))
             .takeScreenshot(driver)
         JFile destFile = new JFile(destinationFile)
-        this.logger.info("FullPage screenshot: $destFile")
+        this.scriptLogger.info("FullPage screenshot: $destFile")
         ImageIO.write(screenshot.getImage(), 'PNG', destFile)
         return destFile
     }
@@ -299,35 +299,35 @@ class Browser implements Constants {
 
 
     WebDriverManager getWebDriverManager(Capabilities capabilities) {
-        logger.warn("Initializing web driver manager")
+        scriptLogger.warn("Initializing web driver manager")
         def driverManager = new DriverManager(core.configuration.folders.cache().resolve("webdriver"))
-        logger.info("Driver manager initialized")
+        scriptLogger.info("Driver manager initialized")
         def manager = driverManager.getManager(config.vendor.toString())
-        logger.info("Web driver manager created. Configuring it...")
+        scriptLogger.info("Web driver manager created. Configuring it...")
 
         ConfigurationCommand configuration = (ConfigurationCommand) scriptEngine.get('configuration')
-        logger.info("Using engine script configuration: ${configuration}")
+        scriptLogger.info("Using engine script configuration: ${configuration}")
 
         Map<String, ?> proxyConfig = [:]
         if (configuration['proxy'] !== false && configuration['proxy'] instanceof Map<String, ?>) {
             proxyConfig = (Map<String, ?>) configuration['proxy']
         }
 
-        logger.info("Proxy configuration ${proxyConfig}")
-        logger.info("Proxy credentials ${proxyConfig.crendentials}")
+        scriptLogger.info("Proxy configuration ${proxyConfig}")
+        scriptLogger.info("Proxy credentials ${proxyConfig.crendentials}")
         if (!proxyConfig.isEmpty()) {
-            logger.warn("Checking manager proxy configuration")
+            scriptLogger.warn("Checking manager proxy configuration")
             managerProxy(manager, proxyConfig)
         }
         if (this.config.binary) {
-            logger.warn("Binary path given. Avoiding browser detection and using ${this.config.version} as browser version.")
+            scriptLogger.warn("Binary path given. Avoiding browser detection and using ${this.config.version} as browser version.")
             manager.avoidBrowserDetection().browserVersion((String) this.config.version)
         }
         if (capabilities) {
-            logger.warn("Setting manager capabilities")
+            scriptLogger.warn("Setting manager capabilities")
             manager.capabilities(capabilities)
         }
-        logger.warn("Web driver manager initialized")
+        scriptLogger.warn("Web driver manager initialized")
         return manager
     }
 
@@ -336,29 +336,29 @@ class Browser implements Constants {
     void managerProxy(WebDriverManager manager, Map<String, ?> proxyConfig) {
         CredentialsCommand credentials = (CredentialsCommand) proxyConfig?.credentials
         if (credentials) {
-            logger.info("Setting up proxy for web driver manager using ${credentials.fullUser}")
+            scriptLogger.info("Setting up proxy for web driver manager using ${credentials.fullUser}")
         } else {
-            logger.warn("Setting up proxy for web driver manager using anonymous")
+            scriptLogger.warn("Setting up proxy for web driver manager using anonymous")
         }
 
         String proxyAddress = proxyConfig.address
         if (!proxyAddress) {
-            logger.warn("Getting proxy from platform")
+            scriptLogger.warn("Getting proxy from platform")
             InetSocketAddress proxy = (InetSocketAddress) ProxySelector.default.select(URI.create('http://google.com.br/'))
-                .each { logger.warn("proxy each: $it}") }
+                .each { scriptLogger.warn("proxy each: $it}") }
                 .find { it.type() == java.net.Proxy.Type.HTTP }
-                .each { logger.warn("proxy found: $it}") }
+                .each { scriptLogger.warn("proxy found: $it}") }
                 ?.address()
             proxyAddress = proxy ? "${proxy.hostName}:${proxy.port}" : null
         }
-        logger.info("Proxy address: ${proxyAddress}")
+        scriptLogger.info("Proxy address: ${proxyAddress}")
 
         if (proxyAddress != null) {
-            logger.warn("Setting manager proxy")
+            scriptLogger.warn("Setting manager proxy")
             manager.proxy(proxyAddress)
         }
         if (credentials != null) {
-            logger.warn("Setting manager proxy credentials")
+            scriptLogger.warn("Setting manager proxy credentials")
             manager.proxyUser(credentials.fullUser)
                 .proxyPass(credentials.password)
         }
@@ -366,12 +366,12 @@ class Browser implements Constants {
 
     void close() {
         if (driver) {
-            logger.warn("Closing browser...")
+            scriptLogger.warn("Closing browser...")
             if (_devTools) {
                 _devTools.close()
             }
             driver.quit()
-            logger.warn("...browser closed.")
+            scriptLogger.warn("...browser closed.")
         }
     }
 

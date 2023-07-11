@@ -19,7 +19,7 @@ class BrowserCommand extends CallableCommand implements AutoCloseable, Constants
 
     @Override
     def call(Closure closure) {
-        return new Browser(this.core, this.scriptEngine, this.bindings, this.getLogger())
+        return new Browser(this.core, this.scriptEngine, this.bindings, this.getScriptLogger())
     }
 
     @Override
