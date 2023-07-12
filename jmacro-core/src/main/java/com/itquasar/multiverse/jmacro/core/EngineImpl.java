@@ -145,7 +145,12 @@ public final class EngineImpl extends Engine implements Constants, TUI {
         globalScope.put("id", id);
         globalScope.put("uuid", UUID.randomUUID());
         globalScope.put("logger", scriptLogger);
-        globalScope.put("#jsr223.groovy.engine.keep.globals", "weak");
+
+        if (engine instanceof GroovyScriptEngineImpl) {
+            engine.getContext().setAttribute("#jsr223.groovy.engine.keep.globals", "weak", ENGINE_SCOPE);
+            // FIXME awaiting https://github.com/groovy/groovy-core/pull/685
+            engine.getContext().setAttribute("#jsr223.groovy.engine.script.name.prefix", script.getMetadata().getName(), ENGINE_SCOPE);
+        }
 
         final var commandTypes = new ArrayList<Class>();
         final var commandProviderLoader = new SPILoader<>(CommandProvider.class);
