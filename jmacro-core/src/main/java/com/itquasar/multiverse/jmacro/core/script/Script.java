@@ -56,19 +56,27 @@ public class Script {
 
     public <T> T run(Callable<T> callable) {
         if (this.running.compareAndSet(false, true)) {
+            String status = "UNKNOWN";
             try {
+                status = "STARTED";
                 LOGGER.warn("Starting " + this.path);
-                T call = callable.call();
-                return call;
+                T result = callable.call();
+                status = "EXECUTED";
+                LOGGER.warn(this.path + " returned " + (result == null ? "<<NULL>>" : result.getClass()));
+                return result;
             } catch (ExitException exception) {
-                // just ignore and go to finally block
+                status = "EXITED ";
+                LOGGER.warn("Exiting", exception);
+                throw exception;
             } catch (Exception exception) {
+                status = "EXCEPTION";
+                LOGGER.warn("Exception while running " + this.path);
                 throw new JMacroException("Error while running script " + getLocation(), exception);
             } finally {
                 this.running.set(false);
-                LOGGER.warn(this.path + " finished");
+                LOGGER.warn(this.path + " finished with status " + status);
             }
         }
-        throw new IllegalStateException("Already running");
+        throw new IllegalStateException("Already running " + this.path);
     }
 }
