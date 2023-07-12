@@ -301,10 +301,10 @@ public final class EngineImpl extends Engine implements Constants, TUI {
             new ConcurrentHashMap<>(engine.getBindings(scope)).forEach((key, value) -> {
                 try {
                     if (value instanceof AutoCloseableAll closeable) {
-                        LOGGER.warn("Closing command " + key + " as it is AutoCloseable");
+                        LOGGER.debug("Closing command " + key + " as it is AutoCloseableAll");
                         closeable.closeAll();
                     } else if (value instanceof AutoCloseable closeable) {
-                        LOGGER.warn("Closing command " + key + " as it is AutoCloseable");
+                        LOGGER.debug("Closing command " + key + " as it is AutoCloseable");
                         closeable.close();
                     }
                 } catch (final Exception exception) {

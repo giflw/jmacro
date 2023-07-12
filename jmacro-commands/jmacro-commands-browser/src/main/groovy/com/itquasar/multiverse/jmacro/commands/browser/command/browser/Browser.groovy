@@ -349,9 +349,9 @@ class Browser implements Constants {
         if (!proxyAddress) {
             scriptLogger.warn("Getting proxy from platform")
             InetSocketAddress proxy = (InetSocketAddress) ProxySelector.default.select(URI.create('http://google.com.br/'))
-                .each { scriptLogger.warn("proxy each: $it}") }
+                .each { scriptLogger.debug("Browser driver manager proxy available: ${it}") }
                 .find { it.type() == java.net.Proxy.Type.HTTP }
-                .each { scriptLogger.warn("proxy found: $it}") }
+                .each { scriptLogger.debug("Browser driver manager proxy found: ${it}") }
                 ?.address()
             proxyAddress = proxy ? "${proxy.hostName}:${proxy.port}" : null
         }
