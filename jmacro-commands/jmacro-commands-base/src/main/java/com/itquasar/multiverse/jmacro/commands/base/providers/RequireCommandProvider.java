@@ -1,15 +1,14 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
 import com.itquasar.multiverse.jmacro.core.CallableCommand;
+import com.itquasar.multiverse.jmacro.core.Command;
 import com.itquasar.multiverse.jmacro.core.Constants;
 import com.itquasar.multiverse.jmacro.core.Core;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 
 import javax.script.ScriptEngine;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class RequireCommandProvider implements CommandProvider<RequireCommandProvider.RequireCommand> {
 
@@ -28,18 +27,18 @@ public class RequireCommandProvider implements CommandProvider<RequireCommandPro
         return new RequireCommand(getName(), core, scriptEngine);
     }
 
-    public static class RequireCommand extends CallableCommand implements Constants {
+    public static class RequireCommand extends CallableCommand<RequireCommand> implements Constants {
 
         public RequireCommand(String name, Core core, ScriptEngine scriptEngine) {
             super(name, core, scriptEngine);
         }
 
-        void api(int version) {
-            api(version + ".0.0");
-        }
-
         void api(float version) {
             api(version + ".0");
+        }
+
+        void api(Number version) {
+            api(version.floatValue());
         }
 
         void api(String version) {
@@ -53,7 +52,7 @@ public class RequireCommandProvider implements CommandProvider<RequireCommandPro
         }
 
         void api(List<Integer> requiredVersion) {
-            api(requiredVersion.stream().map(String::valueOf).reduce((a, b) -> a + b).get(), requiredVersion);
+            api(requiredVersion.stream().map(String::valueOf).reduce("", String::concat), requiredVersion);
         }
 
         private void api(String version, List<Integer> requiredVersion) {
@@ -64,26 +63,42 @@ public class RequireCommandProvider implements CommandProvider<RequireCommandPro
                 apiVersion.add(0);
             }
             // check major version (api == required)
-            boolean matched = apiVersion.get(0) == requiredVersion.get(0);
+            boolean matched = apiVersion.get(0).equals(requiredVersion.get(0));
             // check minor/fix version (major: api == required && minor: api >= required || major: api > required)
-            matched = matched && apiVersion.get(1) == requiredVersion.get(1) ? apiVersion.get(2) >= requiredVersion.get(2) : apiVersion.get(1) > requiredVersion.get(1);
+            matched = matched && apiVersion.get(1).equals(requiredVersion.get(1)) ? apiVersion.get(2) >= requiredVersion.get(2) : apiVersion.get(1) > requiredVersion.get(1);
             if (!matched) {
                 throw new JMacroException("Required API version " + version + " not supported. Actual version is " + API_VERSION + ".");
             }
             getScriptLogger().warn("Required API version matched: " + API_VERSION + " >= " + version + " (matching == major)");
         }
 
-        void call(String commandName) {
-            var command = getBindings().get(commandName);
-            if (command == null) {
-                throw new JMacroException("Required command " + commandName + " not available.");
+        void call(String... commandNames) {
+            call(Collections.emptyMap(), commandNames);
+        }
+
+        void call(Map<String, Object> options, String... commandNames) {
+            var api = options.getOrDefault("api", Constants.API_VERSION);
+            if (api instanceof Number number) {
+                api(number);
+            } else {
+                api(api.toString());
             }
-            getScriptLogger().warn("Required command found: " + commandName + " = " + command);
+            Arrays.stream(commandNames).forEach(commandName -> {
+                    var command = getBindings().get(commandName);
+                    if (command == null) {
+                        throw new JMacroException("Required command " + commandName + " not available.");
+                    }
+                    getScriptLogger().warn("Required command found: " + commandName + " = " + command);
+                }
+            );
         }
 
         @Override
         public Object methodMissing(String name, Object args) {
-            throw new JMacroException("Method missing not implemented in " + this.getClass().getSimpleName());
+            if (args instanceof Object[] arr) {
+                args = Arrays.toString(arr);
+            }
+            throw new JMacroException("Method missing not implemented in " + this.getClass().getSimpleName() + " [" + name + "(" + args + ")]");
         }
 
         @Override
