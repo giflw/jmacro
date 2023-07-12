@@ -10,6 +10,7 @@ import groovy.util.logging.Log4j2
 import io.github.bonigarcia.wdm.WebDriverManager
 import org.apache.commons.io.FileUtils
 import org.apache.logging.log4j.Logger
+import org.apache.logging.log4j.spi.AbstractLogger
 import org.openqa.selenium.By
 import org.openqa.selenium.Capabilities
 import org.openqa.selenium.Dimension
@@ -35,6 +36,8 @@ class Browser implements Constants {
         by: (Object) By
     ]
 
+    final String instanceName
+
     Core core
     ScriptEngine scriptEngine
     Bindings bindings
@@ -54,7 +57,8 @@ class Browser implements Constants {
         debug  : false // driver debug
     ]
 
-    Browser(Core core, ScriptEngine scriptEngine, Bindings bindings, Logger scriptLogger) {
+    Browser(String instanceName, Core core, ScriptEngine scriptEngine, Bindings bindings, Logger scriptLogger) {
+        this.instanceName = instanceName
         this.core = core
         this.scriptEngine = scriptEngine
         this.bindings = bindings

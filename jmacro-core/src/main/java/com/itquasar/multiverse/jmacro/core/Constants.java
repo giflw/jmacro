@@ -20,6 +20,9 @@ public interface Constants {
     int CPUS = Runtime.getRuntime().availableProcessors();
     long MAXMEM = Runtime.getRuntime().maxMemory();
 
+    // DEFAULT
+
+    String DEFAULT = "default";
 
     // ARGS
     String ARGS = "args";
