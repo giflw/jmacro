@@ -43,7 +43,6 @@
 
         <spock.version>2.4-M1-groovy-4.0</spock.version>
         <spock-reports.version>2.4.0-groovy-4.0</spock-reports.version>
-        <spotbugs.version>4.4.1</spotbugs.version>
 
         <javalin.version>4.3.0</javalin.version>
         <httpclient5.version>5.2.1</httpclient5.version>
@@ -95,14 +94,7 @@
                 <plugin>
                     <groupId>com.github.spotbugs</groupId>
                     <artifactId>spotbugs-maven-plugin</artifactId>
-                    <version>4.7.3.4</version>
-                    <dependencies>
-                        <dependency>
-                            <groupId>com.github.spotbugs</groupId>
-                            <artifactId>spotbugs</artifactId>
-                            <version>4.7.3</version>
-                        </dependency>
-                    </dependencies>
+                    <version>4.7.3.5</version>
                 </plugin>
                 <plugin>
                     <groupId>com.googlecode.maven-download-plugin</groupId>
@@ -142,7 +134,6 @@
                     <configuration>
                         <configLocation>checkstyle.xml</configLocation>
                         <excludes>**/module-info.java</excludes>
-                        <encoding>UTF-8</encoding>
                         <consoleOutput>true</consoleOutput>
                         <failsOnError>${checkstyle.fail}</failsOnError>
                         <failOnViolation>${checkstyle.fail}</failOnViolation>
@@ -186,6 +177,32 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
                     <version>3.6.0</version>
+                    <executions>
+                        <execution>
+                            <id>fetch-source</id>
+                            <goals>
+                                <goal>sources</goal>
+                            </goals>
+                            <phase>validate</phase>
+                            <!-- Will prevent this plugin execution in child modules. -->
+                            <inherited>false</inherited>
+                            <configuration>
+                                <includeScope>compile</includeScope>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>fetch-doc</id>
+                            <goals>
+                                <goal>resolve</goal>
+                            </goals>
+                            <phase>validate</phase>
+                            <inherited>false</inherited>
+                            <configuration>
+                                <classifier>javadoc</classifier>
+                                <includeScope>compile</includeScope>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -206,6 +223,20 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>3.3.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>3.5.0</version>
+                    <configuration>
+                        <encoding>UTF-8</encoding>
+                        <charset>UTF-8</charset>
+                        <show>private</show>
+                        <linksource>true</linksource>
+                        <locale>en_AU</locale>
+                        <failOnError>false</failOnError>
+                        <failOnWarnings>false</failOnWarnings>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -350,6 +381,10 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <executions>
                     <execution>
@@ -395,6 +430,29 @@
                                 <banDuplicatePomDependencyVersions/>
                             </rules>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>aggregate</id>
+                        <phase>prepare-package</phase>
+                        <inherited>false</inherited>
+                        <goals>
+                            <goal>aggregate</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>javadoc</id>
+                        <phase>prepare-package</phase>
+                        <inherited>true</inherited>
+                        <goals>
+                            <goal>javadoc</goal>
+                            <goal>jar</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -499,6 +557,14 @@
                         </reports>
                     </reportSet>
                 </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <configuration>
+                    <xmlOutput>true</xmlOutput>
+                    <xmlOutputDirectory>target/site</xmlOutputDirectory>
+                </configuration>
             </plugin>
         </plugins>
     </reporting>

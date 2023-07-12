@@ -3,7 +3,6 @@ package com.itquasar.multiverse.jmacro.core
 import groovy.transform.CompileDynamic
 
 import javax.script.ScriptEngine
-import java.lang.reflect.Proxy
 import java.util.function.Consumer
 
 abstract class CallableCommand<T> extends Command {
@@ -14,6 +13,26 @@ abstract class CallableCommand<T> extends Command {
         super(name, core, scriptEngine)
     }
 
+    /**
+     * Invoking commands:
+     * <pre>
+     * // Groovy way
+     * command {
+     *    it.method args
+     * }
+     * // JVM way
+     * command { c ->
+     *    c.method args
+     * }
+     * // Groovy way
+     * command.with {
+     *    method args
+     * }
+     * </pre>
+     *
+     * @param consumer Block to be executed/consume the command or its object implementation
+     * @return Consumer parameter
+     */
     @CompileDynamic
     T call(Consumer<T> consumer) {
         consumer.accept((T) this)
