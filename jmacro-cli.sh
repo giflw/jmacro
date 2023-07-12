@@ -12,11 +12,13 @@ PROJECT=:jmacro
 CLEAN=""
 BUILD=true
 DAEMON=false
+SINGLE=false
 for arg in $@; do
     case "$arg" in
         "--clean" ) CLEAN=clean;;
         "--skip-build" ) BUILD=false ;;
         "--daemon" ) DAEMON=true ;;
+        "--single-build" ) SINGLE=true ;;
         :* ) PROJECT="${arg}" ;;
         * ) CONFIG_FILE=${arg:=$CONFIG_FILE};;
     esac
@@ -29,7 +31,11 @@ if [ "$BUILD" == "true" ]; then
         maven=$(which mvnd 2>/dev/null || which mvn 2>/dev/null || echo mvn)
         echo "Using maven at '$maven'"
     fi
-    mvn $CLEAN install -amd -pl "${PROJECT}" -DskipTests=true -P "!application,!data,!installer,!jdk-embedded,!jre-embedded,!launcher,!scripts,!tools"
+    ALSO_MAKE_DEPENDENTS="-amd"
+    if [ "$SINGLE" == "true" ]; then
+        ALSO_MAKE_DEPENDENTS=""
+    fi
+    mvn $CLEAN install $ALSO_MAKE_DEPENDENTS -pl "${PROJECT}" -DskipTests=true -P "!application,!data,!installer,!jdk-embedded,!jre-embedded,!launcher,!scripts,!tools"
 else
     echo '!!!! Skipping build !!!!'
 fi
