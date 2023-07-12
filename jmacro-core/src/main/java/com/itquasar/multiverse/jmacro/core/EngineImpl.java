@@ -10,6 +10,7 @@ import com.itquasar.multiverse.jmacro.core.script.ScriptResult;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.groovy.jsr223.GroovyScriptEngineImpl;
 
 import javax.script.*;
 import java.io.PrintWriter;
@@ -223,16 +224,30 @@ public final class EngineImpl extends Engine implements Constants, TUI {
                 postExecHook.accept(engine);
             } catch (final Throwable exception) {
                 if (!normalExecution) {
-                    throw new ExitException(ExitException.SCRIPT_ENGINE_ERROR, exception);
+                    ExitException exitEx = getExitException(exception);
+                    throw new ExitException(exitEx == null ? ExitException.SCRIPT_ENGINE_ERROR : exitEx.getExitCode(), exception);
                 }
 
                 ExitException exitException = getExitException(exception);
+
                 if (exitException == null && result.exitCode() == ExitException.OK) {
                     result.exitCode(ExitException.SCRIPT_ENGINE_ERROR);
                 }
-                LOGGER.warn("Exit code: " + result.exitCode());
+                LOGGER.warn("Result code: " + result.exitCode());
+
                 if (exitException != null) {
-                    LOGGER.warn("Exit cause: exit(" + exitException.getExitCode() + ")");
+                    if (exitException.getExitCode() != ExitException.OK) {
+                        // fixme ADD WHERE CASE NO EXCEPTION LIKE  exit(5)
+                        LOGGER.error("Exit cause: exit(" + exitException.getExitCode() + ")", exitException.getCause());
+                    } else {
+                        String where = "unknown source";
+                        Optional<StackTraceElement> stackTraceElementOptional = Arrays.stream(exitException.getStackTrace()).filter(ste -> !ste.getFileName().endsWith(".java")).findFirst();
+                        if (stackTraceElementOptional.isPresent()) {
+                            StackTraceElement element = stackTraceElementOptional.get();
+                            where = element.getClassName() + "#" + element.getMethodName() + "():" + element.getLineNumber() + "@" + element.getFileName();
+                        }
+                        LOGGER.info("Exit cause: exit(0) (" + where + ")");
+                    }
                 } else {
                     LOGGER.error("Exit cause: " + exception.getMessage(), exception);
                 }
@@ -272,12 +287,11 @@ public final class EngineImpl extends Engine implements Constants, TUI {
     private static ExitException getExitException(Throwable exception) {
         ExitException exitException = null;
         Throwable cause = exception.getCause();
-        while (exitException == null && cause != null) {
+        while (cause != null) {
             if (cause instanceof ExitException ex) {
                 exitException = ex;
-            } else {
-                cause = cause.getCause();
             }
+            cause = cause.getCause();
         }
         return exitException;
     }

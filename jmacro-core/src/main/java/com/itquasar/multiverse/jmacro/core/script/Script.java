@@ -66,7 +66,7 @@ public class Script {
                 return result;
             } catch (ExitException exception) {
                 status = "EXITED ";
-                LOGGER.warn("Exiting", exception);
+                LOGGER.warn("Exiting with code " + exception.getExitCode());
                 throw exception;
             } catch (Exception exception) {
                 status = "EXCEPTION";
