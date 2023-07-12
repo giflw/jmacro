@@ -22,3 +22,4 @@ com.itquasar.multiverse.jmacro.commands.base.providers.ConsoleCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.TimerCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.TodoCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.ParallelCommandProvider
+com.itquasar.multiverse.jmacro.commands.base.providers.ProgressCommandProvider
