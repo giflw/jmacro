@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-if [ "$1" == "" ]; then
-    echo "usage: jmacro-cli.sh [--clean] [--skip-build] [:project] path/to/config.yaml"
+if [ "$1" == "--help" ]; then
+    echo "usage: jmacro.sh [--clean] [--skip-build] [--daemon] [--single-build] [:project] path/to/config.yaml"
     exit 1
 fi
 
@@ -41,7 +41,9 @@ else
 fi
 
 
-echo "Using config file: ${CONFIG_FILE}"
-CMD="mvn exec:java -pl :jmacro-cli -Djmacro.cli.config.path=${CONFIG_FILE} -Djava.net.useSystemProxies=true"
-echo "Command: ${CMD}"
-$CMD
+if [ -n "${CONFIG_FILE}" ]; then
+    echo "Using config file: ${CONFIG_FILE}"
+    CMD="mvn exec:java -pl :jmacro-cli -Djmacro.cli.config.path=${CONFIG_FILE} -Djava.net.useSystemProxies=true"
+    echo "Command: ${CMD}"
+    $CMD
+fi
