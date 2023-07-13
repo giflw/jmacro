@@ -35,7 +35,11 @@ if [ "$BUILD" == "true" ]; then
     if [ "$SINGLE" == "true" ]; then
         ALSO_MAKE_DEPENDENTS=""
     fi
-    mvn $CLEAN install $ALSO_MAKE_DEPENDENTS -pl "${PROJECT}" -DskipTests=true -P "!application,!data,!installer,!jdk-embedded,!jre-embedded,!launcher,!scripts,!tools"
+    projects="-pl ${PROJECT} $ALSO_MAKE_DEPENDENTS"
+    if [ "$PROJECT" == ":jmacro" ]; then
+        projects=""
+    fi
+    mvn $CLEAN install $projects -DskipTests=true -P "!application,!data,!installer,!javadoc,!jdk-embedded,!jre-embedded,!launcher,!scripts,!tools"
 else
     echo '!!!! Skipping build !!!!'
 fi
