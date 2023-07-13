@@ -40,9 +40,9 @@ class ExportCommand extends Command {
         exports[name] = library
         scriptLogger.debug("Exports: $exports")
 
-        if (library.respondsTo("libraryRegistered")) {
-            scriptLogger.warn("Executing libraryRegistered on library $name (${library.class})")
-            library.libraryRegistered()
+        if (library.respondsTo("exported")) {
+            scriptLogger.warn("Executing exported on library $name (${library.class})")
+            library.exported()
         }
     }
 }

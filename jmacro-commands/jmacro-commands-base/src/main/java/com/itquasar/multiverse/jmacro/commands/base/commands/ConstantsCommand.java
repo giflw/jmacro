@@ -46,7 +46,7 @@ public class ConstantsCommand extends Command implements Map<String, Object>, Co
                 } else {
                     Object value = entry.getValue();
                     if ((boolean) getContext().getAttribute("__MAIN__")) {
-                        getScriptLogger().debug("Registering constant " + key + " = " + value);
+                        getScriptLogger().trace("Registering constant " + key + " = " + value);
                     }
                     bindings.put(key, value);
                 }

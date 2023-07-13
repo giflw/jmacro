@@ -162,7 +162,7 @@ public final class EngineImpl extends Engine implements Constants, TUI {
         while (commandProviders.hasNext()) {
             final var commandProvider = commandProviders.next();
             if (normalExecution) {
-                scriptLogger.debug("Registering command [" + commandProvider.getName() + "] from " + commandProvider.getClass());
+                scriptLogger.trace("Registering command '" + commandProvider.getName() + "' from " + commandProvider.getClass());
             }
             final var command = commandProvider.getCommand(this.core, engine);
             if (command == null) {

@@ -33,10 +33,11 @@ abstract class CallableCommand<T> extends Command {
      * @param consumer Block to be executed/consume the command or its object implementation
      * @return Consumer parameter
      */
-    @CompileDynamic
     T call(Consumer<T> consumer) {
-        consumer.accept((T) this)
-        return (T) this
+        scriptLogger.debug("Calling with Consumer parameter and argument this")
+        T t = this as T
+        consumer.accept(t)
+        return t
     }
 
     T invoke(Consumer<T> consumer) {
@@ -50,7 +51,7 @@ abstract class CallableCommand<T> extends Command {
     @Override
     @CompileDynamic
     def methodMissing(String name, def args) {
-        if (name in CALL_ALTERNATIVES) {
+        if (name in CALL_ALTERNATIVES && this.respondsTo(name, args)) {
             return this.call(*args)
         }
         return this.bindings."$name"(*args)
