@@ -127,6 +127,10 @@ class Request implements Constants {
         }
     }
 
+    void parseResponse(boolean parseResponse = true) {
+        this.doNotParseResponse = !parseResponse
+    }
+
     void doNotParseResponse() {
         this.doNotParseResponse = true
     }

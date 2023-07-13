@@ -1,16 +1,17 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
-import com.itquasar.multiverse.jmacro.core.CallableCommand;
+import com.itquasar.multiverse.jmacro.core.Command;
 import com.itquasar.multiverse.jmacro.core.Constants;
 import com.itquasar.multiverse.jmacro.core.Core;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
+import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import lombok.SneakyThrows;
 import org.apache.logging.log4j.Logger;
 
 import javax.script.ScriptEngine;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class ProgressCommandProvider implements CommandProvider<ProgressCommandProvider.ProgressCommand> {
 
@@ -29,62 +30,71 @@ public class ProgressCommandProvider implements CommandProvider<ProgressCommandP
         return new ProgressCommand(getName(), core, scriptEngine);
     }
 
-    public static class ProgressCommand extends CallableCommand<Progress> implements Constants {
+    public static class ProgressCommand extends Command implements Constants {
 
         public ProgressCommand(String name, Core core, ScriptEngine scriptEngine) {
             super(name, core, scriptEngine);
         }
 
-        public Progress call(Runnable runnable) {
-            return new Progress(runnable, getScriptLogger());
+        public <T> Progress<T> call(Supplier<T> runnable) {
+            return new Progress<T>(runnable, getScriptLogger());
         }
 
-        public Progress of(Runnable runnable) {
+        public <T> Progress<T> of(Supplier<T> runnable) {
             return call(runnable);
         }
 
     }
 
-    public static class Progress {
+    // FIXME add name/prefix/label to progress
+    public static class Progress<T> {
 
         private static final AtomicInteger COUNTER = new AtomicInteger(0);
 
         private static final char[] SPINNER = {'/', '-', '\\', '|'};
-        private AtomicBoolean running = new AtomicBoolean(false);
+        private final AtomicBoolean running = new AtomicBoolean(false);
 
-        private final Runnable runnable;
+        private final Supplier<T> supplier;
         private final Logger logger;
 
         private final int id = COUNTER.incrementAndGet();
 
 
-        public Progress(Runnable runnable, Logger logger) {
-            this.runnable = runnable;
+        public Progress(Supplier<T> supplier, Logger logger) {
+            this.supplier = supplier;
             this.logger = logger;
         }
 
-        private void run(Runnable progress) {
+        private T run(Runnable progress) {
             if (running.compareAndSet(false, true)) {
                 try {
+                    T result = null;
                     logger.info("Starting progress task...");
-                    Thread thread = new Thread(() -> {
-                        runnable.run();
-                        running.set(false);
-                        logger.info("...progress task done");
-                    }, "progress#" + id);
-                    thread.start();
-                    progress.run();
+                    // FIXME use virtual threads
+                    new Thread(progress, "progress#" + id).start();
+                    result = supplier.get();
+                    running.set(false);
+                    logger.info("...progress task done");
+                    return result;
                 } catch (Exception exception) {
                     running.set(false);
                     throw exception;
                 }
             }
+            throw new JMacroException("Progress task is already running");
         }
 
-        void dots() {
-            this.run(() -> {
+        T dots() {
+            return dots(0);
+        }
+
+        T dots(int maxDots) {
+            return this.run(() -> {
                 StringBuilder builder = new StringBuilder().append('\r');
                 while (running.get()) {
+                    if (maxDots > 0 && builder.length() > maxDots) {
+                        builder.delete(0, builder.length() - 1);
+                    }
                     builder.insert(0, '.');
                     System.out.print(builder);
                     sleep();
@@ -92,12 +102,12 @@ public class ProgressCommandProvider implements CommandProvider<ProgressCommandP
             });
         }
 
-        void spin() {
-            spinner();
+        T spin() {
+            return spinner();
         }
 
-        void spinner() {
-            this.run(() -> {
+        T spinner() {
+            return this.run(() -> {
                 int i = 0;
                 while (running.get()) {
                     i = (i + 1) % SPINNER.length;
