@@ -1,5 +1,6 @@
 package com.itquasar.multiverse.jmacro.core
 
+import com.itquasar.multiverse.jmacro.core.annotations.NotInherited
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
 import io.vavr.control.Try
@@ -58,17 +59,25 @@ abstract class Command implements Constants {
     }
 
     @CompileDynamic
+    def dynamicMethodCall(String name, def args) {
+        return this."$name"(*args)
+    }
+
+    @CompileDynamic
+    @NotInherited
     def methodMissing(String name, def args) {
         return this.bindings."$name"(*args)
     }
 
     @CompileDynamic
+    @NotInherited
     def propertyMissing(String name) {
         return this.bindings."$name"
     }
 
+    @NotInherited
     def propertyMissing(String name, def arg) {
-        // no op
+        throw new JMacroException("Unsupported operation: propertyMissing(name, value)")
     }
 
     static methodMissingOn(def object, String name, def args) {

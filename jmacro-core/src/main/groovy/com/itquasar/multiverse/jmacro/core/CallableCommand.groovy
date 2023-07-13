@@ -1,5 +1,6 @@
 package com.itquasar.multiverse.jmacro.core
 
+import com.itquasar.multiverse.jmacro.core.annotations.NotInherited
 import groovy.transform.CompileDynamic
 
 import javax.script.ScriptEngine
@@ -7,7 +8,7 @@ import java.util.function.Consumer
 
 abstract class CallableCommand<T> extends Command {
 
-    private static final String[] CALL_ALTERNATIVES = ['apply', 'invoke']
+    public static final String[] CALL_ALTERNATIVES = ['apply', 'invoke']
 
     CallableCommand(String name, Core core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
@@ -48,12 +49,27 @@ abstract class CallableCommand<T> extends Command {
         this.call(consumer)
     }
 
-    @Override
-    @CompileDynamic
+    @NotInherited
+    def propertyMissing(String name) {
+        return propertyMissingOn(this.bindings, name)
+    }
+
+    @NotInherited
     def methodMissing(String name, def args) {
-        if (name in CALL_ALTERNATIVES && this.respondsTo(name, args)) {
-            return this.call(*args)
+        return callMethodAliasOrOnBindings(this, name, args)
+    }
+
+    @CompileDynamic
+    static def callMethodAliasOrElse(CallableCommand<?> command, String name, def args, Closure orElse) {
+        if (name in CALL_ALTERNATIVES && command.respondsTo("call", args)) {
+            return command.dynamicMethodCall("call", args)
+        } else {
+            return orElse()
         }
-        return this.bindings."$name"(*args)
+    }
+
+    @CompileDynamic
+    static def callMethodAliasOrOnBindings(CallableCommand<?> command, String name, def args) {
+        return callMethodAliasOrElse(command, name, args) { methodMissingOn(command.bindings, name, args) }
     }
 }

@@ -67,18 +67,34 @@ class ConfigurationCommand extends SelfClosureCallableCommand implements ToMap {
     }
 
     @CompileDynamic
-    <T> T get(String path, T defaultValue = null) {
-        scriptLogger.warn("Getting '$path' from Configuration")
+    <T> T get(String key, T defaultValue = null) {
+        scriptLogger.debug("Getting '$key' from Configuration")
+        if (key.contains('.')) {
+            return traversePath(key, defaultValue)
+        }
+        T value = this.configs.get(key) as T
+        if (defaultValue != null) {
+            return value != null ? value : defaultValue
+        }
+        return value != null ? value : propertyMissing(key) as T
+    }
+
+    @CompileDynamic
+    <T> T traversePath(String path, T defaultValue) {
         def value = this.configs
-        for(String key: path.split("\\.")) {
+        for (String key : path.split("\\.")) {
             // using get method we avoid automatic creation of non existing property/key
-            value = value.get(key)
-            scriptLogger.warn("Getting '$path' from Configuration: $key -> $value")
+            if (value instanceof Map) {
+                value = value.containsKey(key) ? value.get(key) : null
+            } else {
+                value = value."$key"
+            }
+            scriptLogger.debug("Getting '$path' from Configuration: $key -> $value")
             if (value == null) {
                 return defaultValue
             }
         }
-        return (value != null ? value : defaultValue) as T
+        return value as T
     }
 
     @Doc("""
@@ -88,6 +104,7 @@ class ConfigurationCommand extends SelfClosureCallableCommand implements ToMap {
     // FXIME should listen to core configuration changes an copy refs to here
     @CompileDynamic
     def propertyMissing(String name) {
+        scriptLogger.debug("Searching property '$name' missing on configuration")
         def value = this.configs.containsKey(name) ? this.configs[name] : null
         value = value == null && this.core.configuration.hasProperty(name) ? this.core.configuration."$name" : value
         value = value != null ? value : this.context.getAttribute(name)
