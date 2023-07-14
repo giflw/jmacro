@@ -29,6 +29,7 @@ import javax.script.ScriptEngine
 import java.io.File as JFile
 import java.nio.file.Path
 import java.util.function.Consumer
+import java.util.logging.Level
 
 @Log4j2
 class Browser implements Constants {
@@ -111,7 +112,7 @@ class Browser implements Constants {
         if (driver == null || driver.sessionId == null) {
             this.postConfig()
             this.config.forEach { key, value ->
-                scriptLogger.warn("Browser config ${key}=${value}")
+                scriptLogger.debug("Browser config ${key}=${value}")
             }
 
             def vendors = this.config.vendor == AUTO ? VENDORS : [this.config.vendor]
@@ -128,6 +129,7 @@ class Browser implements Constants {
                 throw new JMacroException("No browser found from given vendors: ${vendors} (config.vendor=${this.config.vendor})")
             }
             this.driver = (RemoteWebDriver) driverManager.create()
+            this.driver.setLogLevel(this.config.debug ? Level.FINE : Level.OFF)
 
             scriptLogger.warn("Web driver instance ${this.driver} with ${capabilities.asMap()}")
             if (this.driver == null) {
@@ -382,13 +384,6 @@ class Browser implements Constants {
 
     @CompileDynamic
     private void managerProxy(WebDriverManager manager, Map<String, ?> proxyConfig, String vendor) {
-        CredentialsCommand credentials = (CredentialsCommand) proxyConfig?.credentials
-        if (credentials) {
-            scriptLogger.info("Setting up proxy for web driver manager using ${credentials.fullUser}")
-        } else {
-            scriptLogger.warn("Setting up proxy for web driver manager using anonymous")
-        }
-
         String proxyAddress = proxyConfig.address
         if (!proxyAddress) {
             scriptLogger.warn("Getting proxy from platform")
@@ -412,10 +407,13 @@ class Browser implements Constants {
             scriptLogger.warn("Setting manager proxy")
             manager.proxy(proxyAddress)
         }
-        if (credentials != null) {
-            scriptLogger.warn("Setting manager proxy credentials")
+        CredentialsCommand credentials = (CredentialsCommand) proxyConfig?.credentials
+        if (credentials) {
+            scriptLogger.info("Setting up proxy for web driver manager using ${credentials.fullUser}")
             manager.proxyUser(credentials.fullUser)
                 .proxyPass(credentials.password)
+        } else {
+            scriptLogger.warn("Setting up proxy for web driver manager using anonymous")
         }
     }
 

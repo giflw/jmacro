@@ -2,12 +2,17 @@
 <Configuration status="WARN">
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{HH:mm:ss} [%-4level] (%.15t|%c{1}) - %msg%n"/>
+<!--            <PatternLayout pattern="%d{HH:mm:ss} [%-4level] (%.15t|%c{1}) - %msg%n"/>-->
+            <PatternLayout pattern="%d{HH:mm:ss} [%-4level] (%.15t|%c) - %msg%n"/>
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apache.hc.client5" level="error">
-        </Logger>
+        <Logger name="org.apache.hc.client5" level="error"/>
+        <Logger name="io.netty" level="error"/>
+        <Logger name="org.asynchttpclient.netty" level="error"/>
+        <Logger name="io.github.bonigarcia.wdm" level="error"/>
+        <Logger name="org.openqa.selenium" level="error"/>
+        <Logger name="com.itquasar" level="trace"/>
         <Root level="debug">
             <AppenderRef ref="Console"/>
         </Root>

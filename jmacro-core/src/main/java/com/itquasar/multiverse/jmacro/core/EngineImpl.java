@@ -39,12 +39,6 @@ public final class EngineImpl extends Engine implements Constants, TUI {
     private static final ScriptEngineManager ENGINE_MANAGER = new ScriptEngineManager();
 
     /**
-     * Java SPI loader for {@link LanguageAdaptor}s.
-     */
-    private static final SPILoader<LanguageAdaptor> LANGUAGE_ADAPTOR_LOADER =
-        new SPILoader<>(LanguageAdaptor.class);
-
-    /**
      * Core instance used by this engine.
      */
     private final Core core;
@@ -58,6 +52,7 @@ public final class EngineImpl extends Engine implements Constants, TUI {
      * {@link LanguageAdaptor}s found in runtime using SPI.
      */
     private final Map<String, LanguageAdaptor> languageAdaptors = new LinkedHashMap<>();
+    private final Set<CommandProvider<?>> commandProviders = new HashSet<>();
 
     private static final List<OnShutdown> ON_SHUTDOWN = new ArrayList<>(0);
 
@@ -89,9 +84,11 @@ public final class EngineImpl extends Engine implements Constants, TUI {
             LOGGER.trace(engineInfo);
         });
 
-        LANGUAGE_ADAPTOR_LOADER.load().forEachRemaining(languageAdaptor ->
+        new SPILoader<>(LanguageAdaptor.class).load().forEachRemaining(languageAdaptor ->
             this.languageAdaptors.put(languageAdaptor.forExtension(), languageAdaptor)
         );
+
+        new SPILoader<>(CommandProvider.class).load().forEachRemaining(this.commandProviders::add);
     }
 
     /**
@@ -154,13 +151,10 @@ public final class EngineImpl extends Engine implements Constants, TUI {
         }
 
         final var commandTypes = new ArrayList<Class>();
-        final var commandProviderLoader = new SPILoader<>(CommandProvider.class);
-        final var commandProviders = commandProviderLoader.load();
 
         final var commands = new ArrayList<Command>();
 
-        while (commandProviders.hasNext()) {
-            final var commandProvider = commandProviders.next();
+        for (CommandProvider<?> commandProvider: commandProviders) {
             if (normalExecution) {
                 scriptLogger.trace("Registering command '" + commandProvider.getName() + "' from " + commandProvider.getClass());
             }
