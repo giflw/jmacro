@@ -115,17 +115,20 @@ public class Run implements Callable<CliResult> {
             }
 
             Cli.out.println(" " + padding + "x ) Exit");
-            String selectMessage = "Select script to run or exit";
-            if (defaultScript != null) {
-                selectMessage += " [default: " + defaultScript.getMetadata().getName() + "]";
-            } else {
-                selectMessage += " [default: exit]";
+
+
+            String scriptIndex = null;
+            while (scriptIndex == null || (scriptIndex.isEmpty() && defaultScript == null)) {
+                String selectMessage = "Select script to run or exit";
+                if (defaultScript != null) {
+                    selectMessage += " [default: " + defaultScript.getMetadata().getName() + "]";
+                }
+                Cli.out.print(selectMessage + ": ");
+
+                scriptIndex = System.console().readLine();
+                scriptIndex = scriptIndex == null ? "" : scriptIndex.trim();
             }
-            Cli.out.print(selectMessage + ": ");
 
-            String scriptIndex = System.console().readLine();
-
-            scriptIndex = scriptIndex == null ? "" : scriptIndex;
             if ("x".equalsIgnoreCase(scriptIndex) || (scriptIndex.isEmpty() && defaultScript == null)) {
                 Cli.out.println("Exiting...");
                 return new CliResult(new ScriptResult(new Script(Metadata.EMPTY, "", "", "", ""), EngineResult.OK));

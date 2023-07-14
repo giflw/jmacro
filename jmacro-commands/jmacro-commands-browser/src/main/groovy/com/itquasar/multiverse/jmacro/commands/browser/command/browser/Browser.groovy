@@ -390,7 +390,7 @@ class Browser implements Constants {
             String driverUrl = manager.config()."get${vendor}DriverUrl"()
             scriptLogger.warn("Searching proxy configuration using ${driverUrl} as driver url")
             def proxy = ProxySelector.default.select(URI.create(driverUrl))
-                .each { scriptLogger.debug("Browser driver manager proxy available: ${it}") }
+                .each { scriptLogger.trace("Browser driver manager proxy available: ${it}") }
                 .find { it.type() == java.net.Proxy.Type.HTTP }
                 .each { scriptLogger.debug("Browser driver manager proxy found: ${it}") }
             if (proxy != null && proxy.address() != null && proxy.address() instanceof InetSocketAddress) {
