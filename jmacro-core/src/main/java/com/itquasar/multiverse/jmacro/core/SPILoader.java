@@ -18,9 +18,10 @@ public final class SPILoader<S> {
     private final ServiceLoader<S> loader;
 
     public SPILoader(Class<S> type) {
+        LOGGER.debug("Loading types for " + type + " through SPI");
         this.type = type;
         this.loader = ServiceLoader.load(type);
-        this.loader.stream().map(this::logMessage).forEach(LOGGER::debug);
+        this.loader.stream().map(this::logMessage).forEach(LOGGER::trace);
     }
 
     public static <S> Iterator<S> load(Class<S> type) {

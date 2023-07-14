@@ -94,7 +94,7 @@ public class IncludeCommand extends Command {
                     this.core.getEngine().include(script, (final var engine) -> {
                         this.includeCommand.getScriptEngine().getBindings(ScriptContext.ENGINE_SCOPE).forEach((key, value) -> {
                             if (!key.startsWith("__") && !key.equals("export") && !key.equals("include")&& !key.equals(ARGS)) {
-                                logger.debug("Transferring [" + key + "] to new engine");
+                                logger.trace("Transferring [" + key + "] to new engine");
                                 engine.getBindings(ScriptContext.ENGINE_SCOPE).put(key, value);
                             }
                             // FIXME APPEND PARENT SCRIPT ARGS

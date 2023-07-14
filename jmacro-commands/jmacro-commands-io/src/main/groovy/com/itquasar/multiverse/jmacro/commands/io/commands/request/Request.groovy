@@ -236,7 +236,7 @@ class Request implements Constants {
     protected Request process() {
         Command.log(bindings, INFO, "Connecting to $method $url")
         headers.each {
-            Command.log(bindings, DEBUG, "[HTTP Header] ${it.key}: ${it.value}")
+            Command.log(bindings, TRACE, "[HTTP Header] ${it.key}: ${it.value}")
         }
 
         Command.log(bindings, DEBUG, 'Creating new response object')
