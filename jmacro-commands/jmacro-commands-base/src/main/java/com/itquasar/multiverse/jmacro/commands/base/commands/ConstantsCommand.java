@@ -1,9 +1,8 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands;
 
-import com.itquasar.multiverse.jmacro.core.Command;
-import com.itquasar.multiverse.jmacro.core.Constants;
-import com.itquasar.multiverse.jmacro.core.Core;
-import com.itquasar.multiverse.jmacro.core.command.Doc;
+import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
+import com.itquasar.multiverse.jmacro.core.interfaces.Constants;
+import com.itquasar.multiverse.jmacro.core.engine.Core;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 
 import javax.script.Bindings;
@@ -14,8 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-@Doc("Map containing values used as global constants. Remove method throws exception.")
-public class ConstantsCommand extends Command implements Map<String, Object>, Constants {
+public class ConstantsCommand extends AbstractCommand implements Map<String, Object>, Constants {
 
     private final Map<String, Object> map = new LinkedHashMap<>();
 

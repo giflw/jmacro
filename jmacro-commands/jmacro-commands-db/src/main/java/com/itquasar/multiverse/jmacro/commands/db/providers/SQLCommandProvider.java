@@ -3,7 +3,7 @@ package com.itquasar.multiverse.jmacro.commands.db.providers;
 import javax.script.ScriptEngine;
 
 import com.itquasar.multiverse.jmacro.commands.db.commands.SQLCommand;
-import com.itquasar.multiverse.jmacro.core.Core;
+import com.itquasar.multiverse.jmacro.core.engine.Core;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 
 public class SQLCommandProvider implements CommandProvider<SQLCommand> {

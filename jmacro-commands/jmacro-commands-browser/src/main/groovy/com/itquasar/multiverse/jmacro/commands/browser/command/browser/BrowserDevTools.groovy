@@ -1,8 +1,9 @@
 package com.itquasar.multiverse.jmacro.commands.browser.command.browser
 
 
-import com.itquasar.multiverse.jmacro.core.Command
-import com.itquasar.multiverse.jmacro.core.Constants
+import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
+import com.itquasar.multiverse.jmacro.core.command.CommandUtils
+import com.itquasar.multiverse.jmacro.core.interfaces.Constants
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
 import org.openqa.selenium.devtools.DevTools
@@ -60,7 +61,7 @@ class BrowserDevTools implements Constants, AutoCloseable {
             try {
                 this.devTools.clearListeners()
             } catch (Exception ex) {
-                Command.log(bindings, ERROR, ex.getMessage())
+                CommandUtils.log(bindings, ERROR, ex.getMessage())
             }
             this.devTools.disconnectSession()
         }
@@ -81,7 +82,7 @@ class BrowserDevTools implements Constants, AutoCloseable {
                 callback = { RequestWillBeSent requestWillBeSent ->
                     def request = requestWillBeSent.getRequest()
                     def postData = postData(requestWillBeSent) ?: ''
-                    Command.echo(
+                    CommandUtils.log(
                         bindings,
                         """
                         ------------------------------------------------------
@@ -107,7 +108,7 @@ class BrowserDevTools implements Constants, AutoCloseable {
                 callback = { ResponseReceived responseReceived ->
                     def response = responseReceived.getResponse()
                     def body = body(responseReceived)?.body ?: ''
-                    Command.echo(
+                    CommandUtils.log(
                         bindings,
                         """
                         ------------------------------------------------------
@@ -143,6 +144,6 @@ class BrowserDevTools implements Constants, AutoCloseable {
     }
 
     def methodMissing(String name, def args) {
-        return Command.methodMissingOn(devTools, name, args, browser.bindings)
+        return CommandUtils.methodMissingOn(devTools, name, args, browser.bindings)
     }
 }

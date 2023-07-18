@@ -1,16 +1,17 @@
 @startuml
 !theme crt-green
-package jmacro{
-    [cli]
-    package commands{
-        [base]
-        [browser]
-        [datax]
-        [io]
-        [server]
-        [terminal]
+    [tn3270j]
+    package jmacro{
+        [cli]
+        package commands{
+            [base]
+            [browser]
+            [datax]
+            [io]
+            [server]
+            [terminal]
+        }
+        [core]
+        [installer]
     }
-    [core]
-    [installer]
-}
 @enduml

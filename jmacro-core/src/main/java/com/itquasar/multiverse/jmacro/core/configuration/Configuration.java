@@ -1,7 +1,6 @@
 package com.itquasar.multiverse.jmacro.core.configuration;
 
-import com.itquasar.multiverse.jmacro.core.Constants;
-import com.itquasar.multiverse.jmacro.core.Folders;
+import com.itquasar.multiverse.jmacro.core.interfaces.Constants;
 import com.itquasar.multiverse.jmacro.core.jmx.JMXManagement;
 import com.itquasar.multiverse.jmacro.core.repository.GlobalScriptRepository;
 import com.itquasar.multiverse.jmacro.core.repository.ScriptRepositoryFactory;

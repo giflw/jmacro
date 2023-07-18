@@ -1,13 +1,11 @@
 package com.itquasar.multiverse.jmacro.engine
 
-import com.itquasar.multiverse.jmacro.core.EngineImpl
-import com.itquasar.multiverse.jmacro.core.Core
+import com.itquasar.multiverse.jmacro.core.engine.EngineImpl
+import com.itquasar.multiverse.jmacro.core.engine.Core
 import com.itquasar.multiverse.jmacro.core.configuration.Configuration
 import com.itquasar.multiverse.jmacro.core.script.Metadata
 import com.itquasar.multiverse.jmacro.core.script.Script
-import com.itquasar.multiverse.jmacro.core.script.ScriptResult
 import com.itquasar.multiverse.jmacro.core.script.ValueHolder
-import spock.lang.Ignore
 import spock.lang.Specification
 
 class EngineImplSpec extends Specification implements Constants {

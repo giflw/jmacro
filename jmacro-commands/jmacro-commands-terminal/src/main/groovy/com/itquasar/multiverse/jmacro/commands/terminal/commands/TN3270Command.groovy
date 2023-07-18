@@ -2,11 +2,12 @@ package com.itquasar.multiverse.jmacro.commands.terminal.commands
 
 import com.itquasar.multiverse.jmacro.commands.terminal.commands.tn3270.Reader
 import com.itquasar.multiverse.jmacro.commands.terminal.commands.tn3270.Writer
-import com.itquasar.multiverse.jmacro.core.Command
-import com.itquasar.multiverse.jmacro.core.Constants
-import com.itquasar.multiverse.jmacro.core.Core
+import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
 import com.itquasar.multiverse.jmacro.core.command.AutoCloseableAll
-import com.itquasar.multiverse.jmacro.core.command.OnShutdown;
+import com.itquasar.multiverse.jmacro.core.command.CommandUtils
+import com.itquasar.multiverse.jmacro.core.command.OnShutdown
+import com.itquasar.multiverse.jmacro.core.engine.Core
+import com.itquasar.multiverse.jmacro.core.interfaces.Constants
 import com.itquasar.multiverse.tn3270j.TN3270j
 import com.itquasar.multiverse.tn3270j.TN3270jFactory
 import com.itquasar.multiverse.tn3270j.WaitMode
@@ -22,7 +23,7 @@ import java.util.concurrent.TimeUnit
 
 @Log4j2
 @CompileStatic
-class TN3270Command extends Command implements AutoCloseableAll, Constants, OnShutdown {
+class TN3270Command extends AbstractCommand implements AutoCloseableAll, Constants, OnShutdown {
 
     static enum Key {
         F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12,
@@ -72,7 +73,7 @@ class TN3270Command extends Command implements AutoCloseableAll, Constants, OnSh
     }
 
     def methodMissing(String name, def args) {
-        return methodMissingOnOrChainToContext(this, this.tn3270j.get(), name, args)
+        return CommandUtils.methodMissingOnOrChainToContext(this, this.tn3270j.get(), name, args)
     }
 
     @CompileDynamic

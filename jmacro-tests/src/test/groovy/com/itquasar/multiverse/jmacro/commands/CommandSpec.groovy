@@ -1,7 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands
 
-import com.itquasar.multiverse.jmacro.core.Core
-import com.itquasar.multiverse.jmacro.core.SPILoader
+import com.itquasar.multiverse.jmacro.core.engine.Core
+import com.itquasar.multiverse.jmacro.core.util.SPILoader
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider
 import com.itquasar.multiverse.jmacro.core.configuration.Configuration
 import com.itquasar.multiverse.jmacro.core.repository.GlobalScriptRepository
@@ -16,12 +16,12 @@ import spock.lang.Unroll
 @Log4j2
 class CommandSpec extends Specification {
 
-    private static final String singleCommanndTest = null
+    private static final String singleCommandTest = null
 
     Core core
 
     void setup() {
-        def configuration = new Configuration()
+        def configuration = Configuration.load()
         def uri = CommandSpec.class.getResource("/tests/commands/").toURI()
         println "URI: $uri"
         configuration.repository = new GlobalScriptRepository(new CommandTestRepository(uri))
@@ -38,7 +38,7 @@ class CommandSpec extends Specification {
     void "Command [#provider.name] of type [#provider.commandType.simpleName]"(CommandProvider provider) {
         when: "Script found"
         Script script = loadScript(provider.name)
-        ScriptResult result = core.engine.execute(script)
+        ScriptResult result = core.engine.execute(script, "foo=bar", "--foo", "bar=false")
 
         then: "No exception thrown"
         noExceptionThrown()
@@ -57,9 +57,9 @@ class CommandSpec extends Specification {
 
         where: "Command providers loaded through Java SPI"
         provider << SPILoader.load(CommandProvider.class).toList().findAll {
-            (singleCommanndTest != null && singleCommanndTest == it.name)
+            (singleCommandTest != null && singleCommandTest == it.name)
                 ||
-                (singleCommanndTest == null && ((it.name == 'tn3270' && System.getProperty('tn3270j.url') != null) || it.name != 'tn3270'))
+                (singleCommandTest == null && ((it.name == 'tn3270' && System.getProperty('tn3270j.url') != null) || it.name != 'tn3270'))
         }
     }
 

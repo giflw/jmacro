@@ -1,9 +1,10 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
-import com.itquasar.multiverse.jmacro.core.Command;
-import com.itquasar.multiverse.jmacro.core.Core;
+import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
+import com.itquasar.multiverse.jmacro.core.engine.Core;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
+import lombok.SneakyThrows;
 
 import javax.script.ScriptEngine;
 
@@ -24,7 +25,7 @@ public class PauseCommandProvider implements CommandProvider<PauseCommandProvide
         return new PauseCommand(getName(), core, scriptEngine);
     }
 
-    public static class PauseCommand extends Command {
+    public static class PauseCommand extends AbstractCommand {
 
         public PauseCommand(String name, Core core, ScriptEngine scriptEngine) {
             super(name, core, scriptEngine);
@@ -45,6 +46,23 @@ public class PauseCommandProvider implements CommandProvider<PauseCommandProvide
             } catch (InterruptedException e) {
                 throw new JMacroException("Error sleeping", e);
             }
+        }
+
+        Thread thread() {
+            return Thread.currentThread();
+        }
+
+        void forever() {
+            Thread thread = thread();
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                getScriptLogger().warn("Thread " + thread.getThreadGroup().getName() + ":" + thread.getName() + " interrupted");
+            }
+        }
+
+        void interrupt() {
+            Thread.currentThread().interrupt();
         }
 
     }

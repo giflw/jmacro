@@ -1,5 +1,6 @@
-package com.itquasar.multiverse.jmacro.core;
+package com.itquasar.multiverse.jmacro.core.engine;
 
+import com.itquasar.multiverse.jmacro.core.engine.AbstractLanguageAdaptor;
 import lombok.extern.log4j.Log4j2;
 
 import javax.script.ScriptEngine;

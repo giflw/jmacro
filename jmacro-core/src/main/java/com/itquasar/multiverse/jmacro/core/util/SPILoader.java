@@ -1,4 +1,4 @@
-package com.itquasar.multiverse.jmacro.core;
+package com.itquasar.multiverse.jmacro.core.util;
 
 import lombok.extern.log4j.Log4j2;
 

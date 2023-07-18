@@ -1,4 +1,4 @@
-package com.itquasar.multiverse.jmacro.core;
+package com.itquasar.multiverse.jmacro.core.engine;
 
 import javax.script.Bindings;
 import javax.script.ScriptContext;

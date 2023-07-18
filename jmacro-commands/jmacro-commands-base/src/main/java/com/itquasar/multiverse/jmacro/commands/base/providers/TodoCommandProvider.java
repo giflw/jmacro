@@ -1,7 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
-import com.itquasar.multiverse.jmacro.core.Command;
-import com.itquasar.multiverse.jmacro.core.Core;
+import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
+import com.itquasar.multiverse.jmacro.core.engine.Core;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 
@@ -24,7 +24,7 @@ public class TodoCommandProvider implements CommandProvider<TodoCommandProvider.
         return new TodoCommand(getName(), core, scriptEngine);
     }
 
-    public static class TodoCommand extends Command {
+    public static class TodoCommand extends AbstractCommand {
 
         public TodoCommand(String name, Core core, ScriptEngine scriptEngine) {
             super(name, core, scriptEngine);

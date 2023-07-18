@@ -1,15 +1,15 @@
 package com.itquasar.multiverse.jmacro.commands.datax.commands;
 
 import com.itquasar.multiverse.jmacro.commands.datax.commands.pdf.PDFAction;
-import com.itquasar.multiverse.jmacro.core.Command;
-import com.itquasar.multiverse.jmacro.core.Core;
+import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
+import com.itquasar.multiverse.jmacro.core.engine.Core;
 import groovy.lang.Closure;
 
 import javax.script.ScriptEngine;
 import java.io.File;
 import java.nio.file.Path;
 
-public class PDFCommand extends Command {
+public class PDFCommand extends AbstractCommand {
 
     public PDFCommand(String name, Core core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine);

@@ -1,7 +1,8 @@
 package com.itquasar.multiverse.jmacro.commands.datax.commands
 
-import com.itquasar.multiverse.jmacro.core.Command
-import com.itquasar.multiverse.jmacro.core.Core
+import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
+import com.itquasar.multiverse.jmacro.core.command.CommandUtils
+import com.itquasar.multiverse.jmacro.core.engine.Core
 import net.sourceforge.tess4j.ITesseract
 import net.sourceforge.tess4j.Tesseract
 
@@ -11,7 +12,7 @@ import java.awt.image.BufferedImage
 import java.nio.file.Path
 import java.util.List
 
-class OCRCommand extends Command {
+class OCRCommand extends AbstractCommand {
 
     private ITesseract tesseract
 
@@ -84,17 +85,17 @@ class OCRCommand extends Command {
 
     def methodMissing(String name, def args) {
         this.init()
-        Command.methodMissingOnOrChainToContext(context, this.tesseract, name, args)
+        CommandUtils.methodMissingOnOrChainToContext(context, this.tesseract, name, args)
     }
 
     def propertyMissing(String name) {
         this.init()
-        Command.propertyMissingOnOrChainToContext(this, this.tesseract, name)
+        CommandUtils.propertyMissingOnOrChainToContext(this, this.tesseract, name)
     }
 
     def propertyMissing(String name, def arg) {
         this.init()
-        Command.propertyMissingOnOrChainToContext(this, this.tesseract, name, arg)
+        CommandUtils.propertyMissingOnOrChainToContext(this, this.tesseract, name, arg)
     }
 
     BufferedImage scale(BufferedImage originalImage, float factor) {

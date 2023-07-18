@@ -1,13 +1,12 @@
 package com.itquasar.multiverse.jmacro.core.command;
 
-import com.itquasar.multiverse.jmacro.core.Command;
-import com.itquasar.multiverse.jmacro.core.Core;
+import com.itquasar.multiverse.jmacro.core.engine.Core;
 
 import javax.script.ScriptEngine;
 import java.util.Collections;
 import java.util.List;
 
-public interface CommandProvider<C extends Command> {
+public interface CommandProvider<C extends AbstractCommand> {
 
     /**
      * @return Command name to be used to invoke in script.

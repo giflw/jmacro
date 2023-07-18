@@ -2,9 +2,9 @@ package com.itquasar.multiverse.jmacro.commands.base.commands;
 
 import com.itquasar.multiverse.jmacro.commands.base.commands.parallel.LockWaitThreadPoolExecutor;
 import com.itquasar.multiverse.jmacro.commands.base.commands.parallel.ParallelThreadFactory;
-import com.itquasar.multiverse.jmacro.core.Command;
-import com.itquasar.multiverse.jmacro.core.Constants;
-import com.itquasar.multiverse.jmacro.core.Core;
+import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
+import com.itquasar.multiverse.jmacro.core.interfaces.Constants;
+import com.itquasar.multiverse.jmacro.core.engine.Core;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import groovy.lang.Closure;
 import lombok.Getter;
@@ -13,7 +13,7 @@ import lombok.SneakyThrows;
 import javax.script.ScriptEngine;
 import java.util.concurrent.*;
 
-public class ParallelCommand extends Command implements AutoCloseable {
+public class ParallelCommand extends AbstractCommand implements AutoCloseable {
 
     public static final TimeUnit MILLISECONDS = TimeUnit.MILLISECONDS;
     public static final TimeUnit SECONDS = TimeUnit.SECONDS;

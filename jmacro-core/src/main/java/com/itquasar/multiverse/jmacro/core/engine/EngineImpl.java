@@ -1,12 +1,17 @@
-package com.itquasar.multiverse.jmacro.core;
+package com.itquasar.multiverse.jmacro.core.engine;
 
+import com.itquasar.multiverse.jmacro.core.engine.EngineResult;
 import com.itquasar.multiverse.jmacro.core.command.AutoCloseableAll;
+import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.command.OnShutdown;
 import com.itquasar.multiverse.jmacro.core.exception.ExitException;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.itquasar.multiverse.jmacro.core.script.Script;
 import com.itquasar.multiverse.jmacro.core.script.ScriptResult;
+import com.itquasar.multiverse.jmacro.core.interfaces.Constants;
+import com.itquasar.multiverse.jmacro.core.util.SPILoader;
+import com.itquasar.multiverse.jmacro.core.util.TUI;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -134,8 +139,8 @@ public final class EngineImpl extends Engine implements Constants, TUI {
         }
 
         final var id = ID_GENERATOR.addAndGet(1);
-        final var loggerName = "#" + id + "#" +
-            scriptPath.substring(scriptPath.lastIndexOf('/') + 1, scriptPath.lastIndexOf('.')) +
+        final var loggerName = "#" + id + ":" +
+            scriptPath.substring(scriptPath.lastIndexOf('/') + 1, scriptPath.lastIndexOf('.')).replace('.', '-') +
             "@" + scriptPath.substring(scriptPath.lastIndexOf('.') + 1);
         final var scriptLogger = LogManager.getLogger(loggerName);
 
@@ -152,7 +157,7 @@ public final class EngineImpl extends Engine implements Constants, TUI {
 
         final var commandTypes = new ArrayList<Class>();
 
-        final var commands = new ArrayList<Command>();
+        final var commands = new ArrayList<AbstractCommand>();
 
         for (CommandProvider<?> commandProvider: commandProviders) {
             if (normalExecution) {
@@ -185,16 +190,19 @@ public final class EngineImpl extends Engine implements Constants, TUI {
             commandTypes.add(command.getClass());
         }
 
-        commands.forEach(Command::allCommandsLoaded);
+        commands.forEach(AbstractCommand::allCommandsLoaded);
 
-        final var argsFinal = normalExecution ? args : List.of(script.getLocation().toString(), INCLUDED);
+        var locationArg = script.getLocation().toString();
+        locationArg = normalExecution ? INCLUDED + ':' + locationArg : locationArg;
+        final var argsFinal = new LinkedList<>(args);
+        argsFinal.addFirst(locationArg);
         scriptLogger.warn("Script args: " + argsFinal);
         engineScope.put(ARGV, argsFinal);
         engineScope.put("__SCRIPT__", script);
         engineScope.put("__METADATA__", script.getMetadata());
         engineScope.put("__CONTEXT__", engineScope);
 
-        commands.forEach(Command::allCommandsRegistered);
+        commands.forEach(AbstractCommand::allCommandsRegistered);
         EngineResult<?, ? extends Throwable> result = (EngineResult) engineScope.get("result");
 
 

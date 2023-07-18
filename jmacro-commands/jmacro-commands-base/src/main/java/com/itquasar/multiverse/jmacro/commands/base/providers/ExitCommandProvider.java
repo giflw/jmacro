@@ -1,8 +1,8 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
 import com.itquasar.multiverse.jmacro.commands.base.commands.ResultCommand;
-import com.itquasar.multiverse.jmacro.core.Command;
-import com.itquasar.multiverse.jmacro.core.Core;
+import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
+import com.itquasar.multiverse.jmacro.core.engine.Core;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.exception.ExitException;
 
@@ -29,7 +29,7 @@ public class ExitCommandProvider implements CommandProvider<ExitCommandProvider.
         return new ExitCommand(getName(), core, scriptEngine);
     }
 
-    public static class ExitCommand extends Command {
+    public static class ExitCommand extends AbstractCommand {
 
         public ExitCommand(String name, Core core, ScriptEngine scriptEngine) {
             super(name, core, scriptEngine);

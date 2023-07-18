@@ -1,4 +1,4 @@
-package com.itquasar.multiverse.jmacro.core;
+package com.itquasar.multiverse.jmacro.core.interfaces;
 
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 
@@ -27,7 +27,7 @@ public interface Constants {
     // ARGS
     String ARGS = "args";
     String ARGV = "argv";
-    String INCLUDED = "INCLUDED";
+    String INCLUDED = "included";
     String SCRIPT_LOCATION = "script-location";
 
     // VERBOSITY

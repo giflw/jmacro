@@ -1,9 +1,10 @@
 package com.itquasar.multiverse.jmacro.commands.io.commands.file
 
 import com.itquasar.multiverse.jmacro.commands.io.InputParsers
-import com.itquasar.multiverse.jmacro.core.Command
-import com.itquasar.multiverse.jmacro.core.Constants
+import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
+import com.itquasar.multiverse.jmacro.core.command.CommandUtils
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
+import com.itquasar.multiverse.jmacro.core.interfaces.Constants
 import groovy.transform.CompileDynamic
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.ss.usermodel.CellType
@@ -54,7 +55,7 @@ class File implements InputParsers, Constants {
     @CompileDynamic
     def methodMissing(final String name, final def args) {
         try {
-            return Command.methodMissingOn(this.path, name, args)
+            return AbstractCommand.methodMissingOn(this.path, name, args)
         } catch (MissingMethodException exPath) {
             MetaMethod method
 
@@ -63,12 +64,12 @@ class File implements InputParsers, Constants {
             if (Object[].class.isInstance(args) && ((Object[]) args).length > 0) {
                 // try using this.path and option empty array
                 for (def attrib : [
-                            new OpenOption[0],
-                            new CopyOption[0],
-                            new LinkOption[0],
-                            new FileAttribute[0],
-                            new FileAttribute[0]
-                        ]) {
+                    new OpenOption[0],
+                    new CopyOption[0],
+                    new LinkOption[0],
+                    new FileAttribute[0],
+                    new FileAttribute[0]
+                ]) {
                     argsToUse = [this.path, *args, attrib]
                     method = Files.metaClass.getMetaMethod(name, argsToUse)
                     if (method) {
@@ -92,12 +93,12 @@ class File implements InputParsers, Constants {
 
             // try using this.path and option empty array
             for (def arr : [
-                        new OpenOption[0],
-                        new CopyOption[0],
-                        new LinkOption[0],
-                        new FileAttribute[0],
-                        new FileAttribute[0]
-                    ]) {
+                new OpenOption[0],
+                new CopyOption[0],
+                new LinkOption[0],
+                new FileAttribute[0],
+                new FileAttribute[0]
+            ]) {
                 argsToUse = [this.path, arr]
                 method = Files.metaClass.getMetaMethod(name, argsToUse)
                 if (method) {
@@ -112,13 +113,13 @@ class File implements InputParsers, Constants {
                 return method.invoke(null, method.correctArguments(argsToUse))
             }
 
-            return Command.methodMissingOnOrChainToContext(this.scriptContext, this.path.toFile(), name, args)
+            return CommandUtils.methodMissingOnOrChainToContext(this.scriptContext, this.path.toFile(), name, args)
         }
     }
 
     def propertyMissing(String name) {
         try {
-            return Command.propertyMissingOn(this.path, name)
+            return CommandUtils.propertyMissingOn(this.path, name)
         } catch (JMacroException ex) {
             def openOption = StandardOpenOption.values().find { it.name() == name }
             if (openOption) {
@@ -132,15 +133,15 @@ class File implements InputParsers, Constants {
             if (linkOption) {
                 return linkOption
             }
-            return Command.propertyMissingOnOrChainToContext(this.scriptContext, this.path.toFile(), name)
+            return CommandUtils.propertyMissingOnOrChainToContext(this.scriptContext, this.path.toFile(), name)
         }
     }
 
     def propertyMissing(String name, def arg) {
         try {
-            Command.propertyMissingOn(this.path, name, arg)
+            CommandUtils.propertyMissingOn(this.path, name, arg)
         } catch (JMacroException ex) {
-            Command.propertyMissingOnOrChainToContext(this.scriptContext, this.path.toFile(), name, arg)
+            CommandUtils.propertyMissingOnOrChainToContext(this.scriptContext, this.path.toFile(), name, arg)
         }
     }
 
@@ -225,20 +226,20 @@ class File implements InputParsers, Constants {
     }
 
     private def xlWorkbook(Class<?> workbookHandler, Map<String, Object> args) {
-        Map<String, Object> defaults  = [drop: 0, map: true, sheet: null, firstSheetAsRoot: true, headers: [:]]
+        Map<String, Object> defaults = [drop: 0, map: true, sheet: null, firstSheetAsRoot: true, headers: [:]]
         args = args ?: defaults
         defaults.each { k, v ->
             args.putIfAbsent(k, v)
         }
         this.path = this.path ?: Path.of(this.name)
-        Command.log(scriptContext, DEBUG, "Using ${workbookHandler} to parse input with ${args}")
+        CommandUtils.log(scriptContext, DEBUG, "Using ${workbookHandler} to parse input with ${args}")
 
         Workbook workbook = (Workbook) workbookHandler.newInstance(new FileInputStream(this.path.toFile()))
         def data = extractXLData(workbook)
         workbook.close()
-        
+
         if (args.map) {
-            data = data.findAll { !it.value.isEmpty() } .collectEntries {
+            data = data.findAll { !it.value.isEmpty() }.collectEntries {
                 [(it.key): matrixToMap(it.value.drop((int) args.drop), (Map<String, String>) args.headers)]
             }
         }

@@ -1,9 +1,9 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands
 
 import com.itquasar.multiverse.jmacro.commands.base.commands.moment.LocalDateTimeWrapper
-import com.itquasar.multiverse.jmacro.core.Command
-import com.itquasar.multiverse.jmacro.core.Core
-import com.itquasar.multiverse.jmacro.core.command.Doc
+import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
+import com.itquasar.multiverse.jmacro.core.engine.Core
+
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
 
@@ -11,19 +11,19 @@ import javax.script.ScriptEngine
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-@Doc("Date and time command")
-class MomentCommand extends Command {
+
+class MomentCommand extends AbstractCommand {
 
     MomentCommand(String name, Core core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
     }
 
-    @Doc("Return LocalDateTimeWrapper with date as today and time at start of day.")
+
     LocalDateTimeWrapper today() {
         return LocalDateTimeWrapper.of(LocalDate.now().atStartOfDay())
     }
 
-    @Doc("Return LocalDateTimeWrapper with date and time as now.")
+
     LocalDateTimeWrapper now() {
         return LocalDateTimeWrapper.of(LocalDateTime.now())
     }

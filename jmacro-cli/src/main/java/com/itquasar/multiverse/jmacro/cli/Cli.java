@@ -1,8 +1,7 @@
 package com.itquasar.multiverse.jmacro.cli;
 
-import com.itquasar.multiverse.jmacro.core.Core;
+import com.itquasar.multiverse.jmacro.core.engine.Core;
 import lombok.Getter;
-import lombok.ToString;
 
 import java.io.PrintStream;
 import java.nio.file.Path;

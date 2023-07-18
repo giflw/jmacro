@@ -1,8 +1,9 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands
 
-import com.itquasar.multiverse.jmacro.core.Command
-import com.itquasar.multiverse.jmacro.core.Core
-import com.itquasar.multiverse.jmacro.core.command.Doc
+import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
+import com.itquasar.multiverse.jmacro.core.engine.Core
+import com.itquasar.multiverse.jmacro.core.exception.JMacroException
+import groovy.transform.CompileDynamic
 
 import javax.script.ScriptEngine
 import java.lang.reflect.Field
@@ -10,33 +11,34 @@ import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import java.lang.reflect.Parameter
 
-class HelpCommand extends Command {
+@CompileDynamic
+class HelpCommand extends AbstractCommand {
 
     HelpCommand(String name, Core core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
     }
 
-    @Doc("Show help for this command.")
+
     void call() {
         echo toString(this)
     }
 
-    @Doc("Show help for given command.")
-    void call(Command command) {
+
+    void call(AbstractCommand command) {
         echo toString(command)
     }
 
-    @Doc("Show help for given command or object.")
+
     void call(Object object) {
         echo toString(object)
     }
 
-    @Doc("Show help for fields and methods with given name on given command instance.")
-    void call(Command command, String name) {
+
+    void call(AbstractCommand command, String name) {
         echo toString(command, command.name, name)
     }
 
-    @Doc("Show help for fields and methods with given name on given object instance.")
+
     void call(Object object, String name) {
         echo toString(object, object.class.simpleName, name)
     }
@@ -54,7 +56,7 @@ class HelpCommand extends Command {
         }
     }
 
-    private String toString(Command command) {
+    private String toString(AbstractCommand command) {
         return toString(command, command.name, name)
     }
 
@@ -67,7 +69,7 @@ class HelpCommand extends Command {
         String methods = methods(obj).findAll { fieldOrMethodName == null || it.name == fieldOrMethodName }.collect { toString(it) }.join("\n\n")
 
         return new StringBuilder()
-            .append("\n\n${Command.isInstance(obj) ? 'COMMAND' : 'OBJECT'}\n\n")
+            .append("\n\n${AbstractCommand.isInstance(obj) ? 'COMMAND' : 'OBJECT'}\n\n")
             .append("${commandName}: ${obj.class.simpleName}\n")
             .append("\tSuper classes: ${getSupers(obj.class).join('\n\t\t\t\t')}\n\n")
             .append("\t\t\t${(obj.class.getAnnotation(Doc.class)?.value() ?: 'Documentation not provided').split('\n').join('\n\t\t\t')}\n")
@@ -99,12 +101,14 @@ class HelpCommand extends Command {
             .toString()
     }
 
-    private Doc doc(Class<?> clazz) {
-        return clazz.getAnnotation(Doc.class)
+    private Object doc(Class<?> clazz) {
+        throw new JMacroException("Must be refactored")
+        //return clazz.getAnnotation(Doc.class)
     }
 
-    private Doc doc(Parameter param) {
-        return param.getAnnotation(Doc.class)
+    private Object doc(Parameter param) {
+        throw new JMacroException("Must be refactored")
+        //return param.getAnnotation(Doc.class)
     }
 
     private String toString(Field f) {

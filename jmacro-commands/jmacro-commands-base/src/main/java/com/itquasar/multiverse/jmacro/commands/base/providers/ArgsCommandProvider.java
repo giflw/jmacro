@@ -1,10 +1,11 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
-import com.itquasar.multiverse.jmacro.core.Command;
-import com.itquasar.multiverse.jmacro.core.Constants;
-import com.itquasar.multiverse.jmacro.core.Core;
+import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
+import com.itquasar.multiverse.jmacro.core.command.CallableCommand;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
+import com.itquasar.multiverse.jmacro.core.engine.Core;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
+import com.itquasar.multiverse.jmacro.core.interfaces.Constants;
 import lombok.Getter;
 
 import javax.script.Bindings;
@@ -31,10 +32,11 @@ public class ArgsCommandProvider implements CommandProvider<ArgsCommandProvider.
         return new ArgsCommand(getName(), core, scriptEngine);
     }
 
-    public static class ArgsCommand extends Command implements Constants {
+    public static class ArgsCommand extends AbstractCommand implements CallableCommand<String, Object>, Constants {
 
         @Getter
         private List<String> args = null;
+
         @Getter
         private Map<String, ?> argm = null;
 
@@ -42,6 +44,7 @@ public class ArgsCommandProvider implements CommandProvider<ArgsCommandProvider.
             super(name, core, scriptEngine);
         }
 
+        @Override
         public void allCommandsRegistered() {
             Bindings bindings = getScriptEngine().getBindings(ScriptContext.ENGINE_SCOPE);
             this.setArgs((List<String>) bindings.get(ARGV));
@@ -49,9 +52,9 @@ public class ArgsCommandProvider implements CommandProvider<ArgsCommandProvider.
 
         synchronized private void setArgs(List<String> argsOrig) {
             if (this.args == null) {
-                var args = new ArrayList<String>();
-                args.addAll(argsOrig);
-                String scriptLocation= SCRIPT_LOCATION  + "=" + (args.size() > 0 ? args.get(0) : "");
+                getScriptLogger().warn("Setting args to " + argsOrig);
+                var args = new LinkedList<>(argsOrig);
+                String scriptLocation = SCRIPT_LOCATION + "=" + (args.size() > 0 ? args.get(0) : "");
                 if (args.size() > 0) {
                     args.set(0, scriptLocation);
                 } else {
@@ -60,8 +63,7 @@ public class ArgsCommandProvider implements CommandProvider<ArgsCommandProvider.
                 this.args = Collections.unmodifiableList(args);
 
                 Map<String, Object> argsMap = new LinkedHashMap<>();
-                this.args.forEach(arg -> {
-                    String key = cleanKey(arg);
+                this.args.forEach(key -> {
                     Object value = true;
                     if (key.contains("=")) {
                         String[] parts = key.split("=", 2);
@@ -72,13 +74,17 @@ public class ArgsCommandProvider implements CommandProvider<ArgsCommandProvider.
                 });
                 this.argm = Collections.unmodifiableMap(argsMap);
             } else {
-                throw new JMacroException("Args already setted!");
+                throw new JMacroException("Args already set!");
             }
         }
 
+        @Override
+        public Object call(String argName) {
+            return get(argName);
+        }
+
         public boolean isIncluded() {
-            Object included = argm.get(INCLUDED);
-            return included != null && ((boolean) included) == true;
+            return args.get(0).startsWith(INCLUDED);
         }
 
         public <T> T get(String key) {
@@ -117,13 +123,6 @@ public class ArgsCommandProvider implements CommandProvider<ArgsCommandProvider.
             }
             // otherwise, keeps given value
             return value;
-        }
-
-        private String cleanKey(String key) {
-//            while (key.startsWith("-")) {
-//                key = key.substring(1);
-//            }
-            return key;
         }
 
         @Override

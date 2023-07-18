@@ -2,8 +2,8 @@ package com.itquasar.multiverse.jmacro.commands.datax.commands
 
 
 import com.itquasar.multiverse.jmacro.commands.datax.commands.com.COMWrapper
-import com.itquasar.multiverse.jmacro.core.Command
-import com.itquasar.multiverse.jmacro.core.Core
+import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
+import com.itquasar.multiverse.jmacro.core.engine.Core
 import com.jacob.activeX.ActiveXComponent
 import com.jacob.com.ComThread
 import com.jacob.com.LibraryLoader
@@ -13,7 +13,7 @@ import groovy.transform.CompileDynamic
 import javax.script.ScriptEngine
 import java.util.concurrent.atomic.AtomicBoolean
 
-class COMCommand extends Command implements AutoCloseable {
+class COMCommand extends AbstractCommand implements AutoCloseable {
 
     @Lazy
     static final Variant NO_PARAM = { new Variant().putNoParam() }()

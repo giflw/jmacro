@@ -3,7 +3,7 @@ package com.itquasar.multiverse.jmacro.cli;
 import com.itquasar.multiverse.jmacro.commands.base.commands.ConfigurationCommand;
 import com.itquasar.multiverse.jmacro.commands.base.commands.ConsoleCommand;
 import com.itquasar.multiverse.jmacro.commands.base.commands.CredentialsCommand;
-import com.itquasar.multiverse.jmacro.core.WrappingCommand;
+import com.itquasar.multiverse.jmacro.core.command.WrappingCommand;
 import com.itquasar.multiverse.jmacro.core.exception.ExitException;
 import com.itquasar.multiverse.jmacro.core.script.Metadata;
 import com.itquasar.multiverse.jmacro.core.script.Script;
@@ -91,7 +91,7 @@ public class Shell implements Callable<CliResult> {
             scriptEngine -> {
                 Bindings bindings = scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
                 CredentialsCommand bindedCredentials = (CredentialsCommand) bindings.get("credentials");
-                bindedCredentials.fill(credentials);
+                bindedCredentials.get().fill(credentials);
                 ConfigurationCommand bindedConfiguration = (ConfigurationCommand) bindings.get("configuration");
                 bindedConfiguration.fill(configuration);
             },

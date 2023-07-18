@@ -1,7 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
 import com.itquasar.multiverse.jmacro.commands.base.commands.IncludeCommand;
-import com.itquasar.multiverse.jmacro.core.Core;
+import com.itquasar.multiverse.jmacro.core.engine.Core;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
 

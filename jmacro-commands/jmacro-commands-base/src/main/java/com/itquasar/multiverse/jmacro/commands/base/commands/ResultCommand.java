@@ -1,14 +1,14 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands;
 
-import com.itquasar.multiverse.jmacro.core.Command;
-import com.itquasar.multiverse.jmacro.core.Constants;
-import com.itquasar.multiverse.jmacro.core.Core;
-import com.itquasar.multiverse.jmacro.core.EngineResult;
+import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
+import com.itquasar.multiverse.jmacro.core.interfaces.Constants;
+import com.itquasar.multiverse.jmacro.core.engine.Core;
+import com.itquasar.multiverse.jmacro.core.engine.EngineResult;
 import com.itquasar.multiverse.jmacro.core.exception.ExitException;
 
 import javax.script.ScriptEngine;
 
-public class ResultCommand<T, E extends Throwable> extends Command implements EngineResult<T, E>, Constants {
+public class ResultCommand<T, E extends Throwable> extends AbstractCommand implements EngineResult<T, E>, Constants {
 
     private T value;
 

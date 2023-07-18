@@ -1,6 +1,6 @@
 package com.itquasar.multiverse.jmacro.core.jmx;
 
-import com.itquasar.multiverse.jmacro.core.Core;
+import com.itquasar.multiverse.jmacro.core.engine.Core;
 import com.j256.simplejmx.common.JmxAttributeField;
 import com.j256.simplejmx.common.JmxAttributeMethod;
 import com.j256.simplejmx.common.JmxOperation;

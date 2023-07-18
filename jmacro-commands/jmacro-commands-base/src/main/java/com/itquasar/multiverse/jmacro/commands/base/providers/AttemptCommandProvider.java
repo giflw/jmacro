@@ -1,9 +1,9 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
 import com.itquasar.multiverse.jmacro.commands.base.Result;
-import com.itquasar.multiverse.jmacro.core.Command;
-import com.itquasar.multiverse.jmacro.core.Constants;
-import com.itquasar.multiverse.jmacro.core.Core;
+import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
+import com.itquasar.multiverse.jmacro.core.interfaces.Constants;
+import com.itquasar.multiverse.jmacro.core.engine.Core;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.exception.ExitException;
 
@@ -29,7 +29,7 @@ public class AttemptCommandProvider implements CommandProvider<AttemptCommandPro
         return new AttemptCommand(getName(), core, scriptEngine);
     }
 
-    public static class AttemptCommand extends Command implements Constants {
+    public static class AttemptCommand extends AbstractCommand implements Constants {
 
         private static final List<String> ALLOWED_VERBOSITY = List.of(QUIET, VERBOSE);
 

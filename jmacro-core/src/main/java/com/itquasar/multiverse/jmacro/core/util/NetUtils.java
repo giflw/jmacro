@@ -1,6 +1,7 @@
-package com.itquasar.multiverse.jmacro.core;
+package com.itquasar.multiverse.jmacro.core.util;
 
-import lombok.experimental.UtilityClass;
+import com.itquasar.multiverse.jmacro.core.configuration.InitializationProvider;
+import com.itquasar.multiverse.jmacro.core.engine.Engine;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;

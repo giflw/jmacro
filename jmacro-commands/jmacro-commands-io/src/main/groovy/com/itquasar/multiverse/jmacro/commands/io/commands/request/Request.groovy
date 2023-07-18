@@ -1,7 +1,8 @@
 package com.itquasar.multiverse.jmacro.commands.io.commands.request
 
-import com.itquasar.multiverse.jmacro.core.Command
-import com.itquasar.multiverse.jmacro.core.Constants
+import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
+import com.itquasar.multiverse.jmacro.core.command.CommandUtils
+import com.itquasar.multiverse.jmacro.core.interfaces.Constants
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
 import org.apache.hc.client5.http.HttpHostConnectException
@@ -71,7 +72,7 @@ class Request implements Constants {
         closure.resolveStrategy = Closure.DELEGATE_FIRST
         closure()
         if (this.skipExecution) {
-            Command.log(bindings, WARNING, "Skipping execution: skipExecution = ${skipExecution}")
+            CommandUtils.log(bindings, WARNING, "Skipping execution: skipExecution = ${skipExecution}")
         } else {
             if (!this.executed) {
                 this.execute()
@@ -82,7 +83,7 @@ class Request implements Constants {
 
     Response getResponse() {
         if (!this.executed) {
-            Command.raise(bindings, 'Request not executed yet')
+            CommandUtils.raise('Request not executed yet')
         }
         return response
     }
@@ -120,7 +121,7 @@ class Request implements Constants {
                 InetSocketAddress address = (InetSocketAddress) proxy.address()
                 this.proxy(address.hostName, address.port)
             } else {
-                Command.log(this.bindings, ERROR, "No system proxy of type HTTP found for ${this.url}")
+                CommandUtils.log(this.bindings, ERROR, "No system proxy of type HTTP found for ${this.url}")
             }
         } else {
             this.proxy()
@@ -146,7 +147,7 @@ class Request implements Constants {
             def value = this.headers[header]
             return value
         }
-        return Command.propertyMissingOn(bindings, name)
+        return CommandUtils.propertyMissingOn(bindings, name)
     }
 
     /**
@@ -174,7 +175,7 @@ class Request implements Constants {
             this.httpRequest = HTTPFluentRequest.create(method, url)
             return this
         } else {
-            return Command.methodMissingOnOrChainToContext(bindings, body, name, args)
+            return AbstractCommand.methodMissingOnOrChainToContext(bindings, body, name, args)
         }
     }
 
@@ -224,9 +225,9 @@ class Request implements Constants {
         try {
             this.process()
         } catch (HttpResponseException ex) {
-            Command.log(bindings, ERROR, "Error ${ex.statusCode}: ${ex.reasonPhrase}", ex)
+            CommandUtils.log(bindings, ERROR, "Error ${ex.statusCode}: ${ex.reasonPhrase}", ex)
         } catch (NoHttpResponseException ex) {
-            Command.log(bindings, ERROR, "Error: no response received", ex)
+            CommandUtils.log(bindings, ERROR, "Error: no response received", ex)
         } catch (Exception ex) {
             throw new JMacroException(this, "Error requesting $method $url: ${ex?.message}", ex)
         }
@@ -234,15 +235,15 @@ class Request implements Constants {
     }
 
     protected Request process() {
-        Command.log(bindings, INFO, "Connecting to $method $url")
+        CommandUtils.log(bindings, INFO, "Connecting to $method $url")
         headers.each {
-            Command.log(bindings, TRACE, "[HTTP Header] ${it.key}: ${it.value}")
+            CommandUtils.log(bindings, TRACE, "[HTTP Header] ${it.key}: ${it.value}")
         }
 
-        Command.log(bindings, DEBUG, 'Creating new response object')
+        CommandUtils.log(bindings, DEBUG, 'Creating new response object')
 
         def credentials = this.bindings.get('credentials') as CredentialsProvider
-        Command.log(bindings, WARNING, "HTTP Credentials: $credentials")
+        CommandUtils.log(bindings, WARNING, "HTTP Credentials: $credentials")
 
         HttpClientBuilder clientBuilder = HttpClients.custom()
 
@@ -276,25 +277,25 @@ class Request implements Constants {
             httpResponse = (HttpResponse) tuple.get(0)
             content = (Content) tuple.get(1)
         } catch (HttpHostConnectException ex) {
-            Command.log(bindings, ERROR, "Error requesting $method $url: ${ex?.message}")
-            Command.log(bindings, DEBUG, "Error requesting $method $url: ${ex?.message}", ex)
+            CommandUtils.log(bindings, ERROR, "Error requesting $method $url: ${ex?.message}")
+            CommandUtils.log(bindings, DEBUG, "Error requesting $method $url: ${ex?.message}", ex)
             httpResponse = DefaultHttpResponseFactory.INSTANCE.newHttpResponse(520, "Web Server Returned an Unknown Error")
             content = new Content(ex.getMessage().getBytes(StandardCharsets.UTF_8), ContentType.create("text/plain", StandardCharsets.UTF_8))
         }
 
         Response response = new Response("$method $url", httpResponse, content, doNotParseResponse)
         if (httpResponse.code >= 400) {
-            Command.log(bindings, ERROR, "Request returned ${httpResponse.code}: ${Response.HTTP_STATUS[httpResponse.code]}")
+            CommandUtils.log(bindings, ERROR, "Request returned ${httpResponse.code}: ${Response.HTTP_STATUS[httpResponse.code]}")
             def message = response?.data
             if (message) {
                 message = message.respondsTo('text') ? message.invokeMethod('text', null) : message
                 message = message.hasProperty('message') ? message['message'] : message
             }
-            Command.log(bindings, ERROR, "Server message $message")
+            CommandUtils.log(bindings, ERROR, "Server message $message")
         } else {
-            Command.log(bindings, INFO, "Request returned ${httpResponse.code}: ${Response.HTTP_STATUS[httpResponse.code]}")
+            CommandUtils.log(bindings, INFO, "Request returned ${httpResponse.code}: ${Response.HTTP_STATUS[httpResponse.code]}")
         }
-        Command.log(bindings, DEBUG, 'New response object created')
+        CommandUtils.log(bindings, DEBUG, 'New response object created')
         this.response = response
         return this
     }

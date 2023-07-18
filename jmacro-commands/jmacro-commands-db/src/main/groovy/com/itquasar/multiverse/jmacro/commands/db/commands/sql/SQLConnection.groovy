@@ -1,12 +1,10 @@
 package com.itquasar.multiverse.jmacro.commands.db.commands.sql
 
-import javax.script.Bindings
 
 import com.itquasar.multiverse.jmacro.commands.db.commands.SQLCommand
-import com.itquasar.multiverse.jmacro.core.Command
-import com.itquasar.multiverse.jmacro.core.Constants
-import com.itquasar.multiverse.jmacro.core.interfaces.ToMap
-
+import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
+import com.itquasar.multiverse.jmacro.core.command.CommandUtils
+import com.itquasar.multiverse.jmacro.core.interfaces.Constants
 import groovy.sql.Sql
 import groovy.transform.CompileDynamic
 import lombok.SneakyThrows
@@ -21,10 +19,10 @@ public class SQLConnection implements AutoCloseable, Constants {
         this.sqlCommand = sqlCommand
     }
 
-    // TODO add support to receive another Sql instance 
-	// FIXME return this
+    // TODO add support to receive another Sql instance
+    // FIXME return this
     Sql connect(final String url, final String user = null, final String password = null) {
-        Command.log(this.sqlCommand.bindings, WARNING, "Connecting to ${url} as ${user}")
+        CommandUtils.log(this.sqlCommand.bindings, WARNING, "Connecting to ${url} as ${user}")
         this.sql = Sql.newInstance(url, user, password)
         return this.sql
     }
@@ -41,7 +39,7 @@ public class SQLConnection implements AutoCloseable, Constants {
             this.sqlCommand.notifyClosed(this)
         }
     }
-    
+
     SQLConnection setBatchSize(int batchSize) {
         this.batchSize = batchSize
         return this
@@ -50,14 +48,14 @@ public class SQLConnection implements AutoCloseable, Constants {
     @CompileDynamic
     def methodMissing(String name, def args) {
         if (this.sql.respondsTo(name)) {
-            Command.methodMissingOn(this.sql, name, args)
+            AbstractCommand.methodMissingOn(this.sql, name, args)
         }
         if (this.sql?.connection.respondsTo(name)) {
-            Command.methodMissingOn(this.sql.connection, name, args)
+            AbstractCommand.methodMissingOn(this.sql.connection, name, args)
         }
         if (name.contains(" ") || name.contains(";")) {
             String command = name.contains(" ") ? name.substring(0, name.indexOf(" ")).trim().toUpperCase() : name
-            switch(command) {
+            switch (command) {
                 case "SELECT":
                     // FIXME allow use of positional substitution, not only named
                     return args ? sql.rows(*args, name) : sql.rows(name)
@@ -66,7 +64,7 @@ public class SQLConnection implements AutoCloseable, Constants {
                 case "UPDATE":
                 case "DELETE":
                     if (args && args[0] != null) {
-                        if (args.length == 1 && Map.isInstance(args[0]) ) {
+                        if (args.length == 1 && Map.isInstance(args[0])) {
                             return this.sql.execute(*args, name)
                         }
                         // suppose array or list of maps
@@ -83,10 +81,10 @@ public class SQLConnection implements AutoCloseable, Constants {
                     return this.sql.execute(name)
             }
         }
-        return Command.methodMissingOn(this.sqlCommand.bindings, name, args)
+        return AbstractCommand.methodMissingOn(this.sqlCommand.bindings, name, args)
     }
-    
+
     def propertyMissing(String name) {
-        return Command.propertyMissingOnOrChainToContext(this.sqlCommand, this.sql, name)
+        return CommandUtils.propertyMissingOnOrChainToContext(this.sqlCommand, this.sql, name)
     }
 }

@@ -1,7 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
 import com.itquasar.multiverse.jmacro.commands.base.commands.MomentCommand;
-import com.itquasar.multiverse.jmacro.core.Core;
+import com.itquasar.multiverse.jmacro.core.engine.Core;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 
 import javax.script.ScriptEngine;

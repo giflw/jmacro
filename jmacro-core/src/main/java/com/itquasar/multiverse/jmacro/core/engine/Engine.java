@@ -1,5 +1,7 @@
-package com.itquasar.multiverse.jmacro.core;
+package com.itquasar.multiverse.jmacro.core.engine;
 
+import com.itquasar.multiverse.jmacro.core.configuration.InitializationProvider;
+import com.itquasar.multiverse.jmacro.core.util.SPILoader;
 import com.itquasar.multiverse.jmacro.core.script.Script;
 import com.itquasar.multiverse.jmacro.core.script.ScriptResult;
 import org.apache.logging.log4j.LogManager;
@@ -7,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
@@ -47,6 +50,9 @@ public abstract class Engine {
         return this.execute(script, Collections.emptyList(), preExecHook, postExecHook);
     }
 
+    public ScriptResult<?, ?> execute(Script script, String... args) throws ScriptException {
+        return this.execute(script, Arrays.asList(args));
+    }
 
     /**
      * Execute script with no operation preExecHook.
@@ -57,7 +63,7 @@ public abstract class Engine {
      * @throws ScriptException if some error occurs.
      */
     public ScriptResult<?, ?> execute(Script script, List<String> args) throws ScriptException {
-        return this.execute(script, Collections.emptyList(), (scriptEngine) -> { /* NO-OP */ },  (scriptEngine) -> { /* NO-OP */ });
+        return this.execute(script, args, (scriptEngine) -> { /* NO-OP */ },  (scriptEngine) -> { /* NO-OP */ });
     }
 
     /**

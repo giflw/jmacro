@@ -1,6 +1,6 @@
 package com.itquasar.multiverse.jmacro.core.repository;
 
-import com.itquasar.multiverse.jmacro.core.SPILoader;
+import com.itquasar.multiverse.jmacro.core.util.SPILoader;
 import com.itquasar.multiverse.jmacro.core.configuration.Configuration;
 
 import java.net.URI;

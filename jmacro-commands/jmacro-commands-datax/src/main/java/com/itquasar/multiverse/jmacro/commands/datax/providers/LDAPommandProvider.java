@@ -1,7 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.datax.providers;
 
 import com.itquasar.multiverse.jmacro.commands.datax.commands.LDAPCommand;
-import com.itquasar.multiverse.jmacro.core.Core;
+import com.itquasar.multiverse.jmacro.core.engine.Core;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 
 import javax.script.ScriptEngine;

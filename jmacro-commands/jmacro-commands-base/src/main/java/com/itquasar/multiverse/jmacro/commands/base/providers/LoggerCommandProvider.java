@@ -1,13 +1,14 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
-import com.itquasar.multiverse.jmacro.core.Command;
-import com.itquasar.multiverse.jmacro.core.Core;
-import com.itquasar.multiverse.jmacro.core.WrappingCommand;
+import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
+import com.itquasar.multiverse.jmacro.core.engine.Core;
+import com.itquasar.multiverse.jmacro.core.command.WrappingCommand;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import org.apache.logging.log4j.Logger;
 
 import javax.script.ScriptEngine;
 
+@SuppressWarnings("rawtypes")
 public class LoggerCommandProvider implements CommandProvider<WrappingCommand> {
 
     @Override
@@ -22,7 +23,7 @@ public class LoggerCommandProvider implements CommandProvider<WrappingCommand> {
 
     @Override
     public WrappingCommand<Logger> getCommand(Core core, ScriptEngine scriptEngine) {
-        return new WrappingCommand<>(Command::getScriptLogger, getName(), core, scriptEngine, false);
+        return new WrappingCommand<>(AbstractCommand::getScriptLogger, getName(), core, scriptEngine, false);
     }
 
 }

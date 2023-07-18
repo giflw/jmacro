@@ -3,8 +3,9 @@ package com.itquasar.multiverse.jmacro.commands.datax.commands;
 import com.itquasar.multiverse.jmacro.commands.datax.commands.ldap.LDAPAuthenticator;
 import com.itquasar.multiverse.jmacro.commands.datax.commands.ldap.LDAPConstants;
 import com.itquasar.multiverse.jmacro.commands.datax.commands.ldap.api.AuthUser;
-import com.itquasar.multiverse.jmacro.core.Command;
-import com.itquasar.multiverse.jmacro.core.Core;
+import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
+import com.itquasar.multiverse.jmacro.core.command.CommandUtils;
+import com.itquasar.multiverse.jmacro.core.engine.Core;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.itquasar.multiverse.jmacro.core.interfaces.ToMap;
 import groovy.lang.Closure;
@@ -14,7 +15,7 @@ import javax.script.ScriptEngine;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class LDAPCommand extends Command implements AutoCloseable, LDAPConstants {
+public class LDAPCommand extends AbstractCommand implements AutoCloseable, LDAPConstants {
 
     private LDAPAuthenticator authenticator = null;
     private final Map<String, String> config = new LinkedHashMap<>() {{
@@ -35,7 +36,7 @@ public class LDAPCommand extends Command implements AutoCloseable, LDAPConstants
     }
 
     LDAPCommand call(Closure closure) {
-        Command.callDelegating(new LDAPCommand(getName(), getCore(), getScriptEngine()), closure);
+        CommandUtils.callDelegating(new LDAPCommand(getName(), getCore(), getScriptEngine()), closure);
         return this;
     }
 
@@ -87,7 +88,7 @@ public class LDAPCommand extends Command implements AutoCloseable, LDAPConstants
         if (DYNAMIC_PROPS_NAMES.contains(name)) {
             return this.config.get(DYNAMIC_PROPERTIES.get(name));
         }
-        return Command.propertyMissingOnOrChainToContext(this, this.authenticator, name);
+        return CommandUtils.propertyMissingOnOrChainToContext(this, this.authenticator, name);
     }
 
     @Override
@@ -98,9 +99,8 @@ public class LDAPCommand extends Command implements AutoCloseable, LDAPConstants
         throw new JMacroException("Property " + name + " (set) not found. Check DYNAMIC_PROPERTIES list.");
     }
 
-    @Override
     public Object methodMissing(String name, Object args) {
-        return Command.methodMissingOnOrChainToContext(this, this.authenticator, name, args);
+        return CommandUtils.methodMissingOnOrChainToContext(this, this.authenticator, name, args);
     }
 
     @Override

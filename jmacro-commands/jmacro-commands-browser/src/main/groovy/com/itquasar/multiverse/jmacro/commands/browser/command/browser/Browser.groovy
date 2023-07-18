@@ -3,9 +3,9 @@ package com.itquasar.multiverse.jmacro.commands.browser.command.browser
 import com.itquasar.multiverse.jmacro.commands.base.commands.ConfigurationCommand
 import com.itquasar.multiverse.jmacro.commands.base.commands.CredentialsCommand
 import com.itquasar.multiverse.jmacro.commands.browser.command.BrowserCommand
-import com.itquasar.multiverse.jmacro.core.Command
-import com.itquasar.multiverse.jmacro.core.Constants
-import com.itquasar.multiverse.jmacro.core.Core
+import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
+import com.itquasar.multiverse.jmacro.core.interfaces.Constants
+import com.itquasar.multiverse.jmacro.core.engine.Core
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
 import groovy.util.logging.Log4j2
@@ -250,7 +250,7 @@ class Browser implements Constants {
         } catch (Exception ex) {
             scriptLogger.warn("$name not found on Browser. Trying context.")
             try {
-                Command.propertyMissingOn(getBindings(), name)
+                CommandUtils.propertyMissingOn(getBindings(), name)
             } catch (Exception ex2) {
                 throw new JMacroException("$name not found on Browser nor context", ex2)
             }
@@ -263,7 +263,7 @@ class Browser implements Constants {
         if (driver.respondsTo(name, args)) {
             return driver."${name}"(*args)
         }
-        return Command.methodMissingOn(getBindings(), name, args)
+        return AbstractCommand.methodMissingOn(getBindings(), name, args)
     }
 
     JFile screenshot(Path destinationFile) {

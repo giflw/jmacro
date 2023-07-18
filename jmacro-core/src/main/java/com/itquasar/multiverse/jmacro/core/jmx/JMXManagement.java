@@ -1,8 +1,8 @@
 package com.itquasar.multiverse.jmacro.core.jmx;
 
-import com.itquasar.multiverse.jmacro.core.Core;
-import com.itquasar.multiverse.jmacro.core.NetUtils;
-import com.itquasar.multiverse.jmacro.core.SPILoader;
+import com.itquasar.multiverse.jmacro.core.engine.Core;
+import com.itquasar.multiverse.jmacro.core.util.NetUtils;
+import com.itquasar.multiverse.jmacro.core.util.SPILoader;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.j256.simplejmx.client.JmxClient;
 import com.j256.simplejmx.server.JmxServer;

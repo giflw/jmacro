@@ -1,11 +1,10 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
-import com.itquasar.multiverse.jmacro.core.CallableCommand;
-import com.itquasar.multiverse.jmacro.core.Command;
-import com.itquasar.multiverse.jmacro.core.Constants;
-import com.itquasar.multiverse.jmacro.core.Core;
+import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
+import com.itquasar.multiverse.jmacro.core.engine.Core;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
+import com.itquasar.multiverse.jmacro.core.interfaces.Constants;
 
 import javax.script.ScriptEngine;
 import java.util.*;
@@ -27,7 +26,7 @@ public class RequireCommandProvider implements CommandProvider<RequireCommandPro
         return new RequireCommand(getName(), core, scriptEngine);
     }
 
-    public static class RequireCommand extends CallableCommand<RequireCommand> implements Constants {
+    public static class RequireCommand extends AbstractCommand implements Constants {
 
         public RequireCommand(String name, Core core, ScriptEngine scriptEngine) {
             super(name, core, scriptEngine);
@@ -91,25 +90,6 @@ public class RequireCommandProvider implements CommandProvider<RequireCommandPro
                     getScriptLogger().warn("Required command found: " + commandName + " = " + command);
                 }
             );
-        }
-
-        @Override
-        public Object methodMissing(String name, Object args) {
-            if (args instanceof Object[] arr) {
-                args = Arrays.toString(arr);
-            }
-            throw new JMacroException("Method missing not implemented in " + this.getClass().getSimpleName() + " [" + name + "(" + args + ")]");
-        }
-
-        @Override
-        public Object propertyMissing(String name) {
-            call(name);
-            return null;
-        }
-
-        @Override
-        public Object propertyMissing(String name, Object arg) {
-            throw new JMacroException("Property missing (set) not implemented in " + this.getClass().getSimpleName());
         }
 
     }

@@ -33,7 +33,7 @@
         <checks.fail>false</checks.fail>
         <checkstyle.fail>${checks.fail}</checkstyle.fail>
 
-        <lombok.version>1.18.20</lombok.version>
+        <lombok.version>1.18.28</lombok.version>
         <vavr.version>0.10.4</vavr.version>
         <checker.version>3.18.0</checker.version>
         <picocli.version>4.7.1</picocli.version>
@@ -152,6 +152,7 @@
                     <version>3.11.0</version>
                     <inherited>true</inherited>
                     <configuration>
+                        <compilerArgs>--enable-preview</compilerArgs>
                         <useIncrementalCompilation>true</useIncrementalCompilation>
                         <showDeprecation>true</showDeprecation>
                         <showWarnings>true</showWarnings>

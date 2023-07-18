@@ -1,7 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.terminal.providers;
 
 import com.itquasar.multiverse.jmacro.commands.terminal.commands.TN3270Command;
-import com.itquasar.multiverse.jmacro.core.Core;
+import com.itquasar.multiverse.jmacro.core.engine.Core;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.tn3270j.WaitMode;
 

@@ -1,83 +1,17 @@
-package com.itquasar.multiverse.jmacro.core
+package com.itquasar.multiverse.jmacro.core.command
 
-import com.itquasar.multiverse.jmacro.core.annotations.NotInherited
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
+import com.itquasar.multiverse.jmacro.core.interfaces.Constants
 import groovy.transform.CompileDynamic
 import io.vavr.control.Try
-import org.apache.logging.log4j.Logger
 
 import javax.script.Bindings
 import javax.script.ScriptContext
-import javax.script.ScriptEngine
 
-abstract class Command implements Constants {
+class CommandUtils implements Constants {
 
-    private final String name
-    private final Core core
-    private final ScriptEngine scriptEngine
-    private final ScriptContext context
-    private final Bindings bindings
-
-    /**
-     * Logger instance to use. This is got from script engine context attribute, or explicitly given.
-     */
-    private final Logger scriptLogger
-
-    /**
-     * @param name Injected from command provider
-     * @param core Injected from command provider
-     * @param scriptEngine Script engine instance to get context, from which we get logger attribute.
-     */
-    Command(String name, final Core core, final ScriptEngine scriptEngine) {
-        if (name == '') {
-            name = this.getClass().name
-        }
-        Objects.requireNonNull(name, "Name must be not null")
-        Objects.requireNonNull(core, "Core must be not null")
-        Objects.requireNonNull(scriptEngine, "Script engine must be not null")
-        this.name = name
-        this.core = core
-        this.scriptEngine = scriptEngine
-
-        this.context = scriptEngine.getContext()
-        Objects.requireNonNull(this.context, "Script context must be not null")
-
-        this.bindings = this.context.getBindings(ScriptContext.ENGINE_SCOPE)
-        Objects.requireNonNull(this.bindings, "Bindings must be not null")
-
-        this.scriptLogger = (Logger) this.context.getBindings(ScriptContext.GLOBAL_SCOPE).get("logger")
-        Objects.requireNonNull(this.scriptLogger, "Logger must be not null")
-    }
-
-    // FIXME find better name
-    void allCommandsLoaded() {
-        // called after registration and before allCommandsRegistered hook
-    }
-
-    void allCommandsRegistered() {
-        // called after command is registered
-    }
-
-    @CompileDynamic
-    def dynamicMethodCall(String name, def args) {
-        return this."$name"(*args)
-    }
-
-    @CompileDynamic
-    @NotInherited
-    def methodMissing(String name, def args) {
-        return this.bindings."$name"(*args)
-    }
-
-    @CompileDynamic
-    @NotInherited
-    def propertyMissing(String name) {
-        return this.bindings."$name"
-    }
-
-    @NotInherited
-    def propertyMissing(String name, def arg) {
-        throw new JMacroException("Unsupported operation: propertyMissing(name, value)")
+    private CommandUtils() {
+        throw new UnsupportedOperationException("Utility class should be instantiated")
     }
 
     static methodMissingOn(def object, String name, def args) {
@@ -90,7 +24,7 @@ abstract class Command implements Constants {
         return args != null ? object."$name"(*args) : object."$name"()
     }
 
-    static methodMissingOnOrChainToContext(Command command, def target, String name, def args) {
+    static methodMissingOnOrChainToContext(AbstractCommand command, def target, String name, def args) {
         return methodMissingOnOrChainToContext(command.bindings, target, name, args)
     }
 
@@ -101,10 +35,12 @@ abstract class Command implements Constants {
     static methodMissingOnOrChainToContext(Bindings bindings, def target, String name, def args) {
         Try.of({ it -> methodMissingOn(target, name, args, bindings) })
             .orElse(Try.of({ methodMissingOn(bindings, name, args, bindings) }))
-            .getOrElseThrow({ it -> throw new JMacroException("Method missing redirection error: $name ($args)", it) })
+            .getOrElseThrow({ it ->
+                throw new JMacroException("Method missing redirection error: $name ($args)", it)
+            })
     }
 
-    static propertyMissingOn(Command command, String name) {
+    static propertyMissingOn(AbstractCommand command, String name) {
         return propertyMissingOn(command.bindings, name)
     }
 
@@ -119,7 +55,7 @@ abstract class Command implements Constants {
             .getOrElseThrow({ it -> new JMacroException("Property missing (get) redirection error: $name", it) })
     }
 
-    static propertyMissingOnOrChainToContext(Command command, def target, String name) {
+    static propertyMissingOnOrChainToContext(AbstractCommand command, def target, String name) {
         return propertyMissingOnOrChainToContext(command.context, target, name)
     }
 
@@ -129,7 +65,7 @@ abstract class Command implements Constants {
             .getOrElseThrow({ it -> new JMacroException("Property missing (get) redirection error: $name", it) })
     }
 
-    static propertyMissingOn(Command command, String name, def arg) {
+    static propertyMissingOn(AbstractCommand command, String name, def arg) {
         return propertyMissingOn(command.bindings, name, arg)
     }
 
@@ -144,7 +80,7 @@ abstract class Command implements Constants {
 
     }
 
-    static propertyMissingOnOrChainToContext(Command command, def target, String name, def arg) {
+    static propertyMissingOnOrChainToContext(AbstractCommand command, def target, String name, def arg) {
         return propertyMissingOnOrChainToContext(command.context, target, name, arg)
     }
 
@@ -154,14 +90,6 @@ abstract class Command implements Constants {
             .getOrElseThrow({ it -> new JMacroException("Property missing (set) redirection error: $name = $arg", it) })
     }
 
-
-    void echo(Object message) {
-        echo(bindings, message)
-    }
-
-    void raise(String message) {
-        raise(bindings, message)
-    }
 
     static callDelegating(Object delegate, Closure closure) {
         closure.delegate = delegate
@@ -173,17 +101,10 @@ abstract class Command implements Constants {
         return bindings.get(name).invokeMethod('call', object)
     }
 
-    static echo(Bindings bindings, String message) {
-        return callOn(bindings, 'echo', message)
+    static raise(String message) {
+        throw new JMacroException(message);
     }
 
-    static echo(Bindings bindings, Object message) {
-        return callOn(bindings, 'echo', message)
-    }
-
-    static raise(Bindings bindings, String message) {
-        return callOn(bindings, 'raise', message)
-    }
 
     static log(ScriptContext scriptContext, String level = DEBUG, String message, Throwable throwable = null) {
         log(scriptContext.getBindings(ScriptContext.ENGINE_SCOPE), level, message, throwable)
@@ -197,27 +118,21 @@ abstract class Command implements Constants {
         }
     }
 
-    String getName() {
-        return name
+    @CompileDynamic
+    static def callMethodAliasOrElse(AbstractCommand command, String name, def args, Closure orElse) {
+        if (command && name in ConsumerCommand.CALL_ALTERNATIVES && command.respondsTo("call", args)) {
+            return command.dynamicMethodCall("call", args)
+        } else {
+            return orElse()
+        }
     }
 
-    Core getCore() {
-        return core
+    static def callMethodAliasOrOnBindings(CallableCommand command, String name, def args) {
+        return callMethodAliasOrOnBindings(command instanceof AbstractCommand ? command as AbstractCommand : null, name, args)
     }
 
-    ScriptEngine getScriptEngine() {
-        return scriptEngine
-    }
-
-    ScriptContext getContext() {
-        return context
-    }
-
-    Bindings getBindings() {
-        return bindings
-    }
-
-    Logger getScriptLogger() {
-        return scriptLogger
+    @CompileDynamic
+    static def callMethodAliasOrOnBindings(AbstractCommand command, String name, def args) {
+        return callMethodAliasOrElse(command, name, args) { methodMissingOn(command.bindings, name, args) }
     }
 }

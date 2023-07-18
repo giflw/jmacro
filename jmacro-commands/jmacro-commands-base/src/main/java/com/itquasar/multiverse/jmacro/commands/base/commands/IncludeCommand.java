@@ -15,24 +15,20 @@ import javax.script.ScriptException;
 
 import com.itquasar.multiverse.jmacro.commands.base.providers.ExportCommandProvider;
 import com.itquasar.multiverse.jmacro.commands.base.providers.IncludeCommandProvider;
-import com.itquasar.multiverse.jmacro.core.Command;
-import com.itquasar.multiverse.jmacro.core.Core;
-import com.itquasar.multiverse.jmacro.core.SPILoader;
+import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
+import com.itquasar.multiverse.jmacro.core.engine.Core;
+import com.itquasar.multiverse.jmacro.core.util.SPILoader;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
-import com.itquasar.multiverse.jmacro.core.command.Doc;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.itquasar.multiverse.jmacro.core.repository.GlobalScriptRepository;
 import com.itquasar.multiverse.jmacro.core.script.Script;
 
 import groovy.lang.Closure;
 
-@Doc("Allows script inclusion, of any extensions installed on the engine.")
-public class IncludeCommand extends Command {
+public class IncludeCommand extends AbstractCommand {
 
-    @Doc("Global repository instance.")
     private final GlobalScriptRepository repository;
 
-    @Doc("File extension of running script.")
     private final String extension;
 
     public IncludeCommand(final String name, final GlobalScriptRepository repository, final Core core, final ScriptEngine scriptEngine) {
@@ -41,26 +37,15 @@ public class IncludeCommand extends Command {
         this.extension = scriptEngine.getFactory().getExtensions().get(0);
     }
 
-    @Doc("""
-         Include all exported objects from included scripts.
-         If extension is not supplied, same extensions as origin script will be used.
-
-         ```
-         include 'script_name_2.ext', 'script_name_2'
-         ```
-
-         See `export` command.
-         """)
-    public void call(@Doc(name = "includeName") final String... includeName) {
+    public void call(final String... includeName) {
         Arrays.stream(includeName).forEach(it -> this.call(includeName));
     }
 
-    public void call(@Doc(name = "includeName") final String includeName) {
+    public void call(final String includeName) {
         new Inclusion(this, this.getCore(), this.getScriptEngine(), Collections.emptyList()).from(includeName);
     }
 
-    @Doc("include { ObjA, ObjB } from 'script_name.ext'.")
-    public Inclusion call(@Doc(name = "includeObjects") final Closure contextNames) {
+    public Inclusion call(final Closure contextNames) {
         final var contextName = new ContextName();
         contextNames.setDelegate(contextName);
         contextNames.setResolveStrategy(Closure.DELEGATE_FIRST);

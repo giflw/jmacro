@@ -1,5 +1,6 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands.moment
 
+import com.itquasar.multiverse.jmacro.commands.base.BaseExtensionMethods
 import groovy.transform.CompileDynamic
 
 import java.time.DayOfWeek
@@ -37,9 +38,9 @@ class LocalDateTimeWrapper implements Comparable<LocalDateTimeWrapper> {
     LocalDateTimeWrapper workDayOrNext() {
         switch (localDateTime.dayOfWeek) {
             case DayOfWeek.SUNDAY:
-                return this + 1.day()
+                return this + BaseExtensionMethods.day(1)
             case DayOfWeek.SATURDAY:
-                return this + 2.days()
+                return this + BaseExtensionMethods.days(2)
             default:
                 return this
         }
@@ -48,9 +49,9 @@ class LocalDateTimeWrapper implements Comparable<LocalDateTimeWrapper> {
     LocalDateTimeWrapper workDayOrPrevious() {
         switch (localDateTime.dayOfWeek) {
             case DayOfWeek.SATURDAY:
-                return this - 1.day()
+                return this - BaseExtensionMethods.day(1)
             case DayOfWeek.SUNDAY:
-                return this - 2.days()
+                return this - BaseExtensionMethods.days(2)
             default:
                 return this
         }

@@ -1,7 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
-import com.itquasar.multiverse.jmacro.core.Command;
-import com.itquasar.multiverse.jmacro.core.Core;
+import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
+import com.itquasar.multiverse.jmacro.core.engine.Core;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 
 import javax.script.ScriptEngine;
@@ -23,7 +23,7 @@ public class ErrorCommandProvider implements CommandProvider<ErrorCommandProvide
         return new ErrorCommand(getName(), core, scriptEngine);
     }
 
-    public static class ErrorCommand extends Command {
+    public static class ErrorCommand extends AbstractCommand {
 
         public ErrorCommand(String name, Core core, ScriptEngine scriptEngine) {
             super(name, core, scriptEngine);

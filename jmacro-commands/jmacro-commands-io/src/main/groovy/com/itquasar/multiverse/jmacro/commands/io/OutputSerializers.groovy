@@ -1,7 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.io
 
 
-import com.itquasar.multiverse.jmacro.core.Constants
+import com.itquasar.multiverse.jmacro.core.interfaces.Constants
 import groovy.json.JsonOutput
 
 import java.nio.charset.Charset

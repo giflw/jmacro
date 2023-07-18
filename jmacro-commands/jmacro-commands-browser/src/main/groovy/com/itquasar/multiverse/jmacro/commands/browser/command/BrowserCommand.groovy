@@ -1,16 +1,18 @@
 package com.itquasar.multiverse.jmacro.commands.browser.command
 
 import com.itquasar.multiverse.jmacro.commands.browser.command.browser.Browser
-import com.itquasar.multiverse.jmacro.core.CallableCommand
-import com.itquasar.multiverse.jmacro.core.Constants
-import com.itquasar.multiverse.jmacro.core.Core
+import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
+import com.itquasar.multiverse.jmacro.core.command.AutoCloseableAll
+import com.itquasar.multiverse.jmacro.core.command.ConsumerCommand
 import com.itquasar.multiverse.jmacro.core.command.OnShutdown
+import com.itquasar.multiverse.jmacro.core.engine.Core
+import com.itquasar.multiverse.jmacro.core.interfaces.Constants
 
 import javax.script.ScriptEngine
 import java.util.concurrent.ConcurrentHashMap
 import java.util.function.Consumer
 
-class BrowserCommand extends CallableCommand<Browser> implements AutoCloseable, Constants, OnShutdown {
+class BrowserCommand extends AbstractCommand implements ConsumerCommand<Browser>, AutoCloseableAll, Constants, OnShutdown {
 
     public static final Map<String, Browser> INSTANCES = new ConcurrentHashMap<>()
 
@@ -44,6 +46,7 @@ class BrowserCommand extends CallableCommand<Browser> implements AutoCloseable, 
         close()
     }
 
+    @Override
     void close() {
         closeAll()
     }
@@ -52,9 +55,10 @@ class BrowserCommand extends CallableCommand<Browser> implements AutoCloseable, 
         INSTANCES.remove(instanceName)?.close()
     }
 
+    @Override
     void closeAll() {
         INSTANCES.forEach { instanceName, browser ->
-            INSTANCES.remove(instanceName).close()
+            this.close(instanceName)
         }
     }
 

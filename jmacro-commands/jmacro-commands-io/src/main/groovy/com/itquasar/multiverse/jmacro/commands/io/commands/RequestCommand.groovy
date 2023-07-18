@@ -1,8 +1,8 @@
 package com.itquasar.multiverse.jmacro.commands.io.commands
 
 import com.itquasar.multiverse.jmacro.commands.io.commands.request.Request
-import com.itquasar.multiverse.jmacro.core.Command
-import com.itquasar.multiverse.jmacro.core.Core
+import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
+import com.itquasar.multiverse.jmacro.core.engine.Core
 import groovy.transform.CompileDynamic
 
 import javax.script.ScriptContext
@@ -23,7 +23,7 @@ import javax.script.ScriptEngine
  *       body_call()
  *       // code
  *}* </pre>*/
-class RequestCommand extends Command {
+class RequestCommand extends AbstractCommand {
 
     RequestCommand(String name, Core core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)

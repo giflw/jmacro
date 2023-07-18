@@ -1,13 +1,13 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands
 
-import com.itquasar.multiverse.jmacro.core.Command
-import com.itquasar.multiverse.jmacro.core.Core
+import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
+import com.itquasar.multiverse.jmacro.core.engine.Core
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 
 import javax.script.ScriptEngine
 import java.util.concurrent.atomic.AtomicBoolean
 
-class TimerCommand extends Command implements AutoCloseable {
+class TimerCommand extends AbstractCommand implements AutoCloseable {
 
     private AtomicBoolean running = new AtomicBoolean(false)
     private Map<String, Long> partials = new LinkedHashMap()

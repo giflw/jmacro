@@ -2,15 +2,15 @@ package com.itquasar.multiverse.jmacro.commands.server.commands;
 
 import com.itquasar.multiverse.jmacro.commands.server.commands.httpd.Httpd;
 import com.itquasar.multiverse.jmacro.commands.server.commands.httpd.HttpdConfig;
-import com.itquasar.multiverse.jmacro.core.Command;
-import com.itquasar.multiverse.jmacro.core.Core;
+import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
+import com.itquasar.multiverse.jmacro.core.engine.Core;
 
 import javax.script.ScriptEngine;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class HttpdCommand extends Command implements AutoCloseable {
+public class HttpdCommand extends AbstractCommand implements AutoCloseable {
 
     private final Map<String, Httpd> servers = new LinkedHashMap<>();
 
@@ -30,7 +30,7 @@ public class HttpdCommand extends Command implements AutoCloseable {
     }
 
     public Httpd start(HttpdConfig httpdConfig) {
-        return this.servers.computeIfAbsent(httpdConfig.getAddress(), key -> new Httpd(httpdConfig));
+        return this.servers.computeIfAbsent(httpdConfig.getAddress(), key -> new Httpd(httpdConfig, getScriptLogger()));
     }
 
     /**

@@ -1,6 +1,6 @@
 package com.itquasar.multiverse.jmacro.core.script;
 
-import com.itquasar.multiverse.jmacro.core.EngineResult;
+import com.itquasar.multiverse.jmacro.core.engine.EngineResult;
 import lombok.Data;
 
 import java.util.Objects;

@@ -1,11 +1,9 @@
-package com.itquasar.multiverse.jmacro.core;
+package com.itquasar.multiverse.jmacro.core.configuration;
 
 import io.vavr.control.Try;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 
-import java.io.File;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;

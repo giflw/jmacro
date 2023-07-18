@@ -10,8 +10,8 @@ import java.util.List;
 
 import javax.script.ScriptEngine;
 
-import com.itquasar.multiverse.jmacro.core.Command;
-import com.itquasar.multiverse.jmacro.core.Core;
+import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
+import com.itquasar.multiverse.jmacro.core.engine.Core;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 
 import lombok.Getter;
@@ -39,7 +39,7 @@ public class Base64CommandProvider implements CommandProvider<Base64CommandProvi
         return new Base64Command(this.getName(), core, scriptEngine);
     }
 
-    static public class Base64Command extends Command {
+    static public class Base64Command extends AbstractCommand {
 
         public enum Codec {
 

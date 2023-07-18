@@ -2,7 +2,7 @@ package com.itquasar.multiverse.jmacro.commands.datax.commands.com
 
 import com.itquasar.multiverse.jmacro.commands.datax.commands.COMCommand.Application
 import com.itquasar.multiverse.jmacro.commands.datax.commands.com.enums.COMEnum
-import com.itquasar.multiverse.jmacro.core.Command
+import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
 import com.jacob.com.ComThread
 import com.jacob.com.Dispatch
 import com.jacob.com.Variant
@@ -38,7 +38,7 @@ class COMWrapper implements AutoCloseable {
     @CompileDynamic
     def methodMissing(String name, args) {
         try {
-            return Command.methodMissingOn(this.bindings, name, args)
+            return AbstractCommand.methodMissingOn(this.bindings, name, args)
         } catch (MissingMethodException exception) {
             def object = context.respondsTo('toDispatch') ? context.toDispatch() : context
             def transform = { value ->

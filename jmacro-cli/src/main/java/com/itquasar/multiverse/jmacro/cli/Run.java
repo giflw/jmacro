@@ -2,7 +2,7 @@ package com.itquasar.multiverse.jmacro.cli;
 
 import com.itquasar.multiverse.jmacro.commands.base.commands.ConfigurationCommand;
 import com.itquasar.multiverse.jmacro.commands.base.commands.CredentialsCommand;
-import com.itquasar.multiverse.jmacro.core.EngineResult;
+import com.itquasar.multiverse.jmacro.core.engine.EngineResult;
 import com.itquasar.multiverse.jmacro.core.script.Metadata;
 import com.itquasar.multiverse.jmacro.core.script.Script;
 import com.itquasar.multiverse.jmacro.core.script.ScriptResult;
@@ -153,7 +153,7 @@ public class Run implements Callable<CliResult> {
                 scriptEngine -> {
                     Bindings bindings = scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
                     CredentialsCommand bindedCredentials = (CredentialsCommand) bindings.get("credentials");
-                    bindedCredentials.fill(credentials);
+                    bindedCredentials.get().fill(credentials);
                     ConfigurationCommand bindedConfiguration = (ConfigurationCommand) bindings.get("configuration");
                     bindedConfiguration.fill(configuration);
                 },
