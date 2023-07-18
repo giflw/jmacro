@@ -1,6 +1,8 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands
 
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
+import com.itquasar.multiverse.jmacro.core.command.Command
+import com.itquasar.multiverse.jmacro.core.command.CommandUtils
 import com.itquasar.multiverse.jmacro.core.engine.Core
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
@@ -69,7 +71,7 @@ class HelpCommand extends AbstractCommand {
         String methods = methods(obj).findAll { fieldOrMethodName == null || it.name == fieldOrMethodName }.collect { toString(it) }.join("\n\n")
 
         return new StringBuilder()
-            .append("\n\n${AbstractCommand.isInstance(obj) ? 'COMMAND' : 'OBJECT'}\n\n")
+            .append("\n\n${Command.isInstance(obj) ? 'COMMAND' : 'OBJECT'}\n\n")
             .append("${commandName}: ${obj.class.simpleName}\n")
             .append("\tSuper classes: ${getSupers(obj.class).join('\n\t\t\t\t')}\n\n")
             .append("\t\t\t${(obj.class.getAnnotation(Doc.class)?.value() ?: 'Documentation not provided').split('\n').join('\n\t\t\t')}\n")

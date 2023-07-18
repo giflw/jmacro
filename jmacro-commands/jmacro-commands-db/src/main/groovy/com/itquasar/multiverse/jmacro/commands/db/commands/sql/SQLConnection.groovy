@@ -48,10 +48,10 @@ public class SQLConnection implements AutoCloseable, Constants {
     @CompileDynamic
     def methodMissing(String name, def args) {
         if (this.sql.respondsTo(name)) {
-            AbstractCommand.methodMissingOn(this.sql, name, args)
+            CommandUtils.methodMissingOn(this.sql, name, args)
         }
         if (this.sql?.connection.respondsTo(name)) {
-            AbstractCommand.methodMissingOn(this.sql.connection, name, args)
+            CommandUtils.methodMissingOn(this.sql.connection, name, args)
         }
         if (name.contains(" ") || name.contains(";")) {
             String command = name.contains(" ") ? name.substring(0, name.indexOf(" ")).trim().toUpperCase() : name
@@ -81,7 +81,7 @@ public class SQLConnection implements AutoCloseable, Constants {
                     return this.sql.execute(name)
             }
         }
-        return AbstractCommand.methodMissingOn(this.sqlCommand.bindings, name, args)
+        return CommandUtils.methodMissingOn(this.sqlCommand.bindings, name, args)
     }
 
     def propertyMissing(String name) {

@@ -50,27 +50,16 @@ abstract class AbstractCommand implements Command, Constants {
         Objects.requireNonNull(this.scriptLogger, "Logger must be not null")
     }
 
-    // FIXME find better name
-    void allCommandsLoaded() {
-        // called after registration and before allCommandsRegistered hook
-    }
-
-    void allCommandsRegistered() {
-        // called after command is registered
-    }
-
     @CompileDynamic
     def dynamicMethodCall(String name, def args) {
-        return this."$name"(*args)
+        return this.invokeMethod(name, args)
     }
 
 
     @CompileDynamic
-
     def propertyMissing(String name) {
         return this.bindings."$name"
     }
-
 
     def propertyMissing(String name, def arg) {
         throw new JMacroException("Unsupported operation: propertyMissing(name, value)")

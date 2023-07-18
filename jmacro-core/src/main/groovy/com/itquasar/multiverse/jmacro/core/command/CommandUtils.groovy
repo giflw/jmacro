@@ -33,7 +33,7 @@ class CommandUtils implements Constants {
     }
 
     static methodMissingOnOrChainToContext(Bindings bindings, def target, String name, def args) {
-        Try.of({ it -> methodMissingOn(target, name, args, bindings) })
+        Try.of({ -> methodMissingOn(target, name, args, bindings) })
             .orElse(Try.of({ methodMissingOn(bindings, name, args, bindings) }))
             .getOrElseThrow({ it ->
                 throw new JMacroException("Method missing redirection error: $name ($args)", it)
@@ -119,20 +119,15 @@ class CommandUtils implements Constants {
     }
 
     @CompileDynamic
-    static def callMethodAliasOrElse(AbstractCommand command, String name, def args, Closure orElse) {
-        if (command && name in ConsumerCommand.CALL_ALTERNATIVES && command.respondsTo("call", args)) {
+    static def callMethodAliasOrElse(Command command, String name, def args, Closure orElse) {
+        if (command instanceof AbstractCommand && name in ConsumerCommand.CALL_ALTERNATIVES && command.respondsTo("call", args)) {
             return command.dynamicMethodCall("call", args)
         } else {
             return orElse()
         }
     }
 
-    static def callMethodAliasOrOnBindings(CallableCommand command, String name, def args) {
-        return callMethodAliasOrOnBindings(command instanceof AbstractCommand ? command as AbstractCommand : null, name, args)
-    }
-
-    @CompileDynamic
-    static def callMethodAliasOrOnBindings(AbstractCommand command, String name, def args) {
+    static def callMethodAliasOrOnBindings(Command command, String name, def args) {
         return callMethodAliasOrElse(command, name, args) { methodMissingOn(command.bindings, name, args) }
     }
 }

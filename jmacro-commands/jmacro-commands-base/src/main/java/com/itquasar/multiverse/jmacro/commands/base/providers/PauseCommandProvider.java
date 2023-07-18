@@ -4,9 +4,11 @@ import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
-import lombok.SneakyThrows;
+import com.itquasar.multiverse.jmacro.core.util.LockUtils;
 
 import javax.script.ScriptEngine;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class PauseCommandProvider implements CommandProvider<PauseCommandProvider.PauseCommand> {
 
@@ -26,6 +28,9 @@ public class PauseCommandProvider implements CommandProvider<PauseCommandProvide
     }
 
     public static class PauseCommand extends AbstractCommand {
+
+        private final ReentrantLock lock = new ReentrantLock();
+        private final Condition pause = lock.newCondition();
 
         public PauseCommand(String name, Core core, ScriptEngine scriptEngine) {
             super(name, core, scriptEngine);
@@ -48,21 +53,20 @@ public class PauseCommandProvider implements CommandProvider<PauseCommandProvide
             }
         }
 
-        Thread thread() {
-            return Thread.currentThread();
+        void await() {
+            LockUtils.runLocked(
+                lock,
+                () -> {
+                    getScriptLogger().warn("Pause awaiting until signal");
+                    pause.await();
+                },
+                e -> getScriptLogger().warn("Pause a interrupted")
+            );
         }
 
-        void forever() {
-            Thread thread = thread();
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                getScriptLogger().warn("Thread " + thread.getThreadGroup().getName() + ":" + thread.getName() + " interrupted");
-            }
-        }
-
-        void interrupt() {
-            Thread.currentThread().interrupt();
+        void signal() {
+            getScriptLogger().warn("Pause signal to proceed");
+            LockUtils.runLocked(lock, pause::signalAll);
         }
 
     }

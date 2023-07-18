@@ -14,11 +14,10 @@
 
     <properties>
         <os.family>unknown</os.family>
-        <java.version>17</java.version>
+        <java.version>20</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.release>${java.version}</maven.compiler.release>
-        <maven.compiler.version>3.8.1</maven.compiler.version>
 
         <jvm.argLine>
             --add-opens java.base/sun.nio.ch=ALL-UNNAMED
@@ -38,13 +37,13 @@
         <checker.version>3.18.0</checker.version>
         <picocli.version>4.7.1</picocli.version>
 
-        <groovy.version>4.0.11</groovy.version>
+        <groovy.version>4.0.13</groovy.version>
         <gmavenplus.version>2.1.0</gmavenplus.version>
 
         <spock.version>2.4-M1-groovy-4.0</spock.version>
         <spock-reports.version>2.4.0-groovy-4.0</spock-reports.version>
 
-        <javalin.version>4.3.0</javalin.version>
+        <javalin.version>5.6.1</javalin.version>
         <httpclient5.version>5.2.1</httpclient5.version>
     </properties>
 
@@ -169,9 +168,6 @@
                                 <version>${picocli.version}</version>
                             </path>
                         </annotationProcessorPaths>
-                        <compilerArgs>
-                            <arg>-Aproject=${project.groupId}/${project.artifactId}</arg>
-                        </compilerArgs>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -399,7 +395,7 @@
                                     <version>3.8.0</version>
                                 </requireMavenVersion>
                                 <requireJavaVersion>
-                                    <version>17</version>
+                                    <version>20</version>
                                 </requireJavaVersion>
                                 <!-- <requireOS><!- - Needed if using jrpm or jdeb - ->
                                     <family>unix</family>
@@ -446,7 +442,7 @@
                 <configuration>
                     <toolchains>
                         <jdk>
-                            <version>17</version>
+                            <version>${java.version}</version>
                         </jdk>
                     </toolchains>
                 </configuration>

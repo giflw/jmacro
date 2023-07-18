@@ -7,7 +7,7 @@ import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 
-interface Command {
+public interface Command {
 
     String getName();
 
@@ -21,8 +21,20 @@ interface Command {
 
     Logger getScriptLogger();
 
+    default void allCommandsLoaded() {
+        // called after registration and before allCommandsRegistered hook
+    }
+
+    default void allCommandsRegistered() {
+        // called after command is registered
+    }
+
     default Object propertyMissing(String name) {
         return CommandUtils.propertyMissingOn(this.getBindings(), name);
+    }
+
+    default Object methodMissing(String name, Object args) {
+        return CommandUtils.callMethodAliasOrOnBindings(this, name, args);
     }
 
 }

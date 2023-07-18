@@ -40,6 +40,9 @@
                 <groupId>org.codehaus.gmavenplus</groupId>
                 <artifactId>gmavenplus-plugin</artifactId>
                 <inherited>true</inherited>
+                <configuration>
+                    <configScript>${project.basedir}/config.groovy</configScript>
+                </configuration>
                 <executions>
                     <execution>
                         <id>doc-scripts</id>

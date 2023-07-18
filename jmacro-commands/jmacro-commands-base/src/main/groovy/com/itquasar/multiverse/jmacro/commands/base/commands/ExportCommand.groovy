@@ -1,6 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands
 
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
+import com.itquasar.multiverse.jmacro.core.command.CommandUtils
 import com.itquasar.multiverse.jmacro.core.engine.Core
 
 import groovy.transform.CompileDynamic
@@ -30,7 +31,7 @@ class ExportCommand extends AbstractCommand {
 
     @CompileDynamic
     void call(String name, Object library) {
-        library.metaClass.methodMissing = { String n, def args -> AbstractCommand.methodMissingOn(bindings, n, args) }
+        library.metaClass.methodMissing = { String n, def args -> CommandUtils.methodMissingOn(bindings, n, args) }
         library.metaClass.propertyMissing = { String n -> CommandUtils.propertyMissingOn(bindings, n) }
         library.metaClass.propertyMissing = { String n, def arg -> CommandUtils.propertyMissingOn(bindings, n, arg) }
 

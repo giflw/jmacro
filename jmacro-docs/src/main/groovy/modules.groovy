@@ -70,7 +70,7 @@ println "target puml: ${targetPuml}"
 targetPuml.toFile().withWriter { it.write(puml) }
 
 println('Generating diagram image file...')
-new SourceFileReader(targetPuml.toFile(), diagramsPath.resolve("svg").toFile(), new FileFormatOption(FileFormat.SVG)).getGeneratedImages().each { println it } 
+new SourceFileReader(targetPuml.toFile(), diagramsPath.resolve("svg").toFile(), new FileFormatOption(FileFormat.SVG)).getGeneratedImages().each { println it }
 println("...done.")
 
 

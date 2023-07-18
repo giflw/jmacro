@@ -3,10 +3,11 @@ package com.itquasar.multiverse.jmacro.commands.browser.command.browser
 import com.itquasar.multiverse.jmacro.commands.base.commands.ConfigurationCommand
 import com.itquasar.multiverse.jmacro.commands.base.commands.CredentialsCommand
 import com.itquasar.multiverse.jmacro.commands.browser.command.BrowserCommand
-import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
-import com.itquasar.multiverse.jmacro.core.interfaces.Constants
+import com.itquasar.multiverse.jmacro.core.command.CommandUtils
+import com.itquasar.multiverse.jmacro.core.configuration.Credentials
 import com.itquasar.multiverse.jmacro.core.engine.Core
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
+import com.itquasar.multiverse.jmacro.core.interfaces.Constants
 import groovy.transform.CompileDynamic
 import groovy.util.logging.Log4j2
 import io.github.bonigarcia.wdm.WebDriverManager
@@ -263,7 +264,7 @@ class Browser implements Constants {
         if (driver.respondsTo(name, args)) {
             return driver."${name}"(*args)
         }
-        return AbstractCommand.methodMissingOn(getBindings(), name, args)
+        return CommandUtils.methodMissingOn(getBindings(), name, args)
     }
 
     JFile screenshot(Path destinationFile) {
@@ -357,7 +358,7 @@ class Browser implements Constants {
 
         Map<String, ?> proxyConfig = [:]
         if (configuration['proxy'] == true) {
-            proxyConfig['credentials'] = (CredentialsCommand) scriptEngine.get('credentials')
+            proxyConfig['credentials'] = ((CredentialsCommand) scriptEngine.get('credentials')).get()
         } else if (configuration['proxy'] != false && configuration['proxy'] instanceof Map<String, ?>) {
             proxyConfig = (Map<String, ?>) configuration['proxy']
         }
@@ -407,7 +408,7 @@ class Browser implements Constants {
             scriptLogger.warn("Setting manager proxy")
             manager.proxy(proxyAddress)
         }
-        CredentialsCommand credentials = (CredentialsCommand) proxyConfig?.credentials
+        def credentials = proxyConfig?.credentials as Credentials
         if (credentials) {
             scriptLogger.info("Setting up proxy for web driver manager using ${credentials.fullUser}")
             manager.proxyUser(credentials.fullUser)

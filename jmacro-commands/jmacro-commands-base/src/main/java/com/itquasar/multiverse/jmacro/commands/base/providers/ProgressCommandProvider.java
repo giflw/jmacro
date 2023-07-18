@@ -1,6 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
+import com.itquasar.multiverse.jmacro.core.command.CallableCommand;
 import com.itquasar.multiverse.jmacro.core.interfaces.Constants;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
@@ -36,12 +37,12 @@ public class ProgressCommandProvider implements CommandProvider<ProgressCommandP
             super(name, core, scriptEngine);
         }
 
-        public <T> Progress<T> call(Supplier<T> runnable) {
-            return new Progress<T>(runnable, getScriptLogger());
+        public <T> Progress<T> call(Supplier<T> supplier) {
+            return new Progress<T>(supplier, getScriptLogger());
         }
 
-        public <T> Progress<T> of(Supplier<T> runnable) {
-            return call(runnable);
+        public <T> Progress<T> of(Supplier<T> supplier) {
+            return call(supplier);
         }
 
     }
@@ -56,6 +57,8 @@ public class ProgressCommandProvider implements CommandProvider<ProgressCommandP
 
         private final Supplier<T> supplier;
         private final Logger logger;
+
+        private static final int DEFAULT_MAX_SIZE = 80;
 
         private final int id = COUNTER.incrementAndGet();
 
@@ -85,7 +88,7 @@ public class ProgressCommandProvider implements CommandProvider<ProgressCommandP
         }
 
         T dots() {
-            return dots(0);
+            return dots(DEFAULT_MAX_SIZE);
         }
 
         T dots(int maxDots) {
@@ -111,7 +114,7 @@ public class ProgressCommandProvider implements CommandProvider<ProgressCommandP
                 int i = 0;
                 while (running.get()) {
                     i = (i + 1) % SPINNER.length;
-                    System.out.print(SPINNER[i]);
+                    System.out.print("[" + SPINNER[i] + ']');
                     System.out.print('\r');
                     sleepQuarter();
                 }

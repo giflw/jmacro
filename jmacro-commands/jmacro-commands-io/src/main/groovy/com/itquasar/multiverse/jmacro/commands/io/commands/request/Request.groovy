@@ -175,7 +175,7 @@ class Request implements Constants {
             this.httpRequest = HTTPFluentRequest.create(method, url)
             return this
         } else {
-            return AbstractCommand.methodMissingOnOrChainToContext(bindings, body, name, args)
+            return CommandUtils.methodMissingOnOrChainToContext(bindings, body, name, args)
         }
     }
 

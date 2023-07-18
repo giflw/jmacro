@@ -1,7 +1,6 @@
 package com.itquasar.multiverse.jmacro.commands.io.commands.file
 
 import com.itquasar.multiverse.jmacro.commands.io.InputParsers
-import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
 import com.itquasar.multiverse.jmacro.core.command.CommandUtils
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import com.itquasar.multiverse.jmacro.core.interfaces.Constants
@@ -16,6 +15,7 @@ import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 import java.nio.file.*
 import java.nio.file.attribute.FileAttribute
+import java.util.stream.IntStream
 
 class File implements InputParsers, Constants {
 
@@ -55,7 +55,7 @@ class File implements InputParsers, Constants {
     @CompileDynamic
     def methodMissing(final String name, final def args) {
         try {
-            return AbstractCommand.methodMissingOn(this.path, name, args)
+            return CommandUtils.methodMissingOn(this.path, name, args)
         } catch (MissingMethodException exPath) {
             MetaMethod method
 
@@ -275,13 +275,13 @@ class File implements InputParsers, Constants {
     }
 
     static private List<Map<String, ?>> matrixToMap(List<List> matrix, Map<String, String> headersMap) {
-        List headers = matrix.first()
+        List<String> headers = matrix.first()
         List<List> rows = matrix.tail()
-        return rows.collect { row ->
-            row.withIndex().collectEntries { element, Integer index ->
-                String name = headers[index]
+        return rows.stream().map { row ->
+            row.withIndex().collectEntries { element, index ->
+                String name = headers[index as Integer]
                 [(headersMap.getOrDefault(name, name)): element]
             }
-        }
+        }.toList() as List<Map<String, ?>>
     }
 }

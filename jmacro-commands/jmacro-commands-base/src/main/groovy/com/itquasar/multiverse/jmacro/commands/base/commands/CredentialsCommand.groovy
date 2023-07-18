@@ -1,6 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands
 
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
+import com.itquasar.multiverse.jmacro.core.command.CommandUtils
 import com.itquasar.multiverse.jmacro.core.command.ConsumerCommand
 import com.itquasar.multiverse.jmacro.core.configuration.Credentials
 import com.itquasar.multiverse.jmacro.core.engine.Core
@@ -27,8 +28,11 @@ class CredentialsCommand extends AbstractCommand implements ConsumerCommand<Cred
         return defaultCredentials
     }
 
-    @CompileDynamic
+    def propertyMissing(String name) {
+        CommandUtils.propertyMissingOnOrChainToContext(this, defaultCredentials, name)
+    }
+
     def methodMissing(String name, def args) {
-        return defaultCredentials.invokeMethod(name, args)
+        CommandUtils.methodMissingOnOrChainToContext(this, defaultCredentials, name, args)
     }
 }

@@ -1,10 +1,7 @@
 package com.itquasar.multiverse.jmacro.core.engine;
 
+import com.itquasar.multiverse.jmacro.core.command.*;
 import com.itquasar.multiverse.jmacro.core.engine.EngineResult;
-import com.itquasar.multiverse.jmacro.core.command.AutoCloseableAll;
-import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
-import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
-import com.itquasar.multiverse.jmacro.core.command.OnShutdown;
 import com.itquasar.multiverse.jmacro.core.exception.ExitException;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.itquasar.multiverse.jmacro.core.script.Script;
@@ -190,7 +187,7 @@ public final class EngineImpl extends Engine implements Constants, TUI {
             commandTypes.add(command.getClass());
         }
 
-        commands.forEach(AbstractCommand::allCommandsLoaded);
+        commands.forEach(Command::allCommandsLoaded);
 
         var locationArg = script.getLocation().toString();
         locationArg = normalExecution ? INCLUDED + ':' + locationArg : locationArg;
@@ -202,7 +199,7 @@ public final class EngineImpl extends Engine implements Constants, TUI {
         engineScope.put("__METADATA__", script.getMetadata());
         engineScope.put("__CONTEXT__", engineScope);
 
-        commands.forEach(AbstractCommand::allCommandsRegistered);
+        commands.forEach(Command::allCommandsRegistered);
         EngineResult<?, ? extends Throwable> result = (EngineResult) engineScope.get("result");
 
 

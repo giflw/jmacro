@@ -2,15 +2,21 @@ package com.itquasar.multiverse.jmacro.commands.server.commands.httpd
 
 import com.itquasar.multiverse.jmacro.core.configuration.Credentials
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
+import com.itquasar.multiverse.jmacro.core.util.LockUtils
 import groovy.transform.CompileDynamic
 import io.javalin.Javalin
 import io.javalin.http.Context
 import org.apache.logging.log4j.Logger
 
+import java.util.concurrent.locks.Condition
+import java.util.concurrent.locks.ReentrantLock
 import java.util.function.BiConsumer
 import java.util.function.Consumer
 
 class Httpd implements AutoCloseable {
+
+    private final ReentrantLock lock = new ReentrantLock()
+    private final Condition keepAlive = lock.newCondition();
 
     public static final String DEFAULT_REALM = 'JMacro'
     private final List<String> serverMethods = [
@@ -28,8 +34,18 @@ class Httpd implements AutoCloseable {
         this.scriptLogger = scriptLogger
         this.server = Javalin.create(javalinConfig -> {
             javalinConfig.showJavalinBanner = false
-            javalinConfig.contextPath = config.getContext()
-            javalinConfig.defaultContentType = config.getDefaultContentType()
+            javalinConfig.routing.contextPath = config.getContext()
+            javalinConfig.routing.ignoreTrailingSlashes = true
+            javalinConfig.routing.treatMultipleSlashesAsSingleSlash = true
+            javalinConfig.compression.brotliAndGzip()
+            javalinConfig.http.defaultContentType = config.getDefaultContentType()
+            javalinConfig.http.prefer405over404 = true
+            javalinConfig.plugins.enableCors { cors ->
+                cors.add { conf ->
+                    conf.reflectClientOrigin = true
+                    conf.allowCredentials = true
+                }
+            }
         })
     }
 
@@ -51,38 +67,62 @@ class Httpd implements AutoCloseable {
         exit(route, { ctx -> ctx.json([message: message]) })
     }
 
+    /**
+     * <pre>
+     *      httpd { server ->
+     *          server.exit().keepAlive()
+     *      }
+     * </pre>
+     *
+     * or
+     *
+     * <pre>
+     *      httpd { server ->
+     *           server.exit { ctx ->
+     *           ctx.json([hi: 'ho'])
+     *           pause.signal()
+     *           }
+     *      }
+     *      pause.await()
+     * </pre>
+     * @param route
+     * @param consumer
+     * @return
+     */
     Httpd exit(String route = '/exit', Consumer<Context> consumer) {
         scriptLogger.info("Registering httpd exit route at '${route}'")
-        Thread mainThread = Thread.currentThread()
         this.server.get(route) { ctx ->
             consumer.accept(ctx)
             try {
                 Thread.sleep(1000)
             } finally {
-                mainThread.interrupt()
+                LockUtils.runLocked(lock, keepAlive::signalAll);
             }
         }
-        this.server.events(event -> {
-            event.serverStarted {
-                try {
-                    mainThread.join()
-                } catch (InterruptedException ex) {
-                    scriptLogger.warn("Exiting httpd server (${ex.getCause()})")
-                }
-            }
-        })
         return this
     }
 
-    void basic(String realm = DEFAULT_REALM, BiConsumer<Context, Credentials> consumer) {
+    void keepAlive() {
+        this.server.events(event -> {
+            event.serverStarted {
+                LockUtils.runLocked(lock, keepAlive::await, ex -> scriptLogger.warn("Exiting httpd server (${ex.getCause()})"))
+            }
+        })
+    }
+
+    void basic(String route = '/*', BiConsumer<Context, Credentials> consumer) {
+        basic(DEFAULT_REALM, route, consumer)
+    }
+
+    void basic(String realm, String route, BiConsumer<Context, Credentials> consumer) {
         scriptLogger.info("Registering httpd basic authentication 'before' callback")
         String headerAuthName = 'Authorization'
         String headerWWWName = 'WWW-Authenticate'
         String headerWWWValue = "Basic realm=\"${realm}\""
         scriptLogger.debug("${headerWWWName}: ${headerWWWValue}")
-        this.server.before { Context context ->
+        this.server.before(route) { Context context ->
             String authorization = context.header(headerAuthName)
-            scriptLogger.debug("Authorization: ${authorization}")
+            scriptLogger.trace("Authorization: ${authorization}")
             if (authorization && authorization.startsWith('Basic')) {
                 authorization = authorization.substring(5).trim()
                 List<String> pair = new String(Base64.decoder.decode(authorization)).split(':') as List<String>
