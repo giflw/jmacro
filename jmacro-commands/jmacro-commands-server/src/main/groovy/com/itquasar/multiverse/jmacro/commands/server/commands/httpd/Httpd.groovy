@@ -6,6 +6,7 @@ import com.itquasar.multiverse.jmacro.core.util.LockUtils
 import groovy.transform.CompileDynamic
 import io.javalin.Javalin
 import io.javalin.http.Context
+import io.javalin.http.HttpStatus
 import org.apache.logging.log4j.Logger
 
 import java.util.concurrent.locks.Condition
@@ -40,12 +41,15 @@ class Httpd implements AutoCloseable {
             javalinConfig.compression.brotliAndGzip()
             javalinConfig.http.defaultContentType = config.getDefaultContentType()
             javalinConfig.http.prefer405over404 = true
+            // FIXME
             javalinConfig.plugins.enableCors { cors ->
                 cors.add { conf ->
                     conf.reflectClientOrigin = true
                     conf.allowCredentials = true
                 }
             }
+            // FIXME
+            javalinConfig.plugins.enableRouteOverview('/routes')
         })
     }
 
@@ -147,6 +151,10 @@ class Httpd implements AutoCloseable {
 
     @CompileDynamic
     def propertyMissing(String name) {
+        def status = HttpStatus.values().find {it.name() == name }
+        if (status != null) {
+            return status
+        }
         if (this.config.hasProperty(name)) {
             return this.config."${name}"
         }

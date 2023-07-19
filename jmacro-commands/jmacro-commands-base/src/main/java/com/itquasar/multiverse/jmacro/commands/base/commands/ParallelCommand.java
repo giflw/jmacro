@@ -3,17 +3,20 @@ package com.itquasar.multiverse.jmacro.commands.base.commands;
 import com.itquasar.multiverse.jmacro.commands.base.commands.parallel.LockWaitThreadPoolExecutor;
 import com.itquasar.multiverse.jmacro.commands.base.commands.parallel.ParallelThreadFactory;
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
-import com.itquasar.multiverse.jmacro.core.interfaces.Constants;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
+import com.itquasar.multiverse.jmacro.core.interfaces.Constants;
 import groovy.lang.Closure;
 import lombok.Getter;
 import lombok.SneakyThrows;
 
 import javax.script.ScriptEngine;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ParallelCommand extends AbstractCommand implements AutoCloseable {
+
+    private static final AtomicInteger VIRTUAL_COUNTER = new AtomicInteger(0);
 
     public static final TimeUnit MILLISECONDS = TimeUnit.MILLISECONDS;
     public static final TimeUnit SECONDS = TimeUnit.SECONDS;
@@ -163,6 +166,12 @@ public class ParallelCommand extends AbstractCommand implements AutoCloseable {
         } catch (InterruptedException e) {
             throw new JMacroException("Could not await executor " + groupName + " termination", e);
         }
+    }
+
+    public Thread virtual(Runnable runnable) {
+        return Thread.ofVirtual()
+            .name("parallel#virtual#" + VIRTUAL_COUNTER.incrementAndGet())
+            .start(runnable);
     }
 
     @Override
