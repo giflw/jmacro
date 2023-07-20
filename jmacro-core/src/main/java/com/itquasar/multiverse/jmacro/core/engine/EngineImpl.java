@@ -175,15 +175,6 @@ public final class EngineImpl extends Engine implements Constants, TUI {
                 ON_SHUTDOWN.add(onShutdown);
             }
 
-            final var scope = engineScope;
-            commandProvider.getAliases().forEach(alias -> {
-                if (scope.containsKey(alias)) {
-                    scriptLogger.error("Alias [" + alias + "] for command " + name + " already registered for another command: " + scope.get(alias).getClass() + ". Register attempt from " + commandProvider.getClass());
-                } else {
-                    scope.put(name, command);
-                }
-            });
-
             commandTypes.add(command.getClass());
         }
 

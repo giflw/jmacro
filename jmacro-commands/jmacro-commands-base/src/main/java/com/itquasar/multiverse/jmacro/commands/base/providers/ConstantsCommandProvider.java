@@ -15,11 +15,6 @@ public class ConstantsCommandProvider implements CommandProvider<ConstantsComman
     }
 
     @Override
-    public List<String> getAliases() {
-        return List.of("C");
-    }
-
-    @Override
     public Class<ConstantsCommand> getCommandType() {
         return ConstantsCommand.class;
     }

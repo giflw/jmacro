@@ -9,6 +9,8 @@ import io.javalin.http.Context
 import io.javalin.http.HttpStatus
 import org.apache.logging.log4j.Logger
 
+import java.awt.*
+import java.util.List
 import java.util.concurrent.locks.Condition
 import java.util.concurrent.locks.ReentrantLock
 import java.util.function.BiConsumer
@@ -24,6 +26,7 @@ class Httpd implements AutoCloseable {
         'before', 'after',
         'get', 'post', 'put', 'patch', 'delete',
         'head', 'options', 'trace', 'connect',
+        'exception', 'error',
         'ws', 'wsBefore', 'wsAfter', 'wsException'
     ]
     private final Logger scriptLogger
@@ -56,6 +59,10 @@ class Httpd implements AutoCloseable {
     Httpd start() {
         this.server.start(this.config.getHost(), this.config.getPort())
         return this
+    }
+
+    String url() {
+        return 'http://' + this.config.getHost() + ':' + this.config.getPort()
     }
 
     void stop() {
@@ -140,6 +147,10 @@ class Httpd implements AutoCloseable {
         }
     }
 
+    void browse() {
+        Desktop.getDesktop().browse(URI.create(this.config.url.replace('0.0.0.0', '127.0.0.1')))
+    }
+
     @CompileDynamic
     def methodMissing(String name, def args) {
         if (name in serverMethods) {
@@ -151,7 +162,7 @@ class Httpd implements AutoCloseable {
 
     @CompileDynamic
     def propertyMissing(String name) {
-        def status = HttpStatus.values().find {it.name() == name }
+        def status = HttpStatus.values().find { it.name() == name }
         if (status != null) {
             return status
         }

@@ -13,10 +13,6 @@ public interface CommandProvider<C extends AbstractCommand> {
      */
     String getName();
 
-    default List<String> getAliases() {
-        return Collections.emptyList();
-    }
-
     /**
      * @return Command type.
      */

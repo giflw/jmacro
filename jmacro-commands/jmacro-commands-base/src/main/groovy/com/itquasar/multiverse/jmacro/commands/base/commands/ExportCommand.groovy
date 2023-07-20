@@ -45,5 +45,7 @@ class ExportCommand extends AbstractCommand {
             scriptLogger.warn("Executing exported on library $name (${library.class})")
             library.exported()
         }
+
+        bindings.put(name, library)
     }
 }

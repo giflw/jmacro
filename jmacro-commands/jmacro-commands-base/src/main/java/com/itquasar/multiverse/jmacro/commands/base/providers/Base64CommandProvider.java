@@ -25,11 +25,6 @@ public class Base64CommandProvider implements CommandProvider<Base64CommandProvi
     }
 
     @Override
-    public List<String> getAliases() {
-        return List.of("b64");
-    }
-
-    @Override
     public Class<Base64Command> getCommandType() {
         return Base64Command.class;
     }

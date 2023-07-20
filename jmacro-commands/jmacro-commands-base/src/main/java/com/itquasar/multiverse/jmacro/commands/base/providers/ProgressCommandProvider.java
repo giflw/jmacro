@@ -72,12 +72,12 @@ public class ProgressCommandProvider implements CommandProvider<ProgressCommandP
             if (running.compareAndSet(false, true)) {
                 try {
                     T result = null;
-                    logger.info("Starting progress task...");
+                    logger.debug("Starting progress task...");
                     // FIXME use virtual threads
                     new Thread(progress, "progress#" + id).start();
                     result = supplier.get();
                     running.set(false);
-                    logger.info("...progress task done");
+                    logger.debug("...progress task done");
                     return result;
                 } catch (Exception exception) {
                     running.set(false);
@@ -93,13 +93,13 @@ public class ProgressCommandProvider implements CommandProvider<ProgressCommandP
 
         T dots(int maxDots) {
             return this.run(() -> {
-                StringBuilder builder = new StringBuilder().append('\r');
+                StringBuilder builder = new StringBuilder();
                 while (running.get()) {
-                    if (maxDots > 0 && builder.length() > maxDots) {
-                        builder.delete(0, builder.length() - 1);
+                    if (maxDots > 0 && builder.length() >= maxDots) {
+                         builder = new StringBuilder();
                     }
-                    builder.insert(0, '.');
-                    System.out.print(builder);
+                    builder.append('.');
+                    System.out.print(builder + " ".repeat(maxDots - builder.length()) + "\r");
                     sleep();
                 }
             });
@@ -134,3 +134,71 @@ public class ProgressCommandProvider implements CommandProvider<ProgressCommandP
     }
 
 }
+
+/*
+
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Supplier;
+
+class Scratch {
+
+
+    public static void main(String[] args) throws InterruptedException {
+        var bar = new Bar();
+
+    }
+
+    abstract class Progress<T> implements Runnable {
+
+    }
+
+    static class Bar implements Runnable {
+
+        private final AtomicBoolean running;
+        private final Supplier<String> labelSupplier;
+
+        private final Supplier<Long> totalSupplier;
+        private final Supplier<Long> actualSupplier;
+
+        private final Supplier<Boolean> indeterminateSupplier;
+        private final String prefix = "[";
+        private final String suffix = "]";
+        private final String cursor = "<===>";
+        private final String separator = ": ";
+        private final int labelSize = 18;
+        private final int barSize = 80 - labelSize - separator.length();
+
+        public Bar(AtomicBoolean running, String label) {
+            this.running = running;
+            this.label = label;
+        }
+
+        public void run() {
+            int position = 0;
+            int step = 1;
+            int spaceLength = barSize - prefix.length() - suffix.length() - cursor.length();
+            String labelPadded = label.length() > labelSize? label.substring(0, labelSize) : label + " ".repeat(labelSize - label.length());
+            while(true) {
+                System.out.print(labelPadded + separator + prefix + innerBar(cursor, position, spaceLength) + suffix + '\r');
+                position += step;
+                if (position >= (spaceLength)) {
+                    step = -1;
+                } if (position == 0) {
+                    step = 1;
+                }
+                // FIXME
+                try {
+                    Thread.sleep(250);
+                } catch (Exception ex) {
+                    // no op
+                }
+            }
+        }
+
+        private String innerBar(String cursor, int position, int availableSize) {
+            return " ".repeat(position) + cursor + " ".repeat(availableSize - position);
+        }
+    }
+}
+
+ */

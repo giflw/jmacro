@@ -19,7 +19,6 @@ class Response implements InputParsers {
         100: 'Continue',
         101: 'Switching Protocols',
         102: 'Processing (WebDAV; RFC 2518)',
-        103: 'Checkpoint',
         103: 'Early Hints (RFC 8297)',
         200: 'OK',
         201: 'Created',
@@ -177,8 +176,20 @@ class Response implements InputParsers {
         }
     }
 
+    boolean isInfo() {
+        return this.statusCode >= 100 && this.statusCode < 200
+    }
+
     boolean isSuccess() {
-        return this.statusCode >= 200 && this.statusCode < 400
+        return this.statusCode >= 200 && this.statusCode < 300
+    }
+
+    boolean isRedirect() {
+        return this.statusCode >= 300 && this.statusCode < 400
+    }
+
+    boolean isError() {
+        return this.statusCode > 400
     }
 
     def getData() {

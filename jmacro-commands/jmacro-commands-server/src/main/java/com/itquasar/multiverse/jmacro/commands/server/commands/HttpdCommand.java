@@ -18,18 +18,18 @@ public class HttpdCommand extends AbstractCommand implements AutoCloseable {
         super(name, core, scriptEngine);
     }
 
-    public Httpd start() {
-        return this.start(new HttpdConfig());
+    public Httpd init() {
+        return this.init(new HttpdConfig());
     }
 
-    public Httpd start(int port) {
-        return this.start(new HttpdConfig(port));
+    public Httpd init(int port) {
+        return this.init(new HttpdConfig(port));
     }
-    public Httpd start(String host, int port) {
-        return this.start(new HttpdConfig(host, port));
+    public Httpd init(String host, int port) {
+        return this.init(new HttpdConfig(host, port));
     }
 
-    public Httpd start(HttpdConfig httpdConfig) {
+    public Httpd init(HttpdConfig httpdConfig) {
         return this.servers.computeIfAbsent(httpdConfig.getAddress(), key -> new Httpd(httpdConfig, getScriptLogger()));
     }
 
@@ -43,15 +43,15 @@ public class HttpdCommand extends AbstractCommand implements AutoCloseable {
     }
 
     public Httpd call(Consumer<Httpd> routeConfigurator) {
-        return this.call(this.start(), routeConfigurator);
+        return this.call(this.init(), routeConfigurator);
     }
 
     public Httpd call(int port, Consumer<Httpd> routeConfigurator) {
-        return this.call(this.start(port), routeConfigurator);
+        return this.call(this.init(port), routeConfigurator);
     }
 
     public Httpd call(String address, int port, Consumer<Httpd> routeConfigurator) {
-        return this.call(this.start(address, port), routeConfigurator);
+        return this.call(this.init(address, port), routeConfigurator);
     }
 
     private Httpd call(Httpd httpd, Consumer<Httpd> routeConfigurator) {

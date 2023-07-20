@@ -170,7 +170,7 @@ public class ParallelCommand extends AbstractCommand implements AutoCloseable {
 
     public Thread virtual(Runnable runnable) {
         return Thread.ofVirtual()
-            .name("parallel#virtual#" + VIRTUAL_COUNTER.incrementAndGet())
+            .name("parall-virt#" + VIRTUAL_COUNTER.incrementAndGet())
             .start(runnable);
     }
 

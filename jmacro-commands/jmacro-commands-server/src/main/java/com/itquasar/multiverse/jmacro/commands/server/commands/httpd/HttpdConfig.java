@@ -3,6 +3,7 @@ package com.itquasar.multiverse.jmacro.commands.server.commands.httpd;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.net.URI;
 import java.util.Map;
 
 @Data
@@ -25,12 +26,13 @@ public class HttpdConfig {
         DEFAULT_CONTENT_TYPE, DEFAULT_DEFAULT_CONTENT_TYPE
     );
 
-    final int port;
-    final String host;
-    final String context;
-    final String defaultContentType;
-    final String address;
-    final String url;
+    private int port;
+    private String host;
+    private String context;
+    private String defaultContentType;
+    private String address;
+    private String url;
+    private URI uri;
 
     public HttpdConfig() {
         this(DEFAULT_PORT);
@@ -56,6 +58,7 @@ public class HttpdConfig {
         this.defaultContentType = defaultContentType;
         this.address = host + ':' + port;
         this.url = "http://" + this.address + context;
+        this.uri = URI.create(this.url);
     }
 
     public static HttpdConfig of(Map<String, Object> options) {
