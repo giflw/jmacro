@@ -3,9 +3,13 @@ package com.itquasar.multiverse.jmacro.commands.base.providers;
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
+import com.itquasar.multiverse.jmacro.core.util.IOUtils;
+import lombok.SneakyThrows;
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.Logger;
 
 import javax.script.ScriptEngine;
+import java.io.*;
 
 public class EchoCommandProvider implements CommandProvider<EchoCommandProvider.EchoCommand> {
 
@@ -13,6 +17,7 @@ public class EchoCommandProvider implements CommandProvider<EchoCommandProvider.
      * New log level between WARN and INFO.
      */
     public static final Level ECHO = Level.forName("ECHO", 350);
+    public static final Level PRINT = Level.forName("PRINT", 349);
 
     @Override
     public String getName() {
@@ -49,6 +54,10 @@ public class EchoCommandProvider implements CommandProvider<EchoCommandProvider.
 
         void call(char c, int size) {
             separator.of(c, size);
+        }
+
+        PrintStream out() {
+            return EchoPrintWriter.of(getScriptLogger());
         }
 
         public Separator getSeparator() {
@@ -118,6 +127,49 @@ public class EchoCommandProvider implements CommandProvider<EchoCommandProvider.
 
         void equals() {
             of('=');
+        }
+    }
+
+    public static class EchoPrintWriter extends PrintStream {
+
+        private final BufferedReader reader;
+
+        public static EchoPrintWriter of(Logger scriptLogger) {
+            IOUtils.Pipe pipe = IOUtils.pipe();
+            return new EchoPrintWriter(pipe.out(), pipe.in(), scriptLogger);
+        }
+
+        private EchoPrintWriter(OutputStream out, InputStream in, Logger scriptLogger) {
+            super(out);
+            this.reader = new BufferedReader(new InputStreamReader(in));
+            Thread.startVirtualThread(() -> {
+                try (this.reader) {
+                    String line;
+                    while ((line = this.reader.readLine()) != null) {
+                        scriptLogger.log(PRINT, line);
+                    }
+                } catch (IOException e) {
+                    if (!e.getMessage().equals("Write end dead")) {
+                        scriptLogger.error("Error in echo print stream");
+                    }
+                }
+            });
+        }
+
+        @SneakyThrows
+        public void write(int b) {
+            this.out.write(b);
+        }
+
+        public BufferedReader reader() {
+            return reader;
+        }
+
+        @SneakyThrows
+        @Override
+        public void close() {
+            super.close();
+            this.reader.close();
         }
     }
 }

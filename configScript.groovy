@@ -28,7 +28,7 @@ def unitValidator = { SourceUnit sourceUnit ->
     name = name.startsWith('/') ? name : "/${name}"
     name = name.replace(rootProjectPath, '')
     // compile static if not tests module or sources
-    boolean allowed = !name.contains('/src/test/')
+    boolean allowed = !(name.contains('/src/test/') || name.contains("/jmacro-docs/"))
     if (debug && !allowed) {
         log "${name}: switching to Compile Dynamic"
     }

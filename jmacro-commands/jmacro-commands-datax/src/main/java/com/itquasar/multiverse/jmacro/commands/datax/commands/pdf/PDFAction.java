@@ -20,6 +20,7 @@ import java.util.List;
 
 public class PDFAction {
 
+    // FIXME is there any beter representation like input stream?
     private final File file;
 
     public PDFAction(File file) {

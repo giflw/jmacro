@@ -13,6 +13,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 public class PDFCommand extends AbstractCommand implements CallableCommand<Object, PDFAction>, ArgAndConsumerCommand<Object, PDFAction> {
@@ -39,9 +41,9 @@ public class PDFCommand extends AbstractCommand implements CallableCommand<Objec
 
     @SneakyThrows
     public PDFAction call(InputStream inputStream) {
-        Path tmp = Files.createTempFile("jmacro-datax", "pdf-command");
-        Files.copy(inputStream, tmp);
-        tmp.toFile().deleteOnExit();
+        File tmp = File.createTempFile("jmacro-datax-pdf-", UUID.randomUUID().toString());
+        Files.copy(inputStream, tmp.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        tmp.deleteOnExit();
         return this.call(tmp);
     }
 
