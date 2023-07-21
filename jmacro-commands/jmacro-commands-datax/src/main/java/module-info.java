@@ -7,6 +7,7 @@ module jmacro.commands.datax {
     requires org.apache.pdfbox;
     requires tess4j;
     requires jacob;
+    requires net.coobird.thumbnailator;
 
     requires java.desktop;
     requires java.scripting;

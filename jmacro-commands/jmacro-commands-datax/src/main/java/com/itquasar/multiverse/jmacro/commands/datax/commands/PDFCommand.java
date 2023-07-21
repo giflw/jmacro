@@ -2,39 +2,62 @@ package com.itquasar.multiverse.jmacro.commands.datax.commands;
 
 import com.itquasar.multiverse.jmacro.commands.datax.commands.pdf.PDFAction;
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
+import com.itquasar.multiverse.jmacro.core.command.ArgAndConsumerCommand;
+import com.itquasar.multiverse.jmacro.core.command.CallableCommand;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
+import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import groovy.lang.Closure;
+import lombok.SneakyThrows;
 
 import javax.script.ScriptEngine;
 import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.function.Consumer;
 
-public class PDFCommand extends AbstractCommand {
+public class PDFCommand extends AbstractCommand implements CallableCommand<Object, PDFAction>, ArgAndConsumerCommand<Object, PDFAction> {
 
     public PDFCommand(String name, Core core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine);
     }
 
-    public Object call(String path, Closure closure) {
-        return this.call(Path.of(path), closure);
+    @Override
+    public PDFAction call(Object o) {
+        return switch (o) {
+            case File f -> this.call(f);
+            case InputStream i -> this.call(i);
+            case Path p -> this.call(p);
+            case String s -> this.call(s);
+            default -> throw new JMacroException("Type " + o.getClass() + " not supported");
+        };
     }
 
-    public Object call(Path path, Closure closure) {
-        return this.call(path.toFile(), closure);
+
+    public PDFAction call(File file) {
+        return new PDFAction(file);
     }
 
-    public Object call(File file, Closure closure) {
-        closure.setDelegate(new PDFAction(file));
-        return execute(closure);
+    @SneakyThrows
+    public PDFAction call(InputStream inputStream) {
+        Path tmp = Files.createTempFile("jmacro-datax", "pdf-command");
+        Files.copy(inputStream, tmp);
+        tmp.toFile().deleteOnExit();
+        return this.call(tmp);
     }
 
-    public Object call(Closure closure) {
-        closure.setDelegate(new PDFAction());
-        return execute(closure);
+    public PDFAction call(Path path) {
+        return this.call(path.toFile());
     }
 
-    private Object execute(Closure closure) {
-        closure.setResolveStrategy(Closure.DELEGATE_FIRST);
-        return closure.call();
+    public PDFAction call(String string) {
+        return this.call(Path.of(string));
+    }
+
+    @Override
+    public Object call(Object arg, Consumer<PDFAction> consumer) {
+        PDFAction pdfAction = this.call(arg);
+        consumer.accept(pdfAction);
+        return pdfAction;
     }
 }

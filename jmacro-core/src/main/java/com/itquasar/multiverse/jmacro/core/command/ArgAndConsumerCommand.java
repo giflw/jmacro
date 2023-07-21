@@ -2,28 +2,24 @@ package com.itquasar.multiverse.jmacro.core.command;
 
 import java.util.function.Consumer;
 
-public interface ConsumerCommand<T> extends CallableCommand<Consumer<T>, T> {
+public interface ArgAndConsumerCommand<T, U> extends Command {
 
     /**
      * Invoking commands:
      * <pre>
      * // Groovy way
-     * command {
+     * command(arg) {
      *    it.method args
      * }
      * // JVM way
-     * command { c ->
+     * command(arg) { c ->
      *    c.method args
-     * }
-     * // Groovy way
-     * command.with {
-     *    method args
      * }
      * </pre>
      *
      * @param consumer Block to be executed/consume the command or its object implementation
      * @return Consumer parameter
      */
-    T call(Consumer<T> consumer);
+    T call(T arg, Consumer<U> consumer);
 
 }

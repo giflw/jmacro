@@ -9,6 +9,8 @@ import javax.script.ScriptEngine;
 
 public interface Command {
 
+    String[] CALL_ALTERNATIVES = {"apply", "invoke"};
+
     String getName();
 
     Core getCore();

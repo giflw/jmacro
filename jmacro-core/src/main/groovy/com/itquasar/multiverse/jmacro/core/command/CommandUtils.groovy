@@ -120,7 +120,7 @@ class CommandUtils implements Constants {
 
     @CompileDynamic
     static def callMethodAliasOrElse(Command command, String name, def args, Closure orElse) {
-        if (command instanceof AbstractCommand && name in ConsumerCommand.CALL_ALTERNATIVES && command.respondsTo("call", args)) {
+        if (command instanceof AbstractCommand && name in Command.CALL_ALTERNATIVES && command.respondsTo("call", args)) {
             return command.dynamicMethodCall("call", args)
         } else {
             return orElse()

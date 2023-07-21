@@ -15,7 +15,6 @@ import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 import java.nio.file.*
 import java.nio.file.attribute.FileAttribute
-import java.util.stream.IntStream
 
 class File implements InputParsers, Constants {
 
