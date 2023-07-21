@@ -16,13 +16,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ParallelCommand extends AbstractCommand implements AutoCloseable {
 
-    private static final AtomicInteger VIRTUAL_COUNTER = new AtomicInteger(0);
-
     public static final TimeUnit MILLISECONDS = TimeUnit.MILLISECONDS;
     public static final TimeUnit SECONDS = TimeUnit.SECONDS;
     public static final TimeUnit MINUTES = TimeUnit.MINUTES;
     public static final TimeUnit HOURS = TimeUnit.HOURS;
-
+    private static final AtomicInteger VIRTUAL_COUNTER = new AtomicInteger(0);
     private static final ConcurrentMap<String, ParallelCommand> instances = new ConcurrentHashMap<>();
 
     private final String defaultGroup = "parallel";
@@ -43,6 +41,10 @@ public class ParallelCommand extends AbstractCommand implements AutoCloseable {
     @Getter
     private long timeout = 1000; // milliseconds
 
+    public ParallelCommand(String name, Core core, ScriptEngine scriptEngine) {
+        super(name, core, scriptEngine);
+    }
+
     public void setMinPoolSize(int minPoolSize) {
         this.minPoolSize = minPoolSize > 0 ? minPoolSize : 1;
         this.computeFixedFlag();
@@ -55,10 +57,6 @@ public class ParallelCommand extends AbstractCommand implements AutoCloseable {
 
     private void computeFixedFlag() {
         this.fixed = minPoolSize == maxPoolSize;
-    }
-
-    public ParallelCommand(String name, Core core, ScriptEngine scriptEngine) {
-        super(name, core, scriptEngine);
     }
 
     public ParallelCommand call() {

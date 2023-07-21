@@ -17,13 +17,13 @@ import java.util.Map;
 
 public class LDAPCommand extends AbstractCommand implements AutoCloseable, LDAPConstants {
 
-    private LDAPAuthenticator authenticator = null;
     private final Map<String, String> config = new LinkedHashMap<>() {{
         put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
         put(Context.URL_PKG_PREFIXES, "com.sun.jndi.url");
         put(Context.SECURITY_AUTHENTICATION, "simple");
         put(Context.REFERRAL, "ignore");
     }};
+    private LDAPAuthenticator authenticator = null;
     private String login = null;
     private String password = null;
 

@@ -33,29 +33,9 @@ public class Base64CommandProvider implements CommandProvider<Base64CommandProvi
 
     static public class Base64Command extends AbstractCommand {
 
-        public enum Codec {
-
-            BASIC(Base64.getEncoder(), Base64.getDecoder()),
-            MIME(Base64.getMimeEncoder(), Base64.getMimeDecoder()),
-            URL(Base64.getUrlEncoder(), Base64.getUrlDecoder());
-
-            @Getter
-            private final Encoder encoder;
-
-            @Getter
-            private final Decoder decoder;
-
-            Codec(final Encoder encoder, final Decoder decoder) {
-                this.encoder = encoder;
-                this.decoder = decoder;
-            }
-        }
-
         public Base64Command(final String name, final Core core, final ScriptEngine scriptEngine) {
             super(name, core, scriptEngine);
         }
-
-
 
         /**
          * Encode to base64 and return String
@@ -119,6 +99,24 @@ public class Base64CommandProvider implements CommandProvider<Base64CommandProvi
         public InputStream decode(final InputStream input, final Codec codec) {
             final var buffer = codec.getDecoder().decode(input.readAllBytes());
             return new ByteArrayInputStream(buffer);
+        }
+
+        public enum Codec {
+
+            BASIC(Base64.getEncoder(), Base64.getDecoder()),
+            MIME(Base64.getMimeEncoder(), Base64.getMimeDecoder()),
+            URL(Base64.getUrlEncoder(), Base64.getUrlDecoder());
+
+            @Getter
+            private final Encoder encoder;
+
+            @Getter
+            private final Decoder decoder;
+
+            Codec(final Encoder encoder, final Decoder decoder) {
+                this.encoder = encoder;
+                this.decoder = decoder;
+            }
         }
 
     }

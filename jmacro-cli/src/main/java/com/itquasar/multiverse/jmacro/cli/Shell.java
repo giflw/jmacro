@@ -86,7 +86,7 @@ public class Shell implements Callable<CliResult> {
         }
         List<String> args = this.args != null ? Collections.unmodifiableList(this.args) : Collections.emptyList();
         ScriptResult scriptResult = cli.getCore().getEngine().execute(
-            new Script(Metadata.EMPTY, "shell","stdin.groovy", "jvm://stdin.groovy", ""),
+            new Script(Metadata.EMPTY, "shell", "stdin.groovy", "jvm://stdin.groovy", ""),
             args,
             scriptEngine -> {
                 Bindings bindings = scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);

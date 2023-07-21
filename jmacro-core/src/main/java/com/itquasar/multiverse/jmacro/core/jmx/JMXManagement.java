@@ -27,11 +27,12 @@ public class JMXManagement implements AutoCloseable {
     private final ServerConfig serverConfig;
     @Getter
     private final ServerConfig webServerConfig;
+    private final Map<String, JmxClient> clients = new LinkedHashMap<>();
     @Getter
     private JmxServer server;
     @Getter
     private JmxWebServer webServer;
-    private final Map<String, JmxClient> clients = new LinkedHashMap<>();
+
     public JMXManagement(JMXConfig config) {
         this(config.jmx, config.web);
     }

@@ -128,7 +128,7 @@ public class TasksMonitor {
 
     @SneakyThrows
     public void waitAll() {
-        while(true) {
+        while (true) {
             if (this.futures.isEmpty()) {
                 return;
             }

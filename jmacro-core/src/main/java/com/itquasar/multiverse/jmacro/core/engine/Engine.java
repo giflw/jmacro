@@ -63,7 +63,7 @@ public abstract class Engine {
      * @throws ScriptException if some error occurs.
      */
     public ScriptResult<?, ?> execute(Script script, List<String> args) throws ScriptException {
-        return this.execute(script, args, (scriptEngine) -> { /* NO-OP */ },  (scriptEngine) -> { /* NO-OP */ });
+        return this.execute(script, args, (scriptEngine) -> { /* NO-OP */ }, (scriptEngine) -> { /* NO-OP */ });
     }
 
     /**

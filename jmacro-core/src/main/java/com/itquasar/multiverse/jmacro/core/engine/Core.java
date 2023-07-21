@@ -60,8 +60,7 @@ public final class Core {
                     throw new JMacroException("Error closing core", e);
                 }
             }
-        }
-        else {
+        } else {
             throw new JMacroException("Core not started");
         }
     }

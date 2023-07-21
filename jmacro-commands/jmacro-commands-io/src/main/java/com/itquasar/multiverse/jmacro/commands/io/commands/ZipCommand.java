@@ -14,9 +14,14 @@ public class ZipCommand extends AbstractCommand {
         super(name, core, scriptEngine);
     }
 
+    private static char[] passwordCharArray(String password) {
+        return password == null ? null : password.toCharArray();
+    }
+
     ZipFileExtended call(Path zipFile) {
         return call(zipFile, null);
     }
+
     ZipFileExtended call(Path zipFile, String password) {
         return new ZipFileExtended(zipFile, passwordCharArray(password));
     }
@@ -24,6 +29,7 @@ public class ZipCommand extends AbstractCommand {
     ZipFileExtended call(File zipFile) {
         return call(zipFile, null);
     }
+
     ZipFileExtended call(File zipFile, String password) {
         return new ZipFileExtended(zipFile, passwordCharArray(password));
     }
@@ -31,12 +37,9 @@ public class ZipCommand extends AbstractCommand {
     ZipFileExtended call(String zipFile) {
         return call(zipFile, null);
     }
+
     ZipFileExtended call(String zipFile, String password) {
         return new ZipFileExtended(zipFile, passwordCharArray(password));
-    }
-
-    private static char[] passwordCharArray(String password){
-        return password == null ? null : password.toCharArray();
     }
 
 }

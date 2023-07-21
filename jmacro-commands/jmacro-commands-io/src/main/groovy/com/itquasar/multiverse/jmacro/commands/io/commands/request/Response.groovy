@@ -149,7 +149,7 @@ class Response implements InputParsers {
         this.charset = content?.type?.charset?.name() ?: StandardCharsets.UTF_8.name()
         this.inputStream = content.asStream()
 
-        if(!disableParser) {
+        if (!disableParser) {
             switch (this.type) {
                 case APPLICATION_XML.mimeType:
                     this.data = this.getXml()

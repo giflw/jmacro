@@ -10,11 +10,6 @@ import java.util.function.Consumer;
 @Log4j2
 public class LockUtils {
 
-    @FunctionalInterface
-    public interface CheckedRunnable {
-        void run() throws Throwable;
-    }
-
     public void runLocked(ReentrantLock lock, CheckedRunnable checkedRunnable) {
         runLocked(lock, checkedRunnable, throwable -> LOGGER.error("Error handling locks", throwable));
     }
@@ -32,5 +27,10 @@ public class LockUtils {
                 lock.unlock();
             }
         }
+    }
+
+    @FunctionalInterface
+    public interface CheckedRunnable {
+        void run() throws Throwable;
     }
 }

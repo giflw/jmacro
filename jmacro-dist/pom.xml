@@ -90,10 +90,14 @@
                                     </programs>
                                     <assembleDirectory>${project.build.directory}/appassembler-full</assembleDirectory>
                                     <generateRepository>false</generateRepository>
-                                    <unixScriptTemplate>${project.parent.basedir}/jmacro-cli/src/main/appassembler/unixBinTemplate.sh</unixScriptTemplate>
-                                    <windowsScriptTemplate>${project.parent.basedir}/jmacro-cli/src/main/appassembler/windowsBinTemplate.bat</windowsScriptTemplate>
+                                    <unixScriptTemplate>${project.parent.basedir}/jmacro-cli/src/main/appassembler/unixBinTemplate.sh
+                                    </unixScriptTemplate>
+                                    <windowsScriptTemplate>
+                                        ${project.parent.basedir}/jmacro-cli/src/main/appassembler/windowsBinTemplate.bat
+                                    </windowsScriptTemplate>
                                     <environmentSetupFileName>setup-env</environmentSetupFileName>
-                                    <configurationSourceDirectory>${project.parent.basedir}/jmacro-cli/src/main/config</configurationSourceDirectory>
+                                    <configurationSourceDirectory>${project.parent.basedir}/jmacro-cli/src/main/config
+                                    </configurationSourceDirectory>
                                     <copyConfigurationDirectory>true</copyConfigurationDirectory>
                                     <configurationDirectory>etc</configurationDirectory>
                                     <logsDirectory>logs</logsDirectory>
@@ -209,7 +213,8 @@
                                     <assembleDirectory>target/appassembler-full/installer</assembleDirectory>
                                     <generateRepository>false</generateRepository>
                                     <environmentSetupFileName>setup-env</environmentSetupFileName>
-                                    <configurationSourceDirectory>${project.parent.basedir}/jmacro-installer/src/main/config</configurationSourceDirectory>
+                                    <configurationSourceDirectory>${project.parent.basedir}/jmacro-installer/src/main/config
+                                    </configurationSourceDirectory>
                                     <copyConfigurationDirectory>true</copyConfigurationDirectory>
                                     <configurationDirectory>etc</configurationDirectory>
                                     <!--logsDirectory>logs</logsDirectory-->

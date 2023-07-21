@@ -17,8 +17,8 @@
         <jmacro.cli.mainClass>com.itquasar.multiverse.jmacro.cli.Launcher</jmacro.cli.mainClass>
         <exec.mainClass>${jmacro.cli.mainClass}</exec.mainClass>
         <exec.args>--config-path=${jmacro.cli.config.path} run</exec.args>
-<!--        <exec.executable>java</exec.executable>-->
-<!--        <exec.args>-classpath %classpath ${exec.mainClass} &#45;&#45;config-path=${jmacro.cli.config.path} run</exec.args>-->
+        <!--        <exec.executable>java</exec.executable>-->
+        <!--        <exec.args>-classpath %classpath ${exec.mainClass} &#45;&#45;config-path=${jmacro.cli.config.path} run</exec.args>-->
     </properties>
 
     <dependencyManagement>
@@ -108,44 +108,44 @@
                             </executableDependency>
                         </configuration>
                     </execution>
-<!--                    <execution>-->
-<!--                        <id>exec-exec</id>-->
-<!--                        <goals>-->
-<!--                            <goal>exec</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <executable>java</executable>-->
-<!--                            <executableDependency>-->
-<!--                                <groupId>com.itquasar.multiverse.jmacro</groupId>-->
-<!--                                <artifactId>jmacro-cli</artifactId>-->
-<!--                            </executableDependency>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
+                    <!--                    <execution>-->
+                    <!--                        <id>exec-exec</id>-->
+                    <!--                        <goals>-->
+                    <!--                            <goal>exec</goal>-->
+                    <!--                        </goals>-->
+                    <!--                        <configuration>-->
+                    <!--                            <executable>java</executable>-->
+                    <!--                            <executableDependency>-->
+                    <!--                                <groupId>com.itquasar.multiverse.jmacro</groupId>-->
+                    <!--                                <artifactId>jmacro-cli</artifactId>-->
+                    <!--                            </executableDependency>-->
+                    <!--                        </configuration>-->
+                    <!--                    </execution>-->
                 </executions>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-antrun-plugin</artifactId>-->
-<!--                <version>3.1.0</version>-->
-<!--                <goals>-->
-<!--                    <goal>run</goal>-->
-<!--                </goals>-->
-<!--                <configuration>-->
-<!--                    <target>-->
-<!--                        <echo message="Main class to run: ${jmacro.cli.mainClass}"/>-->
-<!--                        <java classname="${jmacro.cli.mainClass}"-->
-<!--                              fork="true" dir="${project.basedir}/..">-->
-<!--                            <classpath>-->
-<!--                                <path refid="maven.compile.classpath"/>-->
-<!--                                <path refid="maven.plugin.classpath"/>-->
-<!--                            </classpath>-->
-<!--                            <arg value="&#45;&#45;debug" />-->
-<!--                            <arg value="&#45;&#45;config-path=${jmacro.cli.config.path}" />-->
-<!--                            <arg value="run" />-->
-<!--                        </java>-->
-<!--                    </target>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
+            <!--            <plugin>-->
+            <!--                <groupId>org.apache.maven.plugins</groupId>-->
+            <!--                <artifactId>maven-antrun-plugin</artifactId>-->
+            <!--                <version>3.1.0</version>-->
+            <!--                <goals>-->
+            <!--                    <goal>run</goal>-->
+            <!--                </goals>-->
+            <!--                <configuration>-->
+            <!--                    <target>-->
+            <!--                        <echo message="Main class to run: ${jmacro.cli.mainClass}"/>-->
+            <!--                        <java classname="${jmacro.cli.mainClass}"-->
+            <!--                              fork="true" dir="${project.basedir}/..">-->
+            <!--                            <classpath>-->
+            <!--                                <path refid="maven.compile.classpath"/>-->
+            <!--                                <path refid="maven.plugin.classpath"/>-->
+            <!--                            </classpath>-->
+            <!--                            <arg value="&#45;&#45;debug" />-->
+            <!--                            <arg value="&#45;&#45;config-path=${jmacro.cli.config.path}" />-->
+            <!--                            <arg value="run" />-->
+            <!--                        </java>-->
+            <!--                    </target>-->
+            <!--                </configuration>-->
+            <!--            </plugin>-->
         </plugins>
     </build>
 </project>

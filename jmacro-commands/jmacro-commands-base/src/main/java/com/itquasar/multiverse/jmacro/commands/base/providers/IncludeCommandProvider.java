@@ -24,7 +24,7 @@ public class IncludeCommandProvider implements CommandProvider<IncludeCommand> {
         return new IncludeCommand(
             getName(),
             core == null ? null : core.getConfiguration().getRepository(),
-                core,
+            core,
             scriptEngine
         );
     }

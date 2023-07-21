@@ -40,7 +40,7 @@ public class FileScriptRepository extends ScriptRepositoryAbstract {
                                     Metadata metadata = Metadata.extractMetadata(source);
                                     String path = repoPath.toPath().relativize(file.toPath()).toString().replace("\\", "/");
                                     URI location = URI.create(
-                                        "file://" + file.getAbsolutePath().replace("\\", "/").replaceAll(" ","%20")
+                                        "file://" + file.getAbsolutePath().replace("\\", "/").replaceAll(" ", "%20")
                                     );
                                     return new Script(metadata, this.getId(), path, location, source);
                                 } catch (IOException e) {

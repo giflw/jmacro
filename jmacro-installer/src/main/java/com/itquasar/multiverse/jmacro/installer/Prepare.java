@@ -30,23 +30,17 @@ public class Prepare implements Callable<CliResult>, Constants, KeyFunctions {
     private final static Logger LOGGER = Logger.getLogger(Prepare.class.getName());
 
     @Parameters(paramLabel = "BASE_PATH=BASE_URI", description = "Base PATH and base URI pairs to prepare update config file")
-    private final Map<Path, URI> apps = new LinkedHashMap<>();
-
+    private Map<Path, URI> apps = new LinkedHashMap<>();
+    @Option(names = {"-p", "--prop", "--property"}, paramLabel = "KEY=VALUE")
+    private Map<String, String> properties = new LinkedHashMap<>();
+    @Option(names = {"-r", "--replace-props", "--replace-properties"}, defaultValue = "false", description = "Replace given properties on base Path AND base URL")
+    private boolean replaceProperties = false;
     @Option(names = {"--privk", "--private-key"}, paramLabel = "KEY_FILE", description = "Private key PKCS8 pem file")
     private Path privateKeyFile;
-
     @Option(names = {"--pubk", "--public-key"}, paramLabel = "KEY_FILE", description = "Public key PKCS8 pem file")
     private Path publicKeyFile;
-
     @Option(names = {"-a", "--algorithm"}, paramLabel = "KEY_ALGORITHM", defaultValue = "RSA", description = "Private key algorithm")
     private String keyAlgorithm;
-
-    @Option(names = {"-p", "--prop", "--property"}, paramLabel = "KEY=VALUE")
-    private final Map<String, String> properties = new LinkedHashMap<>();
-
-    @Option(names = {"-r", "--replace-props", "--replace-properties"}, defaultValue = "false", description = "Replace given properties on base Path AND base URL")
-    private final boolean replaceProperties = false;
-
     @Spec
     private CommandSpec spec; // injected by picocli
 

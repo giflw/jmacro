@@ -42,13 +42,13 @@ public class ZipFileExtended extends ZipFile {
     }
 
     public ZipFileExtended add(String... files) {
-        return  this.add(List.of(files).stream().map(File::new).toList());
+        return this.add(List.of(files).stream().map(File::new).toList());
     }
 
     @SneakyThrows
     public ZipFileExtended add(List<File> files) {
-        for(File file: files) {
-            if(file.isDirectory()) {
+        for (File file : files) {
+            if (file.isDirectory()) {
                 this.addFolder(file);
             } else {
                 this.addFile(file);

@@ -88,6 +88,7 @@ public class PDFAction {
      *     p.thumbnail(file("~/thumb.jpg").toFile())
      * }
      * </pre>
+     *
      * @param file File to save the thumbnail
      */
     public void thumbnail(File file) {

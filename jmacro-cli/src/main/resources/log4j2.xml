@@ -3,8 +3,8 @@
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{HH:mm:ss} (%15.15t|%c{1}) %msg%n"/>
-<!--            <PatternLayout pattern="%d{HH:mm:ss} [%-4level] (%.15t|%c{1}) - %msg%n"/>-->
-<!--            <PatternLayout pattern="%d{HH:mm:ss} [%-4level] (%.15t|%c) - %msg%n"/>-->
+            <!--            <PatternLayout pattern="%d{HH:mm:ss} [%-4level] (%.15t|%c{1}) - %msg%n"/>-->
+            <!--            <PatternLayout pattern="%d{HH:mm:ss} [%-4level] (%.15t|%c) - %msg%n"/>-->
         </Console>
     </Appenders>
     <Loggers>

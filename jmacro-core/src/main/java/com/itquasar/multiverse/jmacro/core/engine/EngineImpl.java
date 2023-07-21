@@ -38,24 +38,20 @@ public final class EngineImpl extends Engine implements Constants, TUI {
      * @see <a href="https://www.jcp.org/en/jsr/detail?id=223">JSR 223: Scripting for the JavaTM Platform</a>
      */
     private static final ScriptEngineManager ENGINE_MANAGER = new ScriptEngineManager();
-
+    private static final List<OnShutdown> ON_SHUTDOWN = new ArrayList<>(0);
     /**
      * Core instance used by this engine.
      */
     private final Core core;
-
     /**
      * {@link ScriptEngineFactory} instances available on runtime.
      */
     private final Map<String, ScriptEngineFactory> engines = new LinkedHashMap<>();
-
     /**
      * {@link LanguageAdaptor}s found in runtime using SPI.
      */
     private final Map<String, LanguageAdaptor> languageAdaptors = new LinkedHashMap<>();
     private final Set<CommandProvider<?>> commandProviders = new HashSet<>();
-
-    private static final List<OnShutdown> ON_SHUTDOWN = new ArrayList<>(0);
 
     /**
      * Create engine instance with given core.
@@ -90,6 +86,33 @@ public final class EngineImpl extends Engine implements Constants, TUI {
         );
 
         new SPILoader<>(CommandProvider.class).load().forEachRemaining(this.commandProviders::add);
+    }
+
+    private static void exitBanner(Script script, Logger scriptLogger, EngineResult<?, ?> engineResult) {
+        scriptLogger.warn(SINGLE_SEPARATOR);
+        scriptLogger.warn(SINGLE_SEPARATOR);
+        final var scriptExitCodeDescription = (engineResult.exitCode() == ExitException.SCRIPT_ENGINE_ERROR)
+            ? " (Script engine error)"
+            : " (Script exit code)";
+        scriptLogger.warn("Script exited with code " + engineResult.exitCode() + scriptExitCodeDescription);
+        scriptLogger.warn(SINGLE_SEPARATOR);
+        scriptLogger.warn("Result for script " + script.getPath());
+        scriptLogger.warn("result:");
+        scriptLogger.warn(engineResult.value());
+        scriptLogger.warn(DOUBLE_SEPARATOR);
+        scriptLogger.warn(DOUBLE_SEPARATOR);
+    }
+
+    private static ExitException getExitException(Throwable exception) {
+        ExitException exitException = null;
+        Throwable cause = exception.getCause();
+        while (cause != null) {
+            if (cause instanceof ExitException ex) {
+                exitException = ex;
+            }
+            cause = cause.getCause();
+        }
+        return exitException;
     }
 
     /**
@@ -155,7 +178,7 @@ public final class EngineImpl extends Engine implements Constants, TUI {
 
         final var commands = new ArrayList<AbstractCommand>();
 
-        for (CommandProvider<?> commandProvider: commandProviders) {
+        for (CommandProvider<?> commandProvider : commandProviders) {
             if (normalExecution) {
                 scriptLogger.trace("Registering command '" + commandProvider.getName() + "' from " + commandProvider.getClass());
             }
@@ -254,35 +277,8 @@ public final class EngineImpl extends Engine implements Constants, TUI {
         return new ScriptResult<>(script, result);
     }
 
-    private static void exitBanner(Script script, Logger scriptLogger, EngineResult<?, ?> engineResult) {
-        scriptLogger.warn(SINGLE_SEPARATOR);
-        scriptLogger.warn(SINGLE_SEPARATOR);
-        final var scriptExitCodeDescription = (engineResult.exitCode() == ExitException.SCRIPT_ENGINE_ERROR)
-            ? " (Script engine error)"
-            : " (Script exit code)";
-        scriptLogger.warn("Script exited with code " + engineResult.exitCode() + scriptExitCodeDescription);
-        scriptLogger.warn(SINGLE_SEPARATOR);
-        scriptLogger.warn("Result for script " + script.getPath());
-        scriptLogger.warn("result:");
-        scriptLogger.warn(engineResult.value());
-        scriptLogger.warn(DOUBLE_SEPARATOR);
-        scriptLogger.warn(DOUBLE_SEPARATOR);
-    }
-
     public void onShutdown() {
         ON_SHUTDOWN.forEach(OnShutdown::onShutdown);
-    }
-
-    private static ExitException getExitException(Throwable exception) {
-        ExitException exitException = null;
-        Throwable cause = exception.getCause();
-        while (cause != null) {
-            if (cause instanceof ExitException ex) {
-                exitException = ex;
-            }
-            cause = cause.getCause();
-        }
-        return exitException;
     }
 
     private void closeCommands(final ScriptEngine engine) {

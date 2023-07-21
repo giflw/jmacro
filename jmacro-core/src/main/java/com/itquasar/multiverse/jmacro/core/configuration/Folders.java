@@ -43,7 +43,7 @@ public class Folders {
             return this.paths.get(name);
         }
         Path path = this.appHome.resolve(name);
-        if (!Files.exists(path)){
+        if (!Files.exists(path)) {
             Files.createDirectory(path);
         }
         return path;

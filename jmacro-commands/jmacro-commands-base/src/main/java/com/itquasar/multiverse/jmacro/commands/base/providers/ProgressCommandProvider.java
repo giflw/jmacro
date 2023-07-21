@@ -52,13 +52,10 @@ public class ProgressCommandProvider implements CommandProvider<ProgressCommandP
         private static final AtomicInteger COUNTER = new AtomicInteger(0);
 
         private static final char[] SPINNER = {'/', '-', '\\', '|'};
+        private static final int DEFAULT_MAX_SIZE = 80;
         private final AtomicBoolean running = new AtomicBoolean(false);
-
         private final Supplier<T> supplier;
         private final Logger logger;
-
-        private static final int DEFAULT_MAX_SIZE = 80;
-
         private final int id = COUNTER.incrementAndGet();
 
 
@@ -95,7 +92,7 @@ public class ProgressCommandProvider implements CommandProvider<ProgressCommandP
                 StringBuilder builder = new StringBuilder();
                 while (running.get()) {
                     if (maxDots > 0 && builder.length() >= maxDots) {
-                         builder = new StringBuilder();
+                        builder = new StringBuilder();
                     }
                     builder.append('.');
                     System.out.print(builder + " ".repeat(maxDots - builder.length()) + "\r");

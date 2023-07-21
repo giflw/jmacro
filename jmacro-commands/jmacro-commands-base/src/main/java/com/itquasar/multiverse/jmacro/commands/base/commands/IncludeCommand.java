@@ -45,7 +45,8 @@ public class IncludeCommand extends AbstractCommand {
         return new Inclusion(this, this.getCore(), this.getScriptEngine(), contextName.names);
     }
 
-    public record Inclusion(IncludeCommand includeCommand, Core core, ScriptEngine scriptEngine, List contextName) {
+    public record Inclusion(IncludeCommand includeCommand, Core core, ScriptEngine scriptEngine,
+                            List contextName) {
 
         @SuppressWarnings("unchecked")
         void from(String includeName) {
@@ -70,7 +71,7 @@ public class IncludeCommand extends AbstractCommand {
                 try {
                     this.core.getEngine().include(script, (final var engine) -> {
                         this.includeCommand.getScriptEngine().getBindings(ScriptContext.ENGINE_SCOPE).forEach((key, value) -> {
-                            if (!key.startsWith("__") && !key.equals("export") && !key.equals("include")&& !key.equals(ARGS)) {
+                            if (!key.startsWith("__") && !key.equals("export") && !key.equals("include") && !key.equals(ARGS)) {
                                 logger.trace("Transferring [" + key + "] to new engine");
                                 engine.getBindings(ScriptContext.ENGINE_SCOPE).put(key, value);
                             }

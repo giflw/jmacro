@@ -25,6 +25,7 @@ public class HttpdCommand extends AbstractCommand implements AutoCloseable {
     public Httpd init(int port) {
         return this.init(new HttpdConfig(port));
     }
+
     public Httpd init(String host, int port) {
         return this.init(new HttpdConfig(host, port));
     }
@@ -35,6 +36,7 @@ public class HttpdCommand extends AbstractCommand implements AutoCloseable {
 
     /**
      * Helper method to create {@link HttpdConfig} instances.
+     *
      * @param configs Map of configurations to pass to {@link HttpdConfig#of(Map)}.
      * @return {@link HttpdConfig} new instance.
      */

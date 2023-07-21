@@ -62,6 +62,7 @@ public class ResultCommand<T, E extends Throwable> extends AbstractCommand imple
 
     /**
      * Groovy helper method
+     *
      * @param value
      * @return
      */
@@ -75,6 +76,7 @@ public class ResultCommand<T, E extends Throwable> extends AbstractCommand imple
 
     /**
      * Scala helper method
+     *
      * @param value
      * @return
      */
@@ -88,6 +90,7 @@ public class ResultCommand<T, E extends Throwable> extends AbstractCommand imple
 
     /**
      * Kotlin/Ruby helper method
+     *
      * @param value
      * @return
      */

@@ -2,7 +2,6 @@ module jmacro.commands.datax {
     requires static lombok;
 
 
-
     requires java.desktop;
     requires java.scripting;
     requires java.sql;

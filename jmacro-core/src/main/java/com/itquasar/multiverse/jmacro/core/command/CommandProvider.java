@@ -19,7 +19,7 @@ public interface CommandProvider<C extends AbstractCommand> {
     /**
      * Create command new instance when called.
      *
-     * @param core   Core to use in this command.
+     * @param core         Core to use in this command.
      * @param scriptEngine Script engine instance where command will be bound.
      * @return Command new instance.
      */
