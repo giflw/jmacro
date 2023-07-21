@@ -93,7 +93,7 @@ class LocalDateTimeWrapper implements Comparable<LocalDateTimeWrapper> {
     }
 
     @Override
-    public String toString() {
+    String toString() {
         return this.localDateTime.toString()
     }
 

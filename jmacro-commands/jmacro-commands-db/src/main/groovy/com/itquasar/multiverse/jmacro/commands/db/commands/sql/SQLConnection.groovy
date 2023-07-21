@@ -1,21 +1,19 @@
 package com.itquasar.multiverse.jmacro.commands.db.commands.sql
 
-
 import com.itquasar.multiverse.jmacro.commands.db.commands.SQLCommand
-import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
 import com.itquasar.multiverse.jmacro.core.command.CommandUtils
 import com.itquasar.multiverse.jmacro.core.interfaces.Constants
 import groovy.sql.Sql
 import groovy.transform.CompileDynamic
 import lombok.SneakyThrows
 
-public class SQLConnection implements AutoCloseable, Constants {
+class SQLConnection implements AutoCloseable, Constants {
 
     private final SQLCommand sqlCommand
     private Sql sql
     private int batchSize = 100
 
-    public SQLConnection(SQLCommand sqlCommand) {
+    SQLConnection(SQLCommand sqlCommand) {
         this.sqlCommand = sqlCommand
     }
 
@@ -33,7 +31,7 @@ public class SQLConnection implements AutoCloseable, Constants {
 
     @Override
     @SneakyThrows
-    public void close() {
+    void close() {
         if (this.sql != null && !this.sql?.connection.closed) {
             this.sql.close()
             this.sqlCommand.notifyClosed(this)

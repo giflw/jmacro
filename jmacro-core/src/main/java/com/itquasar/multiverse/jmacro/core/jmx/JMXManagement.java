@@ -1,9 +1,9 @@
 package com.itquasar.multiverse.jmacro.core.jmx;
 
 import com.itquasar.multiverse.jmacro.core.engine.Core;
+import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.itquasar.multiverse.jmacro.core.util.NetUtils;
 import com.itquasar.multiverse.jmacro.core.util.SPILoader;
-import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.j256.simplejmx.client.JmxClient;
 import com.j256.simplejmx.server.JmxServer;
 import com.j256.simplejmx.web.JmxWebServer;
@@ -31,7 +31,7 @@ public class JMXManagement implements AutoCloseable {
     private JmxServer server;
     @Getter
     private JmxWebServer webServer;
-    private Map<String, JmxClient> clients = new LinkedHashMap<>();
+    private final Map<String, JmxClient> clients = new LinkedHashMap<>();
     public JMXManagement(JMXConfig config) {
         this(config.jmx, config.web);
     }

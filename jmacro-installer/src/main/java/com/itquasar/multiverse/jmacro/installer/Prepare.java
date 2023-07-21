@@ -2,20 +2,16 @@ package com.itquasar.multiverse.jmacro.installer;
 
 import org.update4j.Configuration;
 import org.update4j.FileMetadata;
-import org.update4j.Property;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.Writer;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,7 +30,7 @@ public class Prepare implements Callable<CliResult>, Constants, KeyFunctions {
     private final static Logger LOGGER = Logger.getLogger(Prepare.class.getName());
 
     @Parameters(paramLabel = "BASE_PATH=BASE_URI", description = "Base PATH and base URI pairs to prepare update config file")
-    private Map<Path, URI> apps = new LinkedHashMap<>();
+    private final Map<Path, URI> apps = new LinkedHashMap<>();
 
     @Option(names = {"--privk", "--private-key"}, paramLabel = "KEY_FILE", description = "Private key PKCS8 pem file")
     private Path privateKeyFile;
@@ -46,10 +42,10 @@ public class Prepare implements Callable<CliResult>, Constants, KeyFunctions {
     private String keyAlgorithm;
 
     @Option(names = {"-p", "--prop", "--property"}, paramLabel = "KEY=VALUE")
-    private Map<String, String> properties = new LinkedHashMap<>();
+    private final Map<String, String> properties = new LinkedHashMap<>();
 
     @Option(names = {"-r", "--replace-props", "--replace-properties"}, defaultValue = "false", description = "Replace given properties on base Path AND base URL")
-    private boolean replaceProperties = false;
+    private final boolean replaceProperties = false;
 
     @Spec
     private CommandSpec spec; // injected by picocli

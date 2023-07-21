@@ -1,16 +1,14 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands
 
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
+import com.itquasar.multiverse.jmacro.core.command.SelfClosureCallableCommand
 import com.itquasar.multiverse.jmacro.core.configuration.Env
 import com.itquasar.multiverse.jmacro.core.engine.Core
-import com.itquasar.multiverse.jmacro.core.command.SelfClosureCallableCommand
-
 import com.itquasar.multiverse.jmacro.core.interfaces.ToMap
 import groovy.transform.CompileDynamic
 
 import javax.script.ScriptEngine
 import java.util.function.Consumer
-
 
 // FIXME remove SelfClosureCallableCommand
 class ConfigurationCommand extends AbstractCommand implements SelfClosureCallableCommand<ConfigurationCommand>, ToMap {

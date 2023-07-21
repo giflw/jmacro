@@ -102,7 +102,7 @@ class CommandUtils implements Constants {
     }
 
     static raise(String message) {
-        throw new JMacroException(message);
+        throw new JMacroException(message)
     }
 
 

@@ -1,21 +1,18 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
+import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
+import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
+import com.itquasar.multiverse.jmacro.core.engine.Core;
+import lombok.Getter;
+import lombok.SneakyThrows;
+
+import javax.script.ScriptEngine;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Base64.Decoder;
 import java.util.Base64.Encoder;
-import java.util.List;
-
-import javax.script.ScriptEngine;
-
-import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
-import com.itquasar.multiverse.jmacro.core.engine.Core;
-import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
-
-import lombok.Getter;
-import lombok.SneakyThrows;
 
 public class Base64CommandProvider implements CommandProvider<Base64CommandProvider.Base64Command> {
 

@@ -1,7 +1,7 @@
 package com.itquasar.multiverse.jmacro.core.repository;
 
-import com.itquasar.multiverse.jmacro.core.util.SPILoader;
 import com.itquasar.multiverse.jmacro.core.configuration.Configuration;
+import com.itquasar.multiverse.jmacro.core.util.SPILoader;
 
 import java.net.URI;
 import java.util.LinkedHashMap;

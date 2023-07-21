@@ -3,14 +3,12 @@ package com.itquasar.multiverse.jmacro.commands.base.commands
 import com.itquasar.multiverse.jmacro.commands.base.commands.moment.LocalDateTimeWrapper
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
 import com.itquasar.multiverse.jmacro.core.engine.Core
-
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
 
 import javax.script.ScriptEngine
 import java.time.LocalDate
 import java.time.LocalDateTime
-
 
 class MomentCommand extends AbstractCommand {
 

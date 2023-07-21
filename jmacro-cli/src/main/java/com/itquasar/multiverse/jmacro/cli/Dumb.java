@@ -1,16 +1,5 @@
 package com.itquasar.multiverse.jmacro.cli;
 
-import com.itquasar.multiverse.jmacro.commands.base.commands.ConfigurationCommand;
-import com.itquasar.multiverse.jmacro.commands.base.commands.CredentialsCommand;
-import com.itquasar.multiverse.jmacro.core.script.ScriptResult;
-import picocli.CommandLine;
-
-import javax.script.Bindings;
-import javax.script.ScriptContext;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Callable;
 
 import static picocli.CommandLine.*;

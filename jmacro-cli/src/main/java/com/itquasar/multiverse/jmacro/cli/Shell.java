@@ -108,7 +108,7 @@ public class Shell implements Callable<CliResult> {
                     try {
                         StringBuilder tabs = new StringBuilder();
                         IntStream.range(0, opens).forEach(it -> tabs.append(tab));
-                        line = console.read(tabs.toString() + "$");
+                        line = console.read(tabs + "$");
                         if (line.trim().equals("exit()")) {
                             run = false;
                         } else {

@@ -19,7 +19,7 @@ import java.util.function.Consumer
 class Httpd implements AutoCloseable {
 
     private final ReentrantLock lock = new ReentrantLock()
-    private final Condition keepAlive = lock.newCondition();
+    private final Condition keepAlive = lock.newCondition()
 
     public static final String DEFAULT_REALM = 'JMacro'
     private final List<String> serverMethods = [
@@ -107,7 +107,7 @@ class Httpd implements AutoCloseable {
             try {
                 Thread.sleep(1000)
             } finally {
-                LockUtils.runLocked(lock, keepAlive::signalAll);
+                LockUtils.runLocked(lock, keepAlive::signalAll)
             }
         }
         return this

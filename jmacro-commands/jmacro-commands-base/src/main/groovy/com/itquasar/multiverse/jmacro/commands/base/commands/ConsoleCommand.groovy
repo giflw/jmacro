@@ -2,14 +2,12 @@ package com.itquasar.multiverse.jmacro.commands.base.commands
 
 import com.itquasar.multiverse.jmacro.commands.base.Result
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
-import com.itquasar.multiverse.jmacro.core.interfaces.Constants
 import com.itquasar.multiverse.jmacro.core.engine.Core
-
 import com.itquasar.multiverse.jmacro.core.exception.ExitException
+import com.itquasar.multiverse.jmacro.core.interfaces.Constants
 import groovy.transform.CompileDynamic
 
 import javax.script.ScriptEngine
-
 
 class ConsoleCommand extends AbstractCommand implements Constants {
 

@@ -1,12 +1,11 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
-import javax.script.ScriptEngine;
-
+import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
+import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
 import org.apache.logging.log4j.Level;
 
-import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
-import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
+import javax.script.ScriptEngine;
 
 public class EchoCommandProvider implements CommandProvider<EchoCommandProvider.EchoCommand> {
 

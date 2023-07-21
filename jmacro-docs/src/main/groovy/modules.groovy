@@ -1,10 +1,10 @@
 #!/usr/bin/env groovy
-import java.nio.file.Path
-import java.nio.file.Paths
-
 import net.sourceforge.plantuml.FileFormat
 import net.sourceforge.plantuml.FileFormatOption
 import net.sourceforge.plantuml.SourceFileReader
+
+import java.nio.file.Path
+import java.nio.file.Paths
 
 println '*' * 80
 println '*' * 80

@@ -1,10 +1,10 @@
 package com.itquasar.multiverse.jmacro.commands.db.providers;
 
-import javax.script.ScriptEngine;
-
 import com.itquasar.multiverse.jmacro.commands.db.commands.SQLCommand;
-import com.itquasar.multiverse.jmacro.core.engine.Core;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
+import com.itquasar.multiverse.jmacro.core.engine.Core;
+
+import javax.script.ScriptEngine;
 
 public class SQLCommandProvider implements CommandProvider<SQLCommand> {
 

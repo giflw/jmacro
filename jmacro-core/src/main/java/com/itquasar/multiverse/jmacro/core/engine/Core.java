@@ -14,7 +14,7 @@ public final class Core {
     private final AtomicBoolean started = new AtomicBoolean(false);
 
     @Getter
-    private Configuration configuration;
+    private final Configuration configuration;
 
     @Getter
     private JMXManagement jmxManagement;

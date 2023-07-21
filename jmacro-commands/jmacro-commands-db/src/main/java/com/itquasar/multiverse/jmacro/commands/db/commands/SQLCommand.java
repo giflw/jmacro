@@ -1,19 +1,17 @@
 package com.itquasar.multiverse.jmacro.commands.db.commands;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.script.ScriptEngine;
-
 import com.itquasar.multiverse.jmacro.commands.db.commands.sql.SQLConnection;
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
-
 import groovy.lang.Closure;
+
+import javax.script.ScriptEngine;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SQLCommand extends AbstractCommand implements AutoCloseable {
 
-    private static List<SQLConnection> instances = new ArrayList<>(0);
+    private static final List<SQLConnection> instances = new ArrayList<>(0);
 
     public SQLCommand(final String name, final Core core, final ScriptEngine scriptEngine) {
         super(name, core, scriptEngine);

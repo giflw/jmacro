@@ -5,7 +5,6 @@ import com.itquasar.multiverse.jmacro.core.command.CommandUtils
 import com.itquasar.multiverse.jmacro.core.command.ConsumerCommand
 import com.itquasar.multiverse.jmacro.core.configuration.Credentials
 import com.itquasar.multiverse.jmacro.core.engine.Core
-import groovy.transform.CompileDynamic
 
 import javax.script.ScriptEngine
 import java.util.function.Consumer

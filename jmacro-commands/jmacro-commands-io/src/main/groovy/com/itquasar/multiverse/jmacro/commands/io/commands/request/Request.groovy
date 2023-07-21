@@ -1,9 +1,9 @@
 package com.itquasar.multiverse.jmacro.commands.io.commands.request
 
-import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
+
 import com.itquasar.multiverse.jmacro.core.command.CommandUtils
-import com.itquasar.multiverse.jmacro.core.interfaces.Constants
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
+import com.itquasar.multiverse.jmacro.core.interfaces.Constants
 import groovy.transform.CompileDynamic
 import org.apache.hc.client5.http.HttpHostConnectException
 import org.apache.hc.client5.http.HttpResponseException
@@ -268,8 +268,8 @@ class Request implements Constants {
             .setDefaultCredentialsProvider(credentials)
             .build()
 
-        HttpResponse httpResponse = null;
-        Content content = null;
+        HttpResponse httpResponse = null
+        Content content = null
         try {
             HTTPFluentResponse fluentResponse = httpRequest.execute(client)
             Tuple tuple = fluentResponse.handleResponse(new ResponseAndContentHttpresponseHandler()) as Tuple

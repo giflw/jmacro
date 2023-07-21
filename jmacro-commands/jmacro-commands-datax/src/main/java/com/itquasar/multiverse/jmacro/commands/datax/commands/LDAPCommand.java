@@ -53,7 +53,7 @@ public class LDAPCommand extends AbstractCommand implements AutoCloseable, LDAPC
         this.authenticator.configure(this.config);
         if (this.login == null || this.password == null) {
             Object credentials = this.getBindings().get("credentials");
-            if (ToMap.class.isInstance(credentials)) {
+            if (credentials instanceof ToMap) {
                 var map = ((ToMap) credentials).<String, Object>toMap();
                 this.login = this.login != null ? this.login : (String) map.get("login");
                 this.password = this.password != null ? this.password : (String) map.get("password");

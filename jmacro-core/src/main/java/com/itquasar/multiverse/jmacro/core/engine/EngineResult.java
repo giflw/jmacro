@@ -1,8 +1,5 @@
 package com.itquasar.multiverse.jmacro.core.engine;
 
-import lombok.Data;
-import lombok.With;
-
 public interface EngineResult<T, E extends Throwable> {
 
     EngineResult<String, ?> OK = new OkEngineResult();

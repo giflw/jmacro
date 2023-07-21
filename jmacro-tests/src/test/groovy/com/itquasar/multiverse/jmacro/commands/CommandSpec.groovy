@@ -1,14 +1,14 @@
 package com.itquasar.multiverse.jmacro.commands
 
-import com.itquasar.multiverse.jmacro.core.engine.Core
-import com.itquasar.multiverse.jmacro.core.util.SPILoader
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider
 import com.itquasar.multiverse.jmacro.core.configuration.Configuration
+import com.itquasar.multiverse.jmacro.core.engine.Core
 import com.itquasar.multiverse.jmacro.core.repository.GlobalScriptRepository
 import com.itquasar.multiverse.jmacro.core.repository.ScriptRepository
 import com.itquasar.multiverse.jmacro.core.script.Metadata
 import com.itquasar.multiverse.jmacro.core.script.Script
 import com.itquasar.multiverse.jmacro.core.script.ScriptResult
+import com.itquasar.multiverse.jmacro.core.util.SPILoader
 import groovy.util.logging.Log4j2
 import spock.lang.Specification
 import spock.lang.Unroll

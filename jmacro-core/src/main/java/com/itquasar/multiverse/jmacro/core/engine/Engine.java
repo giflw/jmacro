@@ -1,9 +1,9 @@
 package com.itquasar.multiverse.jmacro.core.engine;
 
 import com.itquasar.multiverse.jmacro.core.configuration.InitializationProvider;
-import com.itquasar.multiverse.jmacro.core.util.SPILoader;
 import com.itquasar.multiverse.jmacro.core.script.Script;
 import com.itquasar.multiverse.jmacro.core.script.ScriptResult;
+import com.itquasar.multiverse.jmacro.core.util.SPILoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,8 +12,6 @@ import javax.script.ScriptException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
 

@@ -8,7 +8,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 import java.io.File;
-import java.net.URL;
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 

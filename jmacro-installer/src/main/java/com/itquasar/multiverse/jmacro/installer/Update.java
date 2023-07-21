@@ -34,7 +34,7 @@ public class Update implements Callable<CliResult>, Constants, KeyFunctions {
     private final static Logger LOGGER = Logger.getLogger(Update.class.getName());
 
     @Parameters(paramLabel = "BASE_URI=BASE_PATH", description = "Base URI and base PATH pairs to apply update config")
-    private Map<URI, Path> apps = new LinkedHashMap<>();
+    private final Map<URI, Path> apps = new LinkedHashMap<>();
 
     @Option(names = {"--pubk", "--public-key"}, paramLabel = "KEY_FILE", description = "Public key PKCS8 pem file")
     private Path publicKeyFile;

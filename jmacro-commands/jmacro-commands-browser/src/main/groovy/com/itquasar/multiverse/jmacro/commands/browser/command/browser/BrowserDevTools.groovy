@@ -1,10 +1,9 @@
 package com.itquasar.multiverse.jmacro.commands.browser.command.browser
 
 
-import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
 import com.itquasar.multiverse.jmacro.core.command.CommandUtils
-import com.itquasar.multiverse.jmacro.core.interfaces.Constants
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
+import com.itquasar.multiverse.jmacro.core.interfaces.Constants
 import groovy.transform.CompileDynamic
 import org.openqa.selenium.devtools.DevTools
 import org.openqa.selenium.devtools.HasDevTools

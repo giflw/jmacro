@@ -3,8 +3,6 @@ package com.itquasar.multiverse.jmacro.core.command;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
 
 import javax.script.ScriptEngine;
-import java.util.Collections;
-import java.util.List;
 
 public interface CommandProvider<C extends AbstractCommand> {
 

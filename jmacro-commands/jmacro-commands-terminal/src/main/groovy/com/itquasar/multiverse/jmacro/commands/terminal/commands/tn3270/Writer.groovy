@@ -5,9 +5,9 @@ import com.itquasar.multiverse.tn3270j.TN3270j
 import com.itquasar.multiverse.tn3270j.WaitMode
 import groovy.transform.CompileDynamic
 
-public class Writer {
+class Writer {
     private final TN3270j tn3270j
-    private final def logger;
+    private final def logger
 
     Writer(TN3270Command tn3270) {
         this.tn3270j = tn3270.tn3270j

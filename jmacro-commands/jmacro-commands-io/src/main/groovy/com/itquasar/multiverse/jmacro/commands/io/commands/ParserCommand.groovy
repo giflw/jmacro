@@ -11,7 +11,7 @@ class ParserCommand extends AbstractCommand implements InputParsers {
     private String text
 
     ParserCommand(String name, Core core, ScriptEngine scriptEngine) {
-        super(name, core, scriptEngine);
+        super(name, core, scriptEngine)
     }
 
     @Override

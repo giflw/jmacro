@@ -10,7 +10,7 @@ import com.j256.simplejmx.common.JmxResource;
 public class JMXManagementJMXBean extends JMXBean {
 
     @JmxAttributeField(description = "Number of hits in the cache")
-    private long startTimestamp = System.currentTimeMillis();
+    private final long startTimestamp = System.currentTimeMillis();
 
     @JmxAttributeMethod
     public Core getCore() {

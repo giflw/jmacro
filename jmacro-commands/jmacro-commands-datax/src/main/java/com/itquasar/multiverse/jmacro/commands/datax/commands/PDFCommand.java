@@ -6,7 +6,6 @@ import com.itquasar.multiverse.jmacro.core.command.ArgAndConsumerCommand;
 import com.itquasar.multiverse.jmacro.core.command.CallableCommand;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
-import groovy.lang.Closure;
 import lombok.SneakyThrows;
 
 import javax.script.ScriptEngine;

@@ -1,9 +1,9 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands;
 
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
-import com.itquasar.multiverse.jmacro.core.interfaces.Constants;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
+import com.itquasar.multiverse.jmacro.core.interfaces.Constants;
 
 import javax.script.Bindings;
 import javax.script.ScriptEngine;

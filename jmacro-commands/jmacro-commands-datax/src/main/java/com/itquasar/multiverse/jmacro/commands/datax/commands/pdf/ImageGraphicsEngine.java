@@ -176,8 +176,7 @@ public class ImageGraphicsEngine extends PDFGraphicsStreamEngine {
 
     // find out if it is a tiling pattern, then process that one
     private void processColor(PDColor color) throws IOException {
-        if (color.getColorSpace() instanceof PDPattern) {
-            PDPattern pattern = (PDPattern) color.getColorSpace();
+        if (color.getColorSpace() instanceof PDPattern pattern) {
             PDAbstractPattern abstractPattern = pattern.getPattern(color);
             if (abstractPattern instanceof PDTilingPattern) {
                 processTilingPattern((PDTilingPattern) abstractPattern, null, null);

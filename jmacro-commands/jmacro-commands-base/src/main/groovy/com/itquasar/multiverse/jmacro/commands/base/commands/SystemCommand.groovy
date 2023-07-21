@@ -2,7 +2,6 @@ package com.itquasar.multiverse.jmacro.commands.base.commands
 
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
 import com.itquasar.multiverse.jmacro.core.engine.Core
-
 import groovy.transform.CompileDynamic
 import lombok.Getter
 
@@ -12,7 +11,7 @@ import javax.script.ScriptEngine
 class SystemCommand extends AbstractCommand {
 
 
-    private Map<String, Object> commands = new LinkedHashMap<>();
+    private Map<String, Object> commands = new LinkedHashMap<>()
 
     SystemCommand(String name, Core core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
@@ -22,8 +21,8 @@ class SystemCommand extends AbstractCommand {
     @Override
     void allCommandsRegistered() {
         if (commands.isEmpty()) {
-            this.commands.putAll(this.getBindings());
-            this.commands = Collections.unmodifiableMap(this.commands);
+            this.commands.putAll(this.getBindings())
+            this.commands = Collections.unmodifiableMap(this.commands)
         }
     }
 

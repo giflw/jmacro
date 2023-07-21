@@ -1,12 +1,11 @@
 package com.itquasar.multiverse.jmacro.core.engine;
 
 import com.itquasar.multiverse.jmacro.core.command.*;
-import com.itquasar.multiverse.jmacro.core.engine.EngineResult;
 import com.itquasar.multiverse.jmacro.core.exception.ExitException;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
+import com.itquasar.multiverse.jmacro.core.interfaces.Constants;
 import com.itquasar.multiverse.jmacro.core.script.Script;
 import com.itquasar.multiverse.jmacro.core.script.ScriptResult;
-import com.itquasar.multiverse.jmacro.core.interfaces.Constants;
 import com.itquasar.multiverse.jmacro.core.util.SPILoader;
 import com.itquasar.multiverse.jmacro.core.util.TUI;
 import lombok.extern.log4j.Log4j2;

@@ -2,7 +2,6 @@ package com.itquasar.multiverse.jmacro.commands.datax.commands.com
 
 import com.itquasar.multiverse.jmacro.commands.datax.commands.COMCommand.Application
 import com.itquasar.multiverse.jmacro.commands.datax.commands.com.enums.COMEnum
-import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
 import com.itquasar.multiverse.jmacro.core.command.CommandUtils
 import com.jacob.com.ComThread
 import com.jacob.com.Dispatch

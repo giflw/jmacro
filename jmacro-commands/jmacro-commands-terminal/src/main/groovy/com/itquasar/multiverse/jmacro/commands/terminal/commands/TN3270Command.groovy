@@ -159,7 +159,7 @@ class TN3270Command extends AbstractCommand implements AutoCloseableAll, Constan
 
     @Override
     void onShutdown() {
-        this.closeAll();
+        this.closeAll()
     }
 
     @Override
@@ -171,7 +171,7 @@ class TN3270Command extends AbstractCommand implements AutoCloseableAll, Constan
         long maxTime = System.currentTimeMillis() - timeUnit.toMillis(timeout)
         instances.removeAll {
             if (it.value < maxTime) {
-                it.key.close();
+                it.key.close()
                 true
             } else {
                 false

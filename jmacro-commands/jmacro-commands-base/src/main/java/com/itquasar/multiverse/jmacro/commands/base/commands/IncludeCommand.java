@@ -1,29 +1,21 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands;
 
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.itquasar.multiverse.jmacro.commands.base.providers.ExportCommandProvider;
+import com.itquasar.multiverse.jmacro.commands.base.providers.IncludeCommandProvider;
+import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
+import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
+import com.itquasar.multiverse.jmacro.core.engine.Core;
+import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
+import com.itquasar.multiverse.jmacro.core.repository.GlobalScriptRepository;
+import com.itquasar.multiverse.jmacro.core.script.Script;
+import com.itquasar.multiverse.jmacro.core.util.SPILoader;
+import groovy.lang.Closure;
 
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
-
-import com.itquasar.multiverse.jmacro.commands.base.providers.ExportCommandProvider;
-import com.itquasar.multiverse.jmacro.commands.base.providers.IncludeCommandProvider;
-import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
-import com.itquasar.multiverse.jmacro.core.engine.Core;
-import com.itquasar.multiverse.jmacro.core.util.SPILoader;
-import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
-import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
-import com.itquasar.multiverse.jmacro.core.repository.GlobalScriptRepository;
-import com.itquasar.multiverse.jmacro.core.script.Script;
-
-import groovy.lang.Closure;
+import java.nio.file.Paths;
+import java.util.*;
 
 public class IncludeCommand extends AbstractCommand {
 
@@ -69,7 +61,7 @@ public class IncludeCommand extends AbstractCommand {
 
             // FIXME allow repository selection on inclusion
 
-            final var scriptOptional = this.includeCommand.repository.get(includePath.toString());
+            final var scriptOptional = this.includeCommand.repository.get(includePath);
             if (scriptOptional.isPresent()) {
                 final var script = scriptOptional.get();
 
