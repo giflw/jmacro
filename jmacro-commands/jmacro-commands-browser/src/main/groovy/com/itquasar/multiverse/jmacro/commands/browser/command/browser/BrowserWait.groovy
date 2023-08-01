@@ -19,7 +19,7 @@ class BrowserWait {
         clickable    : { By by -> ExpectedConditions.elementToBeClickable(by) },
         textPresent  : { By by -> ExpectedConditions.not(ExpectedConditions.textToBe(by, '')) },
         noTextPresent: { By by -> ExpectedConditions.textToBe(by, '') }
-    ]
+    ] as Map<String, Function<By, ? extends ExpectedCondition<? extends Object>>>
 
     private static final long DEFAULT_TIMEOUT = 30
     private Browser browser

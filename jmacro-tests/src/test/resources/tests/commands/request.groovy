@@ -7,10 +7,12 @@ END METADATA
  */
 
 def req = request {
-    POST "https://example.com/"
-    // Some-Header
-    Some_Header = "header value"
-    form user: "usr1", senha: "senha11"
+    it.with {
+        POST "https://example.com/"
+        // Some-Header
+        Some_Header = "header value"
+        form user: "usr1", senha: "senha11"
+    }
 }
 
 result(req.response.data.title())

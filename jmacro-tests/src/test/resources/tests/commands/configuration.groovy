@@ -7,10 +7,14 @@ END METADATA
  */
 
 configuration {
-    foo = "bar"
-    bool = true
-    interger = 5
+    it.foo = "bar"
 }
+
+configuration.with {
+    bool = true
+}
+
+configuration interger: 5
 result.ok(configuration.toString())
 
 

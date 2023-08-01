@@ -2,9 +2,10 @@
 START METADATA
 name: LOGGER
 infos:
-    expectedResult: org.apache.logging.log4j.core.Logger
+    expectedResult: com.itquasar.multiverse.jmacro.core.command.WrappingCommand
 END METADATA
  */
+logger.warn("It works!!!!!")
 result(logger.class.name)
 
 

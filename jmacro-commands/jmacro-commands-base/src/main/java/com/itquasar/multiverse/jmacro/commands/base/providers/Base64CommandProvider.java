@@ -48,16 +48,16 @@ public class Base64CommandProvider implements CommandProvider<Base64CommandProvi
             return this.encode(text);
         }
 
-        /**
-         * Decode base64 and return String
-         * base64 >> text
-         *
-         * @param text
-         * @return
-         */
-        public String rightShift(final String text) {
-            return new String(this.decode(text), StandardCharsets.UTF_8);
-        }
+//        /**
+//         * Decode base64 and return String
+//         * base64 >> text
+//         *
+//         * @param text
+//         * @return
+//         */
+//        public String rightShift(final String text) {
+//            return new String(this.decode(text), StandardCharsets.UTF_8);
+//        }
 
         public String call(final String text) {
             return this.encode(text);
@@ -79,12 +79,8 @@ public class Base64CommandProvider implements CommandProvider<Base64CommandProvi
             return Codec.BASIC.getEncoder().encodeToString(bytes);
         }
 
-        public String dec(final String text) {
-            return new String(this.decode(text), StandardCharsets.UTF_8);
-        }
-
-        public byte[] decode(final String text) {
-            return this.decode(text.getBytes(StandardCharsets.UTF_8));
+        public String decode(final String text) {
+            return new String(this.decode(text.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
         }
 
         public byte[] decode(final byte[] bytes) {

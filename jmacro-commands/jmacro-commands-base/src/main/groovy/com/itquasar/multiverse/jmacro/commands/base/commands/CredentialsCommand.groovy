@@ -31,6 +31,10 @@ class CredentialsCommand extends AbstractCommand implements ConsumerCommand<Cred
         CommandUtils.propertyMissingOnOrChainToContext(this, defaultCredentials, name)
     }
 
+    def propertyMissing(String name, def args) {
+        CommandUtils.propertyMissingOnOrChainToContext(this, defaultCredentials, name, args)
+    }
+
     def methodMissing(String name, def args) {
         CommandUtils.methodMissingOnOrChainToContext(this, defaultCredentials, name, args)
     }

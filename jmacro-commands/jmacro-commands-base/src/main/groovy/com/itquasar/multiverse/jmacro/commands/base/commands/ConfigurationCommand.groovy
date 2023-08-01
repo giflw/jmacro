@@ -48,10 +48,20 @@ class ConfigurationCommand extends AbstractCommand implements SelfConsumerComman
 
 
     // FIXME support for "foo.bar" style
-    def contains(String name) {
+    boolean contains(String name) {
         return this.configs.containsKey(name)
     }
 
+    void call(Map<String, Object> config) {
+        config.entrySet().each { entry ->
+            this.configs[entry.key] = entry.value
+        }
+    }
+
+    ConfigurationCommand set(String name, def value) {
+        this.configs[name] = value
+        return this
+    }
 
     // FIXME should support "foo.bar" style for hierarchical assignment
     def propertyMissing(String name, def value) {

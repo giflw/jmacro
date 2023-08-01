@@ -6,7 +6,7 @@ infos:
 END METADATA
  */
 
-credentials {
+credentials.with {
     login = "ANY LOGIN"
     token = "ANY_TOKEN"
     domain = "DOMAIN NAME"

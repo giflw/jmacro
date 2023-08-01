@@ -30,24 +30,18 @@ public class IncludeCommand extends AbstractCommand {
 
     /**
      * include "path/to/file", "path/to/another/file"
-     * @param includeName
+     *
+     * @param includeNames
      */
-    public void call(final String... includeName) {
-        Arrays.stream(includeName).forEach(it -> this.call(includeName));
-    }
-
-    /**
-     * include "path/to/file"
-     * @param includeName
-     */
-    public void call(final String includeName) {
-        new Inclusion(this, this.getCore(), this.getScriptEngine(), Collections.emptyList()).from(includeName);
+    public Inclusion call(final String... includeNames) {
+        return new Inclusion(this, this.getCore(), this.getScriptEngine(), List.of(includeNames));
     }
 
 
     /**
      * include "path/to/file": "nameOnIncludedContext"
      * include "path/to/file": ["nameOnIncludedContext", "anotherNameOnIncludedContext"]
+     *
      * @param contextNames
      */
     public void call(final Map<String, Object> contextNames) {
