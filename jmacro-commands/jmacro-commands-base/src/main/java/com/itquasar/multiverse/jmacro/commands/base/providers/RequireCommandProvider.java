@@ -64,7 +64,7 @@ public class RequireCommandProvider implements CommandProvider<RequireCommandPro
             // check major version (api == required)
             boolean matched = apiVersion.get(0).equals(requiredVersion.get(0));
             // check minor/fix version (major: api == required && minor: api >= required || major: api > required)
-            matched = matched && apiVersion.get(1).equals(requiredVersion.get(1)) ? apiVersion.get(2) >= requiredVersion.get(2) : apiVersion.get(1) > requiredVersion.get(1);
+            matched = matched && (apiVersion.get(1).equals(requiredVersion.get(1)) ? apiVersion.get(2) >= requiredVersion.get(2) : apiVersion.get(1) > requiredVersion.get(1));
             if (!matched) {
                 throw new JMacroException("Required API version " + version + " not supported. Actual version is " + API_VERSION + ".");
             }

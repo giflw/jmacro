@@ -55,8 +55,12 @@ public class ResultCommand<T, E extends Throwable> extends AbstractCommand imple
     }
 
     public ResultCommand<T, E> ok(T value) {
+        return this.ok(0, value);
+    }
+
+    public ResultCommand<T, E> ok(int exitCode, T value) {
         this.value = value;
-        this.exitCode = 0;
+        this.exitCode = exitCode;
         return this;
     }
 
@@ -70,8 +74,16 @@ public class ResultCommand<T, E extends Throwable> extends AbstractCommand imple
         return this.ok(value);
     }
 
+    public ResultCommand<T, E> call(int exitCode, T value) {
+        return this.ok(exitCode, value);
+    }
+
     public ResultCommand<T, E> call(E exception) {
         return this.error(exception);
+    }
+
+    public ResultCommand<T, E> call(int exitCode, E exception) {
+        return this.error(exitCode, exception);
     }
 
     /**
@@ -80,10 +92,11 @@ public class ResultCommand<T, E extends Throwable> extends AbstractCommand imple
      * @param value
      * @return
      */
+    // FIXME use groovy redirect or some kind of interface/abstract class?
     public ResultCommand<T, E> apply(T value) {
         return this.ok(value);
     }
-
+    // FIXME use groovy redirect or some kind of interface/abstract class?
     public ResultCommand<T, E> apply(E exception) {
         return this.error(exception);
     }
@@ -94,19 +107,20 @@ public class ResultCommand<T, E extends Throwable> extends AbstractCommand imple
      * @param value
      * @return
      */
+    // FIXME use groovy redirect or some kind of interface/abstract class?
     public ResultCommand<T, E> invoke(T value) {
         return this.ok(value);
     }
-
+    // FIXME use groovy redirect or some kind of interface/abstract class?
     public ResultCommand<T, E> invoke(E exception) {
         return this.error(exception);
     }
 
     public ResultCommand<T, E> error(E exception) {
-        return error(exception, this.exitCode > 0 ? this.exitCode : ExitException.SCRIPT_ERROR);
+        return error(this.exitCode > 0 ? this.exitCode : ExitException.SCRIPT_ERROR, exception);
     }
 
-    public ResultCommand<T, E> error(E exception, int exitCode) {
+    public ResultCommand<T, E> error(int exitCode, E exception) {
         this.exception = exception;
         this.exitCode = exitCode;
         return this;
