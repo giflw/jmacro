@@ -9,7 +9,6 @@ import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.itquasar.multiverse.jmacro.core.repository.GlobalScriptRepository;
 import com.itquasar.multiverse.jmacro.core.script.Script;
 import com.itquasar.multiverse.jmacro.core.util.SPILoader;
-import groovy.lang.Closure;
 
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
@@ -29,24 +28,41 @@ public class IncludeCommand extends AbstractCommand {
         this.extension = scriptEngine.getFactory().getExtensions().get(0);
     }
 
+    /**
+     * include "path/to/file", "path/to/another/file"
+     * @param includeName
+     */
     public void call(final String... includeName) {
         Arrays.stream(includeName).forEach(it -> this.call(includeName));
     }
 
+    /**
+     * include "path/to/file"
+     * @param includeName
+     */
     public void call(final String includeName) {
         new Inclusion(this, this.getCore(), this.getScriptEngine(), Collections.emptyList()).from(includeName);
     }
 
-    public Inclusion call(final Closure contextNames) {
-        final var contextName = new ContextName();
-        contextNames.setDelegate(contextName);
-        contextNames.setResolveStrategy(Closure.DELEGATE_FIRST);
-        contextNames.call();
-        return new Inclusion(this, this.getCore(), this.getScriptEngine(), contextName.names);
+
+    /**
+     * include "path/to/file": "nameOnIncludedContext"
+     * include "path/to/file": ["nameOnIncludedContext", "anotherNameOnIncludedContext"]
+     * @param contextNames
+     */
+    public void call(final Map<String, Object> contextNames) {
+        contextNames.forEach((k, v) -> {
+            if (v instanceof List<?> list) {
+                List<String> names = list.stream().map(Object::toString).toList();
+                new Inclusion(this, this.getCore(), this.getScriptEngine(), names).from(k);
+            } else {
+                new Inclusion(this, this.getCore(), this.getScriptEngine(), List.of(v.toString())).from(k);
+            }
+        });
     }
 
     public record Inclusion(IncludeCommand includeCommand, Core core, ScriptEngine scriptEngine,
-                            List contextName) {
+                            Collection<String> contextName) {
 
         @SuppressWarnings("unchecked")
         void from(String includeName) {
@@ -114,12 +130,4 @@ public class IncludeCommand extends AbstractCommand {
         }
     }
 
-    public class ContextName {
-
-        private final List<String> names = new ArrayList<>();
-
-        public void propertyMissing(final String name) {
-            this.names.add(name);
-        }
-    }
 }

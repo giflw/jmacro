@@ -6,7 +6,6 @@ import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.itquasar.multiverse.jmacro.core.interfaces.Constants;
-import groovy.lang.Closure;
 import lombok.Getter;
 import lombok.SneakyThrows;
 
@@ -141,10 +140,6 @@ public class ParallelCommand extends AbstractCommand implements AutoCloseable {
             this.call();
         }
         getScriptLogger().info("Executing " + callable + " on parallel group " + this.groupName);
-        if (callable instanceof Closure<?> closure) {
-            closure.setDelegate(this);
-            closure.setResolveStrategy(Closure.DELEGATE_FIRST);
-        }
         return executor.submit((Callable<?>) callable);
     }
 

@@ -1,15 +1,17 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands
 
-import com.itquasar.multiverse.jmacro.commands.base.Result
+
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
+import com.itquasar.multiverse.jmacro.core.command.SelfConsumerCommand
 import com.itquasar.multiverse.jmacro.core.engine.Core
 import com.itquasar.multiverse.jmacro.core.exception.ExitException
 import com.itquasar.multiverse.jmacro.core.interfaces.Constants
 import groovy.transform.CompileDynamic
 
 import javax.script.ScriptEngine
+import java.util.function.Supplier
 
-class ConsoleCommand extends AbstractCommand implements Constants {
+class ConsoleCommand extends AbstractCommand implements SelfConsumerCommand<ConsoleCommand>, Constants {
 
     static class InReader implements Closeable {
 
@@ -59,23 +61,12 @@ class ConsoleCommand extends AbstractCommand implements Constants {
         super(name, core, scriptEngine)
     }
 
-
-    Result call(Closure closure) {
-        closure.delegate = this
-        closure.resolveStrategy = Closure.DELEGATE_FIRST
-        return (Result) closure.call()
-    }
-
-
     String read() {
         System.out.print "${PROMPT}\$> "
         return readerAndWriter.readLine()
     }
 
-
-    String read(
-
-        Map<String, ?> args) {
+    String read(Map<String, ?> args) {
         return read(
             (String) args.label,
             (String) args.fallback ?: '',
@@ -86,12 +77,7 @@ class ConsoleCommand extends AbstractCommand implements Constants {
     }
 
 
-    String read(
-        String label,
-        String fallback = null,
-        List<String> allowed = Collections.EMPTY_LIST,
-        boolean nonInteractive = false,
-        boolean password = false) {
+    String read(String label, String fallback = null, List<String> allowed = Collections.EMPTY_LIST, boolean nonInteractive = false, boolean password = false) {
         def showValue = fallback ?: ''
         showValue = password ? showValue.replaceAll('.', '*') : showValue
         allowed = allowed ?: []
@@ -107,25 +93,18 @@ class ConsoleCommand extends AbstractCommand implements Constants {
         return (value ?: fallback) ?: ''
     }
 
-
-    String password(
-        String message,
-        String fallback = "",
-        boolean nonInteractive = false) {
-        return read(message, fallback, null, true)
+    String password(String message, String fallback = "", boolean nonInteractive = false) {
+        return read(message, fallback, null, nonInteractive)
     }
 
     @CompileDynamic
-    def credentials(Map<String, Map<String, String>> fields, boolean nonInteractive = false, Closure<Boolean> checkCredentials = {
-        ->
-        true
-    }) {
+    def credentials(Map<String, Map<String, String>> fields, boolean nonInteractive = false, Supplier<Boolean> checkCredentials = { -> true }) {
         do {
             fields.each { entry ->
                 String field = entry.key
                 String label = entry.value.label
                 String fallback = entry.value.fallback
-                List<String> allowed = entry.value.allowed ?: List.of()
+                List<String> allowed = entry.value.allowed ?: List.of() as List<String>
                 this.credential(field, label, fallback, allowed, nonInteractive)
             }
         } while (!checkCredentials())

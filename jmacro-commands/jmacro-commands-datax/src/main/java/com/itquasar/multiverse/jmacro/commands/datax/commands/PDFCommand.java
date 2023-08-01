@@ -56,7 +56,7 @@ public class PDFCommand extends AbstractCommand implements CallableCommand<Objec
     }
 
     @Override
-    public Object call(Object arg, Consumer<PDFAction> consumer) {
+    public PDFAction call(Object arg, Consumer<PDFAction> consumer) {
         PDFAction pdfAction = this.call(arg);
         consumer.accept(pdfAction);
         return pdfAction;

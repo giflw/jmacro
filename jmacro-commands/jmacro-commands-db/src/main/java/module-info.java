@@ -1,4 +1,4 @@
-module jmacro.commands.datax {
+module jmacro.commands.db {
     requires static lombok;
 
 

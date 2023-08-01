@@ -29,7 +29,6 @@ class Reader extends LinkedHashMap<String, String> {
         this.put(name, this.tn3270j.read(row, col, length))
     }
 
-
     static enum Mode {
         FINAL_POSITION, LENGTH
     }

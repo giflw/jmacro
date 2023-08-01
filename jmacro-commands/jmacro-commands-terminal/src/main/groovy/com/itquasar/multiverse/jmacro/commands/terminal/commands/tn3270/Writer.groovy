@@ -27,7 +27,7 @@ class Writer {
             String content = name
             int row = args[0]
             int col = args[1]
-            this.logger.info("Writing '$content' at $row x $col")
+            this.logger.debug("Writing '$content' at $row x $col")
             return this.tn3270j.write(row, col, content)
         }
         if (args.length == 3) {
@@ -35,7 +35,7 @@ class Writer {
             int row = args[0]
             int col = args[1]
             int length = args[2]
-            this.logger.info("Writing '$content' at $row x $col with length $length")
+            this.logger.debug("Writing '$content' at $row x $col with length $length")
             return this.tn3270j.write(row, col, length, content)
         }
         if (args.length == 4) {
@@ -44,7 +44,7 @@ class Writer {
             int col = args[1]
             int length = args[2]
             String content = args[3]
-            this.logger.info("Writing $fieldName with '$content' at $row x $col with length $length")
+            this.logger.debug("Writing $fieldName with '$content' at $row x $col with length $length")
             this.tn3270j.write(row, col, length, content, fieldName)
         }
     }

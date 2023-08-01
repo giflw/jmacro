@@ -1,17 +1,15 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands
 
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
-import com.itquasar.multiverse.jmacro.core.command.SelfClosureCallableCommand
+import com.itquasar.multiverse.jmacro.core.command.SelfConsumerCommand
 import com.itquasar.multiverse.jmacro.core.configuration.Env
 import com.itquasar.multiverse.jmacro.core.engine.Core
 import com.itquasar.multiverse.jmacro.core.interfaces.ToMap
 import groovy.transform.CompileDynamic
 
 import javax.script.ScriptEngine
-import java.util.function.Consumer
 
-// FIXME remove SelfClosureCallableCommand
-class ConfigurationCommand extends AbstractCommand implements SelfClosureCallableCommand<ConfigurationCommand>, ToMap {
+class ConfigurationCommand extends AbstractCommand implements SelfConsumerCommand<ConfigurationCommand>, ToMap {
 
     private ConfigObject configs = new ConfigObject()
 
@@ -19,12 +17,6 @@ class ConfigurationCommand extends AbstractCommand implements SelfClosureCallabl
 
     ConfigurationCommand(String name, Core core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
-    }
-
-    @Override
-    ConfigurationCommand call(Consumer consumer) {
-        consumer.accept(this)
-        return this
     }
 
     ConfigObject getConfigs() {

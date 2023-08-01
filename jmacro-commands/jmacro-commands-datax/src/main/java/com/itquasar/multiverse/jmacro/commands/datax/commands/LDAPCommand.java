@@ -5,18 +5,21 @@ import com.itquasar.multiverse.jmacro.commands.datax.commands.ldap.LDAPConstants
 import com.itquasar.multiverse.jmacro.commands.datax.commands.ldap.api.AuthUser;
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
 import com.itquasar.multiverse.jmacro.core.command.CommandUtils;
+import com.itquasar.multiverse.jmacro.core.command.ConsumerCommand;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.itquasar.multiverse.jmacro.core.interfaces.ToMap;
-import groovy.lang.Closure;
+import lombok.Getter;
 
 import javax.naming.Context;
 import javax.script.ScriptEngine;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
-public class LDAPCommand extends AbstractCommand implements AutoCloseable, LDAPConstants {
+public class LDAPCommand extends AbstractCommand implements ConsumerCommand<LDAPCommand>, AutoCloseable, LDAPConstants {
 
+    @Getter
     private final Map<String, String> config = new LinkedHashMap<>() {{
         put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
         put(Context.URL_PKG_PREFIXES, "com.sun.jndi.url");
@@ -31,12 +34,9 @@ public class LDAPCommand extends AbstractCommand implements AutoCloseable, LDAPC
         super(name, core, scriptEngine);
     }
 
-    public Map<String, String> getConfig() {
-        return config;
-    }
-
-    LDAPCommand call(Closure closure) {
-        CommandUtils.callDelegating(new LDAPCommand(getName(), getCore(), getScriptEngine()), closure);
+    @Override
+    public LDAPCommand call(Consumer<LDAPCommand> consumer) {
+        consumer.accept(new LDAPCommand(getName(), getCore(), getScriptEngine()));
         return this;
     }
 

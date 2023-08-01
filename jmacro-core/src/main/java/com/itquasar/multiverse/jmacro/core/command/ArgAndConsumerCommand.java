@@ -20,6 +20,6 @@ public interface ArgAndConsumerCommand<T, U> extends Command {
      * @param consumer Block to be executed/consume the command or its object implementation
      * @return Consumer parameter
      */
-    T call(T arg, Consumer<U> consumer);
+    U call(T arg, Consumer<U> consumer);
 
 }

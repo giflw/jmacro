@@ -3,6 +3,7 @@ package com.itquasar.multiverse.jmacro.commands.terminal.commands
 import com.itquasar.multiverse.jmacro.commands.terminal.commands.tn3270.Reader
 import com.itquasar.multiverse.jmacro.commands.terminal.commands.tn3270.Writer
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
+import com.itquasar.multiverse.jmacro.core.command.ArgAndConsumerCommand
 import com.itquasar.multiverse.jmacro.core.command.AutoCloseableAll
 import com.itquasar.multiverse.jmacro.core.command.CommandUtils
 import com.itquasar.multiverse.jmacro.core.command.OnShutdown
@@ -20,10 +21,11 @@ import javax.script.ScriptEngine
 import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
+import java.util.function.Consumer
 
 @Log4j2
 @CompileStatic
-class TN3270Command extends AbstractCommand implements AutoCloseableAll, Constants, OnShutdown {
+class TN3270Command extends AbstractCommand implements ArgAndConsumerCommand<WaitMode, TN3270Command>, AutoCloseableAll, Constants, OnShutdown {
 
     static enum Key {
         F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12,
@@ -42,7 +44,7 @@ class TN3270Command extends AbstractCommand implements AutoCloseableAll, Constan
         return this.tn3270j.get()
     }
 
-    def _init(WaitMode waitMode = WaitMode.Seconds) {
+    void _init(WaitMode waitMode = WaitMode.Seconds) {
         if (this.tn3270j.get() == null) {
             getScriptLogger().warn("Initializing ${Thread.currentThread().name}")
             Path toolsDir = core.configuration.folders.tools()
@@ -63,14 +65,15 @@ class TN3270Command extends AbstractCommand implements AutoCloseableAll, Constan
         }
     }
 
-    def call(WaitMode waitMode = WaitMode.Seconds, Closure closure) {
+    TN3270Command call(WaitMode waitMode = WaitMode.Seconds, Consumer<TN3270Command> consumer) {
         if (this.tn3270j.get() == null) {
             this._init(waitMode)
         }
-        closure.delegate = this
-        closure.resolveStrategy = Closure.DELEGATE_FIRST
-        return closure()
+        consumer.accept(this)
+        return this
     }
+
+
 
     def methodMissing(String name, def args) {
         return CommandUtils.methodMissingOnOrChainToContext(this, this.tn3270j.get(), name, args)
@@ -115,26 +118,23 @@ class TN3270Command extends AbstractCommand implements AutoCloseableAll, Constan
         }
     }
 
-    def write(Closure closure) {
+    def write(Consumer<Writer> consumer) {
         def writer = new Writer(this)
-        closure.delegate = writer
-        closure.resolveStrategy = Closure.DELEGATE_ONLY
-        return closure()
-    }
-
-    def read(Closure closure) {
-        return read(Reader.Mode.FINAL_POSITION, closure)
+        consumer(writer)
+        return writer
     }
 
     def read(int row, int col, int length) {
         return this.tn3270j.get().read(row, col, length)
     }
 
-    def read(Reader.Mode mode, Closure closure) {
+    def read(Consumer<Reader> consumer) {
+        return read(Reader.Mode.FINAL_POSITION, consumer)
+    }
+
+    def read(Reader.Mode mode, Consumer<Reader> consumer) {
         def reader = new Reader(this, mode)
-        closure.delegate = reader
-        closure.resolveStrategy = Closure.DELEGATE_FIRST
-        closure()
+        consumer.accept(reader)
         return reader
     }
 
