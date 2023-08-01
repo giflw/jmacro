@@ -12,6 +12,7 @@ import groovy.transform.CompileDynamic
 
 import javax.script.ScriptEngine
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.function.Consumer
 
 class COMCommand extends AbstractCommand implements AutoCloseable {
 
@@ -46,7 +47,7 @@ class COMCommand extends AbstractCommand implements AutoCloseable {
         }
     }
 
-    def call(Application application, Closure closure = null) {
+    def call(Application application, Consumer<COMWrapper> consumer = null) {
         if (started.compareAndSet(false, true)) {
             ComThread.startMainSTA()
         }
@@ -59,8 +60,8 @@ class COMCommand extends AbstractCommand implements AutoCloseable {
             this.bindings,
             new ActiveXComponent(application.activeXName) // Instance of application object created.
         )
-        if (closure != null) {
-            wrapper.call(closure)
+        if (consumer != null) {
+            wrapper.call(consumer)
         }
         return wrapper
     }

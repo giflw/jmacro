@@ -8,10 +8,11 @@ import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 
 import java.time.Duration
+import java.util.function.Function
 
 class BrowserWait {
 
-    static Map<String, Closure<? extends ExpectedCondition<? extends Object>>> EXPECTED_CONDITIONS = [
+    static Map<String, Function<By, ? extends ExpectedCondition<? extends Object>>> EXPECTED_CONDITIONS = [
         present      : { By by -> ExpectedConditions.presenceOfElementLocated(by) },
         visible      : { By by -> ExpectedConditions.visibilityOfElementLocated(by) },
         invisible    : { By by -> ExpectedConditions.invisibilityOfElementLocated(by) },

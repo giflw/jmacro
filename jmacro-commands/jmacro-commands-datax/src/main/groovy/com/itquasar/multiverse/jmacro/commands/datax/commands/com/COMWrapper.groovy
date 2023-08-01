@@ -9,6 +9,7 @@ import com.jacob.com.Variant
 import groovy.transform.CompileDynamic
 
 import javax.script.Bindings
+import java.util.function.Consumer
 
 class COMWrapper implements AutoCloseable {
 
@@ -29,10 +30,8 @@ class COMWrapper implements AutoCloseable {
         this.context = context
     }
 
-    def call(Closure closure) {
-        closure.delegate = this
-        closure.resolveStrategy = Closure.DELEGATE_FIRST
-        closure()
+    void call(Consumer<COMWrapper> consumer) {
+        consumer.accept(this)
     }
 
     @CompileDynamic

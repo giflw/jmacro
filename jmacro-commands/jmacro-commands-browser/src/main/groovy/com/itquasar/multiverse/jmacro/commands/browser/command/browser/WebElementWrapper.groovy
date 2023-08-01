@@ -9,6 +9,9 @@ import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.remote.RemoteWebElement
 
+import java.util.function.Consumer
+import java.util.function.Function
+
 @Log4j2
 class WebElementWrapper {
 
@@ -34,27 +37,27 @@ class WebElementWrapper {
         return webElement != null && webElement
     }
 
-    def ifEnabled(Closure closure) {
+    // FIXME is this necessary??? usage???
+//    WebElementWrapper then(Consumer<WebElementWrapper> consumer) {
+//        consumer(this)
+//        return this
+//    }
+
+    void ifEnabled(Consumer<WebElementWrapper> consumer) {
         if (webElement != null && ((WebElement) webElement).isEnabled()) {
-            closure.delegate = this
-            closure.resolveStrategy = Closure.DELEGATE_FIRST
-            return closure(this)
+            consumer.accept(this)
         }
     }
 
-    def then(Closure closure) {
-        return closure(this)
-    }
-
-    def ifExists(Closure closure) {
+    void ifExists(Consumer<WebElementWrapper> consumer) {
         if (exists()) {
-            return closure(this)
+            consumer.accept(this)
         }
     }
 
-    def ifNotExists(Closure closure) {
+    void ifNotExists(Consumer<WebElementWrapper> consumer) {
         if (!exists()) {
-            return closure(this)
+            consumer.accept(this)
         }
     }
 
@@ -83,17 +86,17 @@ class WebElementWrapper {
         return sendKeys(keys, delay, null, jumpKey)
     }
 
-    def sendKeys(keys, Closure transform = null, jumpKey = null) {
+    def sendKeys(keys, Function<String, CharSequence> transform = null, jumpKey = null) {
         return sendKeys(keys, null, transform, jumpKey)
     }
 
     @CompileDynamic
-    def sendKeys(keys, BigDecimal delay, Closure transform, jumpKey = null) {
+    def sendKeys(keys, BigDecimal delay, Function<String, CharSequence> transform, jumpKey = null) {
         if (keys != null) {
-            transform = transform ?: Closure.IDENTITY
+            transform = transform ?: Closure.IDENTITY as Function<String, CharSequence>
             this.webElement.sendKeys(transform(keys.toString()))
         } else {
-            log.warn('Send key was called with null value. Nothing sended!')
+            log.warn('Send key was called with null value. Nothing sent!')
         }
         this.delay(delay)
         return this

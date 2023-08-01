@@ -11,6 +11,7 @@ import java.awt.*
 import java.awt.image.BufferedImage
 import java.nio.file.Path
 import java.util.List
+import java.util.function.Consumer
 
 class OCRCommand extends AbstractCommand {
 
@@ -76,11 +77,8 @@ class OCRCommand extends AbstractCommand {
         return this.read(path.toFile())
     }
 
-    Object call(Closure closure) {
-        this.init()
-        closure.setDelegate(this)
-        closure.setResolveStrategy(Closure.DELEGATE_FIRST)
-        return closure.call()
+    void call(Consumer<OCRCommand> consumer) {
+        consumer.accept(this)
     }
 
     def methodMissing(String name, def args) {

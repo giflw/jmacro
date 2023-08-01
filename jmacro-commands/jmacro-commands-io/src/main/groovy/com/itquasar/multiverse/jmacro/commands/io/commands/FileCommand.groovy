@@ -10,6 +10,7 @@ import javax.swing.*
 import javax.swing.filechooser.FileFilter
 import java.io.File as JFile
 import java.nio.file.Path
+import java.util.function.Consumer
 
 class FileCommand extends AbstractCommand {
 
@@ -30,24 +31,22 @@ class FileCommand extends AbstractCommand {
     }
 
     /**
-     * file("name") {*     closure....
+     * file("name") {*     consumer....
      *}* @param filename
-     * @param closure
+     * @param consumer
      * @return
      */
-    def call(String path, Closure closure) {
-        return call(Path.of(path), closure)
+    def call(String path, Consumer<File> consumer) {
+        return call(Path.of(path), consumer)
     }
 
-    def call(JFile file, Closure closure) {
-        return call(file.toPath(), closure)
+    def call(JFile file, Consumer<File> consumer) {
+        return call(file.toPath(), consumer)
     }
 
-    def call(Path path, Closure closure) {
+    def call(Path path, Consumer<File> consumer) {
         def file = new File(path, scriptEngine.context)
-        closure.delegate = file
-        closure.resolveStrategy = Closure.DELEGATE_FIRST
-        return closure.call() ?: file
+        return consumer.accept(file) ?: file
     }
 
     /**

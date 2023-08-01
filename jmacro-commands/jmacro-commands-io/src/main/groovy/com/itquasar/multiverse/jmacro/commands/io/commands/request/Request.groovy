@@ -29,6 +29,7 @@ import org.apache.hc.core5.ssl.TrustStrategy
 import javax.net.ssl.SSLContext
 import javax.script.Bindings
 import java.nio.charset.StandardCharsets
+import java.util.function.Consumer
 
 /**
  * Request is used to make HTTP requests.
@@ -67,10 +68,8 @@ class Request implements Constants {
         this.body = new Body(bindings)
     }
 
-    Request call(Closure closure) {
-        closure.delegate = this
-        closure.resolveStrategy = Closure.DELEGATE_FIRST
-        closure()
+    Request call(Consumer<Request> consumer) {
+        consumer.accept(this)
         if (this.skipExecution) {
             CommandUtils.log(bindings, WARNING, "Skipping execution: skipExecution = ${skipExecution}")
         } else {

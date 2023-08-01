@@ -8,6 +8,7 @@ import org.apache.hc.core5.http.Header
 import org.apache.hc.core5.http.HttpResponse
 
 import java.nio.charset.StandardCharsets
+import java.util.function.Consumer
 import java.util.stream.Collectors
 
 import static org.apache.hc.core5.http.ContentType.*
@@ -196,10 +197,8 @@ class Response implements InputParsers {
         return InputParsers.super.data
     }
 
-    def call(Closure closure) {
-        closure.delegate = this
-        closure.resolveStrategy = Closure.DELEGATE_FIRST
-        return closure.call()
+    void call(Consumer<Response> consumer) {
+        consumer.accept(this)
     }
 
 }

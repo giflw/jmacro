@@ -183,11 +183,8 @@ class Browser implements Constants {
     }
 
 
-    Browser elements(Closure closure) {
-        BrowserElements fields = new BrowserElements(this)
-        closure.delegate = fields
-        closure.resolveStrategy = Closure.DELEGATE_ONLY
-        closure()
+    Browser elements(Consumer<BrowserElements> consumer) {
+        consumer.accept(new BrowserElements(this))
         return this
     }
 
@@ -216,18 +213,20 @@ class Browser implements Constants {
         return elements
     }
 
+    // FIXME elements should have a specific type
     @CompileDynamic
-    def check(String element, Closure checkLogic) {
+    def check(String element, Consumer<Object> checkLogic) {
         def elements = this.els(element)?.first()
         if (elements) {
-            return checkLogic(elements)
+            return checkLogic.accept(elements)
         }
     }
 
-    def checks(String element, Closure checkLogic) {
+    // FIXME elements should have a specific type
+    def checks(String element, Consumer<Object> checkLogic) {
         def elements = this.els(element)
         if (elements) {
-            return checkLogic(elements)
+            return checkLogic.accept(elements)
         }
     }
 

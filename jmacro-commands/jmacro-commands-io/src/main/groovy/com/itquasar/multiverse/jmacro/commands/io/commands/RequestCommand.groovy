@@ -7,6 +7,8 @@ import groovy.transform.CompileDynamic
 
 import javax.script.ScriptContext
 import javax.script.ScriptEngine
+import java.util.function.Consumer
+import java.util.function.Function
 
 /**
  * Request is used to make HTTP requests.
@@ -30,13 +32,13 @@ class RequestCommand extends AbstractCommand {
     }
 
     @CompileDynamic
-    Request call(Closure closure) {
+    Request call(Consumer<Request> consumer) {
         def action = new Request(getBindings())
         def requestConfig = scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE).get('configuration')?.request
         if (requestConfig?.headers) {
             action.headers.putAll(requestConfig.headers as Map<String, String>)
         }
-        action.call(closure)
+        action.call(consumer)
         return action
     }
 
