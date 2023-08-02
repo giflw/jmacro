@@ -23,6 +23,7 @@
             --add-opens java.base/sun.nio.ch=ALL-UNNAMED
             --add-opens java.base/java.io=ALL-UNNAMED
             -Dspock.iKnowWhatImDoing.disableGroovyVersionCheck=true
+            --enable-preview
         </jvm.argLine>
 
         <source.encoding>UTF-8</source.encoding>
@@ -68,7 +69,6 @@
         <module>jmacro-installer</module>
         <module>jmacro-launcher</module>
         <module>jmacro-tests</module>
-        <module>jmacro-tools</module>
     </modules>
 
     <distributionManagement>
