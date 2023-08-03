@@ -1,0 +1,8 @@
+<project>
+    <body>
+        <menu name="API Docs">
+            <item name="Javadocs" href="apidocs/index.html"/>
+            <item name="Groovydocs" href="gapidocs/overview-summary.html"/>
+        </menu>
+    </body>
+</project>
