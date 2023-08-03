@@ -9,6 +9,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>jmacro-docs</artifactId>
+    <packaging>pom</packaging>
     <name>JMacro::Docs</name>
     <description>JMacro documentation</description>
 
@@ -28,6 +29,10 @@
         <dependency>
             <groupId>org.apache.groovy</groupId>
             <artifactId>groovy</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.groovy</groupId>
+            <artifactId>groovy-groovydoc</artifactId>
         </dependency>
         <dependency>
             <groupId>net.sourceforge.plantuml</groupId>

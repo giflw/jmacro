@@ -23,7 +23,6 @@
             --add-opens java.base/sun.nio.ch=ALL-UNNAMED
             --add-opens java.base/java.io=ALL-UNNAMED
             -Dspock.iKnowWhatImDoing.disableGroovyVersionCheck=true
-            --enable-preview
         </jvm.argLine>
 
         <source.encoding>UTF-8</source.encoding>
@@ -61,14 +60,14 @@
 
     <modules>
         <module>jmacro-bom</module>
-        <module>jmacro-cli</module>
-        <module>jmacro-commands</module>
         <module>jmacro-core</module>
-        <module>jmacro-dist</module>
-        <module>jmacro-docs</module>
+        <module>jmacro-commands</module>
+        <module>jmacro-cli</module>
         <module>jmacro-installer</module>
         <module>jmacro-launcher</module>
         <module>jmacro-tests</module>
+        <module>jmacro-docs</module>
+        <module>jmacro-dist</module>
     </modules>
 
     <distributionManagement>
@@ -226,6 +225,11 @@
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>3.5.0</version>
                     <configuration>
+                        <release>${java.version}</release>
+                        <additionalOptions>
+                            <additionalOption>--enable-preview</additionalOption>
+                            <additionalOption>-Xdoclint:none</additionalOption>
+                        </additionalOptions>
                         <encoding>UTF-8</encoding>
                         <charset>UTF-8</charset>
                         <show>private</show>
@@ -258,7 +262,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>4.0.0-M8</version>
+                    <version>3.12.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -290,10 +294,12 @@
                         <configScript>${project.rootdir}/configScript.groovy</configScript>
                         <!--<debug>true</debug>-->
                         <!--<verbose>true</verbose>-->
+                        <groovyDocOutputDirectory>${project.build.directory}/site/gapidocs</groovyDocOutputDirectory>
                     </configuration>
                     <executions>
                         <execution>
                             <?m2e execute onConfiguration,onIncremental?>
+                            <id>compilation</id>
                             <goals>
                                 <goal>addSources</goal>
                                 <goal>addTestSources</goal>
@@ -303,6 +309,17 @@
                                 <goal>compileTests</goal>
                                 <goal>removeStubs</goal>
                                 <goal>removeTestStubs</goal>
+                                <goal>groovydoc</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <?m2e execute onConfiguration?>
+                            <id>groovydoc</id>
+                            <phase>site</phase>
+                            <goals>
+                                <goal>generateStubs</goal>
+                                <goal>groovydoc</goal>
+                                <goal>removeStubs</goal>
                             </goals>
                         </execution>
                     </executions>
@@ -463,9 +480,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <configuration>
-                    <locales>en</locales>
-                </configuration>
+<!--                <configuration>-->
+<!--                    <locales>en</locales>-->
+<!--                </configuration>-->
                 <executions>
                     <execution>
                         <id>site</id>
@@ -484,15 +501,38 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>ci-management</report>
+                            <report>dependencies</report>
+                            <report>dependency-convergence</report>
+                            <report>dependency-info</report>
+                            <report>dependency-management</report>
+                            <report>distribution-management</report>
+                            <report>help</report>
+                            <report>index</report>
+                            <report>issue-management</report>
+                            <report>licenses</report>
+                            <report>mailing-lists</report>
+                            <report>modules</report>
+                            <report>plugin-management</report>
+                            <report>plugins</report>
+                            <report>scm</report>
+                            <report>summary</report>
+                            <report>team</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
             </plugin>
-            <!--<plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>taglist-maven-plugin</artifactId>
-                <version>2.4</version>
+                <version>3.0.0</version>
                 <configuration>
                     <aggregate>true</aggregate>
                     <tagListOptions>
@@ -502,7 +542,7 @@
                                 <tags>
                                     <tag>
                                         <matchString>FIXME</matchString>
-                                        <matchType>exact</matchType>
+                                        <matchType>ignoreCase</matchType>
                                     </tag>
                                 </tags>
                             </tagClass>
@@ -510,7 +550,7 @@
                                 <displayName>Todo Work</displayName>
                                 <tags>
                                     <tag>
-                                        <matchString>todo</matchString>
+                                        <matchString>TODO</matchString>
                                         <matchType>ignoreCase</matchType>
                                     </tag>
                                 </tags>
@@ -518,7 +558,7 @@
                         </tagClasses>
                     </tagListOptions>
                 </configuration>
-            </plugin>-->
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
@@ -539,6 +579,26 @@
                     <xmlOutput>true</xmlOutput>
                     <xmlOutputDirectory>target/site</xmlOutputDirectory>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <reportSets>
+                    <reportSet><!-- by default, id = "default" -->
+                        <inherited>true</inherited>
+                        <reports><!-- select non-aggregate reports -->
+                            <report>javadoc</report>
+                            <report>test-javadoc</report>
+                        </reports>
+                    </reportSet>
+                    <reportSet><!-- aggregate reportSet, to define in poms having modules -->
+                        <id>aggregate</id>
+                        <inherited>false</inherited><!-- don't run aggregate in child modules -->
+                        <reports>
+                            <report>aggregate</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
             </plugin>
         </plugins>
     </reporting>
@@ -575,6 +635,10 @@
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <executions>
                             <execution>
+                                <id>site</id>
+                                <phase>site</phase>
+                            </execution>
+                            <execution>
                                 <id>aggregate</id>
                                 <phase>prepare-package</phase>
                                 <inherited>false</inherited>
@@ -589,6 +653,17 @@
                                 <goals>
                                     <goal>javadoc</goal>
                                     <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.gmavenplus</groupId>
+                        <artifactId>gmavenplus-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>groovydoc-jar</goal>
                                 </goals>
                             </execution>
                         </executions>
