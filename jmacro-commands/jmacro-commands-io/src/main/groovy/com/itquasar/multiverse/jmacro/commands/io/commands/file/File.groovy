@@ -152,7 +152,7 @@ class File implements InputParsers, Constants {
         return InputParsers.super.data
     }
 
-    File read(String charset = null) {
+    Object read(String charset = null) {
         this.type = name.substring(name.lastIndexOf('.') + 1).toLowerCase()
         this.charset = charset ?: this.charset
 
@@ -178,7 +178,7 @@ class File implements InputParsers, Constants {
             default:
                 throw new Error("File type $type unknow!")
         }
-        return this
+        return this.data
     }
 
     Path write(String text, OpenOption... options) {
