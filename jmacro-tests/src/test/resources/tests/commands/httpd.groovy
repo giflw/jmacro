@@ -9,9 +9,13 @@ def server = httpd {
     it.get('/foo', ctx -> ctx.result(it.config.toString()))
 }
 
+pause 1
+
 def req = request {
     it.GET "${server.url}foo"
 }
+
+server.stop()
 
 result(req.response.data)
 

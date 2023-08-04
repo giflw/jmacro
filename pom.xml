@@ -20,6 +20,7 @@
         <maven.compiler.release>${java.version}</maven.compiler.release>
 
         <jvm.argLine>
+            --enable-preview
             --add-opens java.base/sun.nio.ch=ALL-UNNAMED
             --add-opens java.base/java.io=ALL-UNNAMED
             -Dspock.iKnowWhatImDoing.disableGroovyVersionCheck=true

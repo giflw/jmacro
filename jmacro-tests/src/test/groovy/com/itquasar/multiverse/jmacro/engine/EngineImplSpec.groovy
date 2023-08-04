@@ -17,7 +17,7 @@ class EngineImplSpec extends Specification implements Constants {
             .text
 
         def metadata = Metadata.extractMetadata(source)
-        def script = new Script(metadata, "hello-world.${extension}", '/scripts/hello-world', source)
+        def script = new Script(metadata, this.getClass().getSimpleName(),  "hello-world.${extension}", '/scripts/hello-world', source)
 
         expect:
         metadata.name == 'Metadata Test'
@@ -41,6 +41,7 @@ class EngineImplSpec extends Specification implements Constants {
             first.set(
                 engine.execute(new Script(
                     Metadata.EMPTY,
+                    this.class.simpleName,
                     "set_scope.groovy",
                     '',
                     """
@@ -53,13 +54,14 @@ class EngineImplSpec extends Specification implements Constants {
                         timer.log()
                         result("FIRST \${timer.stop == null && x == 'first'}")
                         """
-                )).result.get()
+                )).result
             )
         }
         Thread.start {
             second.set(
                 engine.execute(new Script(
                     Metadata.EMPTY,
+                    this.class.simpleName,
                     "set_scope.groovy",
                     '',
                     """
@@ -78,7 +80,7 @@ class EngineImplSpec extends Specification implements Constants {
                             timer.log()
                             Thread.sleep(2000)
                         """
-                )).result.get()
+                )).result
             )
         }.join()
 
