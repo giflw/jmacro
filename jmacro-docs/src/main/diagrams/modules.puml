@@ -7,6 +7,7 @@
             [base]
             [browser]
             [datax]
+            [db]
             [io]
             [server]
             [terminal]
