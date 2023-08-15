@@ -92,7 +92,7 @@ public class IncludeCommand extends AbstractCommand {
                             // args.appendArgs()
                             // }
                         });
-                        SPILoader.load(CommandProvider.class).forEachRemaining(provider -> {
+                        SPILoader.iterator(CommandProvider.class).forEachRemaining(provider -> {
                             if ((provider instanceof ExportCommandProvider) || (provider instanceof IncludeCommandProvider)) {
                                 logger.debug("Creating [" + provider.getName() + "] command in new engine");
                                 provider.getCommand(this.core, engine);

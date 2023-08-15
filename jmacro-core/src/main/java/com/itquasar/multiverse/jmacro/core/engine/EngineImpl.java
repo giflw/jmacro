@@ -81,11 +81,11 @@ public final class EngineImpl extends Engine implements Constants, TUI {
             LOGGER.trace(engineInfo);
         });
 
-        new SPILoader<>(LanguageAdaptor.class).load().forEachRemaining(languageAdaptor ->
+        new SPILoader<>(LanguageAdaptor.class).iterator().forEachRemaining(languageAdaptor ->
             this.languageAdaptors.put(languageAdaptor.forExtension(), languageAdaptor)
         );
 
-        new SPILoader<>(CommandProvider.class).load().forEachRemaining(this.commandProviders::add);
+        new SPILoader<>(CommandProvider.class).iterator().forEachRemaining(this.commandProviders::add);
     }
 
     private static void startBanner(Logger scriptLogger) {

@@ -24,22 +24,30 @@ public final class SPILoader<S> {
         this.loader.stream().map(this::logMessage).forEach(LOGGER::trace);
     }
 
-    public static <S> Iterator<S> load(Class<S> type) {
+    public static <S> ServiceLoader<S> load(Class<S> type) {
         return new SPILoader<S>(type).load();
+    }
+
+    public static <S> Iterator<S> iterator(Class<S> type) {
+        return new SPILoader<S>(type).iterator();
     }
 
     private String logMessage(ServiceLoader.Provider<S> provider) {
         return "Loaded " + provider.type().getName() + " as " + this.type.getSimpleName();
     }
 
-    public Iterator<S> load() {
+    public ServiceLoader<S> load() {
         return this.load(false);
     }
 
-    public Iterator<S> load(boolean refresh) {
+    public ServiceLoader<S> load(boolean refresh) {
         if (refresh) {
             loader.reload();
         }
+        return loader;
+    }
+
+    public Iterator<S> iterator() {
         return loader.iterator();
     }
 }

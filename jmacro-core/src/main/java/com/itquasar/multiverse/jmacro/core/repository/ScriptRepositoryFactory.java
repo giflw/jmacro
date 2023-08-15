@@ -17,7 +17,7 @@ public interface ScriptRepositoryFactory {
         var repositoryFactoryMap = new LinkedHashMap<String, ScriptRepositoryFactory>();
 
         var repoFactoryLoader = new SPILoader<>(ScriptRepositoryFactory.class);
-        repoFactoryLoader.load().forEachRemaining(
+        repoFactoryLoader.iterator().forEachRemaining(
             (factory) -> repositoryFactoryMap.put(factory.getType(), factory)
         );
 

@@ -69,7 +69,7 @@ public class JMXManagement implements AutoCloseable {
     public void load(Core core) {
         if (this.server != null && this.loaded.compareAndSet(false, true)) {
             var loader = new SPILoader<>(JMXBeanIFace.class);
-            var iterator = loader.load();
+            var iterator = loader.iterator();
             while (iterator.hasNext()) {
                 var jmxBean = iterator.next();
                 LOGGER.info("Loaded JMX Bean: " + jmxBean.getClass().getName());

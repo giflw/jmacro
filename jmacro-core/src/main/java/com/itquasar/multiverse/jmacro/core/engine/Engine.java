@@ -20,7 +20,7 @@ public abstract class Engine {
     static {
         Logger logger = LogManager.getLogger(Engine.class);
         logger.warn("Loading static initializations");
-        SPILoader.load(InitializationProvider.class).forEachRemaining(init -> {
+        SPILoader.iterator(InitializationProvider.class).forEachRemaining(init -> {
             logger.warn("Static initializing " + init.getClass());
         });
         logger.warn("Static initialization done");
