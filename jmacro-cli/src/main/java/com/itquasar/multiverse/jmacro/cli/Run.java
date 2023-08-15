@@ -33,14 +33,17 @@ public class Run implements Callable<CliResult> {
     public String defaultScriptPath;
     @Option(names = {"--main-infix", "--mi"}, description = "Main infxi to search for main scripts. Default is main as in script.main.groovy", defaultValue = "main")
     public String mainInfix;
-    @Parameters()
-    List<String> args;
+
+    @Parameters(index = "1")
+    public String script;
     @Spec
     private CommandSpec spec; // injected by picocli
     @ParentCommand
     private Cli cli;
     @Parameters(arity = "0..1", description = "Script path to run")
     private String scriptPath;
+    @Parameters(index = "1..*")
+    List<String> args;
 
     @Option(names = {"--config", "--configuration"}, paramLabel = "KEY=VALUE")
     public void setConfiguration(Map<String, String> map) {
@@ -143,9 +146,6 @@ public class Run implements Callable<CliResult> {
         }
 
         if (script.isPresent()) {
-            if (args != null && args.size() > 0) {
-                args.set(0, script.get().getLocation().toString());
-            }
             List<String> args = this.args != null ? Collections.unmodifiableList(this.args) : Collections.emptyList();
             ScriptResult<?, ?> scriptResult = cli.getCore().getEngine().execute(
                 script.get(),

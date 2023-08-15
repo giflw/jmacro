@@ -2,13 +2,15 @@ package com.itquasar.multiverse.jmacro.core.repository;
 
 import com.itquasar.multiverse.jmacro.core.script.Script;
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 
 import java.net.URI;
 import java.util.*;
 
+@Getter
+@Log4j2
 public class GlobalScriptRepository extends ScriptRepositoryAbstract {
 
-    @Getter
     private final List<ScriptRepository> repositories;
 
     public GlobalScriptRepository(ScriptRepository... repositories) {
@@ -35,8 +37,10 @@ public class GlobalScriptRepository extends ScriptRepositoryAbstract {
     @Override
     public Optional<Script> get(String uuidOrLocation) {
         return repositories.stream()
+            .peek(it -> LOGGER.debug("Repository " + it.getId() + ": " + it.getUri()))
             .map(it -> it.get(it.pathToLocation(uuidOrLocation)))
             .filter(Optional::isPresent)
+            .peek(it -> LOGGER.debug("Script found: " + it.get().getLocation()))
             .findFirst()
             .orElseGet(Optional::empty);
     }

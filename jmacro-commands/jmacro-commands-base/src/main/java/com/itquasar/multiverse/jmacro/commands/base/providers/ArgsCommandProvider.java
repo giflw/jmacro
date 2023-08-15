@@ -32,12 +32,11 @@ public class ArgsCommandProvider implements CommandProvider<ArgsCommandProvider.
         return new ArgsCommand(getName(), core, scriptEngine);
     }
 
-    public static class ArgsCommand extends AbstractCommand implements CallableCommand<String, Object>, Constants {
+    @Getter
+    public static class ArgsCommand extends AbstractCommand implements CallableCommand<String, Object>, Constants, Iterable<String> {
 
-        @Getter
         private List<String> args = null;
 
-        @Getter
         private Map<String, ?> argm = null;
 
         public ArgsCommand(String name, Core core, ScriptEngine scriptEngine) {
@@ -52,17 +51,13 @@ public class ArgsCommandProvider implements CommandProvider<ArgsCommandProvider.
 
         synchronized private void setArgs(List<String> argsOrig) {
             if (this.args == null) {
-                getScriptLogger().warn("Setting args to " + argsOrig);
-                var args = new LinkedList<>(argsOrig);
-                String scriptLocation = SCRIPT_LOCATION + "=" + (args.size() > 0 ? args.get(0) : "");
-                if (args.size() > 0) {
-                    args.set(0, scriptLocation);
-                } else {
-                    args.add(scriptLocation);
-                }
-                this.args = Collections.unmodifiableList(args);
-
                 Map<String, Object> argsMap = new LinkedHashMap<>();
+
+                getScriptLogger().warn("Setting args to " + argsOrig);
+                this.args = Collections.unmodifiableList(argsOrig);
+
+                argsMap.put(SCRIPT_LOCATION, args.isEmpty() ? "" : args.get(0));
+
                 this.args.forEach(key -> {
                     Object value = true;
                     if (key.contains("=")) {
@@ -91,8 +86,33 @@ public class ArgsCommandProvider implements CommandProvider<ArgsCommandProvider.
             return (T) argm.get(key);
         }
 
+        public <T> T getAt(String key) {
+            return this.get(key);
+        }
+
         public <T> T get(int key) {
             return (T) args.get(key);
+        }
+
+        public <T> T getAt(int key) {
+            return this.get(key);
+        }
+
+        public <T> T script() {
+            return this.get(0);
+        }
+
+        public <T> T first() {
+            return this.get(1);
+        }
+
+        @Override
+        public Iterator<String> iterator() {
+            return this.args.subList(1, this.args.size()).iterator();
+        }
+
+        public <T> T last() {
+            return (T) this.args.get(this.args.size() - 1);
         }
 
         private Object cast(String value) {

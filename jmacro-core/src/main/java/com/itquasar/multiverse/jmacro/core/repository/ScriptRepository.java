@@ -9,6 +9,8 @@ import java.util.UUID;
 
 public interface ScriptRepository {
 
+    org.apache.logging.log4j.Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger(ScriptRepository.class);
+
     String DEFAULT_MAIN_INFIX = "main";
 
     String getId();
@@ -40,7 +42,9 @@ public interface ScriptRepository {
 
     default URI pathToLocation(String path) {
         URI uri = URI.create(path);
-        return uri.getScheme() != null ? uri : URI.create(getUri().toString() + path);
+        uri = uri.getScheme() != null ? uri : URI.create(getUri().toString() + path);
+        LOGGER.debug("pathToLocation " + this.getId() + ": " + path + " -> " + uri);
+        return uri;
     }
 
     default Optional<Script> get(String uuidOrLocation) {

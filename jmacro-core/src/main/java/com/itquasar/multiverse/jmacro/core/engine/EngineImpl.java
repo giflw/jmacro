@@ -263,7 +263,7 @@ public final class EngineImpl extends Engine implements Constants, TUI {
         commands.forEach(Command::allCommandsLoaded);
 
         var locationArg = script.getLocation().toString();
-        locationArg = normalExecution ? INCLUDED + ':' + locationArg : locationArg;
+        locationArg = normalExecution ? locationArg : INCLUDED + ':' + locationArg;
         final var argsFinal = new LinkedList<>(args);
         argsFinal.addFirst(locationArg);
         scriptLogger.warn("Script args: " + argsFinal);
@@ -314,7 +314,10 @@ public final class EngineImpl extends Engine implements Constants, TUI {
                         LOGGER.error("Exit cause: exit(" + exitException.getExitCode() + ")", exitException.getCause());
                     } else {
                         String where = "unknown source";
-                        Optional<StackTraceElement> stackTraceElementOptional = Arrays.stream(exitException.getStackTrace()).filter(ste -> !ste.getFileName().endsWith(".java")).findFirst();
+                        Optional<StackTraceElement> stackTraceElementOptional = Arrays.stream(exitException.getStackTrace())
+                            .filter(ste -> ste.getFileName() != null)
+                            .filter(ste -> !ste.getFileName().endsWith(".java"))
+                            .findFirst();
                         if (stackTraceElementOptional.isPresent()) {
                             StackTraceElement element = stackTraceElementOptional.get();
                             where = element.getClassName() + "#" + element.getMethodName() + "():" + element.getLineNumber() + "@" + element.getFileName();
