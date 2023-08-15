@@ -10,26 +10,69 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ "main", "feature/*" ]
+    branches: [ "main", "feature/*", "feature/*/*" ]
   pull_request:
     branches: [ "main" ]
 
 jobs:
-  build:
-
+  checkout:
     runs-on: [ "ubuntu-latest", "windows-latest" ]
+    name: Checkout project and submodules
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: true
+
+
+  ubuntu:
+    name: "Linux x64 Build"
+    runs-on: "ubuntu-latest"
+    needs: [ checkout ]
+
+    steps:
+    - run: |
+            download_url="https://github.com/adoptium/temurin20-binaries/releases/download/jdk-20.0.2%2B9/OpenJDK20U-jdk_x64_linux_hotspot_20.0.2_9.tar.gz"
+            wget -O $RUNNER_TEMP/jdk.tar.gz $download_url
     - name: Set up JDK 20
       uses: actions/setup-java@v3
       with:
-        java-version: '20'
-        distribution: 'temurin'
+        distribution: 'jdkfile'
+        jdkFile: ${{ runner.temp }}/jdk.tar.gz
+        architecture: x64
+        java-version: '20.0.2'
         cache: maven
     - name: Build with Maven
       run: mvn -B package --file pom.xml
 
-    # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
-    - name: Update dependency graph
-      uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
+
+  windows:
+    name: "Windows x64 Build"
+    runs-on: "windows-latest"
+    needs: [ checkout ]
+
+    steps:
+      - run: |
+            download_url="https://github.com/adoptium/temurin20-binaries/releases/download/jdk-20.0.2%2B9/OpenJDK20U-jdk_x64_windows_hotspot_20.0.2_9.zip"
+             C:\msys64\usr\bin\wget.exe -O $RUNNER_TEMP/jdk.zip $download_url
+      - name: Set up JDK 20
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'jdkfile'
+          jdkFile: ${{ runner.temp }}/jdk.zip
+          architecture: x64
+          java-version: '20.0.2'
+          cache: maven
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
+
+
+#  depsgraph:
+#    runs-on: [ "ubuntu-latest", "windows-latest" ]
+#
+#    if: ${{ always() }}
+#    needs: [ ubuntu, windows ]
+#    steps:
+#    # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
+#    - name: Update dependency graph
+#      uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
