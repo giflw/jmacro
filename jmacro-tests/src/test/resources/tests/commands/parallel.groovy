@@ -23,6 +23,7 @@ AtomicInteger count = new AtomicInteger(0)
     echo "$n SUBMITED"
 }
 echo "SHUTDOWN HERE"
+pause 1
 p.shutdown()
 
 result(count.get())

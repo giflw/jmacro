@@ -83,6 +83,7 @@ class EngineImplSpec extends Specification implements Constants {
                 )).result
             )
         }.join()
+        Thread.sleep(1000)
 
         expect:
         assert first.get() == "FIRST true"
