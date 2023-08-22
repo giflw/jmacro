@@ -44,7 +44,11 @@ public class FileScriptRepository extends ScriptRepositoryAbstract {
                                     );
                                     return new Script(metadata, this.getId(), path, location, source);
                                 } catch (IOException e) {
-                                    LOGGER.error("Error reading file " + file, e);
+                                    if (LOGGER.isDebugEnabled()) {
+                                        LOGGER.error("Error reading file " + file, e);
+                                    } else {
+                                        LOGGER.warn("Error reading file " + file + ": " + e.getMessage());
+                                    }
                                     return null;
                                 }
                             }).filter(Objects::nonNull)

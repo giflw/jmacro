@@ -147,8 +147,10 @@ class Httpd implements AutoCloseable {
         }
     }
 
-    void browse() {
-        Desktop.getDesktop().browse(URI.create(this.config.url.replace('0.0.0.0', '127.0.0.1')))
+    void browse(boolean open = true) {
+        if (open) {
+            Desktop.getDesktop().browse(URI.create(this.config.url.replace('0.0.0.0', '127.0.0.1')))
+        }
     }
 
     @CompileDynamic

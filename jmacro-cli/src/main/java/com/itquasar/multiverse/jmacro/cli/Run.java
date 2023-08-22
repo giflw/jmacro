@@ -33,9 +33,6 @@ public class Run implements Callable<CliResult> {
     public String defaultScriptPath;
     @Option(names = {"--main-infix", "--mi"}, description = "Main infxi to search for main scripts. Default is main as in script.main.groovy", defaultValue = "main")
     public String mainInfix;
-
-    @Parameters(index = "1")
-    public String script;
     @Spec
     private CommandSpec spec; // injected by picocli
     @ParentCommand
