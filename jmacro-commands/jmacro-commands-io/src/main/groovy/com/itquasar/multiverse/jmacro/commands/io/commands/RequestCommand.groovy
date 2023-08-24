@@ -8,7 +8,6 @@ import groovy.transform.CompileDynamic
 import javax.script.ScriptContext
 import javax.script.ScriptEngine
 import java.util.function.Consumer
-import java.util.function.Function
 
 /**
  * Request is used to make HTTP requests.

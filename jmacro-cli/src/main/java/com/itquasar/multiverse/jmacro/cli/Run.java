@@ -110,7 +110,8 @@ public class Run implements Callable<CliResult> {
 
                 String name = _script.getMetadata().getName();
                 String description = _script.getMetadata().getDescription();
-                Cli.out.println("  " + idx + " ) " + name + (description.isEmpty() ? "" : " -> " + description));
+                Cli.out.println("  " + idx + " ) " + name);
+                Cli.out.println(description.indent("            ".length()));
                 Cli.out.println("            [" + _script.getRepository() + "] " + _script.getLocation());
             }
 

@@ -121,32 +121,6 @@ class Httpd implements AutoCloseable {
         })
     }
 
-    void basic(String route = '/*', BiConsumer<Context, Credentials> consumer) {
-        basic(DEFAULT_REALM, route, consumer)
-    }
-
-    void basic(String realm, String route, BiConsumer<Context, Credentials> consumer) {
-        scriptLogger.info("Registering httpd basic authentication 'before' callback")
-        String headerAuthName = 'Authorization'
-        String headerWWWName = 'WWW-Authenticate'
-        String headerWWWValue = "Basic realm=\"${realm}\""
-        scriptLogger.debug("${headerWWWName}: ${headerWWWValue}")
-        this.server.before(route) { Context context ->
-            String authorization = context.header(headerAuthName)
-            scriptLogger.trace("Authorization: ${authorization}")
-            if (authorization && authorization.startsWith('Basic')) {
-                authorization = authorization.substring(5).trim()
-                List<String> pair = new String(Base64.decoder.decode(authorization)).split(':') as List<String>
-                if (pair.size() == 2) {
-                    consumer.accept(context, Credentials.of(pair.first(), pair.last()))
-                    return
-                }
-            }
-            context.status(401)
-            context.header(headerWWWName, headerWWWValue)
-        }
-    }
-
     void browse(boolean open = true) {
         if (open) {
             Desktop.getDesktop().browse(URI.create(this.config.url.replace('0.0.0.0', '127.0.0.1')))
