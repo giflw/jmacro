@@ -247,6 +247,7 @@ class Request implements Constants {
         HttpClientBuilder clientBuilder = HttpClients.custom()
 
         if (ignoreSSL) {
+            CommandUtils.log(bindings, WARNING, "Disabling SSL checks")
             TrustStrategy acceptingTrustStrategy = (cert, authType) -> true
             SSLContext sslContext = SSLContexts.custom().loadTrustMaterial(null, acceptingTrustStrategy).build()
             SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE)
@@ -260,9 +261,11 @@ class Request implements Constants {
         }
 
         if (this.proxy) {
+            CommandUtils.log(bindings, DEBUG, "Setting proxy")
             clientBuilder.setProxy(HttpHost.create(this.proxy))
         }
 
+        CommandUtils.log(bindings, DEBUG, "Creating client")
         CloseableHttpClient client = clientBuilder
             .setDefaultCredentialsProvider(credentials)
             .build()
@@ -270,6 +273,7 @@ class Request implements Constants {
         HttpResponse httpResponse = null
         Content content = null
         try {
+            CommandUtils.log(bindings, DEBUG, "Preforming request")
             HTTPFluentResponse fluentResponse = httpRequest.execute(client)
             Tuple tuple = fluentResponse.handleResponse(new ResponseAndContentHttpresponseHandler()) as Tuple
 

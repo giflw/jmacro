@@ -1,5 +1,6 @@
 package com.itquasar.multiverse.jmacro.commands.server.commands.httpd;
 
+import io.javalin.util.ConcurrencyUtil;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -7,7 +8,6 @@ import java.net.URI;
 import java.util.Map;
 
 @Data
-@Accessors()
 public class HttpdConfig {
 
     public static final String PORT = "port";
@@ -33,6 +33,7 @@ public class HttpdConfig {
     private String address;
     private String url;
     private URI uri;
+    private boolean virtualThreads = true;
 
     public HttpdConfig() {
         this(DEFAULT_PORT);
@@ -59,6 +60,12 @@ public class HttpdConfig {
         this.address = host + ':' + port;
         this.url = "http://" + this.address + context;
         this.uri = URI.create(this.url);
+        this.setVirtualThreads(this.virtualThreads);
+    }
+
+    public void setVirtualThreads(boolean virtualThreads) {
+        this.virtualThreads = this.virtualThreads && Boolean.parseBoolean(System.getProperty("httpd.virtualThreads", "true"));
+        ConcurrencyUtil.INSTANCE.setUseLoom(this.virtualThreads);
     }
 
     public static HttpdConfig of(Map<String, Object> options) {
