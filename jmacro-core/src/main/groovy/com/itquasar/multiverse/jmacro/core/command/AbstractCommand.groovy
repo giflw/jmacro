@@ -5,6 +5,7 @@ import com.itquasar.multiverse.jmacro.core.engine.Core
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import com.itquasar.multiverse.jmacro.core.interfaces.Constants
 import groovy.transform.CompileDynamic
+import lombok.Getter
 import org.apache.logging.log4j.Logger
 
 import javax.script.Bindings
@@ -13,6 +14,7 @@ import javax.script.ScriptEngine
 
 abstract class AbstractCommand implements Command, Constants {
 
+    @Getter
     private final String name
     private final Core core
     private final ScriptEngine scriptEngine

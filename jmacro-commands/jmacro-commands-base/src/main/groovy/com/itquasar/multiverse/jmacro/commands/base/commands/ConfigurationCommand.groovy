@@ -1,123 +1,106 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands
 
+import com.itquasar.multiverse.jmacro.commands.base.commands.configuration.ConfigurationAwareCommand
+import com.itquasar.multiverse.jmacro.commands.base.commands.configuration.ConfigurationHolder
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
-import com.itquasar.multiverse.jmacro.core.command.SelfConsumerCommand
-import com.itquasar.multiverse.jmacro.core.configuration.Env
+import com.itquasar.multiverse.jmacro.core.command.CallableCommand
+import com.itquasar.multiverse.jmacro.core.command.Command
 import com.itquasar.multiverse.jmacro.core.engine.Core
-import com.itquasar.multiverse.jmacro.core.interfaces.ToMap
 import groovy.transform.CompileDynamic
 
 import javax.script.ScriptEngine
+import java.util.function.Consumer
 
-class ConfigurationCommand extends AbstractCommand implements SelfConsumerCommand<ConfigurationCommand>, ToMap {
+class ConfigurationCommand extends AbstractCommand implements CallableCommand<Consumer<ConfigurationCommand>, ConfigurationCommand>, Iterable {
 
-    private ConfigObject configs = new ConfigObject()
-
-    private excludeKeys = CredentialsCommand.declaredFields.collect { it.name }
+    private Map<String, ConfigurationHolder> configHolders = new LinkedHashMap<>()
+    private ConfigObject custom = new ConfigObject()
 
     ConfigurationCommand(String name, Core core, ScriptEngine scriptEngine) {
         super(name, core, scriptEngine)
     }
 
-    ConfigObject getConfigs() {
-        return configs
+    @Override
+    void allCommandsRegistered(Collection<? extends Command> commands) {
+        commands.stream().filter { it -> it instanceof ConfigurationAwareCommand }.
+            forEach { ConfigurationAwareCommand command ->
+                scriptLogger.warn("Loading configuration holder for command ${command.name}")
+                this.configHolders.put(command.getName(), command.getConfiguration())
+            }
     }
-
 
     @Override
-    <A, B> Map<A, B> toMap() {
-        return configs
-    }
-
-
-    def fill(ConfigurationCommand configuration) {
-        fill(configuration.configs.toSpreadMap())
-    }
-
-
-    def fill(Map<String, ?> values) {
-        values.each { key, value ->
-            if (key in excludeKeys) {
-                return
-            }
-            this[key] = value
-        }
-        this['env'] = this['env'] ? (Env.isInstance(this['env']) ? Env.env((Env) this['env']) : Env.env((String) this['env'])) : Env.env("DEV")
+    ConfigurationCommand call(Consumer<ConfigurationCommand> consumer) {
+        consumer.accept(this)
         return this
-    }
-
-
-    // FIXME support for "foo.bar" style
-    boolean contains(String name) {
-        return this.configs.containsKey(name)
-    }
-
-    void call(Map<String, Object> config) {
-        config.entrySet().each { entry ->
-            this.configs[entry.key] = entry.value
-        }
     }
 
     ConfigurationCommand set(String name, def value) {
-        this.configs[name] = value
+        if (this.configHolders.containsKey(name)) {
+            scriptLogger.error("CONFIG HOLDER $name: ${this.configHolders.containsKey(name)}")
+            this.configHolders[name].set(value)
+        } else {
+            scriptLogger.error("CONFIG CUSTOM $name: ${this.custom}")
+            this.custom.putAt(name, value)
+        }
         return this
     }
 
-    // FIXME should support "foo.bar" style for hierarchical assignment
-    def propertyMissing(String name, def value) {
-        scriptLogger.warn("Setting new entry: $name -> $value")
-        this.configs[name] = value
-        return this
+    <T> T getAt(String path, T defaultValue = null) {
+        return get(path, defaultValue)
     }
 
-    <T> T getAt(String path) {
-        return get(path, null)
-    }
-
-    @CompileDynamic
     <T> T get(String key, T defaultValue = null) {
         scriptLogger.debug("Getting '$key' from Configuration")
-        if (key.contains('.')) {
-            return traversePath(key, defaultValue)
-        }
-        T value = this.configs.get(key) as T
-        if (defaultValue != null) {
-            return value != null ? value : defaultValue
-        }
+        T value = (this.configHolders.get(key)?.get() ?: defaultValue) as T
         return value != null ? value : propertyMissing(key) as T
     }
 
-    @CompileDynamic
-    <T> T traversePath(String path, T defaultValue) {
-        def value = this.configs
-        for (String key : path.split("\\.")) {
-            // using get method we avoid automatic creation of non existing property/key
-            if (value instanceof Map) {
-                value = value.containsKey(key) ? value.get(key) : null
-            } else {
-                value = value."$key"
-            }
-            scriptLogger.debug("Getting '$path' from Configuration: $key -> $value")
-            if (value == null) {
-                return defaultValue
-            }
-        }
-        return value as T
-    }
-
-
-    // FXIME should listen to core configuration changes an copy refs to here
-    @CompileDynamic
     def propertyMissing(String name) {
         scriptLogger.debug("Searching property '$name' missing on configuration")
-        def value = this.configs.containsKey(name) ? this.configs[name] : null
-        value = value == null && this.core.configuration.hasProperty(name) ? this.core.configuration."$name" : value
+        if (this.configHolders.containsKey(name)) {
+            return this.get(name, null)
+        }
+        def value = this.core.configuration.hasProperty(name) ? this.core.configuration.getAt(name) : null
         value = value != null ? value : this.context.getAttribute(name)
         return value
     }
 
+    @CompileDynamic
+    ConfigurationCommand fill(Map<String, String> configurations) {
+        for (Map.Entry<String, String> entry : configurations) {
+            List<String> paths = (entry.key.split("\\.")).toList()
+            Object object = this.configHolders.containsKey(paths.first()) ? this.configHolders : null
+            for (String path : paths) {
+                if (object == null) {
+                    scriptLogger.warn("Could not find configuration ${entry.key} (path ${path} is null). Creating custom config.")
+                    this.custom.putAt(entry.key, entry.value)
+                    break
+                }
+                if (path == paths.last()) {
+                    if (object instanceof ConfigurationHolder<?>) {
+                        object.setValueOf(entry.value)
+                    } else {
+                        object."$path" = entry.value
+                    }
+                    break
+                }
+                object = object."$path"
+            }
+        }
+        return this
+    }
+
+    @Override
+    Iterator iterator() {
+        List list = new ArrayList()
+        list.addAll(configHolders.entrySet())
+        list.addAll(custom.entrySet())
+        return list.iterator()
+    }
+
     @Override
     String toString() {
-        return configs.toString()
+        return [configuration: this.configHolders.toString(), custom: this.custom].toString()
     }
 }

@@ -1,6 +1,6 @@
 package com.itquasar.multiverse.jmacro.commands.browser.command.browser
 
-import com.itquasar.multiverse.jmacro.commands.base.commands.ConfigurationCommand
+
 import com.itquasar.multiverse.jmacro.commands.base.commands.CredentialsCommand
 import com.itquasar.multiverse.jmacro.commands.browser.command.BrowserCommand
 import com.itquasar.multiverse.jmacro.core.command.CommandUtils
@@ -45,6 +45,7 @@ class Browser implements Constants {
     ScriptEngine scriptEngine
     Bindings bindings
     Logger scriptLogger
+    BrowserConfiguration config
 
     RemoteWebDriver driver
     BrowserDevTools _devTools
@@ -65,25 +66,17 @@ class Browser implements Constants {
             yield VENDORS_UNIX
     }
 
-    Map<String, ?> config = [
-        vendor      : AUTO,
-        visible     : false, //  true -> visible;  false -> headless
-        driver      : null, // driver binary path
-        binary      : null, // browser binary path or path#version
-        version     : null, // browser binary version
-        debug       : false, // driver debug
-        ignoreSSL   : false, // ignore SSL errors
-        capabilities: []
-    ]
-
-    Browser(String instanceName, Core core, ScriptEngine scriptEngine, Bindings bindings, Logger scriptLogger) {
+    Browser(String instanceName, Core core, ScriptEngine scriptEngine, Bindings bindings, Logger scriptLogger, BrowserConfiguration config) {
         this.instanceName = instanceName
         this.core = core
         this.scriptEngine = scriptEngine
         this.bindings = bindings
         this.scriptLogger = scriptLogger
+        this.config = config
+    }
 
-        autoConfigFromContext()
+    BrowserConfiguration getConfig() {
+        return config;
     }
 
     BrowserDevTools getDevTools() {
@@ -112,8 +105,8 @@ class Browser implements Constants {
     Browser start() {
         if (driver == null || driver.sessionId == null) {
             this.postConfig()
-            this.config.forEach { key, value ->
-                scriptLogger.debug("Browser config ${key}=${value}")
+            this.config.class.declaredFields.each { field ->
+                scriptLogger.debug("Browser config ${field.name}=${field.get(this.config)}")
             }
 
             def vendors = this.config.vendor == AUTO ? VENDORS : [this.config.vendor]
@@ -142,19 +135,8 @@ class Browser implements Constants {
         return this
     }
 
-    @CompileDynamic
-    void autoConfigFromContext() {
-        def configuration = getBindings().get("configuration")
-        configure((configuration.browser ?: Collections.emptyMap()) as Map)
-    }
-
-    void configure(Map<String, Object> config) {
-        scriptLogger.warn("Configuring browser with ${config}")
-        this.config.putAll(config)
-    }
-
-    void configure(ConfigObject config) {
-        configure(config.spread())
+    void configure(Consumer<BrowserConfiguration> consumer) {
+        consumer.accept(this.config)
     }
 
     def wait(String cssSelector) {
@@ -351,20 +333,18 @@ class Browser implements Constants {
         }
 
         scriptLogger.info("Browser ${vendor} found at ${browserPath}")
+        scriptLogger.info("Using engine script configuration: ${config}")
 
-        ConfigurationCommand configuration = (ConfigurationCommand) scriptEngine.get('configuration')
-        scriptLogger.info("Using engine script configuration: ${configuration}")
-
-        Map<String, ?> proxyConfig = [:]
-        if (configuration['proxy'] == true) {
-            proxyConfig['credentials'] = ((CredentialsCommand) scriptEngine.get('credentials')).get()
-        } else if (configuration['proxy'] != false && configuration['proxy'] instanceof Map<String, ?>) {
-            proxyConfig = (Map<String, ?>) configuration['proxy']
+        BrowserProxyConfiguration proxyConfig = config.proxy
+        if (proxyConfig.auto) {
+            Credentials credentials = ((CredentialsCommand) scriptEngine.get('credentials')).get()
+            proxyConfig.setUser(credentials.login)
+            proxyConfig.setPassword(credentials.password)
         }
 
         scriptLogger.info("Proxy configuration ${proxyConfig}")
         scriptLogger.info("Proxy credentials ${proxyConfig.credentials}")
-        if (!proxyConfig.isEmpty()) {
+        if (proxyConfig.isEnabled()) {
             scriptLogger.warn("Checking manager proxy configuration")
             managerProxy(manager, proxyConfig, vendor)
         }
@@ -383,7 +363,7 @@ class Browser implements Constants {
     }
 
     @CompileDynamic
-    private void managerProxy(WebDriverManager manager, Map<String, ?> proxyConfig, String vendor) {
+    private void managerProxy(WebDriverManager manager, BrowserProxyConfiguration proxyConfig, String vendor) {
         String proxyAddress = proxyConfig.address
         if (!proxyAddress) {
             scriptLogger.warn("Getting proxy from platform")
@@ -407,11 +387,9 @@ class Browser implements Constants {
             scriptLogger.warn("Setting manager proxy")
             manager.proxy(proxyAddress)
         }
-        def credentials = proxyConfig?.credentials as Credentials
-        if (credentials) {
-            scriptLogger.info("Setting up proxy for web driver manager using ${credentials.fullUser}")
-            manager.proxyUser(credentials.fullUser)
-                .proxyPass(credentials.password)
+        if (proxyConfig.hasCredentials()) {
+            scriptLogger.info("Setting up proxy for web driver manager using ${proxyConfig}")
+            manager.proxyUser(proxyConfig.user).proxyPass(proxyConfig.password)
         } else {
             scriptLogger.warn("Setting up proxy for web driver manager using anonymous")
         }

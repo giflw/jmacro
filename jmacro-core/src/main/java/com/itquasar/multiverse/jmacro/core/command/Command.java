@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
+import java.util.Collection;
 
 public interface Command {
 
@@ -23,11 +24,11 @@ public interface Command {
 
     Logger getScriptLogger();
 
-    default void allCommandsLoaded() {
+    default void allCommandsLoaded(Collection<? extends Command> commands) {
         // called after registration and before allCommandsRegistered hook
     }
 
-    default void allCommandsRegistered() {
+    default void allCommandsRegistered(Collection<? extends Command> commands) {
         // called after command is registered
     }
 

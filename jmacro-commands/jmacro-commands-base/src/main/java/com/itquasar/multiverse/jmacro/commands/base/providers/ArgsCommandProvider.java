@@ -2,6 +2,7 @@ package com.itquasar.multiverse.jmacro.commands.base.providers;
 
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
 import com.itquasar.multiverse.jmacro.core.command.CallableCommand;
+import com.itquasar.multiverse.jmacro.core.command.Command;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
@@ -43,8 +44,9 @@ public class ArgsCommandProvider implements CommandProvider<ArgsCommandProvider.
             super(name, core, scriptEngine);
         }
 
+        @SuppressWarnings("unchecked")
         @Override
-        public void allCommandsRegistered() {
+        public void allCommandsRegistered(Collection<? extends Command> commands) {
             Bindings bindings = getScriptEngine().getBindings(ScriptContext.ENGINE_SCOPE);
             this.setArgs((List<String>) bindings.get(ARGV));
         }

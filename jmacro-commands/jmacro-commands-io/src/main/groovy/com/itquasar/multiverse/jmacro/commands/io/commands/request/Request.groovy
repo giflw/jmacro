@@ -8,6 +8,8 @@ import groovy.transform.CompileDynamic
 import org.apache.hc.client5.http.HttpHostConnectException
 import org.apache.hc.client5.http.HttpResponseException
 import org.apache.hc.client5.http.auth.CredentialsProvider
+import org.apache.hc.client5.http.auth.StandardAuthScheme
+import org.apache.hc.client5.http.config.RequestConfig
 import org.apache.hc.client5.http.fluent.Content
 import org.apache.hc.client5.http.fluent.Request as HTTPFluentRequest
 import org.apache.hc.client5.http.fluent.Response as HTTPFluentResponse
@@ -244,7 +246,14 @@ class Request implements Constants {
         def credentials = this.bindings.get('credentials') as CredentialsProvider
         CommandUtils.log(bindings, WARNING, "HTTP Credentials: $credentials")
 
-        HttpClientBuilder clientBuilder = HttpClients.custom()
+
+        def authSchemes = List.of(StandardAuthScheme.NTLM, StandardAuthScheme.BASIC, StandardAuthScheme.DIGEST)
+        RequestConfig requestConfig = RequestConfig.custom()
+            .setTargetPreferredAuthSchemes(authSchemes)
+            .setProxyPreferredAuthSchemes(authSchemes)
+            .build()
+
+        HttpClientBuilder clientBuilder = HttpClients.custom().setDefaultRequestConfig(requestConfig)
 
         if (ignoreSSL) {
             CommandUtils.log(bindings, WARNING, "Disabling SSL checks")

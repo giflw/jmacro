@@ -234,8 +234,6 @@ public final class EngineImpl extends Engine implements Constants, TUI {
             engine.getContext().setAttribute("#jsr223.groovy.engine.script.name.prefix", script.getMetadata().getName(), ENGINE_SCOPE);
         }
 
-        final var commandTypes = new ArrayList<Class>();
-
         final var commands = new ArrayList<AbstractCommand>();
 
         for (CommandProvider<?> commandProvider : commandProviders) {
@@ -256,11 +254,9 @@ public final class EngineImpl extends Engine implements Constants, TUI {
             if (command instanceof OnShutdown onShutdown) {
                 ON_SHUTDOWN.add(onShutdown);
             }
-
-            commandTypes.add(command.getClass());
         }
 
-        commands.forEach(Command::allCommandsLoaded);
+        commands.forEach( c -> c.allCommandsLoaded(commands));
 
         var locationArg = script.getLocation().toString();
         locationArg = normalExecution ? locationArg : INCLUDED + ':' + locationArg;
@@ -272,7 +268,7 @@ public final class EngineImpl extends Engine implements Constants, TUI {
         engineScope.put("__METADATA__", script.getMetadata());
         engineScope.put("__CONTEXT__", engineScope);
 
-        commands.forEach(Command::allCommandsRegistered);
+        commands.forEach(c -> c.allCommandsRegistered(commands));
         EngineResult<?, ? extends Throwable> result = (EngineResult) engineScope.get("result");
 
 

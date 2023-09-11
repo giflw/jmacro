@@ -28,6 +28,15 @@ class Credentials implements CredentialsProvider, ToMap {
         this.reset()
     }
 
+    Credentials(String login, String password) {
+        this.login = login
+        this.password = password
+    }
+
+    Credentials(String token) {
+        this.token = token
+    }
+
     Credentials(Map<String, ?> values) {
         this()
         values.forEach(this::setProperty)
@@ -118,7 +127,7 @@ class Credentials implements CredentialsProvider, ToMap {
         return this
     }
 
-    String getFullUser() {
+    String getDomainUser() {
         return "${domain ? domain + '\\' : ''}$login"
     }
 
@@ -126,8 +135,8 @@ class Credentials implements CredentialsProvider, ToMap {
         return impersonate ?: login
     }
 
-    String getFullImpersonate() {
-        return impersonate ? "$domain\\$impersonate" : fullUser
+    String getDomainImpersonate() {
+        return impersonate ? "$domain\\$impersonate" : domainUser
     }
 
     @Override

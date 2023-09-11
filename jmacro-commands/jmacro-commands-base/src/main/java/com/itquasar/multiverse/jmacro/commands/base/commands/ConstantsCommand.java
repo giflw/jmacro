@@ -1,6 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands;
 
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
+import com.itquasar.multiverse.jmacro.core.command.Command;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.itquasar.multiverse.jmacro.core.interfaces.Constants;
@@ -33,7 +34,7 @@ public class ConstantsCommand extends AbstractCommand implements Map<String, Obj
     }
 
     @Override
-    public void allCommandsRegistered() {
+    public void allCommandsRegistered(Collection<? extends Command> commands) {
         Bindings bindings = this.getBindings();
         this.entrySet().stream().forEach(entry -> {
             String key = entry.getKey();

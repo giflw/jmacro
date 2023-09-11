@@ -1,6 +1,7 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands
 
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
+import com.itquasar.multiverse.jmacro.core.command.Command
 import com.itquasar.multiverse.jmacro.core.engine.Core
 import groovy.transform.CompileDynamic
 import lombok.Getter
@@ -19,7 +20,7 @@ class SystemCommand extends AbstractCommand {
 
 
     @Override
-    void allCommandsRegistered() {
+    void allCommandsRegistered(Collection<? extends Command> commands) {
         if (commands.isEmpty()) {
             this.commands.putAll(this.getBindings())
             this.commands = Collections.unmodifiableMap(this.commands)
