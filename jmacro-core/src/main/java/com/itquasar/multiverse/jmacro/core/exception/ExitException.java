@@ -140,6 +140,12 @@ public final class ExitException extends RuntimeException {
 
     public static final int OK = 0;
     public static final int SCRIPT_ERROR = 1;
+    public static final int USAGE = 2;
+    // FIXME javadocs
+    public static final int RESTART = 23;
+    // FIXME javadocs
+    public static final int RELAUNCH = 24;
+
     public static final int SCRIPT_ENGINE_ERROR = 63;
 
     @Getter

@@ -1,10 +1,14 @@
 package com.itquasar.multiverse.jmacro.cli;
 
 import com.itquasar.multiverse.jmacro.core.engine.Core;
+import com.itquasar.multiverse.jmacro.core.engine.EngineResult;
+import com.itquasar.multiverse.jmacro.core.script.Script;
+import com.itquasar.multiverse.jmacro.core.script.ScriptResult;
 import lombok.Getter;
 
 import java.io.PrintStream;
 import java.nio.file.Path;
+import java.util.concurrent.Callable;
 
 import static picocli.CommandLine.Command;
 import static picocli.CommandLine.Option;

@@ -13,6 +13,22 @@
     <packaging>pom</packaging>
     <name>JMacro::BOM</name>
 
+    <properties>
+        <lombok.version>1.18.28</lombok.version>
+        <vavr.version>0.10.4</vavr.version>
+        <checker.version>3.18.0</checker.version>
+        <picocli.version>4.7.1</picocli.version>
+
+        <groovy.version>4.0.13</groovy.version>
+        <gmavenplus.version>2.1.0</gmavenplus.version>
+
+        <spock.version>2.4-M1-groovy-4.0</spock.version>
+        <spock-reports.version>2.4.0-groovy-4.0</spock-reports.version>
+
+        <javalin.version>5.6.1</javalin.version>
+        <httpclient5.version>5.2.1</httpclient5.version>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -117,6 +133,12 @@
             </dependency>
 
             <dependency>
+                <groupId>com.github.jnr</groupId>
+                <artifactId>jnr-posix</artifactId>
+                <version>3.1.18</version>
+            </dependency>
+
+            <dependency>
                 <groupId>io.vavr</groupId>
                 <artifactId>vavr</artifactId>
                 <version>${vavr.version}</version>
@@ -149,6 +171,11 @@
                 <groupId>org.yaml</groupId>
                 <artifactId>snakeyaml</artifactId>
                 <version>1.29</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>2.10.1</version>
             </dependency>
             <dependency>
                 <groupId>net.sourceforge.plantuml</groupId>
@@ -314,6 +341,11 @@
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>2.0.9</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.spockframework</groupId>
@@ -322,7 +354,11 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-
+            <dependency>
+                <groupId>com.athaydes</groupId>
+                <artifactId>spock-reports</artifactId>
+                <version>${spock-reports.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.spockframework</groupId>
                 <artifactId>spock-core</artifactId>

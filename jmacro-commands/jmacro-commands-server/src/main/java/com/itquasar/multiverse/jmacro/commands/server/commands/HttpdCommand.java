@@ -3,6 +3,7 @@ package com.itquasar.multiverse.jmacro.commands.server.commands;
 import com.itquasar.multiverse.jmacro.commands.server.commands.httpd.Httpd;
 import com.itquasar.multiverse.jmacro.commands.server.commands.httpd.HttpdConfig;
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
+import com.itquasar.multiverse.jmacro.core.command.OnShutdown;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
 
 import javax.script.ScriptEngine;
@@ -10,7 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class HttpdCommand extends AbstractCommand implements AutoCloseable {
+public class HttpdCommand extends AbstractCommand implements AutoCloseable, OnShutdown {
 
     private final Map<String, Httpd> servers = new LinkedHashMap<>();
 
@@ -63,7 +64,17 @@ public class HttpdCommand extends AbstractCommand implements AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         this.servers.forEach((k, v) -> v.close());
+    }
+
+    @Override
+    public void onShutdown() {
+        try {
+            getScriptLogger().warn("Closing all HTTPD instances as we are shutting down)");
+            this.close();
+        } catch (Exception e) {
+            getScriptLogger().error("Error closing HTTPD instances on shutdown", e);
+        }
     }
 }

@@ -338,6 +338,7 @@ public final class EngineImpl extends Engine implements Constants, TUI {
     }
 
     public void onShutdown() {
+        // FIXME logger to indicate shutdown hook started
         ON_SHUTDOWN.forEach(OnShutdown::onShutdown);
     }
 

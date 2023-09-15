@@ -6,6 +6,8 @@ module jmacro.cli {
 
     requires java.scripting;
 
+    requires org.jnrproject.posix;
+    requires org.jnrproject.constants;
     requires info.picocli;
     requires org.checkerframework.checker.qual;
     requires org.apache.logging.log4j;

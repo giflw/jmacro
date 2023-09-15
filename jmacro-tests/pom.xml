@@ -108,7 +108,6 @@
             <!-- FIXME move def to BOM -->
             <groupId>com.athaydes</groupId>
             <artifactId>spock-reports</artifactId>
-            <version>${spock-reports.version}</version>
             <scope>test</scope>
             <!-- this avoids affecting your version of Groovy/Spock -->
             <exclusions>

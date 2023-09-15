@@ -12,6 +12,17 @@
     <name>JMacro</name>
     <description>JMacro parent pom</description>
 
+    <pluginRepositories>
+        <pluginRepository>
+            <!-- KEEP SNAPSHOT until maven compiler 3.12 or 3.11.1 -->
+            <id>apache-snapshot</id>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <url>https://repository.apache.org/content/repositories/snapshots/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
     <properties>
         <os.family>unknown</os.family>
         <java.version>20</java.version>
@@ -32,20 +43,6 @@
 
         <checks.fail>false</checks.fail>
         <checkstyle.fail>${checks.fail}</checkstyle.fail>
-
-        <lombok.version>1.18.28</lombok.version>
-        <vavr.version>0.10.4</vavr.version>
-        <checker.version>3.18.0</checker.version>
-        <picocli.version>4.7.1</picocli.version>
-
-        <groovy.version>4.0.13</groovy.version>
-        <gmavenplus.version>2.1.0</gmavenplus.version>
-
-        <spock.version>2.4-M1-groovy-4.0</spock.version>
-        <spock-reports.version>2.4.0-groovy-4.0</spock-reports.version>
-
-        <javalin.version>5.6.1</javalin.version>
-        <httpclient5.version>5.2.1</httpclient5.version>
     </properties>
 
     <dependencyManagement>
@@ -148,7 +145,8 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.11.0</version>
+                    <!-- KEEP SNAPSHOT until 3.12 or 3.11.1 -->
+                    <version>3.11.1-SNAPSHOT</version>
                     <inherited>true</inherited>
                     <configuration>
                         <compilerArgs>--enable-preview</compilerArgs>
@@ -160,12 +158,10 @@
                             <path>
                                 <groupId>org.projectlombok</groupId>
                                 <artifactId>lombok</artifactId>
-                                <version>${lombok.version}</version>
                             </path>
                             <path>
                                 <groupId>info.picocli</groupId>
                                 <artifactId>picocli-codegen</artifactId>
-                                <version>${picocli.version}</version>
                             </path>
                         </annotationProcessorPaths>
                     </configuration>
@@ -429,11 +425,12 @@
                                     <message>The reactor is not valid</message>
                                     <ignoreModuleDependencies>true</ignoreModuleDependencies>
                                 </reactorModuleConvergence>-->
-                                <requireNoRepositories>
-                                    <message>Best Practice is to never define repositories in pom.xml (use a repository
-                                        manager instead)
-                                    </message>
-                                </requireNoRepositories>
+                                <!--                                <requireNoRepositories>-->
+                                <!-- KEEP this commented until maven compiler 3.12 or 3.11.1 -->
+                                <!--                                    <message>Best Practice is to never define repositories in pom.xml (use a repository-->
+                                <!--                                        manager instead)-->
+                                <!--                                    </message>-->
+                                <!--                                </requireNoRepositories>-->
                                 <!--                                <requireReleaseDeps>-->
                                 <!--                                    <message>No Snapshots Allowed! (requireReleaseDeps)</message>-->
                                 <!--                                </requireReleaseDeps>-->
@@ -488,9 +485,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-<!--                <configuration>-->
-<!--                    <locales>en</locales>-->
-<!--                </configuration>-->
+                <!--                <configuration>-->
+                <!--                    <locales>en</locales>-->
+                <!--                </configuration>-->
                 <executions>
                     <execution>
                         <id>site</id>

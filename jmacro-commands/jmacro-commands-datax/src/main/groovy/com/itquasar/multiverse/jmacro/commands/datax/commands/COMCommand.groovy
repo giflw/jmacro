@@ -3,6 +3,7 @@ package com.itquasar.multiverse.jmacro.commands.datax.commands
 
 import com.itquasar.multiverse.jmacro.commands.datax.commands.com.COMWrapper
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
+import com.itquasar.multiverse.jmacro.core.command.Command
 import com.itquasar.multiverse.jmacro.core.engine.Core
 import com.jacob.activeX.ActiveXComponent
 import com.jacob.com.ComThread
@@ -40,7 +41,7 @@ class COMCommand extends AbstractCommand implements AutoCloseable {
 
     @CompileDynamic
     @Override
-    void allCommandsLoaded() {
+    void allCommandsLoaded(Collection<? extends Command> Command) {
         Application.values().each {
             // FIXME NPE on constants
             bindings.constants?.put(it.name(), it)
@@ -84,6 +85,8 @@ class COMCommand extends AbstractCommand implements AutoCloseable {
             ComThread.quitMainSTA()
         }
     }
+
+
 }
 
 /*

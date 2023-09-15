@@ -22,8 +22,9 @@ class ConfigurationCommand extends AbstractCommand implements CallableCommand<Co
 
     @Override
     void allCommandsRegistered(Collection<? extends Command> commands) {
-        commands.stream().filter { it -> it instanceof ConfigurationAwareCommand }.
-            forEach { ConfigurationAwareCommand command ->
+        commands.stream().filter { it instanceof ConfigurationAwareCommand }
+            .map { it as ConfigurationAwareCommand }
+            .forEach { ConfigurationAwareCommand command ->
                 scriptLogger.warn("Loading configuration holder for command ${command.name}")
                 this.configHolders.put(command.getName(), command.getConfiguration())
             }

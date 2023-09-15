@@ -5,7 +5,7 @@ START METADATA
 name: EXIT
 infos:
     expectedResult: Should raise exception with exit codes 0 and 1
-    exitCode: 127
+    exitCode: 23
 END METADATA
  */
 
@@ -23,6 +23,6 @@ try {
 
 result("Should raise exception with exit codes $exitCode1 and $exitCode2")
 
-exit(127)
+exit(23)
 
 

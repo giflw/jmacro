@@ -50,7 +50,6 @@ public final class Core {
         }
     }
 
-
     public void stop() {
         if (started.compareAndSet(true, false)) {
             if (this.jmxManagement != null) {
