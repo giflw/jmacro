@@ -73,9 +73,15 @@ public class FileScriptRepository extends ScriptRepositoryAbstract {
 
     @Override
     public Optional<Script> get(URI location) {
-        // when relativizes and is the same base uri as the repository, only relative path is kept on uri
+        // when location has the same base uri as the repository, only relative path is kept on uri
+        // otherwise location full uri is returned (so not in the repository)
+        LOGGER.debug("Getting " + location + " | " + this.getUri().relativize(location));
         if (!this.getUri().relativize(location).equals(location)) {
-            return this.list().stream().filter(it -> it.getLocation().equals(location)).findFirst();
+            return this.list().stream()
+                .peek(it -> LOGGER.debug(location + " | " + it.getLocation() + " -> " + it.getLocation().equals(location)))
+                .filter(it -> it.getLocation().equals(location))
+                .peek(LOGGER::debug)
+                .findFirst();
         }
         return Optional.empty();
     }

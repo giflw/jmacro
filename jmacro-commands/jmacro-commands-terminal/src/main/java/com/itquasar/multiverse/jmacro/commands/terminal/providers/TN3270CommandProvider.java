@@ -8,6 +8,8 @@ import com.itquasar.multiverse.tn3270j.WaitMode;
 import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 
 public class TN3270CommandProvider implements CommandProvider<TN3270Command> {
 
@@ -22,9 +24,9 @@ public class TN3270CommandProvider implements CommandProvider<TN3270Command> {
     }
 
     @Override
-    public TN3270Command getCommand(Core core, ScriptEngine scriptEngine) {
-        Bindings bindings = scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
+    public TN3270Command getCommand(Core core, ScriptEngineAware scriptEngineAware) {
+        Bindings bindings = scriptEngineAware.scriptEngine().getBindings(ScriptContext.ENGINE_SCOPE);
         bindings.put("WaitMode", WaitMode.class);
-        return new TN3270Command(getName(), core, scriptEngine);
+        return new TN3270Command(getName(), core, scriptEngineAware);
     }
 }

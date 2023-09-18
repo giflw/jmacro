@@ -1,6 +1,6 @@
 package com.itquasar.multiverse.jmacro.commands.browser.command.browser;
 
-import com.itquasar.multiverse.jmacro.commands.base.commands.configuration.ConfigurationHolder;
+import com.itquasar.multiverse.jmacro.core.engine.ConfigurationHolder;
 import com.itquasar.multiverse.jmacro.core.interfaces.Constants;
 import com.itquasar.multiverse.jmacro.core.interfaces.Copyable;
 import lombok.*;

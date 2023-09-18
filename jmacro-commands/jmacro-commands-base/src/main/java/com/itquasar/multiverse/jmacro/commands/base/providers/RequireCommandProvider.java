@@ -3,10 +3,10 @@ package com.itquasar.multiverse.jmacro.commands.base.providers;
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.itquasar.multiverse.jmacro.core.interfaces.Constants;
 
-import javax.script.ScriptEngine;
 import java.util.*;
 
 public class RequireCommandProvider implements CommandProvider<RequireCommandProvider.RequireCommand> {
@@ -22,14 +22,14 @@ public class RequireCommandProvider implements CommandProvider<RequireCommandPro
     }
 
     @Override
-    public RequireCommand getCommand(Core core, ScriptEngine scriptEngine) {
-        return new RequireCommand(getName(), core, scriptEngine);
+    public RequireCommand getCommand(Core core, ScriptEngineAware scriptEngineAware) {
+        return new RequireCommand(getName(), core, scriptEngineAware);
     }
 
     public static class RequireCommand extends AbstractCommand implements Constants {
 
-        public RequireCommand(String name, Core core, ScriptEngine scriptEngine) {
-            super(name, core, scriptEngine);
+        public RequireCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
+            super(name, core, scriptEngineAware);
         }
 
         void api(float version) {

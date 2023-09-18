@@ -1,6 +1,7 @@
 package com.itquasar.multiverse.jmacro.core.command
 
 import com.itquasar.multiverse.jmacro.core.engine.Core
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware
 
 import javax.script.ScriptEngine
 import java.util.function.Function
@@ -11,20 +12,22 @@ class WrappingCommand<T> extends AbstractCommand {
     private T target
     private final boolean redirectMissingToContext
 
-    WrappingCommand(Function<WrappingCommand<T>, T> function, String name, Core core, ScriptEngine scriptEngine, boolean redirectMissingToContext = true) {
-        super(name, core, scriptEngine)
+    WrappingCommand(Function<WrappingCommand<T>, T> function, String name, Core core, ScriptEngineAware scriptEngineAware, boolean redirectMissingToContext = true) {
+        super(name, core, scriptEngineAware)
         this.targetSupplier = () -> function.apply(this)
         this.redirectMissingToContext = redirectMissingToContext
     }
 
-    WrappingCommand(T target, String name, Core core, ScriptEngine scriptEngine) {
-        super(name, core, scriptEngine)
+    WrappingCommand(T target, String name, Core core, ScriptEngineAware scriptEngineAware) {
+        super(name, core, scriptEngineAware)
         this.targetSupplier = () -> target
+        this.redirectMissingToContext = true
     }
 
-    WrappingCommand(Supplier<T> targetSupplier, String name, Core core, ScriptEngine scriptEngine) {
-        super(name, core, scriptEngine)
+    WrappingCommand(Supplier<T> targetSupplier, String name, Core core, ScriptEngineAware scriptEngineAware) {
+        super(name, core, scriptEngineAware)
         this.targetSupplier = targetSupplier
+        this.redirectMissingToContext = true
     }
 
     Object methodMissing(String name, Object args) {

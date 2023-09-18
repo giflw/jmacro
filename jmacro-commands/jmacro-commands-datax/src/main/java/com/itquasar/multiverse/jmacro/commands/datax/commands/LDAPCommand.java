@@ -13,6 +13,7 @@ import lombok.Getter;
 
 import javax.naming.Context;
 import javax.script.ScriptEngine;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -30,13 +31,13 @@ public class LDAPCommand extends AbstractCommand implements ConsumerCommand<LDAP
     private String login = null;
     private String password = null;
 
-    public LDAPCommand(String name, Core core, ScriptEngine scriptEngine) {
-        super(name, core, scriptEngine);
+    public LDAPCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
+        super(name, core, scriptEngineAware);
     }
 
     @Override
     public LDAPCommand call(Consumer<LDAPCommand> consumer) {
-        consumer.accept(new LDAPCommand(getName(), getCore(), getScriptEngine()));
+        consumer.accept(new LDAPCommand(getName(), getCore(), getScriptEngineAware()));
         return this;
     }
 

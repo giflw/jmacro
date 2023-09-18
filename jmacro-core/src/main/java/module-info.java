@@ -16,12 +16,6 @@ module jmacro.core {
     requires gethostname4j;
     requires org.apache.httpcomponents.core5.httpcore5;
     requires org.apache.httpcomponents.client5.httpclient5;
-
-    exports com.itquasar.multiverse.jmacro.core.exception;
-    exports com.itquasar.multiverse.jmacro.core.jmx;
-    exports com.itquasar.multiverse.jmacro.core.script;
-    exports com.itquasar.multiverse.jmacro.core.configuration;
-
     uses com.itquasar.multiverse.jmacro.core.repository.ScriptRepositoryFactory;
     uses com.itquasar.multiverse.jmacro.core.engine.LanguageAdaptor;
     uses com.itquasar.multiverse.jmacro.core.command.CommandProvider;
@@ -31,9 +25,13 @@ module jmacro.core {
     provides com.itquasar.multiverse.jmacro.core.engine.LanguageAdaptor with com.itquasar.multiverse.jmacro.core.engine.ScalaLanguageAdaptor;
 
     opens com.itquasar.multiverse.jmacro.core.configuration to org.yaml.snakeyaml;
-    exports com.itquasar.multiverse.jmacro.core.repository;
-    exports com.itquasar.multiverse.jmacro.core.interfaces;
-    exports com.itquasar.multiverse.jmacro.core.engine;
-    exports com.itquasar.multiverse.jmacro.core.util;
     exports com.itquasar.multiverse.jmacro.core.command;
+    exports com.itquasar.multiverse.jmacro.core.configuration;
+    exports com.itquasar.multiverse.jmacro.core.engine;
+    exports com.itquasar.multiverse.jmacro.core.exception;
+    exports com.itquasar.multiverse.jmacro.core.interfaces;
+    exports com.itquasar.multiverse.jmacro.core.jmx;
+    exports com.itquasar.multiverse.jmacro.core.repository;
+    exports com.itquasar.multiverse.jmacro.core.script;
+    exports com.itquasar.multiverse.jmacro.core.util;
 }

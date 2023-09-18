@@ -5,6 +5,7 @@ import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
 
 import javax.script.ScriptEngine;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 
 public class PDFCommandProvider implements CommandProvider<PDFCommand> {
 
@@ -19,7 +20,7 @@ public class PDFCommandProvider implements CommandProvider<PDFCommand> {
     }
 
     @Override
-    public PDFCommand getCommand(Core core, ScriptEngine scriptEngine) {
-        return new PDFCommand(getName(), core, scriptEngine);
+    public PDFCommand getCommand(Core core, ScriptEngineAware scriptEngineAware) {
+        return new PDFCommand(getName(), core, scriptEngineAware);
     }
 }

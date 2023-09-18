@@ -3,6 +3,7 @@ package com.itquasar.multiverse.jmacro.commands.io.commands
 import com.itquasar.multiverse.jmacro.commands.io.commands.file.File
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
 import com.itquasar.multiverse.jmacro.core.engine.Core
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 
 import javax.script.ScriptEngine
@@ -14,8 +15,8 @@ import java.util.function.Consumer
 
 class FileCommand extends AbstractCommand {
 
-    FileCommand(String name, Core core, ScriptEngine scriptEngine) {
-        super(name, core, scriptEngine)
+    FileCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
+        super(name, core, scriptEngineAware)
     }
 
     def call(String path) {

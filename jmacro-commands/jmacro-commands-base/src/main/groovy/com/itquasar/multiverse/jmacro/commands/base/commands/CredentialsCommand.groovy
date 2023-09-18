@@ -5,6 +5,7 @@ import com.itquasar.multiverse.jmacro.core.command.CommandUtils
 import com.itquasar.multiverse.jmacro.core.command.ConsumerCommand
 import com.itquasar.multiverse.jmacro.core.configuration.Credentials
 import com.itquasar.multiverse.jmacro.core.engine.Core
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware
 
 import javax.script.ScriptEngine
 import java.util.function.Consumer
@@ -13,8 +14,8 @@ class CredentialsCommand extends AbstractCommand implements ConsumerCommand<Cred
 
     private final Credentials defaultCredentials = new Credentials()
 
-    CredentialsCommand(String name, Core core, ScriptEngine scriptEngine) {
-        super(name, core, scriptEngine)
+    CredentialsCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
+        super(name, core, scriptEngineAware)
     }
 
     Credentials get() {

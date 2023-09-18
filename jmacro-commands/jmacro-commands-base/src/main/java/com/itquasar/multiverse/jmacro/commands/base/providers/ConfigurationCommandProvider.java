@@ -6,6 +6,8 @@ import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
 
 import javax.script.ScriptEngine;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 
 public class ConfigurationCommandProvider implements CommandProvider<ConfigurationCommand> {
 
@@ -21,8 +23,8 @@ public class ConfigurationCommandProvider implements CommandProvider<Configurati
 
     @Override
 
-    public ConfigurationCommand getCommand(Core core, ScriptEngine scriptEngine) {
-        return new ConfigurationCommand(getName(), core, scriptEngine);
+    public ConfigurationCommand getCommand(Core core, ScriptEngineAware scriptEngineAware) {
+        return new ConfigurationCommand(getName(), core, scriptEngineAware);
     }
 }
 

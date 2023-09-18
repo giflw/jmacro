@@ -1,11 +1,13 @@
 package com.itquasar.multiverse.jmacro.core.command;
 
 import com.itquasar.multiverse.jmacro.core.engine.Core;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import org.apache.logging.log4j.Logger;
 
 import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import java.util.Collection;
 
 public interface Command {
@@ -15,6 +17,8 @@ public interface Command {
     String getName();
 
     Core getCore();
+
+    ScriptEngineAware getScriptEngineAware();
 
     ScriptEngine getScriptEngine();
 

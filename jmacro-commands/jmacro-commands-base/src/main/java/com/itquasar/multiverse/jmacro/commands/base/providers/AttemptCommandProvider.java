@@ -8,6 +8,8 @@ import com.itquasar.multiverse.jmacro.core.exception.ExitException;
 import com.itquasar.multiverse.jmacro.core.interfaces.Constants;
 
 import javax.script.ScriptEngine;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -25,16 +27,16 @@ public class AttemptCommandProvider implements CommandProvider<AttemptCommandPro
     }
 
     @Override
-    public AttemptCommand getCommand(Core core, ScriptEngine scriptEngine) {
-        return new AttemptCommand(getName(), core, scriptEngine);
+    public AttemptCommand getCommand(Core core, ScriptEngineAware scriptEngineAware) {
+        return new AttemptCommand(getName(), core, scriptEngineAware);
     }
 
     public static class AttemptCommand extends AbstractCommand implements Constants {
 
         private static final List<String> ALLOWED_VERBOSITY = List.of(QUIET, VERBOSE);
 
-        public AttemptCommand(String name, Core core, ScriptEngine scriptEngine) {
-            super(name, core, scriptEngine);
+        public AttemptCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
+            super(name, core, scriptEngineAware);
         }
 
         Result call(Callable callable) {

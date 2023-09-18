@@ -38,34 +38,6 @@
             <groupId>com.itquasar.multiverse.jmacro</groupId>
             <artifactId>jmacro-core</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.itquasar.multiverse.jmacro.commands</groupId>
-            <artifactId>jmacro-commands-base</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.itquasar.multiverse.jmacro.commands</groupId>
-            <artifactId>jmacro-commands-io</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.itquasar.multiverse.jmacro.commands</groupId>
-            <artifactId>jmacro-commands-terminal</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.itquasar.multiverse.jmacro.commands</groupId>
-            <artifactId>jmacro-commands-datax</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.itquasar.multiverse.jmacro.commands</groupId>
-            <artifactId>jmacro-commands-browser</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.itquasar.multiverse.jmacro.commands</groupId>
-            <artifactId>jmacro-commands-server</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.itquasar.multiverse.jmacro.commands</groupId>
-            <artifactId>jmacro-commands-db</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -77,12 +49,14 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j2-impl</artifactId>
-        </dependency>
-        <dependency>
             <groupId>info.picocli</groupId>
             <artifactId>picocli</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

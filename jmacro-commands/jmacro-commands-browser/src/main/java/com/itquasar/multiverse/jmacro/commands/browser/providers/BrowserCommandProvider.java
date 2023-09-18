@@ -5,6 +5,8 @@ import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
 
 import javax.script.ScriptEngine;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 
 public class BrowserCommandProvider implements CommandProvider<BrowserCommand> {
 
@@ -19,7 +21,7 @@ public class BrowserCommandProvider implements CommandProvider<BrowserCommand> {
     }
 
     @Override
-    public BrowserCommand getCommand(Core core, ScriptEngine scriptEngine) {
-        return new BrowserCommand(getName(), core, scriptEngine);
+    public BrowserCommand getCommand(Core core, ScriptEngineAware scriptEngineAware) {
+        return new BrowserCommand(getName(), core, scriptEngineAware);
     }
 }

@@ -5,13 +5,14 @@ import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
 
 import javax.script.ScriptEngine;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import java.io.File;
 import java.nio.file.Path;
 
 public class ZipCommand extends AbstractCommand {
 
-    public ZipCommand(String name, Core core, ScriptEngine scriptEngine) {
-        super(name, core, scriptEngine);
+    public ZipCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
+        super(name, core, scriptEngineAware);
     }
 
     private static char[] passwordCharArray(String password) {

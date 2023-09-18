@@ -5,6 +5,8 @@ import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
 
 import javax.script.ScriptEngine;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 
 // FIXME shouldnt have a "catch" block ???
 public class HelpCommandProvider implements CommandProvider<HelpCommand> {
@@ -20,7 +22,7 @@ public class HelpCommandProvider implements CommandProvider<HelpCommand> {
     }
 
     @Override
-    public HelpCommand getCommand(Core core, ScriptEngine scriptEngine) {
-        return new HelpCommand(getName(), core, scriptEngine);
+    public HelpCommand getCommand(Core core, ScriptEngineAware scriptEngineAware) {
+        return new HelpCommand(getName(), core, scriptEngineAware);
     }
 }

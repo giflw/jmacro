@@ -12,6 +12,8 @@ import lombok.Getter;
 import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -29,8 +31,8 @@ public class ArgsCommandProvider implements CommandProvider<ArgsCommandProvider.
     }
 
     @Override
-    public ArgsCommand getCommand(Core core, ScriptEngine scriptEngine) {
-        return new ArgsCommand(getName(), core, scriptEngine);
+    public ArgsCommand getCommand(Core core, ScriptEngineAware scriptEngineAware) {
+        return new ArgsCommand(getName(), core, scriptEngineAware);
     }
 
     @Getter
@@ -40,8 +42,8 @@ public class ArgsCommandProvider implements CommandProvider<ArgsCommandProvider.
 
         private Map<String, ?> argm = null;
 
-        public ArgsCommand(String name, Core core, ScriptEngine scriptEngine) {
-            super(name, core, scriptEngine);
+        public ArgsCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
+            super(name, core, scriptEngineAware);
         }
 
         @SuppressWarnings("unchecked")

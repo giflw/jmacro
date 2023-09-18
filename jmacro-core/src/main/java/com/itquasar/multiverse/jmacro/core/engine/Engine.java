@@ -1,13 +1,13 @@
 package com.itquasar.multiverse.jmacro.core.engine;
 
 import com.itquasar.multiverse.jmacro.core.configuration.InitializationProvider;
+import com.itquasar.multiverse.jmacro.core.interfaces.Constants;
 import com.itquasar.multiverse.jmacro.core.script.Script;
 import com.itquasar.multiverse.jmacro.core.script.ScriptResult;
 import com.itquasar.multiverse.jmacro.core.util.SPILoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 
-public abstract class Engine {
+public abstract class Engine implements Constants {
 
     static {
         Logger logger = LogManager.getLogger(Engine.class);
@@ -26,27 +26,31 @@ public abstract class Engine {
         logger.warn("Static initialization done");
     }
 
-    /**
-     * Execute given {@link Script} and return its execution result wrapped on {@link ScriptResult}.
-     *
-     * @param script       {@link Script} to execute.
-     * @param preExecHook  {@link Consumer} allowing access to {@link ScriptEngine} before script execution.
-     * @param postExecHook {@link Consumer} allowing access to {@link ScriptEngine} after script execution.
-     * @return {@link ScriptResult} wrapped result.
-     * @throws ScriptException if some error occurs.
-     */
-    public abstract ScriptResult<?, ?> execute(Script script, List<String> args, Consumer<ScriptEngine> preExecHook, Consumer<ScriptEngine> postExecHook) throws ScriptException;
+    private static <T> Consumer<T> noOp() {
+        return (T t) -> { /* NO OP */ };
+    }
 
     /**
      * Execute given {@link Script} and return its execution result wrapped on {@link ScriptResult}.
      *
      * @param script       {@link Script} to execute.
-     * @param preExecHook  {@link Consumer} allowing access to {@link ScriptEngine} before script execution.
-     * @param postExecHook {@link Consumer} allowing access to {@link ScriptEngine} after script execution.
+     * @param preExecHook  {@link Consumer} allowing access to {@link ScriptEngineAware} before script execution.
+     * @param postExecHook {@link Consumer} allowing access to {@link ScriptEngineAware} after script execution.
      * @return {@link ScriptResult} wrapped result.
      * @throws ScriptException if some error occurs.
      */
-    public ScriptResult<?, ?> include(Script script, Consumer<ScriptEngine> preExecHook, Consumer<ScriptEngine> postExecHook) throws ScriptException {
+    public abstract ScriptResult<?, ?> execute(Script script, List<String> args, Consumer<ScriptEngineAware> preExecHook, Consumer<ScriptEngineAware> postExecHook) throws ScriptException;
+
+    /**
+     * Execute given {@link Script} and return its execution result wrapped on {@link ScriptResult}.
+     *
+     * @param script       {@link Script} to execute.
+     * @param preExecHook  {@link Consumer} allowing access to {@link ScriptEngineAware} before script execution.
+     * @param postExecHook {@link Consumer} allowing access to {@link ScriptEngineAware} after script execution.
+     * @return {@link ScriptResult} wrapped result.
+     * @throws ScriptException if some error occurs.
+     */
+    public ScriptResult<?, ?> include(Script script, Consumer<ScriptEngineAware> preExecHook, Consumer<ScriptEngineAware> postExecHook) throws ScriptException {
         return this.execute(script, Collections.emptyList(), preExecHook, postExecHook);
     }
 
@@ -63,7 +67,7 @@ public abstract class Engine {
      * @throws ScriptException if some error occurs.
      */
     public ScriptResult<?, ?> execute(Script script, List<String> args) throws ScriptException {
-        return this.execute(script, args, (scriptEngine) -> { /* NO-OP */ }, (scriptEngine) -> { /* NO-OP */ });
+        return this.execute(script, args, noOp(), noOp());
     }
 
     /**

@@ -5,6 +5,7 @@ import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
 
 import javax.script.ScriptEngine;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 
 public class SQLCommandProvider implements CommandProvider<SQLCommand> {
 
@@ -19,7 +20,7 @@ public class SQLCommandProvider implements CommandProvider<SQLCommand> {
     }
 
     @Override
-    public SQLCommand getCommand(final Core core, final ScriptEngine scriptEngine) {
-        return new SQLCommand(this.getName(), core, scriptEngine);
+    public SQLCommand getCommand(final Core core, final ScriptEngineAware scriptEngineAware) {
+        return new SQLCommand(this.getName(), core, scriptEngineAware);
     }
 }

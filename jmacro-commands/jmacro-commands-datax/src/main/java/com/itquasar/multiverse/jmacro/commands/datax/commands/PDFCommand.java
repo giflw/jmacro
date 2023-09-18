@@ -9,6 +9,7 @@ import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import lombok.SneakyThrows;
 
 import javax.script.ScriptEngine;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -19,8 +20,8 @@ import java.util.function.Consumer;
 
 public class PDFCommand extends AbstractCommand implements CallableCommand<Object, PDFAction>, ArgAndConsumerCommand<Object, PDFAction> {
 
-    public PDFCommand(String name, Core core, ScriptEngine scriptEngine) {
-        super(name, core, scriptEngine);
+    public PDFCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
+        super(name, core, scriptEngineAware);
     }
 
     @Override

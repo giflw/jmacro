@@ -1,23 +1,31 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands
 
-import com.itquasar.multiverse.jmacro.commands.base.commands.configuration.ConfigurationAwareCommand
-import com.itquasar.multiverse.jmacro.commands.base.commands.configuration.ConfigurationHolder
+import com.itquasar.multiverse.jmacro.core.command.ConfigurationAwareCommand
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
 import com.itquasar.multiverse.jmacro.core.command.CallableCommand
 import com.itquasar.multiverse.jmacro.core.command.Command
+import com.itquasar.multiverse.jmacro.core.engine.ConfigurationHolder
 import com.itquasar.multiverse.jmacro.core.engine.Core
-import groovy.transform.CompileDynamic
+import com.itquasar.multiverse.jmacro.core.engine.ScriptConfiguration
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware
 
-import javax.script.ScriptEngine
 import java.util.function.Consumer
 
 class ConfigurationCommand extends AbstractCommand implements CallableCommand<Consumer<ConfigurationCommand>, ConfigurationCommand>, Iterable {
 
-    private Map<String, ConfigurationHolder> configHolders = new LinkedHashMap<>()
-    private ConfigObject custom = new ConfigObject()
+    private final ScriptConfiguration configuration
 
-    ConfigurationCommand(String name, Core core, ScriptEngine scriptEngine) {
-        super(name, core, scriptEngine)
+    ConfigurationCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
+        super(name, core, scriptEngineAware)
+        this.configuration = scriptEngineAware.configuration()
+    }
+
+    private ConfigObject getCustom() {
+        return this.configuration.custom
+    }
+
+    private Map<String, ConfigurationHolder> getConfigHolders() {
+        return this.configuration.configHolders
     }
 
     @Override
@@ -67,30 +75,6 @@ class ConfigurationCommand extends AbstractCommand implements CallableCommand<Co
         return value
     }
 
-    @CompileDynamic
-    ConfigurationCommand fill(Map<String, String> configurations) {
-        for (Map.Entry<String, String> entry : configurations) {
-            List<String> paths = (entry.key.split("\\.")).toList()
-            Object object = this.configHolders.containsKey(paths.first()) ? this.configHolders : null
-            for (String path : paths) {
-                if (object == null) {
-                    scriptLogger.warn("Could not find configuration ${entry.key} (path ${path} is null). Creating custom config.")
-                    this.custom.putAt(entry.key, entry.value)
-                    break
-                }
-                if (path == paths.last()) {
-                    if (object instanceof ConfigurationHolder<?>) {
-                        object.setValueOf(entry.value)
-                    } else {
-                        object."$path" = entry.value
-                    }
-                    break
-                }
-                object = object."$path"
-            }
-        }
-        return this
-    }
 
     @Override
     Iterator iterator() {

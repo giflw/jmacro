@@ -5,6 +5,8 @@ import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
 
 import javax.script.ScriptEngine;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 
 public class ExportCommandProvider implements CommandProvider<ExportCommand> {
 
@@ -19,7 +21,7 @@ public class ExportCommandProvider implements CommandProvider<ExportCommand> {
     }
 
     @Override
-    public ExportCommand getCommand(Core core, ScriptEngine scriptEngine) {
-        return new ExportCommand(getName(), core, scriptEngine);
+    public ExportCommand getCommand(Core core, ScriptEngineAware scriptEngineAware) {
+        return new ExportCommand(getName(), core, scriptEngineAware);
     }
 }

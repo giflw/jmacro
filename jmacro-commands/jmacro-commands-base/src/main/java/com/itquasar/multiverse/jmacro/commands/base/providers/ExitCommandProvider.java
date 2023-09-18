@@ -2,9 +2,9 @@ package com.itquasar.multiverse.jmacro.commands.base.providers;
 
 import com.itquasar.multiverse.jmacro.commands.base.commands.ResultCommand;
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
-import com.itquasar.multiverse.jmacro.core.command.CallableCommand;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import com.itquasar.multiverse.jmacro.core.exception.ExitException;
 
 import javax.script.ScriptContext;
@@ -26,14 +26,14 @@ public class ExitCommandProvider implements CommandProvider<ExitCommandProvider.
     }
 
     @Override
-    public ExitCommand getCommand(Core core, ScriptEngine scriptEngine) {
-        return new ExitCommand(getName(), core, scriptEngine);
+    public ExitCommand getCommand(Core core, ScriptEngineAware scriptEngineAware) {
+        return new ExitCommand(getName(), core, scriptEngineAware);
     }
 
     public static class ExitCommand extends AbstractCommand {
 
-        public ExitCommand(String name, Core core, ScriptEngine scriptEngine) {
-            super(name, core, scriptEngine);
+        public ExitCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
+            super(name, core, scriptEngineAware);
         }
 
         void call() {

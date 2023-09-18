@@ -3,6 +3,7 @@ package com.itquasar.multiverse.jmacro.commands.base.commands
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
 import com.itquasar.multiverse.jmacro.core.command.CommandUtils
 import com.itquasar.multiverse.jmacro.core.engine.Core
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware
 import groovy.transform.CompileDynamic
 
 import javax.script.ScriptContext
@@ -13,8 +14,8 @@ class ExportCommand extends AbstractCommand {
 
     public static final String EXPORTS_KEY = "__EXPORTS__"
 
-    ExportCommand(String name, Core core, ScriptEngine scriptEngine) {
-        super(name, core, scriptEngine)
+    ExportCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
+        super(name, core, scriptEngineAware)
         def globalScope = this.scriptEngine.getBindings(ScriptContext.GLOBAL_SCOPE)
         if (!globalScope.get(EXPORTS_KEY)) {
             scriptLogger.debug("Creating $EXPORTS_KEY")

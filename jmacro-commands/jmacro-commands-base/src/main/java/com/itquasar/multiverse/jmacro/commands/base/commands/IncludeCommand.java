@@ -12,6 +12,8 @@ import com.itquasar.multiverse.jmacro.core.util.SPILoader;
 
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import javax.script.ScriptException;
 import java.nio.file.Paths;
 import java.util.*;
@@ -22,10 +24,10 @@ public class IncludeCommand extends AbstractCommand {
 
     private final String extension;
 
-    public IncludeCommand(final String name, final GlobalScriptRepository repository, final Core core, final ScriptEngine scriptEngine) {
-        super(name, core, scriptEngine);
+    public IncludeCommand(final String name, final GlobalScriptRepository repository, final Core core, final ScriptEngineAware scriptEngineAware) {
+        super(name, core, scriptEngineAware);
         this.repository = repository;
-        this.extension = scriptEngine.getFactory().getExtensions().get(0);
+        this.extension = this.getScriptEngine().getFactory().getExtensions().get(0);
     }
 
     /**
@@ -79,11 +81,11 @@ public class IncludeCommand extends AbstractCommand {
                 logger.debug("Including " + includeName);
 
                 try {
-                    this.core.getEngine().include(script, (final var engine) -> {
+                    this.core.getEngine().include(script, (final var scriptEngineAware) -> {
                         this.includeCommand.getScriptEngine().getBindings(ScriptContext.ENGINE_SCOPE).forEach((key, value) -> {
                             if (!key.startsWith("__") && !key.equals("export") && !key.equals("include") && !key.equals(ARGS)) {
                                 logger.trace("Transferring [" + key + "] to new engine");
-                                engine.getBindings(ScriptContext.ENGINE_SCOPE).put(key, value);
+                                scriptEngineAware.scriptEngine().getBindings(ScriptContext.ENGINE_SCOPE).put(key, value);
                             }
                             // FIXME APPEND PARENT SCRIPT ARGS
                             // if (key.equals(ARGS)) {
@@ -95,11 +97,11 @@ public class IncludeCommand extends AbstractCommand {
                         SPILoader.iterator(CommandProvider.class).forEachRemaining(provider -> {
                             if ((provider instanceof ExportCommandProvider) || (provider instanceof IncludeCommandProvider)) {
                                 logger.debug("Creating [" + provider.getName() + "] command in new engine");
-                                provider.getCommand(this.core, engine);
+                                provider.getCommand(this.core, scriptEngineAware);
                             }
                         });
-                    }, (final var engine) -> {
-                        final var exportsMap = (Map) engine.getBindings(ScriptContext.GLOBAL_SCOPE).get(ExportCommand.EXPORTS_KEY);
+                    }, (final var scriptEngineAware) -> {
+                        final var exportsMap = (Map) scriptEngineAware.scriptEngine().getBindings(ScriptContext.GLOBAL_SCOPE).get(ExportCommand.EXPORTS_KEY);
                         Set<String> contextNames = new HashSet<>(this.contextName);
                         if (contextNames.isEmpty()) {
                             contextNames = exportsMap.keySet();

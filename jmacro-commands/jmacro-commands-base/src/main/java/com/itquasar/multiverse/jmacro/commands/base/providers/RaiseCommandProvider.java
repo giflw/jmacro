@@ -6,6 +6,8 @@ import com.itquasar.multiverse.jmacro.core.command.CommandUtils;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
 
 import javax.script.ScriptEngine;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 
 public class RaiseCommandProvider implements CommandProvider<RaiseCommandProvider.RaiseCommand> {
 
@@ -20,14 +22,14 @@ public class RaiseCommandProvider implements CommandProvider<RaiseCommandProvide
     }
 
     @Override
-    public RaiseCommand getCommand(Core core, ScriptEngine scriptEngine) {
-        return new RaiseCommand(getName(), core, scriptEngine);
+    public RaiseCommand getCommand(Core core, ScriptEngineAware scriptEngineAware) {
+        return new RaiseCommand(getName(), core, scriptEngineAware);
     }
 
     public static class RaiseCommand extends AbstractCommand {
 
-        public RaiseCommand(String name, Core core, ScriptEngine scriptEngine) {
-            super(name, core, scriptEngine);
+        public RaiseCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
+            super(name, core, scriptEngineAware);
         }
 
         void call(String message) {

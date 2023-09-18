@@ -7,6 +7,8 @@ import com.itquasar.multiverse.jmacro.core.engine.Core;
 import org.apache.logging.log4j.Logger;
 
 import javax.script.ScriptEngine;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 
 @SuppressWarnings("rawtypes")
 public class LoggerCommandProvider implements CommandProvider<WrappingCommand> {
@@ -22,8 +24,8 @@ public class LoggerCommandProvider implements CommandProvider<WrappingCommand> {
     }
 
     @Override
-    public WrappingCommand<Logger> getCommand(Core core, ScriptEngine scriptEngine) {
-        return new WrappingCommand<>(Command::getScriptLogger, getName(), core, scriptEngine, false);
+    public WrappingCommand<Logger> getCommand(Core core, ScriptEngineAware scriptEngineAware) {
+        return new WrappingCommand<>(Command::getScriptLogger, getName(), core, scriptEngineAware, false);
     }
 
 }

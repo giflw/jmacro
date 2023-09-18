@@ -3,6 +3,7 @@ package com.itquasar.multiverse.jmacro.commands.base.providers;
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.itquasar.multiverse.jmacro.core.interfaces.Constants;
 import lombok.SneakyThrows;
@@ -26,14 +27,14 @@ public class ProgressCommandProvider implements CommandProvider<ProgressCommandP
     }
 
     @Override
-    public ProgressCommand getCommand(Core core, ScriptEngine scriptEngine) {
-        return new ProgressCommand(getName(), core, scriptEngine);
+    public ProgressCommand getCommand(Core core, ScriptEngineAware scriptEngineAware) {
+        return new ProgressCommand(getName(), core, scriptEngineAware);
     }
 
     public static class ProgressCommand extends AbstractCommand implements Constants {
 
-        public ProgressCommand(String name, Core core, ScriptEngine scriptEngine) {
-            super(name, core, scriptEngine);
+        public ProgressCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
+            super(name, core, scriptEngineAware);
         }
 
         public <T> Progress<T> call(Supplier<T> supplier) {

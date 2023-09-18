@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 
 import javax.script.ScriptEngine;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -27,14 +29,14 @@ public class Base64CommandProvider implements CommandProvider<Base64CommandProvi
     }
 
     @Override
-    public Base64Command getCommand(final Core core, final ScriptEngine scriptEngine) {
-        return new Base64Command(this.getName(), core, scriptEngine);
+    public Base64Command getCommand(final Core core, final ScriptEngineAware scriptEngineAware) {
+        return new Base64Command(this.getName(), core, scriptEngineAware);
     }
 
     static public class Base64Command extends AbstractCommand {
 
-        public Base64Command(final String name, final Core core, final ScriptEngine scriptEngine) {
-            super(name, core, scriptEngine);
+        public Base64Command(final String name, final Core core, final ScriptEngineAware scriptEngineAware) {
+            super(name, core, scriptEngineAware);
         }
 
         /**

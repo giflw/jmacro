@@ -7,6 +7,7 @@ import com.itquasar.multiverse.jmacro.core.command.OnShutdown;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
 
 import javax.script.ScriptEngine;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -15,8 +16,8 @@ public class HttpdCommand extends AbstractCommand implements AutoCloseable, OnSh
 
     private final Map<String, Httpd> servers = new LinkedHashMap<>();
 
-    public HttpdCommand(String name, Core core, ScriptEngine scriptEngine) {
-        super(name, core, scriptEngine);
+    public HttpdCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
+        super(name, core, scriptEngineAware);
     }
 
     public Httpd init() {

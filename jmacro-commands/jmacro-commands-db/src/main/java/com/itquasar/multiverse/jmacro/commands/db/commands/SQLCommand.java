@@ -6,6 +6,7 @@ import com.itquasar.multiverse.jmacro.core.command.FunctionCommand;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
 
 import javax.script.ScriptEngine;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -14,8 +15,8 @@ public class SQLCommand extends AbstractCommand implements FunctionCommand<SQLCo
 
     private static final List<SQLConnection> instances = new ArrayList<>(0);
 
-    public SQLCommand(final String name, final Core core, final ScriptEngine scriptEngine) {
-        super(name, core, scriptEngine);
+    public SQLCommand(final String name, final Core core, final ScriptEngineAware scriptEngineAware) {
+        super(name, core, scriptEngineAware);
     }
 
     @Override

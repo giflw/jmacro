@@ -3,6 +3,7 @@ package com.itquasar.multiverse.jmacro.commands.io.commands
 import com.itquasar.multiverse.jmacro.commands.io.commands.request.Request
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
 import com.itquasar.multiverse.jmacro.core.engine.Core
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware
 import groovy.transform.CompileDynamic
 
 import javax.script.ScriptContext
@@ -26,8 +27,8 @@ import java.util.function.Consumer
  *}* </pre>*/
 class RequestCommand extends AbstractCommand {
 
-    RequestCommand(String name, Core core, ScriptEngine scriptEngine) {
-        super(name, core, scriptEngine)
+    RequestCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
+        super(name, core, scriptEngineAware)
     }
 
     @CompileDynamic

@@ -5,6 +5,8 @@ import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
 
 import javax.script.ScriptEngine;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 
 public class MomentCommandProvider implements CommandProvider<MomentCommand> {
 
@@ -19,7 +21,7 @@ public class MomentCommandProvider implements CommandProvider<MomentCommand> {
     }
 
     @Override
-    public MomentCommand getCommand(Core core, ScriptEngine scriptEngine) {
-        return new MomentCommand(getName(), core, scriptEngine);
+    public MomentCommand getCommand(Core core, ScriptEngineAware scriptEngineAware) {
+        return new MomentCommand(getName(), core, scriptEngineAware);
     }
 }

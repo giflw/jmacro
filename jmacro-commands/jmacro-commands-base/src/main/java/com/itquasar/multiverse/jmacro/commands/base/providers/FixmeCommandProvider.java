@@ -6,6 +6,8 @@ import com.itquasar.multiverse.jmacro.core.engine.Core;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 
 import javax.script.ScriptEngine;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 
 public class FixmeCommandProvider implements CommandProvider<FixmeCommandProvider.FixmeCommand> {
 
@@ -20,14 +22,14 @@ public class FixmeCommandProvider implements CommandProvider<FixmeCommandProvide
     }
 
     @Override
-    public FixmeCommand getCommand(Core core, ScriptEngine scriptEngine) {
-        return new FixmeCommand(getName(), core, scriptEngine);
+    public FixmeCommand getCommand(Core core, ScriptEngineAware scriptEngineAware) {
+        return new FixmeCommand(getName(), core, scriptEngineAware);
     }
 
     public static class FixmeCommand extends AbstractCommand {
 
-        public FixmeCommand(String name, Core core, ScriptEngine scriptEngine) {
-            super(name, core, scriptEngine);
+        public FixmeCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
+            super(name, core, scriptEngineAware);
         }
 
         void call(String message) {

@@ -1,6 +1,9 @@
 package com.itquasar.multiverse.jmacro.core.engine;
 
-import com.itquasar.multiverse.jmacro.core.command.*;
+import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
+import com.itquasar.multiverse.jmacro.core.command.AutoCloseableAll;
+import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
+import com.itquasar.multiverse.jmacro.core.command.OnShutdown;
 import com.itquasar.multiverse.jmacro.core.exception.ExitException;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.itquasar.multiverse.jmacro.core.interfaces.Constants;
@@ -183,16 +186,16 @@ public final class EngineImpl extends Engine implements Constants, TUI {
     }
 
     @Override
-    public ScriptResult<?, ? extends Throwable> execute(final Script script, final List<String> args, final Consumer<ScriptEngine> preExecHook, final Consumer<ScriptEngine> postExecHook) {
+    public ScriptResult<?, ? extends Throwable> execute(final Script script, final List<String> args, final Consumer<ScriptEngineAware> preExecHook, final Consumer<ScriptEngineAware> postExecHook) {
         return this.executeInternal(script, args, preExecHook, postExecHook, true);
     }
 
     @Override
-    public ScriptResult<?, ? extends Throwable> include(final Script script, final Consumer<ScriptEngine> preExecHook, final Consumer<ScriptEngine> postExecHook) {
+    public ScriptResult<?, ? extends Throwable> include(final Script script, final Consumer<ScriptEngineAware> preExecHook, final Consumer<ScriptEngineAware> postExecHook) {
         return this.executeInternal(script, Collections.emptyList(), preExecHook, postExecHook, false);
     }
 
-    private ScriptResult<?, ? extends Throwable> executeInternal(final Script script, final List<String> args, final Consumer<ScriptEngine> preExecHook, final Consumer<ScriptEngine> postExecHook, final boolean normalExecution) {
+    private ScriptResult<?, ? extends Throwable> executeInternal(final Script script, final List<String> args, final Consumer<ScriptEngineAware> preExecHook, final Consumer<ScriptEngineAware> postExecHook, final boolean normalExecution) {
         String scriptPath = script.getPath();
         final var extension = scriptPath.substring(scriptPath.lastIndexOf('.') + 1);
         final var engine = this.engines.get(extension).getScriptEngine();
@@ -228,6 +231,8 @@ public final class EngineImpl extends Engine implements Constants, TUI {
         globalScope.put("uuid", UUID.randomUUID());
         globalScope.put("logger", scriptLogger);
 
+        ScriptEngineAware scriptEngineAware = ScriptEngineAware.of(globalScope, engine, scriptLogger);
+
         if (engine instanceof GroovyScriptEngineImpl) {
             engine.getContext().setAttribute("#jsr223.groovy.engine.keep.globals", "weak", ENGINE_SCOPE);
             // FIXME awaiting https://github.com/groovy/groovy-core/pull/685
@@ -240,7 +245,7 @@ public final class EngineImpl extends Engine implements Constants, TUI {
             if (normalExecution) {
                 scriptLogger.trace("Registering command '" + commandProvider.getName() + "' from " + commandProvider.getClass());
             }
-            final var command = commandProvider.getCommand(this.core, engine);
+            final var command = commandProvider.getCommand(this.core, scriptEngineAware);
             if (command == null) {
                 throw new JMacroException(this,
                     "Command provider " + commandProvider.getName() + " returned null command");
@@ -256,7 +261,7 @@ public final class EngineImpl extends Engine implements Constants, TUI {
             }
         }
 
-        commands.forEach( c -> c.allCommandsLoaded(commands));
+        commands.forEach(c -> c.allCommandsLoaded(commands));
 
         var locationArg = script.getLocation().toString();
         locationArg = normalExecution ? locationArg : INCLUDED + ':' + locationArg;
@@ -288,9 +293,9 @@ public final class EngineImpl extends Engine implements Constants, TUI {
             }
             Object evalReturn = null;
             try {
-                preExecHook.accept(engine);
+                preExecHook.accept(scriptEngineAware);
                 evalReturn = engine.eval(script.getSource());
-                postExecHook.accept(engine);
+                postExecHook.accept(scriptEngineAware);
             } catch (final Throwable exception) {
                 if (!normalExecution) {
                     ExitException exitEx = getExitException(exception);

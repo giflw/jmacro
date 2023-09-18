@@ -2,12 +2,9 @@ package com.itquasar.multiverse.jmacro.commands.terminal.commands
 
 import com.itquasar.multiverse.jmacro.commands.terminal.commands.tn3270.Reader
 import com.itquasar.multiverse.jmacro.commands.terminal.commands.tn3270.Writer
-import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
-import com.itquasar.multiverse.jmacro.core.command.ArgAndConsumerCommand
-import com.itquasar.multiverse.jmacro.core.command.AutoCloseableAll
-import com.itquasar.multiverse.jmacro.core.command.CommandUtils
-import com.itquasar.multiverse.jmacro.core.command.OnShutdown
+import com.itquasar.multiverse.jmacro.core.command.*
 import com.itquasar.multiverse.jmacro.core.engine.Core
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware
 import com.itquasar.multiverse.jmacro.core.interfaces.Constants
 import com.itquasar.multiverse.tn3270j.TN3270j
 import com.itquasar.multiverse.tn3270j.TN3270jFactory
@@ -17,7 +14,6 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Log4j2
 import io.vavr.control.Try
 
-import javax.script.ScriptEngine
 import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
@@ -36,8 +32,8 @@ class TN3270Command extends AbstractCommand implements ArgAndConsumerCommand<Wai
     private static Map<TN3270j, Long> instances = new ConcurrentHashMap<>()
     private final ThreadLocal<TN3270j> tn3270j = new ThreadLocal<>()
 
-    TN3270Command(String name, Core core, ScriptEngine scriptEngine) {
-        super(name, core, scriptEngine)
+    TN3270Command(String name, Core core, ScriptEngineAware scriptEngineAware) {
+        super(name, core, scriptEngineAware)
     }
 
     TN3270j getTn3270j() {
@@ -72,7 +68,6 @@ class TN3270Command extends AbstractCommand implements ArgAndConsumerCommand<Wai
         consumer.accept(this)
         return this
     }
-
 
 
     def methodMissing(String name, def args) {

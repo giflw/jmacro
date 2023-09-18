@@ -7,6 +7,8 @@ import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.itquasar.multiverse.jmacro.core.util.LockUtils;
 
 import javax.script.ScriptEngine;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -23,8 +25,8 @@ public class PauseCommandProvider implements CommandProvider<PauseCommandProvide
     }
 
     @Override
-    public PauseCommand getCommand(Core core, ScriptEngine scriptEngine) {
-        return new PauseCommand(getName(), core, scriptEngine);
+    public PauseCommand getCommand(Core core, ScriptEngineAware scriptEngineAware) {
+        return new PauseCommand(getName(), core, scriptEngineAware);
     }
 
     public static class PauseCommand extends AbstractCommand {
@@ -32,8 +34,8 @@ public class PauseCommandProvider implements CommandProvider<PauseCommandProvide
         private final ReentrantLock lock = new ReentrantLock();
         private final Condition pause = lock.newCondition();
 
-        public PauseCommand(String name, Core core, ScriptEngine scriptEngine) {
-            super(name, core, scriptEngine);
+        public PauseCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
+            super(name, core, scriptEngineAware);
         }
 
         void call(Number seconds) {

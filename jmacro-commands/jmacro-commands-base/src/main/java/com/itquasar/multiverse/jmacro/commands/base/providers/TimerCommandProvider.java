@@ -5,6 +5,8 @@ import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
 
 import javax.script.ScriptEngine;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 
 public class TimerCommandProvider implements CommandProvider<TimerCommand> {
 
@@ -19,8 +21,8 @@ public class TimerCommandProvider implements CommandProvider<TimerCommand> {
     }
 
     @Override
-    public TimerCommand getCommand(Core core, ScriptEngine scriptEngine) {
-        return new TimerCommand(getName(), core, scriptEngine);
+    public TimerCommand getCommand(Core core, ScriptEngineAware scriptEngineAware) {
+        return new TimerCommand(getName(), core, scriptEngineAware);
     }
 }
 

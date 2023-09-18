@@ -1,64 +1,25 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands
 
-
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
 import com.itquasar.multiverse.jmacro.core.command.SelfConsumerCommand
 import com.itquasar.multiverse.jmacro.core.engine.Core
-import com.itquasar.multiverse.jmacro.core.exception.ExitException
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware
+import com.itquasar.multiverse.jmacro.core.engine.ScriptUI
 import com.itquasar.multiverse.jmacro.core.interfaces.Constants
 import groovy.transform.CompileDynamic
 
-import javax.script.ScriptEngine
 import java.util.function.Supplier
 
+// FIXME review all
 class ConsoleCommand extends AbstractCommand implements SelfConsumerCommand<ConsoleCommand>, Constants {
-
-    static class InReader implements Closeable {
-
-        private final Object reader
-
-        InReader() {
-            def reader = System.console()
-            if (reader == null) {
-                reader = new BufferedReader(new InputStreamReader(System.in))
-            }
-            this.reader = reader
-        }
-
-        String readLine() {
-            String line = (String) this.reader.invokeMethod('readLine', null)
-            if (line == null) {
-                throw new ExitException(0)
-            }
-            return line
-        }
-
-        char[] readPassword() {
-            if (this.reader.respondsTo('readPassword')) {
-                return (char[]) this.reader.invokeMethod('readPassword', null)
-            } else {
-                return this.reader.invokeMethod('readLine', null)?.toString()?.toCharArray()
-            }
-        }
-
-
-        @CompileDynamic
-        @Override
-        void close() throws IOException {
-            if (reader != null && reader.respondsTo('close')) {
-                reader.invokeMethod('close', null)
-            }
-        }
-    }
-
 
     private static final String PROMPT = '[INPT] '
 
+    private final ScriptUI readerAndWriter
 
-    private InReader readerAndWriter = new InReader()
-
-    ConsoleCommand(String name, Core core, ScriptEngine scriptEngine) {
-        super(name, core, scriptEngine)
+    ConsoleCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
+        super(name, core, scriptEngineAware)
+        this.readerAndWriter = scriptEngineAware.ui()
     }
 
     String read() {
@@ -75,7 +36,6 @@ class ConsoleCommand extends AbstractCommand implements SelfConsumerCommand<Cons
             (boolean) args.password ?: false
         )
     }
-
 
     String read(String label, String fallback = null, List<String> allowed = Collections.EMPTY_LIST, boolean nonInteractive = false, boolean password = false) {
         def showValue = fallback ?: ''
@@ -98,7 +58,8 @@ class ConsoleCommand extends AbstractCommand implements SelfConsumerCommand<Cons
     }
 
     @CompileDynamic
-    def credentials(Map<String, Map<String, String>> fields, boolean nonInteractive = false, Supplier<Boolean> checkCredentials = { -> true }) {
+    def credentials(Map<String, Map<String, String>> fields, boolean nonInteractive = false, Supplier<Boolean> checkCredentials = { ->
+        true }) {
         do {
             fields.each { entry ->
                 String field = entry.key

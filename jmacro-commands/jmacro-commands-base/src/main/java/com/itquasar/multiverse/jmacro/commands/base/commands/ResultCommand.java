@@ -7,6 +7,8 @@ import com.itquasar.multiverse.jmacro.core.exception.ExitException;
 import com.itquasar.multiverse.jmacro.core.interfaces.Constants;
 
 import javax.script.ScriptEngine;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 
 public class ResultCommand<T, E extends Throwable> extends AbstractCommand implements EngineResult<T, E>, Constants {
 
@@ -16,8 +18,8 @@ public class ResultCommand<T, E extends Throwable> extends AbstractCommand imple
 
     private int exitCode = ExitException.OK;
 
-    public ResultCommand(String name, Core core, ScriptEngine scriptEngine) {
-        super(name, core, scriptEngine);
+    public ResultCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
+        super(name, core, scriptEngineAware);
     }
 
     public T value() {

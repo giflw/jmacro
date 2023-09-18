@@ -17,6 +17,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Log4j2
 public class Script {
 
+    public static final Script EMPTY = new Script(Metadata.EMPTY, "", "", "", "");
+
     private final Metadata metadata;
     private final String repository;
     private final String path;

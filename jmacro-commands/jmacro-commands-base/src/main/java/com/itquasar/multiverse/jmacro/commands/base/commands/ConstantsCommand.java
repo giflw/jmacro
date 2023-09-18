@@ -3,11 +3,11 @@ package com.itquasar.multiverse.jmacro.commands.base.commands;
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
 import com.itquasar.multiverse.jmacro.core.command.Command;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.itquasar.multiverse.jmacro.core.interfaces.Constants;
 
 import javax.script.Bindings;
-import javax.script.ScriptEngine;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -18,8 +18,8 @@ public class ConstantsCommand extends AbstractCommand implements Map<String, Obj
 
     private final Map<String, Object> map = new LinkedHashMap<>();
 
-    public ConstantsCommand(String name, Core core, ScriptEngine scriptEngine) {
-        super(name, core, scriptEngine);
+    public ConstantsCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
+        super(name, core, scriptEngineAware);
         this.init();
     }
 

@@ -5,6 +5,7 @@ import com.itquasar.multiverse.jmacro.commands.datax.commands.com.COMWrapper
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
 import com.itquasar.multiverse.jmacro.core.command.Command
 import com.itquasar.multiverse.jmacro.core.engine.Core
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware
 import com.jacob.activeX.ActiveXComponent
 import com.jacob.com.ComThread
 import com.jacob.com.LibraryLoader
@@ -67,8 +68,8 @@ class COMCommand extends AbstractCommand implements AutoCloseable {
         return wrapper
     }
 
-    COMCommand(String name, Core core, ScriptEngine scriptEngine) {
-        super(name, core, scriptEngine)
+    COMCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
+        super(name, core, scriptEngineAware)
         if (!System.getProperty("jacob.dll.path")) {
             def dllPath = core.configuration.folders.bin().resolve(LibraryLoader.getPreferredDLLName() + ".dll").toString()
             System.setProperty("jacob.dll.path", dllPath)

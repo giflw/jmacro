@@ -1,5 +1,6 @@
 package com.itquasar.multiverse.jmacro.engine
 
+
 import com.itquasar.multiverse.jmacro.core.configuration.Configuration
 import com.itquasar.multiverse.jmacro.core.engine.Core
 import com.itquasar.multiverse.jmacro.core.engine.EngineImpl

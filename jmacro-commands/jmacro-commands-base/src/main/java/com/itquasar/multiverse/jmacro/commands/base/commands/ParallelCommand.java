@@ -4,12 +4,12 @@ import com.itquasar.multiverse.jmacro.commands.base.commands.parallel.LockWaitTh
 import com.itquasar.multiverse.jmacro.commands.base.commands.parallel.ParallelThreadFactory;
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.itquasar.multiverse.jmacro.core.interfaces.Constants;
 import lombok.Getter;
 import lombok.SneakyThrows;
 
-import javax.script.ScriptEngine;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -40,8 +40,8 @@ public class ParallelCommand extends AbstractCommand implements AutoCloseable {
     @Getter
     private long timeout = 1000; // milliseconds
 
-    public ParallelCommand(String name, Core core, ScriptEngine scriptEngine) {
-        super(name, core, scriptEngine);
+    public ParallelCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
+        super(name, core, scriptEngineAware);
     }
 
     public void setMinPoolSize(int minPoolSize) {
@@ -105,7 +105,7 @@ public class ParallelCommand extends AbstractCommand implements AutoCloseable {
         if (instances.containsKey(group)) {
             return instances.get(group);
         } else {
-            ParallelCommand parallel = new ParallelCommand(this.getName(), this.getCore(), this.getScriptEngine());
+            ParallelCommand parallel = new ParallelCommand(this.getName(), this.getCore(), this.getScriptEngineAware());
             instances.put(group, initParallel(parallel, group, minPoolSize, maxPoolSize, timeout));
             return parallel;
         }

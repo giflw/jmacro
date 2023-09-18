@@ -6,6 +6,8 @@ import com.itquasar.multiverse.jmacro.core.engine.Core;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 
 import javax.script.ScriptEngine;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 
 public class TodoCommandProvider implements CommandProvider<TodoCommandProvider.TodoCommand> {
 
@@ -20,14 +22,14 @@ public class TodoCommandProvider implements CommandProvider<TodoCommandProvider.
     }
 
     @Override
-    public TodoCommand getCommand(Core core, ScriptEngine scriptEngine) {
-        return new TodoCommand(getName(), core, scriptEngine);
+    public TodoCommand getCommand(Core core, ScriptEngineAware scriptEngineAware) {
+        return new TodoCommand(getName(), core, scriptEngineAware);
     }
 
     public static class TodoCommand extends AbstractCommand {
 
-        public TodoCommand(String name, Core core, ScriptEngine scriptEngine) {
-            super(name, core, scriptEngine);
+        public TodoCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
+            super(name, core, scriptEngineAware);
         }
 
         void call() {

@@ -1,8 +1,11 @@
 package com.itquasar.multiverse.jmacro.core.command;
 
 import com.itquasar.multiverse.jmacro.core.engine.Core;
+import com.itquasar.multiverse.jmacro.core.engine.Engine;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 
 import javax.script.ScriptEngine;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 
 public interface CommandProvider<C extends AbstractCommand> {
 
@@ -20,8 +23,8 @@ public interface CommandProvider<C extends AbstractCommand> {
      * Create command new instance when called.
      *
      * @param core         Core to use in this command.
-     * @param scriptEngine Script engine instance where command will be bound.
+     * @param scriptEngineAware Script engine aware instance where command will be bound.
      * @return Command new instance.
      */
-    C getCommand(Core core, ScriptEngine scriptEngine);
+    C getCommand(Core core, ScriptEngineAware scriptEngineAware);
 }

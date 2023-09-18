@@ -1,14 +1,18 @@
 package com.itquasar.multiverse.jmacro.cli;
 
+import com.itquasar.multiverse.jmacro.core.configuration.Credentials;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
 import com.itquasar.multiverse.jmacro.core.engine.EngineResult;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import com.itquasar.multiverse.jmacro.core.script.Script;
 import com.itquasar.multiverse.jmacro.core.script.ScriptResult;
 import lombok.Getter;
 
 import java.io.PrintStream;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.function.Consumer;
 
 import static picocli.CommandLine.Command;
 import static picocli.CommandLine.Option;
@@ -60,5 +64,12 @@ public class Cli {
             ", configPath=" + configPath +
             ", core=" + core +
             '}';
+    }
+
+    public static Consumer<ScriptEngineAware> getPreExecHook(Map<String, String> credentials, Map<String, String> configuration) {
+        return scriptEngineAware -> {
+            scriptEngineAware.credentials().fill(credentials);
+            scriptEngineAware.configuration().fill(configuration);
+        };
     }
 }

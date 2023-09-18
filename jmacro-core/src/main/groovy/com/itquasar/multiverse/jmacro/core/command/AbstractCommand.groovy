@@ -2,6 +2,7 @@ package com.itquasar.multiverse.jmacro.core.command
 
 
 import com.itquasar.multiverse.jmacro.core.engine.Core
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import com.itquasar.multiverse.jmacro.core.interfaces.Constants
 import groovy.transform.CompileDynamic
@@ -17,7 +18,7 @@ abstract class AbstractCommand implements Command, Constants {
     @Getter
     private final String name
     private final Core core
-    private final ScriptEngine scriptEngine
+    private final ScriptEngineAware scriptEngineAware
     private final ScriptContext context
     private final Bindings bindings
 
@@ -26,12 +27,13 @@ abstract class AbstractCommand implements Command, Constants {
      */
     private final Logger scriptLogger
 
+
     /**
      * @param name Injected from command provider
      * @param core Injected from command provider
-     * @param scriptEngine Script engine instance to get context, from which we get logger attribute.
+     * @param scriptEngineAware Script engine aware instance to get context, from which we get logger attribute.
      */
-    AbstractCommand(String name, final Core core, final ScriptEngine scriptEngine) {
+    AbstractCommand(String name, final Core core, final ScriptEngineAware scriptEngineAware) {
         if (name == '') {
             name = this.getClass().name
         }
@@ -40,7 +42,7 @@ abstract class AbstractCommand implements Command, Constants {
         Objects.requireNonNull(scriptEngine, "Script engine must be not null")
         this.name = name
         this.core = core
-        this.scriptEngine = scriptEngine
+        this.scriptEngineAware = scriptEngineAware
 
         this.context = scriptEngine.getContext()
         Objects.requireNonNull(this.context, "Script context must be not null")
@@ -48,7 +50,7 @@ abstract class AbstractCommand implements Command, Constants {
         this.bindings = this.context.getBindings(ScriptContext.ENGINE_SCOPE)
         Objects.requireNonNull(this.bindings, "Bindings must be not null")
 
-        this.scriptLogger = (Logger) this.context.getBindings(ScriptContext.GLOBAL_SCOPE).get("logger")
+        this.scriptLogger = this.scriptEngineAware.logger()
         Objects.requireNonNull(this.scriptLogger, "Logger must be not null")
     }
 
@@ -78,8 +80,13 @@ abstract class AbstractCommand implements Command, Constants {
     }
 
     @Override
+    ScriptEngineAware getScriptEngineAware() {
+        return scriptEngineAware
+    }
+
+    @Override
     ScriptEngine getScriptEngine() {
-        return scriptEngine
+        return scriptEngineAware.scriptEngine()
     }
 
     @Override

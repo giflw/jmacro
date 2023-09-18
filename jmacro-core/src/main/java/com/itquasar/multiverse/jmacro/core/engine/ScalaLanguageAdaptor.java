@@ -3,6 +3,7 @@ package com.itquasar.multiverse.jmacro.core.engine;
 import lombok.extern.log4j.Log4j2;
 
 import javax.script.ScriptEngine;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import java.util.Set;
 import java.util.stream.Collectors;
 

@@ -1,10 +1,11 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
-import com.itquasar.multiverse.jmacro.commands.base.commands.configuration.ConfigurationAwareCommand;
 import com.itquasar.multiverse.jmacro.core.command.CallableCommand;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
+import com.itquasar.multiverse.jmacro.core.command.ConfigurationAwareCommand;
 import com.itquasar.multiverse.jmacro.core.configuration.Env;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 
 import javax.script.ScriptEngine;
 
@@ -20,14 +21,14 @@ public class EnvCommandProvider implements CommandProvider<EnvCommandProvider.En
     }
 
     @Override
-    public EnvCommand getCommand(final Core core, final ScriptEngine scriptEngine) {
-        return new EnvCommand(this.getName(), core, scriptEngine);
+    public EnvCommand getCommand(final Core core, final ScriptEngineAware scriptEngineAware) {
+        return new EnvCommand(this.getName(), core, scriptEngineAware);
     }
 
     public static class EnvCommand extends ConfigurationAwareCommand<Env> implements CallableCommand<String, Env> {
 
-        public EnvCommand(String name, Core core, ScriptEngine scriptEngine) {
-            super(name, core, scriptEngine);
+        public EnvCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
+            super(name, core, scriptEngineAware);
         }
 
         @Override

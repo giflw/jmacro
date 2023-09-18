@@ -3,6 +3,7 @@ package com.itquasar.multiverse.jmacro.core.engine;
 import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import javax.script.SimpleBindings;
 
 public abstract class AbstractLanguageAdaptor implements LanguageAdaptor {

@@ -1,4 +1,4 @@
-package com.itquasar.multiverse.jmacro.commands.base.commands.configuration;
+package com.itquasar.multiverse.jmacro.core.engine;
 
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.itquasar.multiverse.jmacro.core.interfaces.Copyable;

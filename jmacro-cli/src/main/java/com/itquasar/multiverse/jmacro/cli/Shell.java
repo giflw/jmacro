@@ -1,17 +1,12 @@
 package com.itquasar.multiverse.jmacro.cli;
 
-import com.itquasar.multiverse.jmacro.commands.base.commands.ConfigurationCommand;
-import com.itquasar.multiverse.jmacro.commands.base.commands.ConsoleCommand;
-import com.itquasar.multiverse.jmacro.commands.base.commands.CredentialsCommand;
-import com.itquasar.multiverse.jmacro.core.command.WrappingCommand;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptUI;
 import com.itquasar.multiverse.jmacro.core.exception.ExitException;
 import com.itquasar.multiverse.jmacro.core.script.Metadata;
 import com.itquasar.multiverse.jmacro.core.script.Script;
 import com.itquasar.multiverse.jmacro.core.script.ScriptResult;
 import org.apache.logging.log4j.Logger;
 
-import javax.script.Bindings;
-import javax.script.ScriptContext;
 import javax.script.ScriptException;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -81,24 +76,18 @@ public class Shell implements Callable<CliResult> {
             });
         }
 
-        if (args != null && args.size() > 0) {
+        if (args != null && !args.isEmpty()) {
             args.set(0, "<<stdin>>");
         }
         List<String> args = this.args != null ? Collections.unmodifiableList(this.args) : Collections.emptyList();
-        ScriptResult scriptResult = cli.getCore().getEngine().execute(
+        ScriptResult<?, ?> scriptResult = cli.getCore().getEngine().execute(
             new Script(Metadata.EMPTY, "shell", "stdin.groovy", "jvm://stdin.groovy", ""),
             args,
-            scriptEngine -> {
-                Bindings bindings = scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
-                CredentialsCommand bindedCredentials = (CredentialsCommand) bindings.get("credentials");
-                bindedCredentials.get().fill(credentials);
-                ConfigurationCommand bindedConfiguration = (ConfigurationCommand) bindings.get("configuration");
-                bindedConfiguration.fill(configuration);
-            },
-            scriptEngine -> {
+            Cli.getPreExecHook(credentials, configuration),
+            scriptEngineAware -> {
                 boolean run = true;
-                ConsoleCommand console = (ConsoleCommand) scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE).get("console");
-                Logger logger = ((WrappingCommand) scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE).get("logger")).getScriptLogger();
+                ScriptUI console = scriptEngineAware.ui();
+                Logger logger = scriptEngineAware.logger();
 
                 StringBuilder block = new StringBuilder();
                 int opens = 0;
@@ -121,7 +110,7 @@ public class Shell implements Callable<CliResult> {
                             if (opens == 0) {
                                 String script = block.toString();
                                 block = new StringBuilder();
-                                scriptEngine.eval(script, scriptEngine.getContext());
+                                scriptEngineAware.scriptEngine().eval(script, scriptEngineAware.scriptEngine().getContext());
                             }
                         }
                     } catch (ExitException e) {
@@ -135,4 +124,5 @@ public class Shell implements Callable<CliResult> {
         );
         return new CliResult(scriptResult);
     }
+
 }

@@ -22,8 +22,8 @@
         <groovy.version>4.0.13</groovy.version>
         <gmavenplus.version>2.1.0</gmavenplus.version>
 
-        <spock.version>2.4-M1-groovy-4.0</spock.version>
-        <spock-reports.version>2.4.0-groovy-4.0</spock-reports.version>
+        <spock.version>2.3-groovy-4.0</spock.version>
+        <spock-reports.version>2.5.1-groovy-4.0</spock-reports.version>
 
         <javalin.version>5.6.1</javalin.version>
         <httpclient5.version>5.2.1</httpclient5.version>
@@ -229,7 +229,7 @@
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-java</artifactId>
-                <version>4.6.0</version>
+                <version>4.12.1</version>
             </dependency>
             <dependency>
                 <groupId>ru.yandex.qatools.ashot</groupId>
@@ -348,6 +348,25 @@
             </dependency>
 
             <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>5.10.0</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-vintage</artifactId>
+                <version>5.10.0</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>5.10.0</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
                 <groupId>org.spockframework</groupId>
                 <artifactId>spock-bom</artifactId>
                 <version>${spock.version}</version>
@@ -362,12 +381,6 @@
             <dependency>
                 <groupId>org.spockframework</groupId>
                 <artifactId>spock-core</artifactId>
-                <version>${spock.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.spockframework</groupId>
-                <artifactId>spock-junit4</artifactId>
                 <version>${spock.version}</version>
                 <scope>test</scope>
             </dependency>

@@ -5,6 +5,7 @@ import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
 
 import javax.script.ScriptEngine;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 
 public class OCRCommandProvider implements CommandProvider<OCRCommand> {
 
@@ -19,7 +20,7 @@ public class OCRCommandProvider implements CommandProvider<OCRCommand> {
     }
 
     @Override
-    public OCRCommand getCommand(Core core, ScriptEngine scriptEngine) {
-        return new OCRCommand(getName(), core, scriptEngine);
+    public OCRCommand getCommand(Core core, ScriptEngineAware scriptEngineAware) {
+        return new OCRCommand(getName(), core, scriptEngineAware);
     }
 }
