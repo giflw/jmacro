@@ -55,9 +55,9 @@ class COMWrapper implements AutoCloseable {
     }
 
     def enumeration(String name) {
-        Class<Enum<COMEnum>> enumClass = Class.forName("${this.class.packageName}.enums.${application.name().toLowerCase()}.${name}")
-        enumClass.invokeMethod("values", null).each { COMEnum it ->
-            this.enums.put(it.name(), it.value)
+        Class<Enum> enumClass = Class.forName("${this.class.packageName}.enums.${application.name().toLowerCase()}.${name}") as Class<Enum>
+        enumClass.invokeMethod("values", null).each { Enum it ->
+            this.enums.put(it.name(), (it as COMEnum).value)
         }
     }
 

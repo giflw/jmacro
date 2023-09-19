@@ -5,6 +5,7 @@ module jmacro.commands.datax {
     requires org.apache.logging.log4j;
     requires org.checkerframework.checker.qual;
     requires org.apache.pdfbox;
+    requires org.apache.pdfbox.io;
     requires tess4j;
     requires jacob;
     requires net.coobird.thumbnailator;

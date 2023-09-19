@@ -4,7 +4,7 @@ import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import lombok.SneakyThrows;
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.pdfbox.cos.COSDocument;
-import org.apache.pdfbox.io.RandomAccessFile;
+import org.apache.pdfbox.io.RandomAccessReadBufferedFile;
 import org.apache.pdfbox.pdfparser.PDFParser;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
@@ -33,7 +33,8 @@ public class PDFAction {
 
     public PDDocument load(File file) {
         try {
-            return PDDocument.load(this.file);
+            PDFParser parser = new PDFParser(new RandomAccessReadBufferedFile(this.file));
+            return parser.parse();
         } catch (IOException e) {
             throw new JMacroException("Error loading pdf " + this.file, e);
         }
@@ -52,15 +53,11 @@ public class PDFAction {
 
     public String asText() {
         try {
-            PDFParser parser = new PDFParser(new RandomAccessFile(this.file, "r"));
-            parser.parse();
-
-            COSDocument cosDoc = parser.getDocument();
+            PDFParser parser = new PDFParser(new RandomAccessReadBufferedFile(this.file));
+            PDDocument pdDoc = parser.parse();
             PDFTextStripper pdfStripper = new PDFTextStripper();
-            PDDocument pdDoc = new PDDocument(cosDoc);
-
             String parsedText = pdfStripper.getText(pdDoc);
-            cosDoc.close();
+            pdDoc.close();
             return parsedText;
         } catch (IOException e) {
             throw new JMacroException("Error extracting text from pdf", e);
@@ -73,7 +70,8 @@ public class PDFAction {
      */
     public BufferedImage asImage(int page) {
         try {
-            PDDocument document = PDDocument.load(this.file);
+            PDFParser parser = new PDFParser(new RandomAccessReadBufferedFile(this.file));
+            PDDocument document = parser.parse();
             PDFRenderer pdfRenderer = new PDFRenderer(document);
             BufferedImage image = pdfRenderer.renderImageWithDPI(page - 1, 300, ImageType.RGB);
             document.close();
@@ -118,7 +116,8 @@ public class PDFAction {
 
     public List<BufferedImage> asImages() {
         try {
-            PDDocument document = PDDocument.load(this.file);
+            PDFParser parser = new PDFParser(new RandomAccessReadBufferedFile(this.file));
+            PDDocument document = parser.parse();
             List<BufferedImage> images = new ArrayList<>();
             PDFRenderer pdfRenderer = new PDFRenderer(document);
             for (int page = 0; page < document.getNumberOfPages(); ++page) {

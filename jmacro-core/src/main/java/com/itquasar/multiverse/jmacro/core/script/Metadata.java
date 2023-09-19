@@ -4,8 +4,10 @@ import com.itquasar.multiverse.jmacro.core.util.RepresenterNonNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.yaml.snakeyaml.LoaderOptions;
+import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -48,7 +50,9 @@ public class Metadata {
     }
 
     public static Metadata load(String string) {
-        return new Yaml(new Constructor(Metadata.class)).load(string);
+        SafeConstructor constructor = new SafeConstructor(new LoaderOptions());
+        constructor.addTypeDescription(new TypeDescription(Metadata.class));
+        return new Yaml(constructor).load(string);
     }
 
     private Metadata copy() {

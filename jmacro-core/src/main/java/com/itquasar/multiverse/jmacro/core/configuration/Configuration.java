@@ -8,8 +8,11 @@ import com.itquasar.multiverse.jmacro.core.util.RepresenterNonNull;
 import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
+import org.yaml.snakeyaml.LoaderOptions;
+import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 import javax.script.ScriptEngineManager;
 import java.io.BufferedReader;
@@ -117,7 +120,9 @@ public final class Configuration {
      * @return Parsed configuration.
      */
     public static Configuration load(final Reader reader) {
-        Configuration configuration = new Yaml(new Constructor(Configuration.class)).load(reader);
+        SafeConstructor constructor = new SafeConstructor(new LoaderOptions());
+        constructor.addTypeDescription(new TypeDescription(Configuration.class));
+        Configuration configuration = new Yaml(constructor).load(reader);
         configuration.init();
         return configuration;
     }
