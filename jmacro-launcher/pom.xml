@@ -79,7 +79,7 @@
                                     <resources>
                                         <resource>
                                             <directory>
-                                                ${project.basedir}/../git-modules/knx-launcher/build/bin/native/knxLauncherReleaseExecutable/
+                                                ${project.basedir}/../git-modules/knx-launcher/build/bin/mingwX64/knxLauncherReleaseExecutable/
                                             </directory>
                                             <includes>
                                                 <include>jmacro.exe</include>
@@ -88,7 +88,7 @@
                                         </resource>
                                         <resource>
                                             <directory>
-                                                ${project.basedir}/../git-modules/knx-launcher/build/bin/native/knxLauncherDebugExecutable/
+                                                ${project.basedir}/../git-modules/knx-launcher/build/bin/mingwX64/knxLauncherDebugExecutable/
                                             </directory>
                                             <includes>
                                                 <include>jmacro_debug_.exe</include>
@@ -130,7 +130,7 @@
                                     <arguments>
                                         <argument>/C</argument>
                                         <argument>${project.basedir}/../git-modules/knx-launcher/gradlew.bat</argument>
-                                        <argument>nativeBinaries</argument>
+                                        <argument>mingwX64Binaries</argument>
                                     </arguments>
                                 </configuration>
                             </execution>

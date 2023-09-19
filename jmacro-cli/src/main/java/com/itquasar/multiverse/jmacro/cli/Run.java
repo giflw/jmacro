@@ -41,6 +41,7 @@ public class Run implements Callable<CliResult> {
     @Parameters(arity = "0..1", description = "Script path to run")
     private String scriptPath;
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     private static String selectScriptMenu(Optional<Script> defaultScript) {
         String scriptIndex = null;
         while (scriptIndex == null || (scriptIndex.isEmpty() && defaultScript.isPresent())) {
@@ -88,8 +89,6 @@ public class Run implements Callable<CliResult> {
 
         this.defaultScriptPath = checkInfixAndExtension(this.defaultScriptPath).orElse(null);
         this.scriptPath = checkInfixAndExtension(this.scriptPath).orElse(null);
-
-        System.exit(1);
 
         Optional<Script> script;
         if (scriptPath != null) {
