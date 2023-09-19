@@ -50,9 +50,8 @@ public class Metadata {
     }
 
     public static Metadata load(String string) {
-        SafeConstructor constructor = new SafeConstructor(new LoaderOptions());
-        constructor.addTypeDescription(new TypeDescription(Metadata.class));
-        return new Yaml(constructor).load(string);
+        Metadata metadata = new Yaml().loadAs(string, Metadata.class);
+        return metadata;
     }
 
     private Metadata copy() {
@@ -82,7 +81,7 @@ public class Metadata {
     }
 
     public Map<String, ?> getInfos() {
-        return this.infos != null ? this.infos : Collections.EMPTY_MAP;
+        return this.infos != null ? this.infos : Collections.emptyMap();
     }
 
     public void setInfos(Map<String, ?> infos) {

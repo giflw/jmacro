@@ -20,7 +20,7 @@ public record ScriptEngineAware(
     public static ScriptEngineAware of(Bindings globalScope, ScriptEngine engine, Logger scriptLogger) {
         ScriptEngineAware scriptEngineAware = (ScriptEngineAware) globalScope.get(SCRIPT_ENGINE_AWARE_KEY);
         scriptEngineAware = scriptEngineAware != null ? scriptEngineAware : new ScriptEngineAware(
-            engine, scriptLogger, new ScriptConfiguration(), new Credentials(), ScriptUI.get()
+            engine, scriptLogger, new ScriptConfiguration(scriptLogger), new Credentials(), ScriptUI.get()
         );
         globalScope.put(SCRIPT_ENGINE_AWARE_KEY, scriptEngineAware);
         return scriptEngineAware;

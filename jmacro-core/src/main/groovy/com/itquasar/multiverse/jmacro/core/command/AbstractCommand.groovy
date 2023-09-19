@@ -15,7 +15,6 @@ import javax.script.ScriptEngine
 
 abstract class AbstractCommand implements Command, Constants {
 
-    @Getter
     private final String name
     private final Core core
     private final ScriptEngineAware scriptEngineAware
@@ -39,7 +38,8 @@ abstract class AbstractCommand implements Command, Constants {
         }
         Objects.requireNonNull(name, "Name must be not null")
         Objects.requireNonNull(core, "Core must be not null")
-        Objects.requireNonNull(scriptEngine, "Script engine must be not null")
+        Objects.requireNonNull(scriptEngineAware, "Script engine aware must be not null")
+        Objects.requireNonNull(scriptEngineAware.scriptEngine(), "Script engine must be not null")
         this.name = name
         this.core = core
         this.scriptEngineAware = scriptEngineAware

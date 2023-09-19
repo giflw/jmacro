@@ -271,10 +271,16 @@ public final class EngineImpl extends Engine implements Constants, TUI {
         engineScope.put(ARGV, argsFinal);
         engineScope.put("__SCRIPT__", script);
         engineScope.put("__METADATA__", script.getMetadata());
+        //noinspection CollectionAddedToSelf
         engineScope.put("__CONTEXT__", engineScope);
 
         commands.forEach(c -> c.allCommandsRegistered(commands));
-        EngineResult<?, ? extends Throwable> result = (EngineResult) engineScope.get("result");
+        @SuppressWarnings("OptionalGetWithoutIsPresent")
+        EngineResult<?, ? extends Throwable> result = (EngineResult<?, ? extends Throwable>) commands.stream()
+            //.peek(it -> System.out.println(it.getName() + " : " + it.getClass()))
+            .filter(it -> it.getName().equals("result"))
+            .findFirst()
+            .get();
 
 
         if (this.languageAdaptors.containsKey(extension)) {

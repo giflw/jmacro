@@ -120,9 +120,7 @@ public final class Configuration {
      * @return Parsed configuration.
      */
     public static Configuration load(final Reader reader) {
-        SafeConstructor constructor = new SafeConstructor(new LoaderOptions());
-        constructor.addTypeDescription(new TypeDescription(Configuration.class));
-        Configuration configuration = new Yaml(constructor).load(reader);
+        Configuration configuration = new Yaml().loadAs(reader, Configuration.class);
         configuration.init();
         return configuration;
     }

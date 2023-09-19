@@ -1,11 +1,17 @@
 package com.itquasar.multiverse.jmacro.core.engine
 
 import groovy.transform.CompileDynamic
+import org.apache.logging.log4j.Logger
 
 class ScriptConfiguration {
 
     private Map<String, ConfigurationHolder<?>> configHolders = new LinkedHashMap<>()
     private ConfigObject custom = new ConfigObject()
+    private final Logger scriptLogger;
+
+    ScriptConfiguration(Logger scriptLogger) {
+        this.scriptLogger = scriptLogger
+    }
 
     Map<String, ConfigurationHolder<?>> getConfigHolders() {
         return configHolders
@@ -23,7 +29,7 @@ class ScriptConfiguration {
             for (String path : paths) {
                 if (object == null) {
                     scriptLogger.warn("Could not find configuration ${entry.key} (path ${path} is null). Creating custom config.")
-                    this.custom.putAt(entry.key, entry.value)
+                    this.custom[entry.key] = entry.value
                     break
                 }
                 if (path == paths.last()) {
