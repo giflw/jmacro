@@ -9,12 +9,17 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import java.util.Collection;
+import java.util.Set;
 
 public interface Command {
 
     String[] CALL_ALTERNATIVES = {"apply", "invoke"};
 
     String getName();
+
+    default Set<String> getAlias() {
+        return Set.of();
+    }
 
     Core getCore();
 

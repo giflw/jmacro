@@ -62,6 +62,10 @@ public class EchoCommandProvider implements CommandProvider<EchoCommandProvider.
             return EchoPrintWriter.of(getScriptLogger());
         }
 
+        PrintStream getOut() {
+            return out();
+        }
+
         public Separator getSeparator() {
             return separator;
         }

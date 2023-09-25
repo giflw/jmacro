@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Base64.Decoder;
 import java.util.Base64.Encoder;
+import java.util.Set;
 
 public class Base64CommandProvider implements CommandProvider<Base64CommandProvider.Base64Command> {
 
@@ -37,6 +38,11 @@ public class Base64CommandProvider implements CommandProvider<Base64CommandProvi
 
         public Base64Command(final String name, final Core core, final ScriptEngineAware scriptEngineAware) {
             super(name, core, scriptEngineAware);
+        }
+
+        @Override
+        public Set<String> getAlias() {
+            return Set.of("b64");
         }
 
         /**

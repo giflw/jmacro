@@ -1,9 +1,6 @@
 package com.itquasar.multiverse.jmacro.core.engine;
 
-import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
-import com.itquasar.multiverse.jmacro.core.command.AutoCloseableAll;
-import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
-import com.itquasar.multiverse.jmacro.core.command.OnShutdown;
+import com.itquasar.multiverse.jmacro.core.command.*;
 import com.itquasar.multiverse.jmacro.core.exception.ExitException;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.itquasar.multiverse.jmacro.core.interfaces.Constants;
@@ -258,6 +255,16 @@ public final class EngineImpl extends Engine implements Constants, TUI {
             commands.add(command);
             if (command instanceof OnShutdown onShutdown) {
                 ON_SHUTDOWN.add(onShutdown);
+            }
+        }
+
+        // Register alias, if they do not exist
+        for (Command command : commands) {
+            for (String alias : command.getAlias()) {
+                if (!engineScope.containsKey(alias)) {
+                    scriptLogger.trace("Registering alias '" + alias + "' for command " + command.getName());
+                    engineScope.put(alias, command);
+                }
             }
         }
 
