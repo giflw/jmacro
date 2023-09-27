@@ -10,6 +10,7 @@ import java.util.Objects;
 public class ScriptResult<T, E extends Throwable> {
 
     public static ScriptResult<String, ?> EMPTY_OK = new ScriptResult<>(Script.EMPTY, EngineResult.OK);
+    public static ScriptResult<String, ?> EMPTY_ERROR = new ScriptResult<>(Script.EMPTY, EngineResult.ERROR);
 
     private Script script;
     private int exitCode;

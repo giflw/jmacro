@@ -1,8 +1,13 @@
 package com.itquasar.multiverse.jmacro.core.engine;
 
+import com.itquasar.multiverse.jmacro.core.exception.ExitException;
+import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
+
 public interface EngineResult<T, E extends Throwable> {
 
     EngineResult<String, ?> OK = new OkEngineResult();
+
+    EngineResult<String, Throwable> ERROR = new ErrorEngineResult();
 
     T value();
 
@@ -42,6 +47,38 @@ class OkEngineResult implements EngineResult<String, Throwable> {
     @Override
     public int exitCode() {
         return 0;
+    }
+
+    @Override
+    public EngineResult<String, Throwable> exitCode(int exitCode) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+}
+
+class ErrorEngineResult implements EngineResult<String, Throwable> {
+    @Override
+    public String value() {
+        return "error";
+    }
+
+    @Override
+    public EngineResult<String, Throwable> value(String value) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public Throwable exception() {
+        return new JMacroException("error");
+    }
+
+    @Override
+    public EngineResult<String, Throwable> exception(Throwable exception) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public int exitCode() {
+        return ExitException.USAGE;
     }
 
     @Override

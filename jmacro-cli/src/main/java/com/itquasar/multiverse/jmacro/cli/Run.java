@@ -122,7 +122,11 @@ public class Run implements Callable<CliResult> {
             );
             return new CliResult(scriptResult);
         }
-        throw new Exception("Script " + this.scriptPath + " not found on configured repositories!");
+        String message = this.scriptPath == null || this.scriptPath.isEmpty()
+            ? "No script selected."
+            : "Script " + this.scriptPath + " not found on configured repositories!";
+        LOGGER.info("Exiting: " + message);
+        return CliResult.EMPTY_ERROR;
     }
 
     private Optional<Script> getDefaultScript(List<Script> scripts) {
