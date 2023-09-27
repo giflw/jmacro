@@ -5,6 +5,7 @@ import com.itquasar.multiverse.jmacro.commands.base.providers.IncludeCommandProv
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.itquasar.multiverse.jmacro.core.repository.GlobalScriptRepository;
 import com.itquasar.multiverse.jmacro.core.script.Script;
@@ -12,8 +13,6 @@ import com.itquasar.multiverse.jmacro.core.util.SPILoader;
 
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
-import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
-import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import javax.script.ScriptException;
 import java.nio.file.Paths;
 import java.util.*;
@@ -24,8 +23,8 @@ public class IncludeCommand extends AbstractCommand {
 
     private final String extension;
 
-    public IncludeCommand(final String name, final GlobalScriptRepository repository, final Core core, final ScriptEngineAware scriptEngineAware) {
-        super(name, core, scriptEngineAware);
+    public IncludeCommand(final GlobalScriptRepository repository, final Core core, final ScriptEngineAware scriptEngineAware) {
+        super(core, scriptEngineAware);
         this.repository = repository;
         this.extension = this.getScriptEngine().getFactory().getExtensions().get(0);
     }
@@ -96,8 +95,8 @@ public class IncludeCommand extends AbstractCommand {
                         });
                         SPILoader.iterator(CommandProvider.class).forEachRemaining(provider -> {
                             if ((provider instanceof ExportCommandProvider) || (provider instanceof IncludeCommandProvider)) {
-                                logger.debug("Creating [" + provider.getName() + "] command in new engine");
-                                provider.getCommand(this.core, scriptEngineAware);
+                                AbstractCommand command = provider.getCommand(this.core, scriptEngineAware);
+                                logger.debug("Command [" + command.getName() + "] created in new engine");
                             }
                         });
                     }, (final var scriptEngineAware) -> {

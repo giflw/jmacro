@@ -4,20 +4,21 @@ import com.itquasar.multiverse.jmacro.commands.datax.commands.ldap.LDAPAuthentic
 import com.itquasar.multiverse.jmacro.commands.datax.commands.ldap.LDAPConstants;
 import com.itquasar.multiverse.jmacro.commands.datax.commands.ldap.api.AuthUser;
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
+import com.itquasar.multiverse.jmacro.core.command.CommandName;
 import com.itquasar.multiverse.jmacro.core.command.CommandUtils;
 import com.itquasar.multiverse.jmacro.core.command.ConsumerCommand;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.itquasar.multiverse.jmacro.core.interfaces.ToMap;
 import lombok.Getter;
 
 import javax.naming.Context;
-import javax.script.ScriptEngine;
-import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
+@CommandName("ldap")
 public class LDAPCommand extends AbstractCommand implements ConsumerCommand<LDAPCommand>, AutoCloseable, LDAPConstants {
 
     @Getter
@@ -31,13 +32,13 @@ public class LDAPCommand extends AbstractCommand implements ConsumerCommand<LDAP
     private String login = null;
     private String password = null;
 
-    public LDAPCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
-        super(name, core, scriptEngineAware);
+    public LDAPCommand(Core core, ScriptEngineAware scriptEngineAware) {
+        super(core, scriptEngineAware);
     }
 
     @Override
     public LDAPCommand call(Consumer<LDAPCommand> consumer) {
-        consumer.accept(new LDAPCommand(getName(), getCore(), getScriptEngineAware()));
+        consumer.accept(new LDAPCommand(getCore(), getScriptEngineAware()));
         return this;
     }
 

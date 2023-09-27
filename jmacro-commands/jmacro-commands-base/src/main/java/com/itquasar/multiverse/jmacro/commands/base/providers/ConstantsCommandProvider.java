@@ -8,11 +8,6 @@ import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 public class ConstantsCommandProvider implements CommandProvider<ConstantsCommand> {
 
     @Override
-    public String getName() {
-        return "constants";
-    }
-
-    @Override
     public Class<ConstantsCommand> getCommandType() {
         return ConstantsCommand.class;
     }
@@ -20,7 +15,7 @@ public class ConstantsCommandProvider implements CommandProvider<ConstantsComman
     @Override
 
     public ConstantsCommand getCommand(Core core, ScriptEngineAware scriptEngineAware) {
-        return new ConstantsCommand(getName(), core, scriptEngineAware);
+        return new ConstantsCommand(core, scriptEngineAware);
     }
 
 }

@@ -40,8 +40,8 @@ public class ParallelCommand extends AbstractCommand implements AutoCloseable {
     @Getter
     private long timeout = 1000; // milliseconds
 
-    public ParallelCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
-        super(name, core, scriptEngineAware);
+    public ParallelCommand(Core core, ScriptEngineAware scriptEngineAware) {
+        super(core, scriptEngineAware);
     }
 
     public void setMinPoolSize(int minPoolSize) {
@@ -105,7 +105,7 @@ public class ParallelCommand extends AbstractCommand implements AutoCloseable {
         if (instances.containsKey(group)) {
             return instances.get(group);
         } else {
-            ParallelCommand parallel = new ParallelCommand(this.getName(), this.getCore(), this.getScriptEngineAware());
+            ParallelCommand parallel = new ParallelCommand(this.getCore(), this.getScriptEngineAware());
             instances.put(group, initParallel(parallel, group, minPoolSize, maxPoolSize, timeout));
             return parallel;
         }

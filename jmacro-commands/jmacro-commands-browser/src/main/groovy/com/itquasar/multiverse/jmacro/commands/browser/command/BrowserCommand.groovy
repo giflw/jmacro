@@ -1,16 +1,15 @@
 package com.itquasar.multiverse.jmacro.commands.browser.command
 
-import com.itquasar.multiverse.jmacro.core.command.ConfigurationAwareCommand
 import com.itquasar.multiverse.jmacro.commands.browser.command.browser.Browser
 import com.itquasar.multiverse.jmacro.commands.browser.command.browser.BrowserConfiguration
 import com.itquasar.multiverse.jmacro.core.command.AutoCloseableAll
+import com.itquasar.multiverse.jmacro.core.command.ConfigurationAwareCommand
 import com.itquasar.multiverse.jmacro.core.command.ConsumerCommand
 import com.itquasar.multiverse.jmacro.core.command.OnShutdown
 import com.itquasar.multiverse.jmacro.core.engine.Core
 import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware
 import com.itquasar.multiverse.jmacro.core.interfaces.Constants
 
-import javax.script.ScriptEngine
 import java.util.concurrent.ConcurrentHashMap
 import java.util.function.Consumer
 
@@ -18,8 +17,8 @@ class BrowserCommand extends ConfigurationAwareCommand<BrowserConfiguration> imp
 
     public static final Map<String, Browser> INSTANCES = new ConcurrentHashMap<>()
 
-    BrowserCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
-        super(name, core, scriptEngineAware)
+    BrowserCommand(Core core, ScriptEngineAware scriptEngineAware) {
+        super(core, scriptEngineAware)
     }
 
     @Override

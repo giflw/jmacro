@@ -3,16 +3,9 @@ package com.itquasar.multiverse.jmacro.commands.io.providers;
 import com.itquasar.multiverse.jmacro.commands.io.commands.RequestCommand;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
-
-import javax.script.ScriptEngine;
 import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 
 public class RequestCommandProvider implements CommandProvider<RequestCommand> {
-
-    @Override
-    public String getName() {
-        return "request";
-    }
 
     @Override
     public Class<RequestCommand> getCommandType() {
@@ -21,6 +14,6 @@ public class RequestCommandProvider implements CommandProvider<RequestCommand> {
 
     @Override
     public RequestCommand getCommand(Core core, ScriptEngineAware scriptEngineAware) {
-        return new RequestCommand(getName(), core, scriptEngineAware);
+        return new RequestCommand(core, scriptEngineAware);
     }
 }

@@ -8,17 +8,11 @@ import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import com.itquasar.multiverse.jmacro.core.exception.ExitException;
 
 import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
 
 /**
  * Exits script, not Java Virtual Machine
  */
 public class ExitCommandProvider implements CommandProvider<ExitCommandProvider.ExitCommand> {
-
-    @Override
-    public String getName() {
-        return "exit";
-    }
 
     @Override
     public Class<ExitCommand> getCommandType() {
@@ -27,13 +21,13 @@ public class ExitCommandProvider implements CommandProvider<ExitCommandProvider.
 
     @Override
     public ExitCommand getCommand(Core core, ScriptEngineAware scriptEngineAware) {
-        return new ExitCommand(getName(), core, scriptEngineAware);
+        return new ExitCommand(core, scriptEngineAware);
     }
 
     public static class ExitCommand extends AbstractCommand {
 
-        public ExitCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
-            super(name, core, scriptEngineAware);
+        public ExitCommand(Core core, ScriptEngineAware scriptEngineAware) {
+            super(core, scriptEngineAware);
         }
 
         void call() {

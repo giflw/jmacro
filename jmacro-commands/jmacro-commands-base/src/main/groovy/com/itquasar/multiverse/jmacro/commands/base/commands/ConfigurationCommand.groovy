@@ -1,9 +1,9 @@
 package com.itquasar.multiverse.jmacro.commands.base.commands
 
-import com.itquasar.multiverse.jmacro.core.command.ConfigurationAwareCommand
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
 import com.itquasar.multiverse.jmacro.core.command.CallableCommand
 import com.itquasar.multiverse.jmacro.core.command.Command
+import com.itquasar.multiverse.jmacro.core.command.ConfigurationAwareCommand
 import com.itquasar.multiverse.jmacro.core.engine.ConfigurationHolder
 import com.itquasar.multiverse.jmacro.core.engine.Core
 import com.itquasar.multiverse.jmacro.core.engine.ScriptConfiguration
@@ -15,8 +15,8 @@ class ConfigurationCommand extends AbstractCommand implements CallableCommand<Co
 
     private final ScriptConfiguration configuration
 
-    ConfigurationCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
-        super(name, core, scriptEngineAware)
+    ConfigurationCommand(Core core, ScriptEngineAware scriptEngineAware) {
+        super(core, scriptEngineAware)
         this.configuration = scriptEngineAware.configuration()
     }
 

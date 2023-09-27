@@ -54,6 +54,9 @@ public class Update implements Callable<CliResult>, Constants, KeyFunctions {
     @Option(names = {"-P", "--ask-password"}, description = "Asks for user password to access update, if needed")
     private boolean askPassword;
 
+    @Option(names = {"--max-redirects"}, description = "Max follow http redirects")
+    private int maxredirects = 3;
+
     @Spec
     private CommandSpec spec; // injected by picocli
 
@@ -62,6 +65,7 @@ public class Update implements Callable<CliResult>, Constants, KeyFunctions {
 
     @Override
     public CliResult call() throws Exception {
+        System.setProperty("http.maxRedirects", String.valueOf(this.maxredirects));
         if (this.askLogin) {
             var providedLogin = this.login;
             this.login = System.console().readLine("Login [%s]: ", providedLogin);

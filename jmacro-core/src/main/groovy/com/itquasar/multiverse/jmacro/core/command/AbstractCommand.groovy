@@ -1,12 +1,10 @@
 package com.itquasar.multiverse.jmacro.core.command
 
-
 import com.itquasar.multiverse.jmacro.core.engine.Core
 import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import com.itquasar.multiverse.jmacro.core.interfaces.Constants
 import groovy.transform.CompileDynamic
-import lombok.Getter
 import org.apache.logging.log4j.Logger
 
 import javax.script.Bindings
@@ -15,7 +13,6 @@ import javax.script.ScriptEngine
 
 abstract class AbstractCommand implements Command, Constants {
 
-    private final String name
     private final Core core
     private final ScriptEngineAware scriptEngineAware
     private final ScriptContext context
@@ -32,15 +29,10 @@ abstract class AbstractCommand implements Command, Constants {
      * @param core Injected from command provider
      * @param scriptEngineAware Script engine aware instance to get context, from which we get logger attribute.
      */
-    AbstractCommand(String name, final Core core, final ScriptEngineAware scriptEngineAware) {
-        if (name == '') {
-            name = this.getClass().name
-        }
-        Objects.requireNonNull(name, "Name must be not null")
+    AbstractCommand(final Core core, final ScriptEngineAware scriptEngineAware) {
         Objects.requireNonNull(core, "Core must be not null")
         Objects.requireNonNull(scriptEngineAware, "Script engine aware must be not null")
         Objects.requireNonNull(scriptEngineAware.scriptEngine(), "Script engine must be not null")
-        this.name = name
         this.core = core
         this.scriptEngineAware = scriptEngineAware
 
@@ -67,11 +59,6 @@ abstract class AbstractCommand implements Command, Constants {
 
     def propertyMissing(String name, def arg) {
         throw new JMacroException("Unsupported operation: propertyMissing(name, value)")
-    }
-
-    @Override
-    String getName() {
-        return name
     }
 
     @Override

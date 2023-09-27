@@ -4,12 +4,12 @@ import com.itquasar.multiverse.jmacro.commands.datax.commands.pdf.PDFAction;
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
 import com.itquasar.multiverse.jmacro.core.command.ArgAndConsumerCommand;
 import com.itquasar.multiverse.jmacro.core.command.CallableCommand;
+import com.itquasar.multiverse.jmacro.core.command.CommandName;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import lombok.SneakyThrows;
 
-import javax.script.ScriptEngine;
-import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -18,10 +18,11 @@ import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+@CommandName("pdf")
 public class PDFCommand extends AbstractCommand implements CallableCommand<Object, PDFAction>, ArgAndConsumerCommand<Object, PDFAction> {
 
-    public PDFCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
-        super(name, core, scriptEngineAware);
+    public PDFCommand(Core core, ScriptEngineAware scriptEngineAware) {
+        super(core, scriptEngineAware);
     }
 
     @Override

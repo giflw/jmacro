@@ -2,23 +2,40 @@ package com.itquasar.multiverse.jmacro.core.command;
 
 import com.itquasar.multiverse.jmacro.core.engine.Core;
 import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
+import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Logger;
 
 import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
-import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public interface Command {
 
     String[] CALL_ALTERNATIVES = {"apply", "invoke"};
 
-    String getName();
+    static String nameOf(Class<? extends Command> command) {
+        for (CommandName commandName : command.getAnnotationsByType(CommandName.class)) {
+            return commandName.value();
+        }
+        String name = command.getSimpleName().replace("Command", "");
+        return name.substring(0, 1).toLowerCase() + name.substring(1);
+    }
 
-    default Set<String> getAlias() {
-        return Set.of();
+    static Set<String> aliasesOf(Class<? extends Command> command) {
+        CommandAlias[] aliases = command.getAnnotationsByType(CommandAlias.class);
+        return Arrays.stream(aliases).map(CommandAlias::value).collect(Collectors.toSet());
+    }
+
+    default String getName() {
+        return nameOf(this.getClass());
+    }
+
+    default Set<String> getAliases() {
+        return aliasesOf(this.getClass());
     }
 
     Core getCore();

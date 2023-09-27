@@ -7,7 +7,6 @@ import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 import groovy.transform.CompileDynamic
 
-import javax.script.ScriptEngine
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
@@ -16,8 +15,8 @@ import java.lang.reflect.Parameter
 @CompileDynamic
 class HelpCommand extends AbstractCommand {
 
-    HelpCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
-        super(name, core, scriptEngineAware)
+    HelpCommand(Core core, ScriptEngineAware scriptEngineAware) {
+        super(core, scriptEngineAware)
     }
 
 

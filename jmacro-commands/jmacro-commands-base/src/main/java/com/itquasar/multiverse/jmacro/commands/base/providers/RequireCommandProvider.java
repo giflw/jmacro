@@ -12,24 +12,19 @@ import java.util.*;
 public class RequireCommandProvider implements CommandProvider<RequireCommandProvider.RequireCommand> {
 
     @Override
-    public String getName() {
-        return "require";
-    }
-
-    @Override
     public Class<RequireCommand> getCommandType() {
         return RequireCommand.class;
     }
 
     @Override
     public RequireCommand getCommand(Core core, ScriptEngineAware scriptEngineAware) {
-        return new RequireCommand(getName(), core, scriptEngineAware);
+        return new RequireCommand(core, scriptEngineAware);
     }
 
     public static class RequireCommand extends AbstractCommand implements Constants {
 
-        public RequireCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
-            super(name, core, scriptEngineAware);
+        public RequireCommand(Core core, ScriptEngineAware scriptEngineAware) {
+            super(core, scriptEngineAware);
         }
 
         void api(float version) {
@@ -41,9 +36,7 @@ public class RequireCommandProvider implements CommandProvider<RequireCommandPro
         }
 
         void api(String version) {
-            var requiredVersion = new ArrayList<>(
-                Arrays.stream(version.split("\\.")).map(Integer::valueOf).toList()
-            );
+            var requiredVersion = new ArrayList<>(Arrays.stream(version.split("\\.")).map(Integer::valueOf).toList());
             while (requiredVersion.size() < 3) {
                 requiredVersion.add(0);
             }
@@ -55,9 +48,7 @@ public class RequireCommandProvider implements CommandProvider<RequireCommandPro
         }
 
         private void api(String version, List<Integer> requiredVersion) {
-            var apiVersion = new ArrayList<>(
-                Arrays.stream(API_VERSION.split("\\.")).map(Integer::valueOf).toList()
-            );
+            var apiVersion = new ArrayList<>(Arrays.stream(API_VERSION.split("\\.")).map(Integer::valueOf).toList());
             while (apiVersion.size() < 3) {
                 apiVersion.add(0);
             }
@@ -83,13 +74,12 @@ public class RequireCommandProvider implements CommandProvider<RequireCommandPro
                 api(api.toString());
             }
             Arrays.stream(commandNames).forEach(commandName -> {
-                    var command = getBindings().get(commandName);
-                    if (command == null) {
-                        throw new JMacroException("Required command " + commandName + " not available.");
-                    }
-                    getScriptLogger().warn("Required command found: " + commandName + " = " + command);
+                var command = getBindings().get(commandName);
+                if (command == null) {
+                    throw new JMacroException("Required command " + commandName + " not available.");
                 }
-            );
+                getScriptLogger().warn("Required command found: " + commandName + " = " + command);
+            });
         }
 
     }

@@ -240,14 +240,14 @@ public final class EngineImpl extends Engine implements Constants, TUI {
 
         for (CommandProvider<?> commandProvider : commandProviders) {
             if (normalExecution) {
-                scriptLogger.trace("Registering command '" + commandProvider.getName() + "' from " + commandProvider.getClass());
+                scriptLogger.trace("Registering command from " + commandProvider.getClass().getSimpleName());
             }
             final var command = commandProvider.getCommand(this.core, scriptEngineAware);
             if (command == null) {
                 throw new JMacroException(this,
-                    "Command provider " + commandProvider.getName() + " returned null command");
+                    "Command provider " + commandProvider.getClass().getSimpleName() + " returned null command");
             }
-            final var name = commandProvider.getName();
+            final var name = command.getName();
             if (engineScope.containsKey(name)) {
                 throw new JMacroException("Command [" + name + "] already registered for " + engineScope.get(name).getClass() + ". Register attempt from " + commandProvider.getClass());
             }
@@ -260,7 +260,7 @@ public final class EngineImpl extends Engine implements Constants, TUI {
 
         // Register alias, if they do not exist
         for (Command command : commands) {
-            for (String alias : command.getAlias()) {
+            for (String alias : command.getAliases()) {
                 if (!engineScope.containsKey(alias)) {
                     scriptLogger.trace("Registering alias '" + alias + "' for command " + command.getName());
                     engineScope.put(alias, command);

@@ -7,13 +7,7 @@ import com.itquasar.multiverse.jmacro.core.configuration.Env;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
 import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 
-import javax.script.ScriptEngine;
-
 public class EnvCommandProvider implements CommandProvider<EnvCommandProvider.EnvCommand> {
-    @Override
-    public String getName() {
-        return "env";
-    }
 
     @Override
     public Class<EnvCommand> getCommandType() {
@@ -22,13 +16,13 @@ public class EnvCommandProvider implements CommandProvider<EnvCommandProvider.En
 
     @Override
     public EnvCommand getCommand(final Core core, final ScriptEngineAware scriptEngineAware) {
-        return new EnvCommand(this.getName(), core, scriptEngineAware);
+        return new EnvCommand(core, scriptEngineAware);
     }
 
     public static class EnvCommand extends ConfigurationAwareCommand<Env> implements CallableCommand<String, Env> {
 
-        public EnvCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
-            super(name, core, scriptEngineAware);
+        public EnvCommand(Core core, ScriptEngineAware scriptEngineAware) {
+            super(core, scriptEngineAware);
         }
 
         @Override

@@ -3,18 +3,10 @@ package com.itquasar.multiverse.jmacro.commands.base.providers;
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 
-import javax.script.ScriptEngine;
-import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
-import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
-
 public class FixmeCommandProvider implements CommandProvider<FixmeCommandProvider.FixmeCommand> {
-
-    @Override
-    public String getName() {
-        return "fixme";
-    }
 
     @Override
     public Class<FixmeCommand> getCommandType() {
@@ -23,13 +15,13 @@ public class FixmeCommandProvider implements CommandProvider<FixmeCommandProvide
 
     @Override
     public FixmeCommand getCommand(Core core, ScriptEngineAware scriptEngineAware) {
-        return new FixmeCommand(getName(), core, scriptEngineAware);
+        return new FixmeCommand(core, scriptEngineAware);
     }
 
     public static class FixmeCommand extends AbstractCommand {
 
-        public FixmeCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
-            super(name, core, scriptEngineAware);
+        public FixmeCommand(Core core, ScriptEngineAware scriptEngineAware) {
+            super(core, scriptEngineAware);
         }
 
         void call(String message) {

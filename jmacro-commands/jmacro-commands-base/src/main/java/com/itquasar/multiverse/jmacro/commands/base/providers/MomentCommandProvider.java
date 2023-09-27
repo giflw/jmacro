@@ -11,17 +11,12 @@ import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 public class MomentCommandProvider implements CommandProvider<MomentCommand> {
 
     @Override
-    public String getName() {
-        return "moment";
-    }
-
-    @Override
     public Class<MomentCommand> getCommandType() {
         return MomentCommand.class;
     }
 
     @Override
     public MomentCommand getCommand(Core core, ScriptEngineAware scriptEngineAware) {
-        return new MomentCommand(getName(), core, scriptEngineAware);
+        return new MomentCommand(core, scriptEngineAware);
     }
 }

@@ -1,28 +1,22 @@
 package com.itquasar.multiverse.jmacro.commands.base.providers;
 
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
+import com.itquasar.multiverse.jmacro.core.command.CommandAlias;
+import com.itquasar.multiverse.jmacro.core.command.CommandName;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import lombok.Getter;
 import lombok.SneakyThrows;
 
-import javax.script.ScriptEngine;
-import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
-import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Base64.Decoder;
 import java.util.Base64.Encoder;
-import java.util.Set;
 
 public class Base64CommandProvider implements CommandProvider<Base64CommandProvider.Base64Command> {
-
-    @Override
-    public String getName() {
-        return "base64";
-    }
 
     @Override
     public Class<Base64Command> getCommandType() {
@@ -31,18 +25,15 @@ public class Base64CommandProvider implements CommandProvider<Base64CommandProvi
 
     @Override
     public Base64Command getCommand(final Core core, final ScriptEngineAware scriptEngineAware) {
-        return new Base64Command(this.getName(), core, scriptEngineAware);
+        return new Base64Command(core, scriptEngineAware);
     }
 
+    @CommandName("base64")
+    @CommandAlias("b64")
     static public class Base64Command extends AbstractCommand {
 
-        public Base64Command(final String name, final Core core, final ScriptEngineAware scriptEngineAware) {
-            super(name, core, scriptEngineAware);
-        }
-
-        @Override
-        public Set<String> getAlias() {
-            return Set.of("b64");
+        public Base64Command(final Core core, final ScriptEngineAware scriptEngineAware) {
+            super(core, scriptEngineAware);
         }
 
         /**

@@ -18,8 +18,8 @@ public class ConstantsCommand extends AbstractCommand implements Map<String, Obj
 
     private final Map<String, Object> map = new LinkedHashMap<>();
 
-    public ConstantsCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
-        super(name, core, scriptEngineAware);
+    public ConstantsCommand(Core core, ScriptEngineAware scriptEngineAware) {
+        super(core, scriptEngineAware);
         this.init();
     }
 

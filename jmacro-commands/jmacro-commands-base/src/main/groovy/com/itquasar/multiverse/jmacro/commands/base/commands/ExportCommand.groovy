@@ -7,15 +7,14 @@ import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware
 import groovy.transform.CompileDynamic
 
 import javax.script.ScriptContext
-import javax.script.ScriptEngine
 
 class ExportCommand extends AbstractCommand {
 
 
     public static final String EXPORTS_KEY = "__EXPORTS__"
 
-    ExportCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
-        super(name, core, scriptEngineAware)
+    ExportCommand(Core core, ScriptEngineAware scriptEngineAware) {
+        super(core, scriptEngineAware)
         def globalScope = this.scriptEngine.getBindings(ScriptContext.GLOBAL_SCOPE)
         if (!globalScope.get(EXPORTS_KEY)) {
             scriptLogger.debug("Creating $EXPORTS_KEY")

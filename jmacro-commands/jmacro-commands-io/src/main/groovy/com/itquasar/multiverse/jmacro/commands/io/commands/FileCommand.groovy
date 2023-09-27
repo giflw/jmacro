@@ -6,7 +6,6 @@ import com.itquasar.multiverse.jmacro.core.engine.Core
 import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 
-import javax.script.ScriptEngine
 import javax.swing.*
 import javax.swing.filechooser.FileFilter
 import java.io.File as JFile
@@ -15,8 +14,8 @@ import java.util.function.Consumer
 
 class FileCommand extends AbstractCommand {
 
-    FileCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
-        super(name, core, scriptEngineAware)
+    FileCommand(Core core, ScriptEngineAware scriptEngineAware) {
+        super(core, scriptEngineAware)
     }
 
     def call(String path) {

@@ -3,12 +3,9 @@ package com.itquasar.multiverse.jmacro.commands.base.commands;
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
 import com.itquasar.multiverse.jmacro.core.engine.EngineResult;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import com.itquasar.multiverse.jmacro.core.exception.ExitException;
 import com.itquasar.multiverse.jmacro.core.interfaces.Constants;
-
-import javax.script.ScriptEngine;
-import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
-import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 
 public class ResultCommand<T, E extends Throwable> extends AbstractCommand implements EngineResult<T, E>, Constants {
 
@@ -18,8 +15,8 @@ public class ResultCommand<T, E extends Throwable> extends AbstractCommand imple
 
     private int exitCode = ExitException.OK;
 
-    public ResultCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
-        super(name, core, scriptEngineAware);
+    public ResultCommand(Core core, ScriptEngineAware scriptEngineAware) {
+        super(core, scriptEngineAware);
     }
 
     public T value() {
@@ -98,6 +95,7 @@ public class ResultCommand<T, E extends Throwable> extends AbstractCommand imple
     public ResultCommand<T, E> apply(T value) {
         return this.ok(value);
     }
+
     // FIXME use groovy redirect or some kind of interface/abstract class?
     public ResultCommand<T, E> apply(E exception) {
         return this.error(exception);
@@ -113,6 +111,7 @@ public class ResultCommand<T, E extends Throwable> extends AbstractCommand imple
     public ResultCommand<T, E> invoke(T value) {
         return this.ok(value);
     }
+
     // FIXME use groovy redirect or some kind of interface/abstract class?
     public ResultCommand<T, E> invoke(E exception) {
         return this.error(exception);

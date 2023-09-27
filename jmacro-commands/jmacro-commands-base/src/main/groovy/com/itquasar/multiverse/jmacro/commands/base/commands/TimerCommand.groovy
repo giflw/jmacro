@@ -5,7 +5,6 @@ import com.itquasar.multiverse.jmacro.core.engine.Core
 import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 
-import javax.script.ScriptEngine
 import java.util.concurrent.atomic.AtomicBoolean
 
 class TimerCommand extends AbstractCommand implements AutoCloseable {
@@ -13,8 +12,8 @@ class TimerCommand extends AbstractCommand implements AutoCloseable {
     private AtomicBoolean running = new AtomicBoolean(false)
     private Map<String, Long> partials = new LinkedHashMap()
 
-    TimerCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
-        super(name, core, scriptEngineAware)
+    TimerCommand(Core core, ScriptEngineAware scriptEngineAware) {
+        super(core, scriptEngineAware)
     }
 
     TimerCommand start() {

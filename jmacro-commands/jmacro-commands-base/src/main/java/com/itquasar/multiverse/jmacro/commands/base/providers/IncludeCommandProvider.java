@@ -9,11 +9,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 public class IncludeCommandProvider implements CommandProvider<IncludeCommand> {
 
     @Override
-    public String getName() {
-        return "include";
-    }
-
-    @Override
     public Class<IncludeCommand> getCommandType() {
         return IncludeCommand.class;
     }
@@ -21,8 +16,7 @@ public class IncludeCommandProvider implements CommandProvider<IncludeCommand> {
     @Override
     public IncludeCommand getCommand(@NonNull Core core, @NonNull ScriptEngineAware scriptEngineAware) {
         return new IncludeCommand(
-            getName(),
-            core == null ? null : core.getConfiguration().getRepository(),
+            core.getConfiguration().getRepository(),
             core,
             scriptEngineAware
         );

@@ -13,6 +13,7 @@ com.itquasar.multiverse.jmacro.commands.base.providers.IncludeCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.ExportCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.LoggerCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.MomentCommandProvider
+com.itquasar.multiverse.jmacro.commands.base.providers.NumberUtilsCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.PauseCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.RaiseCommandProvider
 com.itquasar.multiverse.jmacro.commands.base.providers.RequireCommandProvider

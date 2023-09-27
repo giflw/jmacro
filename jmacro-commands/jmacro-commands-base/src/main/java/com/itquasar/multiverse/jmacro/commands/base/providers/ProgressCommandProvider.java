@@ -9,17 +9,11 @@ import com.itquasar.multiverse.jmacro.core.interfaces.Constants;
 import lombok.SneakyThrows;
 import org.apache.logging.log4j.Logger;
 
-import javax.script.ScriptEngine;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 public class ProgressCommandProvider implements CommandProvider<ProgressCommandProvider.ProgressCommand> {
-
-    @Override
-    public String getName() {
-        return "progress";
-    }
 
     @Override
     public Class<ProgressCommand> getCommandType() {
@@ -28,13 +22,13 @@ public class ProgressCommandProvider implements CommandProvider<ProgressCommandP
 
     @Override
     public ProgressCommand getCommand(Core core, ScriptEngineAware scriptEngineAware) {
-        return new ProgressCommand(getName(), core, scriptEngineAware);
+        return new ProgressCommand(core, scriptEngineAware);
     }
 
     public static class ProgressCommand extends AbstractCommand implements Constants {
 
-        public ProgressCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
-            super(name, core, scriptEngineAware);
+        public ProgressCommand(Core core, ScriptEngineAware scriptEngineAware) {
+            super(core, scriptEngineAware);
         }
 
         public <T> Progress<T> call(Supplier<T> supplier) {

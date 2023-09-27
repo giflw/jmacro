@@ -6,14 +6,7 @@ import com.itquasar.multiverse.jmacro.core.engine.Core;
 import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import com.itquasar.multiverse.jmacro.core.util.IOUtils;
 
-import javax.script.ScriptEngine;
-
 public class UtilsCommandProvider implements CommandProvider<UtilsCommandProvider.UtilsCommand> {
-
-    @Override
-    public String getName() {
-        return "utils";
-    }
 
     @Override
     public Class<UtilsCommand> getCommandType() {
@@ -22,13 +15,13 @@ public class UtilsCommandProvider implements CommandProvider<UtilsCommandProvide
 
     @Override
     public UtilsCommand getCommand(Core core, ScriptEngineAware scriptEngineAware) {
-        return new UtilsCommand(getName(), core, scriptEngineAware);
+        return new UtilsCommand(core, scriptEngineAware);
     }
 
     public static class UtilsCommand extends AbstractCommand {
 
-        public UtilsCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
-            super(name, core, scriptEngineAware);
+        public UtilsCommand(Core core, ScriptEngineAware scriptEngineAware) {
+            super(core, scriptEngineAware);
         }
 
         IOUtils.Pipe pipe() {

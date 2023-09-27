@@ -19,6 +19,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
 
+@CommandName("tn3270")
 @Log4j2
 @CompileStatic
 class TN3270Command extends AbstractCommand implements ArgAndConsumerCommand<WaitMode, TN3270Command>, AutoCloseableAll, Constants, OnShutdown {
@@ -32,8 +33,8 @@ class TN3270Command extends AbstractCommand implements ArgAndConsumerCommand<Wai
     private static Map<TN3270j, Long> instances = new ConcurrentHashMap<>()
     private final ThreadLocal<TN3270j> tn3270j = new ThreadLocal<>()
 
-    TN3270Command(String name, Core core, ScriptEngineAware scriptEngineAware) {
-        super(name, core, scriptEngineAware)
+    TN3270Command(Core core, ScriptEngineAware scriptEngineAware) {
+        super(core, scriptEngineAware)
     }
 
     TN3270j getTn3270j() {

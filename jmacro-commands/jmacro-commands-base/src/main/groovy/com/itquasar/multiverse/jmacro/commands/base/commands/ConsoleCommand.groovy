@@ -17,8 +17,8 @@ class ConsoleCommand extends AbstractCommand implements SelfConsumerCommand<Cons
 
     private final ScriptUI readerAndWriter
 
-    ConsoleCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
-        super(name, core, scriptEngineAware)
+    ConsoleCommand(Core core, ScriptEngineAware scriptEngineAware) {
+        super(core, scriptEngineAware)
         this.readerAndWriter = scriptEngineAware.ui()
     }
 

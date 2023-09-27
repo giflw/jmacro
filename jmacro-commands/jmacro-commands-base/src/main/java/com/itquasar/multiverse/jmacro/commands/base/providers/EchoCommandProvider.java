@@ -3,14 +3,12 @@ package com.itquasar.multiverse.jmacro.commands.base.providers;
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import com.itquasar.multiverse.jmacro.core.util.IOUtils;
 import lombok.SneakyThrows;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 
-import javax.script.ScriptEngine;
-import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
-import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import java.io.*;
 
 public class EchoCommandProvider implements CommandProvider<EchoCommandProvider.EchoCommand> {
@@ -22,18 +20,13 @@ public class EchoCommandProvider implements CommandProvider<EchoCommandProvider.
     public static final Level PRINT = Level.forName("PRINT", 349);
 
     @Override
-    public String getName() {
-        return "echo";
-    }
-
-    @Override
     public Class<EchoCommand> getCommandType() {
         return EchoCommand.class;
     }
 
     @Override
     public EchoCommand getCommand(final Core core, final ScriptEngineAware scriptEngineAware) {
-        return new EchoCommand(this.getName(), core, scriptEngineAware);
+        return new EchoCommand(core, scriptEngineAware);
     }
 
 
@@ -42,8 +35,8 @@ public class EchoCommandProvider implements CommandProvider<EchoCommandProvider.
 
         private final Separator separator = new Separator(this);
 
-        public EchoCommand(final String name, final Core core, final ScriptEngineAware scriptEngineAware) {
-            super(name, core, scriptEngineAware);
+        public EchoCommand(final Core core, final ScriptEngineAware scriptEngineAware) {
+            super(core, scriptEngineAware);
         }
 
         void call(final Object arg) {
@@ -140,11 +133,6 @@ public class EchoCommandProvider implements CommandProvider<EchoCommandProvider.
 
         private final BufferedReader reader;
 
-        public static EchoPrintWriter of(Logger scriptLogger) {
-            IOUtils.Pipe pipe = IOUtils.pipe();
-            return new EchoPrintWriter(pipe.out(), pipe.in(), scriptLogger);
-        }
-
         private EchoPrintWriter(OutputStream out, InputStream in, Logger scriptLogger) {
             super(out);
             this.reader = new BufferedReader(new InputStreamReader(in));
@@ -160,6 +148,11 @@ public class EchoCommandProvider implements CommandProvider<EchoCommandProvider.
                     }
                 }
             });
+        }
+
+        public static EchoPrintWriter of(Logger scriptLogger) {
+            IOUtils.Pipe pipe = IOUtils.pipe();
+            return new EchoPrintWriter(pipe.out(), pipe.in(), scriptLogger);
         }
 
         @SneakyThrows

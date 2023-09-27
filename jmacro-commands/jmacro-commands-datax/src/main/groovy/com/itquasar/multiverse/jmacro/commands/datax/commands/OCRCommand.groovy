@@ -1,25 +1,26 @@
 package com.itquasar.multiverse.jmacro.commands.datax.commands
 
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand
+import com.itquasar.multiverse.jmacro.core.command.CommandName
 import com.itquasar.multiverse.jmacro.core.command.CommandUtils
 import com.itquasar.multiverse.jmacro.core.engine.Core
 import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware
 import net.sourceforge.tess4j.ITesseract
 import net.sourceforge.tess4j.Tesseract
 
-import javax.script.ScriptEngine
 import java.awt.*
 import java.awt.image.BufferedImage
 import java.nio.file.Path
 import java.util.List
 import java.util.function.Consumer
 
+@CommandName("ocr")
 class OCRCommand extends AbstractCommand {
 
     private ITesseract tesseract
 
-    OCRCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
-        super(name, core, scriptEngineAware)
+    OCRCommand(Core core, ScriptEngineAware scriptEngineAware) {
+        super(core, scriptEngineAware)
     }
 
     private synchronized void init() {

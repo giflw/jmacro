@@ -4,22 +4,15 @@ import com.itquasar.multiverse.jmacro.commands.base.Result;
 import com.itquasar.multiverse.jmacro.core.command.AbstractCommand;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import com.itquasar.multiverse.jmacro.core.exception.ExitException;
 import com.itquasar.multiverse.jmacro.core.interfaces.Constants;
 
-import javax.script.ScriptEngine;
-import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
-import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import java.util.List;
 import java.util.concurrent.Callable;
 
 // FIXME shouldnt have a "catch" block ???
 public class AttemptCommandProvider implements CommandProvider<AttemptCommandProvider.AttemptCommand> {
-
-    @Override
-    public String getName() {
-        return "attempt";
-    }
 
     @Override
     public Class<AttemptCommand> getCommandType() {
@@ -28,15 +21,15 @@ public class AttemptCommandProvider implements CommandProvider<AttemptCommandPro
 
     @Override
     public AttemptCommand getCommand(Core core, ScriptEngineAware scriptEngineAware) {
-        return new AttemptCommand(getName(), core, scriptEngineAware);
+        return new AttemptCommand(core, scriptEngineAware);
     }
 
     public static class AttemptCommand extends AbstractCommand implements Constants {
 
         private static final List<String> ALLOWED_VERBOSITY = List.of(QUIET, VERBOSE);
 
-        public AttemptCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
-            super(name, core, scriptEngineAware);
+        public AttemptCommand(Core core, ScriptEngineAware scriptEngineAware) {
+            super(core, scriptEngineAware);
         }
 
         Result call(Callable callable) {

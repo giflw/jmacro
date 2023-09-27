@@ -5,25 +5,18 @@ import com.itquasar.multiverse.jmacro.core.command.CallableCommand;
 import com.itquasar.multiverse.jmacro.core.command.Command;
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider;
 import com.itquasar.multiverse.jmacro.core.engine.Core;
+import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import com.itquasar.multiverse.jmacro.core.exception.JMacroException;
 import com.itquasar.multiverse.jmacro.core.interfaces.Constants;
 import lombok.Getter;
 
 import javax.script.Bindings;
 import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
-import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware;
 import java.util.*;
 import java.util.stream.Collectors;
 
 // FIXME shouldnt have a "catch" block ???
 public class ArgsCommandProvider implements CommandProvider<ArgsCommandProvider.ArgsCommand> {
-
-    @Override
-    public String getName() {
-        return "args";
-    }
 
     @Override
     public Class<ArgsCommand> getCommandType() {
@@ -32,7 +25,7 @@ public class ArgsCommandProvider implements CommandProvider<ArgsCommandProvider.
 
     @Override
     public ArgsCommand getCommand(Core core, ScriptEngineAware scriptEngineAware) {
-        return new ArgsCommand(getName(), core, scriptEngineAware);
+        return new ArgsCommand(core, scriptEngineAware);
     }
 
     @Getter
@@ -42,8 +35,8 @@ public class ArgsCommandProvider implements CommandProvider<ArgsCommandProvider.
 
         private Map<String, ?> argm = null;
 
-        public ArgsCommand(String name, Core core, ScriptEngineAware scriptEngineAware) {
-            super(name, core, scriptEngineAware);
+        public ArgsCommand(Core core, ScriptEngineAware scriptEngineAware) {
+            super(core, scriptEngineAware);
         }
 
         @SuppressWarnings("unchecked")
