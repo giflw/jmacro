@@ -34,7 +34,7 @@ public abstract class ScriptRepositoryAbstract implements ScriptRepository {
             uri.getUserInfo(),
             uri.getHost(),
             uri.getPort(),
-            uri.getPath().replace("//", "/"),
+            uri.getPath().replaceAll("[/]{2,}", "/"),
             uri.getQuery(),
             uri.getFragment()
         );

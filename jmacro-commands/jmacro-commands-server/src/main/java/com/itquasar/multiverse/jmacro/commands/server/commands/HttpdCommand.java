@@ -35,19 +35,6 @@ public class HttpdCommand extends AbstractCommand implements AutoCloseable, OnSh
         return this.servers.computeIfAbsent(httpdConfig.getAddress(), key -> new Httpd(httpdConfig, getScriptLogger()));
     }
 
-    public HttpdCommand useVirtualThreads(boolean useVirtualThreads) {
-        io.javalin.util.ConcurrencyUtil.INSTANCE.setUseLoom(useVirtualThreads);
-        return this;
-    }
-
-    public HttpdCommand usingLoom(boolean useVirtualThreads) {
-        return useVirtualThreads(useVirtualThreads);
-    }
-
-    public HttpdCommand usingLoom() {
-        return usingLoom(true);
-    }
-
     /**
      * Helper method to create {@link HttpdConfig} instances.
      *
@@ -59,6 +46,12 @@ public class HttpdCommand extends AbstractCommand implements AutoCloseable, OnSh
     }
 
     public Httpd call(Consumer<Httpd> routeConfigurator) {
+        return this.call(this.init(), routeConfigurator);
+    }
+
+    public Httpd call(boolean useVirtualThreads, Consumer<Httpd> routeConfigurator) {
+        getScriptLogger().warn("Disabling virtual threads all together");
+        io.javalin.util.ConcurrencyUtil.INSTANCE.setUseLoom(useVirtualThreads);
         return this.call(this.init(), routeConfigurator);
     }
 

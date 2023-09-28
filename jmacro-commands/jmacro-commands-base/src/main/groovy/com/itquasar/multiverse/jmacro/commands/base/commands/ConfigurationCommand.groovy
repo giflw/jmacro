@@ -44,6 +44,10 @@ class ConfigurationCommand extends AbstractCommand implements CallableCommand<Co
         return this
     }
 
+    ConfigurationCommand setAt(String name, def value) {
+        return set(name, value)
+    }
+
     ConfigurationCommand set(String name, def value) {
         if (this.configHolders.containsKey(name)) {
             scriptLogger.error("CONFIG HOLDER $name: ${this.configHolders.containsKey(name)}")
@@ -61,16 +65,22 @@ class ConfigurationCommand extends AbstractCommand implements CallableCommand<Co
 
     <T> T get(String key, T defaultValue = null) {
         scriptLogger.debug("Getting '$key' from Configuration")
-        T value = (this.configHolders.get(key)?.get() ?: defaultValue) as T
-        return value != null ? value : propertyMissing(key) as T
+        return innerPropertyMissing(key, defaultValue)
+    }
+
+    private <T> T innerPropertyMissing(String key, T defaultValue = null) {
+        if (this.configHolders.containsKey(key)) {
+            return (this.configHolders.get(key)?.get() ?: defaultValue) as T
+        }
+        if (this.custom.containsKey(key)) {
+            return this.custom.get(key, null)
+        }
+        return (this.core.configuration.hasProperty(name) ? this.core.configuration.getAt(name) : defaultValue) as T
     }
 
     def propertyMissing(String name) {
         scriptLogger.debug("Searching property '$name' missing on configuration")
-        if (this.configHolders.containsKey(name)) {
-            return this.get(name, null)
-        }
-        def value = this.core.configuration.hasProperty(name) ? this.core.configuration.getAt(name) : null
+        def value = innerPropertyMissing(name)
         value = value != null ? value : this.context.getAttribute(name)
         return value
     }
