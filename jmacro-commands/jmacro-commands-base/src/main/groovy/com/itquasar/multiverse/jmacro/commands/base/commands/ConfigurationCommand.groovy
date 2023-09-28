@@ -8,6 +8,7 @@ import com.itquasar.multiverse.jmacro.core.engine.ConfigurationHolder
 import com.itquasar.multiverse.jmacro.core.engine.Core
 import com.itquasar.multiverse.jmacro.core.engine.ScriptConfiguration
 import com.itquasar.multiverse.jmacro.core.engine.ScriptEngineAware
+import com.itquasar.multiverse.jmacro.core.exception.JMacroException
 
 import java.util.function.Consumer
 
@@ -50,10 +51,8 @@ class ConfigurationCommand extends AbstractCommand implements CallableCommand<Co
 
     ConfigurationCommand set(String name, def value) {
         if (this.configHolders.containsKey(name)) {
-            scriptLogger.error("CONFIG HOLDER $name: ${this.configHolders.containsKey(name)}")
             this.configHolders[name].set(value)
         } else {
-            scriptLogger.error("CONFIG CUSTOM $name: ${this.custom}")
             this.custom.putAt(name, value)
         }
         return this
@@ -83,6 +82,10 @@ class ConfigurationCommand extends AbstractCommand implements CallableCommand<Co
         def value = innerPropertyMissing(name)
         value = value != null ? value : this.context.getAttribute(name)
         return value
+    }
+
+    def propertyMissing(String name, def value) {
+        throw new JMacroException("Property missing redirect is disabled in configuration")
     }
 
 

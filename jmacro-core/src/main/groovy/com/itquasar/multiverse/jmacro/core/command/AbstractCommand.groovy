@@ -63,31 +63,31 @@ abstract class AbstractCommand implements Command, Constants {
 
     @Override
     Core getCore() {
-        return core
+        return this.core
     }
 
     @Override
     ScriptEngineAware getScriptEngineAware() {
-        return scriptEngineAware
+        return this.scriptEngineAware
     }
 
     @Override
     ScriptEngine getScriptEngine() {
-        return scriptEngineAware.scriptEngine()
+        return this.scriptEngineAware.scriptEngine()
     }
 
     @Override
     ScriptContext getContext() {
-        return context
+        return this.context
     }
 
     @Override
     Bindings getBindings() {
-        return bindings
+        return this.bindings
     }
 
     @Override
     Logger getScriptLogger() {
-        return scriptLogger
+        return this.scriptLogger
     }
 }

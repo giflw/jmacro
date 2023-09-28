@@ -4,23 +4,26 @@ import jnr.constants.platform.Signal;
 import jnr.posix.SignalHandler;
 import jnr.posix.util.SunMiscSignal;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import picocli.CommandLine;
 
 import java.util.Arrays;
 
 public class Launcher {
 
+    private static final Logger LOGGER = LogManager.getLogger(Launcher.class);
+
     static {
         SignalHandler handler = signalCode -> {
             Signal signal = Signal.valueOf(signalCode);
-            System.out.println("Received signal " + signal.name() + " (" + signal.intValue() + "|" + signalCode + ")");
+            LOGGER.warn("Received signal " + signal.name() + " (" + signal.intValue() + "|" + signalCode + ")");
             System.exit(128 + signalCode);
         };
         for (Signal signal : new Signal[]{Signal.SIGINT, Signal.SIGTERM, Signal.SIGQUIT, Signal.SIGPIPE, Signal.SIGABRT, Signal.SIGIOT}) {
             try {
                 SunMiscSignal.signal(signal, handler);
             } catch (IllegalArgumentException ex) {
-                System.out.println("Error registering signal handler for " + signal.name());
+                LOGGER.warn("Error registering signal handler for " + signal.name());
             }
         }
     }

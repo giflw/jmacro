@@ -194,7 +194,7 @@ public class Run implements Callable<CliResult> {
                 LOGGER.info("Path with infix and default extension " + path);
             }
         }
-        Cli.out.print("Returning path as " + path);
+        LOGGER.info("Returning path as " + path);
         return Optional.of(path);
     }
 }
