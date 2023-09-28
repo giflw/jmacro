@@ -4,6 +4,7 @@ import com.itquasar.multiverse.jmacro.core.script.Script;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.net.URI;
@@ -12,6 +13,7 @@ import java.util.List;
 
 public abstract class ScriptRepositoryAbstract implements ScriptRepository {
 
+    @Getter
     @NonNull
     private final URI uri;
 
@@ -22,15 +24,20 @@ public abstract class ScriptRepositoryAbstract implements ScriptRepository {
     @Getter(AccessLevel.PROTECTED)
     @Setter(AccessLevel.PROTECTED)
     @NonNull
-    private List<Script> cache = Collections.EMPTY_LIST;
+    private List<Script> cache = Collections.emptyList();
 
+    @SneakyThrows
     public ScriptRepositoryAbstract(@NonNull String id, @NonNull URI uri) {
         this.id = id;
-        this.uri = uri;
-    }
-
-    public URI getUri() {
-        return uri;
+        this.uri = new URI(
+            uri.getScheme(),
+            uri.getUserInfo(),
+            uri.getHost(),
+            uri.getPort(),
+            uri.getPath().replace("//", "/"),
+            uri.getQuery(),
+            uri.getFragment()
+        );
     }
 
     @Override

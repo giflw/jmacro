@@ -35,6 +35,19 @@ public class HttpdCommand extends AbstractCommand implements AutoCloseable, OnSh
         return this.servers.computeIfAbsent(httpdConfig.getAddress(), key -> new Httpd(httpdConfig, getScriptLogger()));
     }
 
+    public HttpdCommand useVirtualThreads(boolean useVirtualThreads) {
+        io.javalin.util.ConcurrencyUtil.INSTANCE.setUseLoom(useVirtualThreads);
+        return this;
+    }
+
+    public HttpdCommand usingLoom(boolean useVirtualThreads) {
+        return useVirtualThreads(useVirtualThreads);
+    }
+
+    public HttpdCommand usingLoom() {
+        return usingLoom(true);
+    }
+
     /**
      * Helper method to create {@link HttpdConfig} instances.
      *
