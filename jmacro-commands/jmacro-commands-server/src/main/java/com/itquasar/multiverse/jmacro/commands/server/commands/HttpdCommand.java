@@ -77,8 +77,10 @@ public class HttpdCommand extends AbstractCommand implements AutoCloseable, OnSh
     @Override
     public void onShutdown() {
         try {
-            getScriptLogger().warn("Closing all HTTPD instances as we are shutting down)");
-            this.close();
+            if (!this.servers.isEmpty()) {
+                getScriptLogger().warn("Closing all HTTPD instances as we are shutting down)");
+                this.close();
+            }
         } catch (Exception e) {
             getScriptLogger().error("Error closing HTTPD instances on shutdown", e);
         }

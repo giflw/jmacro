@@ -103,7 +103,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <!-- FIXME move def to BOM -->
             <groupId>com.athaydes</groupId>
             <artifactId>spock-reports</artifactId>
             <scope>test</scope>

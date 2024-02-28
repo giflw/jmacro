@@ -20,4 +20,8 @@ public interface CommandProvider<C extends AbstractCommand> {
      * @return Command new instance.
      */
     C getCommand(Core core, ScriptEngineAware scriptEngineAware);
+
+    default String getName() {
+        return Command.nameOf(this.getCommandType());
+    }
 }

@@ -62,8 +62,4 @@ public interface Command {
         return CommandUtils.propertyMissingOn(this.getBindings(), name);
     }
 
-    default Object methodMissing(String name, Object args) {
-        return CommandUtils.callMethodAliasOrOnBindings(this, name, args);
-    }
-
 }

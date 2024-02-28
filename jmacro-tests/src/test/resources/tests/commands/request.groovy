@@ -10,7 +10,7 @@ def server = httpd {
     it.post('/foo', ctx -> ctx.result(ctx.header("Some-Header") + "#" + ctx.formParam("user") + ":" + ctx.formParam("senha")))
 }
 
-pause 1
+server.waitBeReady()
 
 def req = request {
     it.with {

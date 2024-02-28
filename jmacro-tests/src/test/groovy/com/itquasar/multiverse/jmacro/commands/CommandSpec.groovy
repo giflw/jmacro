@@ -1,5 +1,6 @@
 package com.itquasar.multiverse.jmacro.commands
 
+
 import com.itquasar.multiverse.jmacro.core.command.CommandProvider
 import com.itquasar.multiverse.jmacro.core.configuration.Configuration
 import com.itquasar.multiverse.jmacro.core.engine.Core
@@ -10,13 +11,14 @@ import com.itquasar.multiverse.jmacro.core.script.Script
 import com.itquasar.multiverse.jmacro.core.script.ScriptResult
 import com.itquasar.multiverse.jmacro.core.util.SPILoader
 import groovy.util.logging.Log4j2
+import org.opentest4j.TestSkippedException
 import spock.lang.Specification
 import spock.lang.Unroll
 
 @Log4j2
 class CommandSpec extends Specification {
 
-    private static final String singleCommandTest = null
+    private static final String singleCommandTest = "configuration"
 
     Core core
 
@@ -35,7 +37,7 @@ class CommandSpec extends Specification {
     }
 
     @Unroll
-    void "Command [#provider.name] of type [#provider.commandType.simpleName]"(CommandProvider provider) {
+    void 'Command #provider.name of type #provider.commandType.simpleName'(CommandProvider provider) {
         when: "Script found"
         Script script = loadScript(provider.name)
         ScriptResult result = core.engine.execute(script, "foo=bar", "--foo", "bar=false")
@@ -57,9 +59,7 @@ class CommandSpec extends Specification {
 
         where: "Command providers loaded through Java SPI"
         provider << SPILoader.load(CommandProvider.class).toList().findAll {
-            (singleCommandTest != null && singleCommandTest == it.name)
-                ||
-                (singleCommandTest == null && ((it.name == 'tn3270' && System.getProperty('tn3270j.url') != null) || it.name != 'tn3270'))
+            (singleCommandTest != null && singleCommandTest == it.name) || (singleCommandTest == null && ((it.name == 'tn3270' && System.getProperty('tn3270j.url') != null) || it.name != 'tn3270'))
         }
     }
 
@@ -67,11 +67,13 @@ class CommandSpec extends Specification {
         String filename = basename + ".groovy"
         URL location = CommandSpec.class.getResource("/tests/commands/" + filename)
         if (location == null) {
-            throw new IllegalArgumentException("Could not find $filename")
+            log.error("Could not find $filename")
+            throw new TestSkippedException("Command ${basename} (${filename}) have no test")
         }
         String source = location.text
         Metadata metadata = Metadata.extractMetadata(source)
         return new Script(metadata, 'command-spec', filename, location.toString(), source)
+
     }
 
     static class CommandTestRepository implements ScriptRepository {

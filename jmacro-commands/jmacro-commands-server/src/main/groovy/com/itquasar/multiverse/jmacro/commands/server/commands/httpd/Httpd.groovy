@@ -74,6 +74,17 @@ class Httpd implements AutoCloseable {
         this.stop()
     }
 
+    boolean isReady() {
+        return this.server.jettyServer().server().isStarted();
+    }
+
+    Httpd waitBeReady() {
+        while(!this.isReady()) {
+            Thread.sleep(25);
+        }
+        return this
+    }
+
     Httpd exit(String route = '/exit', String message = 'Bye') {
         exit(route, { ctx -> ctx.json([message: message]) })
     }

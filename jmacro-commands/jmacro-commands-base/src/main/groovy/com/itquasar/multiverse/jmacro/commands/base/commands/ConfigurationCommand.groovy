@@ -88,6 +88,10 @@ class ConfigurationCommand extends AbstractCommand implements CallableCommand<Co
         throw new JMacroException("Property missing redirect is disabled in configuration")
     }
 
+    def methodMissing(String name, def args) {
+        scriptLogger.debug("Calling method '$name' missing on configuration")
+        return configuration.invokeMethod(name, args)
+    }
 
     @Override
     Iterator iterator() {

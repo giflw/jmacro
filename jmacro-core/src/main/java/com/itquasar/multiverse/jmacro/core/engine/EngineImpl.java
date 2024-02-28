@@ -205,10 +205,10 @@ public final class EngineImpl extends Engine implements Constants, TUI {
 
         context.setWriter(new PrintWriter(System.out));
 
+        // FIXME where this is used??? tests break without this!!!
         var globalScope = context.getBindings(GLOBAL_SCOPE);
         if (globalScope == null) {
             context.setBindings(engine.createBindings(), ScriptContext.GLOBAL_SCOPE);
-            globalScope = context.getBindings(GLOBAL_SCOPE);
         }
 
         var engineScope = context.getBindings(ENGINE_SCOPE);
@@ -223,12 +223,12 @@ public final class EngineImpl extends Engine implements Constants, TUI {
             "@" + scriptPath.substring(scriptPath.lastIndexOf('.') + 1);
         final var scriptLogger = LogManager.getLogger(loggerName);
 
-        globalScope.put("__MAIN__", normalExecution);
-        globalScope.put("id", id);
-        globalScope.put("uuid", UUID.randomUUID());
-        globalScope.put("logger", scriptLogger);
+        engineScope.put("__MAIN__", normalExecution);
+        engineScope.put("id", id);
+        engineScope.put("uuid", UUID.randomUUID());
+        engineScope.put("logger", scriptLogger);
 
-        ScriptEngineAware scriptEngineAware = ScriptEngineAware.of(globalScope, engine, scriptLogger);
+        ScriptEngineAware scriptEngineAware = ScriptEngineAware.of(engineScope, engine, scriptLogger);
 
         if (engine instanceof GroovyScriptEngineImpl) {
             engine.getContext().setAttribute("#jsr223.groovy.engine.keep.globals", "weak", ENGINE_SCOPE);
