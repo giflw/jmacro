@@ -54,9 +54,9 @@
         <profile>
             <id>extra-jlink-modules</id>
             <activation>
-                <os>
+                <!--<os>
                     <family>windows</family>
-                </os>
+                </os>-->
             </activation>
             <properties>
                 <jlink.modules.os-dependent>jdk.crypto.mscapi,</jlink.modules.os-dependent>

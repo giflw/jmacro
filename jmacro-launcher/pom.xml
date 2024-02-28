@@ -30,9 +30,9 @@
             <id>launcher</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
-                <os>
+                <!--<os>
                     <family>windows</family>
-                </os>
+                </os>-->
             </activation>
             <build>
                 <plugins>

@@ -1,6 +1,0 @@
-[submodule "git-modules/knx-launcher"]
-	path = git-modules/knx-launcher
-	url = https://github.com/giflw/knx-launcher.git
-[submodule "git-modules/tn3270j"]
-	path = git-modules/tn3270j
-	url = https://github.com/giflw/tn3270j.git

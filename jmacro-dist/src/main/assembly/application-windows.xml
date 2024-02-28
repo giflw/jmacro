@@ -55,11 +55,12 @@
         </fileSet>
     </fileSets>
     <files>
+        <!-- FIXME jmacro.exe
         <file>
             <source>../jmacro-launcher/target/jmacro.exe</source>
             <destName>installer.exe</destName>
             <outputDirectory></outputDirectory>
-        </file>
+        </file>-->
         <!--        <file>-->
         <!--            <source>LICENSE.txt</source>-->
         <!--            <outputDirectory></outputDirectory>-->
