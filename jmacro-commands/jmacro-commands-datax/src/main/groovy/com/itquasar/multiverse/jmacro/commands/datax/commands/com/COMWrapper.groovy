@@ -54,6 +54,7 @@ class COMWrapper implements AutoCloseable {
         }
     }
 
+    // FIXME review implementation
     def enumeration(String name) {
         Class<Enum> enumClass = Class.forName("${this.class.packageName}.enums.${application.name().toLowerCase()}.${name}") as Class<Enum>
         enumClass.invokeMethod("values", null).each { Enum it ->

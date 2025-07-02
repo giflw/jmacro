@@ -13,22 +13,6 @@
     <packaging>pom</packaging>
     <name>JMacro::BOM</name>
 
-    <properties>
-        <lombok.version>1.18.28</lombok.version>
-        <vavr.version>0.10.4</vavr.version>
-        <checker.version>3.38.0</checker.version>
-        <picocli.version>4.7.5</picocli.version>
-
-        <groovy.version>4.0.15</groovy.version>
-        <gmavenplus.version>2.1.0</gmavenplus.version>
-
-        <spock.version>2.4-M1-groovy-4.0</spock.version>
-        <spock-reports.version>2.5.1-groovy-4.0</spock-reports.version>
-
-        <javalin.version>5.6.2</javalin.version>
-        <httpclient5.version>5.2.1</httpclient5.version>
-    </properties>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -170,7 +154,7 @@
             <dependency>
                 <groupId>org.yaml</groupId>
                 <artifactId>snakeyaml</artifactId>
-                <version>2.2</version>
+                <version>2.4</version>
             </dependency>
             <dependency>
                 <groupId>com.google.code.gson</groupId>
@@ -340,67 +324,6 @@
                 <version>2.20.0</version>
                 <scope>import</scope>
                 <type>pom</type>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>2.0.9</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-simple</artifactId>
-                <version>2.0.9</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter</artifactId>
-                <version>5.10.0</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-vintage</artifactId>
-                <version>5.10.0</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-api</artifactId>
-                <version>5.10.0</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.spockframework</groupId>
-                <artifactId>spock-bom</artifactId>
-                <version>${spock.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.athaydes</groupId>
-                <artifactId>spock-reports</artifactId>
-                <version>${spock-reports.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.spockframework</groupId>
-                <artifactId>spock-core</artifactId>
-                <version>${spock.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency> <!-- enables mocking of classes (in addition to interfaces) -->
-                <groupId>net.bytebuddy</groupId>
-                <artifactId>byte-buddy</artifactId>
-                <version>1.14.8</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency> <!-- enables mocking of classes without default constructor (together with ByteBuddy or CGLIB) -->
-                <groupId>org.objenesis</groupId>
-                <artifactId>objenesis</artifactId>
-                <version>3.3</version>
-                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -20,6 +20,7 @@
         <module>jmacro-commands-db</module>
         <module>jmacro-commands-io</module>
         <module>jmacro-commands-server</module>
+        <module>../git-modules/tn3270j</module>
         <module>jmacro-commands-terminal</module>
     </modules>
 </project>

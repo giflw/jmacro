@@ -5,14 +5,13 @@ import com.itquasar.multiverse.jmacro.core.jmx.JMXManagement;
 import com.itquasar.multiverse.jmacro.core.repository.GlobalScriptRepository;
 import com.itquasar.multiverse.jmacro.core.repository.ScriptRepositoryFactory;
 import com.itquasar.multiverse.jmacro.core.util.RepresenterNonNull;
+import com.itquasar.multiverse.jmacro.core.util.YamlUtil;
 import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
-import org.yaml.snakeyaml.LoaderOptions;
-import org.yaml.snakeyaml.TypeDescription;
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
-import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 import javax.script.ScriptEngineManager;
 import java.io.BufferedReader;
@@ -120,7 +119,7 @@ public final class Configuration {
      * @return Parsed configuration.
      */
     public static Configuration load(final Reader reader) {
-        Configuration configuration = new Yaml().loadAs(reader, Configuration.class);
+        Configuration configuration = YamlUtil.load(reader, Configuration.class);
         configuration.init();
         return configuration;
     }
@@ -137,7 +136,8 @@ public final class Configuration {
     }
 
     public String serialize() {
-        return new Yaml(new RepresenterNonNull()).dumpAsMap(this.copy());
+        // FIXME move to YamlUtil
+        return new Yaml(new RepresenterNonNull(), new DumperOptions()).dumpAsMap(this.copy());
     }
 
     private Configuration copy() {

@@ -1,13 +1,12 @@
 package com.itquasar.multiverse.jmacro.core.script;
 
 import com.itquasar.multiverse.jmacro.core.util.RepresenterNonNull;
+import com.itquasar.multiverse.jmacro.core.util.YamlUtil;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.yaml.snakeyaml.LoaderOptions;
-import org.yaml.snakeyaml.TypeDescription;
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -50,8 +49,7 @@ public class Metadata {
     }
 
     public static Metadata load(String string) {
-        Metadata metadata = new Yaml().loadAs(string, Metadata.class);
-        return metadata;
+        return YamlUtil.load(string, Metadata.class);
     }
 
     private Metadata copy() {
@@ -61,7 +59,8 @@ public class Metadata {
     }
 
     public String dump() {
-        return new Yaml(new RepresenterNonNull()).dumpAsMap(this.copy());
+        // FIXME move to YamlUtil
+        return new Yaml(new RepresenterNonNull(), new DumperOptions()).dumpAsMap(this.copy());
     }
 
     public void setName(String name) {
@@ -81,7 +80,7 @@ public class Metadata {
     }
 
     public Map<String, ?> getInfos() {
-        return this.infos != null ? this.infos : Collections.emptyMap();
+        return this.infos != null ? this.infos : Collections.EMPTY_MAP;
     }
 
     public void setInfos(Map<String, ?> infos) {

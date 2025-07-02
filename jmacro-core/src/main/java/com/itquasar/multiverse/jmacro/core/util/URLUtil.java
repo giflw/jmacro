@@ -5,6 +5,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.log4j.Log4j2;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Map;
@@ -16,7 +17,8 @@ public class URLUtil {
 
     public URL create(String url) {
         try {
-            return new URL(url);
+            // FIXME usar URI????
+            return URI.create(url).toURL();
         } catch (MalformedURLException e) {
             throw new JMacroException("Error creating URL objetc for [" + url + "]", e);
         }
